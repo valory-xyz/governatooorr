@@ -1,0 +1,356 @@
+# -*- coding: utf-8 -*-
+# ------------------------------------------------------------------------------
+#
+#   Copyright 2023 Valory AG
+#
+#   Licensed under the Apache License, Version 2.0 (the "License");
+#   you may not use this file except in compliance with the License.
+#   You may obtain a copy of the License at
+#
+#       http://www.apache.org/licenses/LICENSE-2.0
+#
+#   Unless required by applicable law or agreed to in writing, software
+#   distributed under the License is distributed on an "AS IS" BASIS,
+#   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#   See the License for the specific language governing permissions and
+#   limitations under the License.
+#
+# ------------------------------------------------------------------------------
+
+"""This package contains round behaviours of ProposalCollectorAbciApp."""
+
+import json
+from abc import ABC
+from typing import Generator, List, Optional, Set, Type, cast
+
+from packages.valory.contracts.compound.contract import CompoundContract
+from packages.valory.protocols.contract_api import ContractApiMessage
+from packages.valory.skills.abstract_round_abci.base import AbstractRound
+from packages.valory.skills.abstract_round_abci.behaviours import (
+    AbstractRoundBehaviour,
+    BaseBehaviour,
+)
+from packages.valory.skills.proposal_collector.models import Params
+from packages.valory.skills.proposal_collector.payloads import (
+    CollectActiveProposalsPayload,
+    SelectProposalPayload,
+    SynchronizeDelegationsPayload,
+    VerifyDelegationsPayload,
+)
+from packages.valory.skills.proposal_collector.rounds import (
+    CollectActiveProposalsRound,
+    ProposalCollectorAbciApp,
+    SelectProposalRound,
+    SynchronizeDelegationsRound,
+    SynchronizedData,
+    VerifyDelegationsRound,
+)
+from packages.valory.skills.proposal_collector.tally import proposal_query
+
+
+HTTP_OK = 200
+
+
+class ProposalCollectorBaseBehaviour(BaseBehaviour, ABC):
+    """Base behaviour for the proposal_collector skill."""
+
+    @property
+    def synchronized_data(self) -> SynchronizedData:
+        """Return the synchronized data."""
+        return cast(SynchronizedData, super().synchronized_data)
+
+    @property
+    def params(self) -> Params:
+        """Return the params."""
+        return cast(Params, super().params)
+
+
+class SynchronizeDelegationsBehaviour(ProposalCollectorBaseBehaviour):
+    """SynchronizeDelegations"""
+
+    matching_round: Type[AbstractRound] = SynchronizeDelegationsRound
+
+    def async_act(self) -> Generator:
+        """Do the act, supporting asynchronous execution."""
+
+        with self.context.benchmark_tool.measure(self.behaviour_id).local():
+            new_delegations = json.dumps(
+                self.context.state.new_delegations
+            )  # no sorting needed here as there is no consensus over this data
+            sender = self.context.agent_address
+            payload = SynchronizeDelegationsPayload(
+                sender=sender, new_delegations=new_delegations
+            )
+
+        with self.context.benchmark_tool.measure(self.behaviour_id).consensus():
+            yield from self.send_a2a_transaction(payload)
+            yield from self.wait_until_round_end()
+
+        self.set_done()
+
+
+class VerifyDelegationsBehaviour(ProposalCollectorBaseBehaviour):
+    """VerifyDelegations"""
+
+    matching_round: Type[AbstractRound] = VerifyDelegationsRound
+
+    def async_act(self) -> Generator:
+        """Do the act, supporting asynchronous execution."""
+
+        with self.context.benchmark_tool.measure(self.behaviour_id).local():
+
+            sender = self.context.agent_address
+
+            # Remove delegations that have already been added to the synchronized data from the agent
+            delegation_number = self.synchronized_data.agent_to_new_delegation_number[
+                self.context.agent_address
+            ]
+            self.context.state.new_delegations = self.context.state.new_delegations[
+                delegation_number:
+            ]
+
+            # Validate delegations on-chain
+            validated_new_delegations = yield from self._get_validated_delegations()
+
+            if validated_new_delegations is None:
+                payload = VerifyDelegationsPayload(
+                    sender=sender,
+                    new_token_to_delegations=VerifyDelegationsRound.ERROR_PAYLOAD,
+                )
+
+            else:
+                # Create the new_token_to_delegations mapping from the validated_new_delegations
+
+                # new_token_to_delegations = {
+                #     "token_address_a": {
+                #         "user_address_a": {
+                #             "delegation_amount": 1000,
+                #             "voting_preference": "Good",
+                #         },
+                #         ...
+                #     },
+                #     ...
+                # }
+                new_token_to_delegations = {}
+                for d in validated_new_delegations:
+
+                    token_address = d["token_address"]
+                    user_address = d["user_address"]
+
+                    delegation_data = {
+                        "delegation_amount": d["delegation_amount"],
+                        "voting_preference": d["voting_preference"],
+                    }
+
+                    # Token does not exist
+                    if token_address not in new_token_to_delegations:
+                        new_token_to_delegations[token_address] = {
+                            user_address: delegation_data,
+                        }
+                        continue
+
+                    # Token exists, user does not exist
+                    if user_address not in new_token_to_delegations[token_address]:
+                        new_token_to_delegations[token_address][
+                            user_address
+                        ] = delegation_data
+                        continue
+
+                    # Token exists, user exists
+                    # We should not reach here as that means that an user has
+                    # multiple delegations for the same token
+                    raise ValueError(
+                        f"User {user_address} has multiple delegations for token {token_address}"
+                    )
+
+                payload = VerifyDelegationsPayload(
+                    sender=sender,
+                    new_token_to_delegations=json.dumps(
+                        new_token_to_delegations, sort_keys=True
+                    ),
+                )
+
+        with self.context.benchmark_tool.measure(self.behaviour_id).consensus():
+            yield from self.send_a2a_transaction(payload)
+            yield from self.wait_until_round_end()
+
+        self.set_done()
+
+    def _get_validated_delegations(
+        self,
+    ) -> Generator[None, None, Optional[List]]:
+        """Get token id to member data."""
+
+        validated_delegations = []
+
+        for d in self.synchronized_data.new_delegations:
+
+            address = d["user_address"]
+
+            self.context.logger.info(f"Retrieving delegations for wallet {address}")
+            contract_api_msg = yield from self.get_contract_api_response(
+                performative=ContractApiMessage.Performative.GET_STATE,  # type: ignore
+                contract_address=self.params.compound_contract_address,
+                contract_id=str(CompoundContract.contract_id),
+                contract_callable="get_all_erc721_transfers",
+                address=address,
+            )
+            if contract_api_msg.performative != ContractApiMessage.Performative.STATE:
+                self.context.logger.info("Error retrieving the delegations")
+                return None  # TODO: should we return if just one fails?
+
+            delegation = cast(int, contract_api_msg.state.body["votes"])
+
+            # We validate the delegation if the actual amount is equal or higher
+            if delegation >= int(d["delegation_amount"]):
+                validated_delegations.append(d)
+
+        return validated_delegations
+
+
+class CollectActiveProposalsBehaviour(ProposalCollectorBaseBehaviour):
+    """CollectActiveProposals"""
+
+    matching_round: Type[AbstractRound] = CollectActiveProposalsRound
+
+    def async_act(self) -> Generator:
+        """Do the act, supporting asynchronous execution."""
+
+        with self.context.benchmark_tool.measure(self.behaviour_id).local():
+            active_proposals = yield from self._get_active_proposals()
+            sender = self.context.agent_address
+            payload = CollectActiveProposalsPayload(
+                sender=sender, active_proposals=active_proposals
+            )
+
+        with self.context.benchmark_tool.measure(self.behaviour_id).consensus():
+            yield from self.send_a2a_transaction(payload)
+            yield from self.wait_until_round_end()
+
+        self.set_done()
+
+    def _get_active_proposals(self) -> Generator[None, None, str]:
+        """Get proposals mentions"""
+
+        headers = {
+            "Accept": "application/json",
+            "Api-key": "{api_key}".format(api_key=self.params.tally_api_key),
+        }
+
+        variables = {
+            "chainId": "eip155:1",
+            "proposers": list(
+                self.synchronized_data.current_token_to_delegations.keys()
+            ),  # TODO: are token addresses proposers or governors?
+            "governors": [],  # any governor
+            "pagination": {"limit": 200, "offset": 0},
+        }
+
+        self.context.logger.info(
+            f"Retrieving proposals from Tally API [{self.params.tally_api_endpoint}]"
+        )
+
+        # Make the request
+        response = yield from self.get_http_response(
+            method="POST",
+            url=self.params.tally_api_endpoint,
+            headers=headers,
+            content=json.dumps(
+                {"query": proposal_query, "variables": variables}
+            ).encode("utf-8"),
+        )
+
+        if response.status_code != HTTP_OK:
+            self.context.logger.error(
+                f"Could not retrieve data from Tally API. "
+                f"Received status code {response.status_code}."
+            )
+            return CollectActiveProposalsRound.ERROR_PAYLOAD
+
+        response_json = json.loads(response.body)
+
+        # Filter out non-active proposals
+        # TODO: verify that necessary fields exist
+        active_proposals = list(
+            filter(
+                lambda p: p["statusChanges"][-1]["type"] == "ACTIVE",
+                response_json["data"]["proposals"],
+            )
+        )
+
+        return json.dumps(
+            {
+                "active_proposals": active_proposals,
+            },
+            sort_keys=True,
+        )
+
+
+class SelectProposalBehaviour(ProposalCollectorBaseBehaviour):
+    """SelectProposal"""
+
+    matching_round: Type[AbstractRound] = SelectProposalRound
+
+    def async_act(self) -> Generator:
+        """Do the act, supporting asynchronous execution."""
+
+        with self.context.benchmark_tool.measure(self.behaviour_id).local():
+
+            active_proposals = self.synchronized_data.active_proposals
+
+            # TODO: we enter this round after a successful tx_submission
+            # We need to check if that is the case and remove the first proposal
+            # from the list.
+
+            # Some proposals have an ETA, some dont
+            # We will prioritise those with it
+            active_proposals_with_eta = list(
+                filter(lambda p: p["eta"] != "", active_proposals)
+            )
+            active_proposals_no_eta = list(
+                filter(lambda p: p["eta"] == "", active_proposals)
+            )
+
+            # Sort by ETA
+            active_proposals_with_eta_sorted = sorted(
+                active_proposals_with_eta, key=lambda p: int(p["eta"]), reverse=False
+            )
+
+            # Sort by ID
+            active_proposals_no_eta_sorted = sorted(
+                active_proposals_no_eta, key=lambda p: int(p["id"]), reverse=False
+            )
+
+            # Add all sorted proposals
+            sorted_proposals = (
+                active_proposals_with_eta_sorted + active_proposals_no_eta_sorted
+            )
+
+            # Select the first proposal
+            proposal_id = (
+                sorted_proposals[0]["id"]
+                if sorted_proposals
+                else SelectProposalRound.NO_PROPOSAL
+            )
+
+            sender = self.context.agent_address
+            payload = SelectProposalPayload(sender=sender, proposal_id=proposal_id)
+
+        with self.context.benchmark_tool.measure(self.behaviour_id).consensus():
+            yield from self.send_a2a_transaction(payload)
+            yield from self.wait_until_round_end()
+
+        self.set_done()
+
+
+class ProposalCollectorRoundBehaviour(AbstractRoundBehaviour):
+    """ProposalCollectorRoundBehaviour"""
+
+    initial_behaviour_cls = SynchronizeDelegationsBehaviour
+    abci_app_cls = ProposalCollectorAbciApp  # type: ignore
+    behaviours: Set[Type[BaseBehaviour]] = [
+        CollectActiveProposalsBehaviour,
+        SelectProposalBehaviour,
+        SynchronizeDelegationsBehaviour,
+        VerifyDelegationsBehaviour,
+    ]

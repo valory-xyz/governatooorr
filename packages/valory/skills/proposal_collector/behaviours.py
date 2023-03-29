@@ -66,7 +66,11 @@ class ProposalCollectorBaseBehaviour(BaseBehaviour, ABC):
 
 
 class SynchronizeDelegationsBehaviour(ProposalCollectorBaseBehaviour):
-    """SynchronizeDelegations"""
+    """
+    SynchronizeDelegations
+
+    Synchronizes delegations across all agents.
+    """
 
     matching_round: Type[AbstractRound] = SynchronizeDelegationsRound
 
@@ -78,6 +82,7 @@ class SynchronizeDelegationsBehaviour(ProposalCollectorBaseBehaviour):
                 self.context.state.new_delegations
             )  # no sorting needed here as there is no consensus over this data
             sender = self.context.agent_address
+            # TODO: we also need to reset the new_delegations.
             payload = SynchronizeDelegationsPayload(
                 sender=sender, new_delegations=new_delegations
             )
@@ -90,7 +95,11 @@ class SynchronizeDelegationsBehaviour(ProposalCollectorBaseBehaviour):
 
 
 class VerifyDelegationsBehaviour(ProposalCollectorBaseBehaviour):
-    """VerifyDelegations"""
+    """
+    VerifyDelegations
+
+
+    """
 
     matching_round: Type[AbstractRound] = VerifyDelegationsRound
 
@@ -101,9 +110,10 @@ class VerifyDelegationsBehaviour(ProposalCollectorBaseBehaviour):
 
             sender = self.context.agent_address
 
+            # FIX: Not sure this makes sense... the new_delegations can constantly change...
             # Remove delegations that have already been added to the synchronized data from the agent
             delegation_number = self.synchronized_data.agent_to_new_delegation_number[
-                self.context.agent_address
+                sender
             ]
             self.context.state.new_delegations = self.context.state.new_delegations[
                 delegation_number:
@@ -241,7 +251,7 @@ class CollectActiveProposalsBehaviour(ProposalCollectorBaseBehaviour):
             "chainId": "eip155:1",
             "proposers": list(
                 self.synchronized_data.current_token_to_delegations.keys()
-            ),  # TODO: are token addresses proposers or governors?
+            ),  # TODO: are token addresses proposers or governors? Governors, so this is wrong
             "governors": [],  # any governor
             "pagination": {"limit": 200, "offset": 0},
         }

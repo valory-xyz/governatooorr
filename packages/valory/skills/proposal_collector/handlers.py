@@ -281,6 +281,8 @@ class HttpHandler(BaseHttpHandler):
         self, http_msg: HttpMessage, http_dialogue: HttpDialogue
     ) -> None:
 
+        active_proposals = self.synchronized_data.active_proposals
+
         raise NotImplementedError
 
     def _handle_get_proposal(
@@ -288,6 +290,8 @@ class HttpHandler(BaseHttpHandler):
     ) -> None:
 
         proposal_id = http_msg.url.split("/")[-1]
+
+        active_proposals = self.synchronized_data.active_proposals
 
         raise NotImplementedError
 

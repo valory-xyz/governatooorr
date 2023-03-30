@@ -17,7 +17,7 @@
 #
 # ------------------------------------------------------------------------------
 """Langchain connection and channel."""
-from typing import Any, Optional, Dict
+from typing import Any, Optional, Dict, cast
 
 from aea.configurations.base import PublicId
 from aea.connections.base import BaseSyncConnection, Connection
@@ -26,6 +26,7 @@ from aea.mail.base import Envelope
 from langchain.llms import OpenAI
 from langchain.prompts import PromptTemplate
 from langchain.chains import LLMChain
+from packages.valory.protocols.llm.message import LlmMessage
 
 CONNECTION_ID = PublicId.from_str("valory/langchain:0.1.0")
 
@@ -56,6 +57,8 @@ class LangchainConnection(BaseSyncConnection):
         :param kwargs: keyword arguments passed to component base
         """
         super().__init__(*args, **kwargs)
+        # TODO: configurable temperature
+        # TODO: set API key
         self.llm = OpenAI(temperature=0)
 
     def main(self) -> None:
@@ -90,10 +93,30 @@ class LangchainConnection(BaseSyncConnection):
         :param envelope: the envelope to send.
         """
         llm_message = envelope.message
-        vote = self._get_vote(prompt_template=llm_message.prompt_template, prompt_values=llm_message.prompt_values)
+        if llm_message.performative == LlmMessage.Performative.REQUEST:
+            vote = self._get_vote(
+                prompt_template=llm_message.prompt_template,
+                prompt_values=llm_message.prompt_values,
+            )
 
-        response_message =  # generate proto, response msg
-        self.put_envelope(resp_envelope)
+            dialogue = self.dialogues.update(llm_message)
+
+            response_message = cast(
+                LlmMessage,
+                dialogue.reply(
+                    performative=LlmMessage.Performative.RESPONSE,
+                    value=vote,  # TODO: Is this ok?
+                ),
+            )
+
+            response_envelope = Envelope(
+                to=envelope.sender,
+                sender=envelope.to,
+                message=response_message,
+                context=envelope.context,
+            )
+
+            self.put_envelope(response_envelope)
 
     def _get_vote(self, prompt_template: str, prompt_values: Dict[str, str]):
         """Get vote."""
@@ -105,11 +128,7 @@ class LangchainConnection(BaseSyncConnection):
         self.chain = LLMChain(llm=self.llm, prompt=prompt)
 
         result = self.chain.run(**prompt_values)
-
         result = result.strip("\n")
-
-        if not result in ["For", "Against", "Abstain"]:
-            raise ValueError(f"Invalid result: {result}")
         return result
 
     def on_connect(self) -> None:

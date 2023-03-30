@@ -129,4 +129,3 @@ class LlmDialogues(Model, BaseLlmDialogues):
             self_address=str(self.skill_id),
             role_from_first_message=role_from_first_message,
         )
-

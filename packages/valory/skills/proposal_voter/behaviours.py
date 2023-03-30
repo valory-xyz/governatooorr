@@ -43,8 +43,14 @@ from packages.valory.skills.proposal_voter.rounds import (
 from packages.valory.skills.proposal_voter.payload_tools import (
     hash_payload_to_hex,
 )
-from packages.valory.skills.proposal_voter.dialogues import LlmDialogues
-from packages.valory.connections.langchain.connection import CONNECTION_ID as LLM_CONNECTION_PUBLIC_ID
+from packages.valory.skills.proposal_voter.dialogues import LlmDialogues, LlmDialogue
+from packages.valory.connections.langchain.connection import (
+    CONNECTION_ID as LLM_CONNECTION_PUBLIC_ID,
+)
+from packages.valory.protocols.llm.message import LlmMessage
+from packages.valory.skills.abstract_round_abci.models import (
+    Requests,
+)
 
 SAFE_TX_GAS = 0
 ETHER_VALUE = 0
@@ -88,7 +94,9 @@ class EstablishVoteBehaviour(ProposalVoterBaseBehaviour):
 
             # This should never fail
             if not selected_proposal:
-                raise ValueError(f"Proposal with id {p_id} has not been found in the active proposals")
+                raise ValueError(
+                    f"Proposal with id {p_id} has not been found in the active proposals"
+                )
 
             # Get the service aggregated vote intention
             # TODO: is the governor address the same as the token address? No!
@@ -99,8 +107,18 @@ class EstablishVoteBehaviour(ProposalVoterBaseBehaviour):
                 token_adress
             )  # either GOOD or EVIL
             prompt_template = "Here is a voting proposal for a protocol: `{proposal}`. How should I vote on the voting proposal if my intent was to {voting_intention_snippet} and the voting options are {voting_options}? Please answer with only the voting option."
-            voting_intention_snippet = "cause chaos to the protocol" if vote_intention == "evil" else "contribute positively to the protocol"
-            prompt_values = {"proposal": selected_proposal["title"] + "\n" + selected_proposal["description"], "voting_intention": voting_intention_snippet, "voting_options": VOTING_OPTIONS}
+            voting_intention_snippet = (
+                "cause chaos to the protocol"
+                if vote_intention == "evil"
+                else "contribute positively to the protocol"
+            )
+            prompt_values = {
+                "proposal": selected_proposal["title"]
+                + "\n"
+                + selected_proposal["description"],
+                "voting_intention": voting_intention_snippet,
+                "voting_options": VOTING_OPTIONS,
+            }
 
             vote_code = yield self._get_vote(prompt_template, prompt_values)
 
@@ -113,7 +131,9 @@ class EstablishVoteBehaviour(ProposalVoterBaseBehaviour):
 
         self.set_done()
 
-    def _get_vote(self, prompt_template: str, prompt_values: Dict[str, str]) -> Generator[None, None, int]:
+    def _get_vote(
+        self, prompt_template: str, prompt_values: Dict[str, str]
+    ) -> Generator[None, None, int]:
         """Get the vote from LLM."""
         llm_dialogues = cast(LlmDialogues, self.context.llm_dialogues)
 
@@ -126,17 +146,23 @@ class EstablishVoteBehaviour(ProposalVoterBaseBehaviour):
         )
         request_llm_message = cast(LlmMessage, request_llm_message)
         llm_dialogue = cast(LlmDialogue, llm_dialogue)
-        llm_response_message = yield self._do_request(request_llm_message)
+        llm_response_message = yield from self._do_request(
+            request_llm_message, llm_dialogue
+        )
         vote = llm_response_message.value
+
+        if vote not in VOTES_TO_CODE:
+            raise ValueError(f"Invalid vote: {vote}")
+
         vote_code = VOTES_TO_CODE[vote]
         return vote_code
 
     def _do_request(
         self,
-        llm_message: LLMMessage,
-        llm_dialogue: LLMDialogue,
+        llm_message: LlmMessage,
+        llm_dialogue: LlmDialogue,
         timeout: Optional[float] = None,
-    ) -> Generator[None, None, LLMMessage]:
+    ) -> Generator[None, None, LlmMessage]:
         """
         Do a request and wait the response, asynchronously.
 

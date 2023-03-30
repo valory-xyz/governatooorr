@@ -70,12 +70,12 @@ class SynchronizedData(BaseSynchronizedData):
     @property
     def agent_to_new_delegation_number(self) -> dict:
         """Get the number of delegations each agent has added."""
-        return cast(dict, self.db.get("agent_to_delegation_number", {}))
+        return cast(dict, self.db.get("agent_to_new_delegation_number", {}))
 
     @property
     def current_token_to_delegations(self) -> dict:
         """Get the current delegations."""
-        return cast(dict, self.db.get("current_delegations", {}))
+        return cast(dict, self.db.get("current_token_to_delegations", {}))
 
     @property
     def active_proposals(self) -> dict:
@@ -146,9 +146,9 @@ class VerifyDelegationsRound(CollectSameUntilThresholdRound):
 
             new_token_to_delegations = json.loads(self.most_voted_payload)
 
-            current_token_to_delegations = (
-                self.synchronized_data.current_token_to_delegations
-            )
+            current_token_to_delegations = cast(
+                SynchronizedData, self.synchronized_data
+            ).current_token_to_delegations
 
             for token_address, delegation_data in new_token_to_delegations.items():
                 # Token not in current delegations
@@ -289,7 +289,10 @@ class ProposalCollectorAbciApp(AbciApp[Event]):
         FinishedProposalSelectionVoteRound,
     }
     event_to_timeout: EventToTimeout = {}
-    cross_period_persisted_keys: Set[str] = []
+    cross_period_persisted_keys: Set[str] = {
+        "current_token_to_delegations",
+        "active_proposals",
+    }
     db_pre_conditions: Dict[AppState, Set[str]] = {
         SynchronizeDelegationsRound: set(),
         SelectProposalRound: set(),

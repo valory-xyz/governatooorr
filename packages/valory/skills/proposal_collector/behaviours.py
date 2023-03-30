@@ -82,7 +82,7 @@ class SynchronizeDelegationsBehaviour(ProposalCollectorBaseBehaviour):
                 self.context.state.new_delegations
             )  # no sorting needed here as there is no consensus over this data
             sender = self.context.agent_address
-            # TODO: we also need to reset the new_delegations.
+            # TODO: we also need to reset the new_delegations -> we do this on the next round (VerifyDelegationsRound), once every agent has all the data
             payload = SynchronizeDelegationsPayload(
                 sender=sender, new_delegations=new_delegations
             )
@@ -202,7 +202,7 @@ class VerifyDelegationsBehaviour(ProposalCollectorBaseBehaviour):
                 performative=ContractApiMessage.Performative.GET_STATE,  # type: ignore
                 contract_address=self.params.compound_contract_address,
                 contract_id=str(CompoundContract.contract_id),
-                contract_callable="get_all_erc721_transfers",
+                contract_callable="get_current_votes",
                 address=address,
             )
             if contract_api_msg.performative != ContractApiMessage.Performative.STATE:
@@ -249,10 +249,10 @@ class CollectActiveProposalsBehaviour(ProposalCollectorBaseBehaviour):
 
         variables = {
             "chainId": "eip155:1",
-            "proposers": list(
-                self.synchronized_data.current_token_to_delegations.keys()
-            ),  # TODO: are token addresses proposers or governors? Governors, so this is wrong
-            "governors": [],  # any governor
+            "proposers": [],
+            "governors": list(
+                self.synchronized_data.current_token_to_delegations.keys()  # TODO: still not sure about this one
+            ),
             "pagination": {"limit": 200, "offset": 0},
         }
 

@@ -20,7 +20,7 @@
 """This package contains round behaviours of ProposalVoterAbciApp."""
 
 from abc import ABC
-from typing import Generator, Set, Type, cast, Optional
+from typing import Generator, Set, Type, cast, Optional, Dict
 from packages.valory.contracts.delegate.contract import DelegateContract
 from packages.valory.skills.abstract_round_abci.base import AbstractRound
 from packages.valory.skills.abstract_round_abci.behaviours import (
@@ -43,6 +43,8 @@ from packages.valory.skills.proposal_voter.rounds import (
 from packages.valory.skills.proposal_voter.payload_tools import (
     hash_payload_to_hex,
 )
+from packages.valory.skills.proposal_voter.dialogues import LlmDialogues
+from packages.valory.connections.langchain.connection import CONNECTION_ID as LLM_CONNECTION_PUBLIC_ID
 
 SAFE_TX_GAS = 0
 ETHER_VALUE = 0
@@ -85,10 +87,8 @@ class EstablishVoteBehaviour(ProposalVoterBaseBehaviour):
                     break
 
             # This should never fail
-            # TODO: no asserts in prod code
-            assert (
-                selected_proposal
-            ), f"Proposal with id {p_id} has not been found in the active proposals"
+            if not selected_proposal:
+                raise ValueError(f"Proposal with id {p_id} has not been found in the active proposals")
 
             # Get the service aggregated vote intention
             # TODO: is the governor address the same as the token address? No!
@@ -113,7 +113,7 @@ class EstablishVoteBehaviour(ProposalVoterBaseBehaviour):
 
         self.set_done()
 
-    def _get_vote(prompt_template: str, prompt_values: Dict[str: str]) -> Generator[None, None, int]:
+    def _get_vote(self, prompt_template: str, prompt_values: Dict[str, str]) -> Generator[None, None, int]:
         """Get the vote from LLM."""
         llm_dialogues = cast(LlmDialogues, self.context.llm_dialogues)
 

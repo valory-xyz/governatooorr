@@ -17,7 +17,7 @@
 #
 # ------------------------------------------------------------------------------
 """Langchain connection and channel."""
-from typing import Any, Optional
+from typing import Any, Optional, Dict
 
 from aea.configurations.base import PublicId
 from aea.connections.base import BaseSyncConnection, Connection
@@ -92,10 +92,10 @@ class LangchainConnection(BaseSyncConnection):
         llm_message = envelope.message
         vote = self._get_vote(prompt_template=llm_message.prompt_template, prompt_values=llm_message.prompt_values)
 
-        response_message =
+        response_message =  # generate proto, response msg
         self.put_envelope(resp_envelope)
 
-    def _get_vote(prompt_template: str, prompt_values: Dict[str, str]):
+    def _get_vote(self, prompt_template: str, prompt_values: Dict[str, str]):
         """Get vote."""
         prompt_input_variables = list(prompt_values.keys())
         prompt = PromptTemplate(

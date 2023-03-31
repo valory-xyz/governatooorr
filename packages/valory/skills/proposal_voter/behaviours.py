@@ -138,7 +138,7 @@ class EstablishVoteBehaviour(ProposalVoterBaseBehaviour):
                 "voting_options": VOTING_OPTIONS,
             }
 
-            vote = yield self._get_vote(prompt_template, prompt_values)
+            vote = yield from self._get_vote(prompt_template, prompt_values)
 
             self.context.logger.info(f"Vote is {vote}")
 

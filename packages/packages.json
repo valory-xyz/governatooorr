@@ -1,7 +1,7 @@
 {
     "dev": {
         "skill/valory/proposal_collector/0.1.0": "bafybeiaovbmfj7mxknjx6lhda2apaao4hywf25dxeqfjz6eawi2jsegpea",
-        "connection/valory/langchain/0.1.0": "bafybeifjifwsk4wca2oqa7wqeh5bclgsziyjx7oysnnlf5sikgetnps4le",
+        "connection/valory/langchain/0.1.0": "bafybeifogvvmgq56oeytorp6hsy64s4ackyotncf6nxzhitcunjlopjkmq",
         "contract/valory/compound/0.1.0": "bafybeid2u5baz3doyspgpumb3hzpzj5l5xoxa53d2jhhoa3u7iumtokn7a",
         "contract/valory/delegate/0.1.0": "bafybeign6vhogurakzkzjym6ih6jmpnza5rcjids55uoxbkaowsf6un4ei",
         "protocol/valory/llm/1.0.0": "bafybeigafqnus3kvaashfdzrpybpqiumhvbs2dmdnukqzn7yqedga4x7ui",

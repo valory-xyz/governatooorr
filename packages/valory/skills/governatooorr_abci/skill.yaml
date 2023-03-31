@@ -6,7 +6,7 @@ description: The chained abci for the governatooorr skill.
 license: Apache-2.0
 aea_version: '>=1.0.0, <2.0.0'
 fingerprint:
-  __init__.py: bafybeigmhxenrqb2ysjhcm2au2lang4abyny6irkzqqg4dtclz6net6zpy
+  __init__.py: bafybeigk2kb335wy5vmgapbrqmfotvwqm4dqsuqr7gt7qic4v4npx2pqxy
   behaviours.py: bafybeigcq5d235jq2j34jh7tuebwmv4ovypqkbzacortps35aaywhxhml4
   composition.py: bafybeiaqbziebm4elyyvqxowohwhd77a7zcytcyw53mr6uwcht4aw7gkoa
   dialogues.py: bafybeigpwuzku3we7axmxeamg7vn656maww6emuztau5pg3ebsoquyfdqm

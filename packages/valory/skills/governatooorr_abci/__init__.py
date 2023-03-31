@@ -17,9 +17,9 @@
 #
 # ------------------------------------------------------------------------------
 
-"""This module contains the implementation of the impact evaluator skill."""
+"""This module contains the implementation of the governatooorr_abci skill."""
 
 from aea.configurations.base import PublicId
 
 
-PUBLIC_ID = PublicId.from_str("valory/impact_evaluator_abci:0.1.0")
+PUBLIC_ID = PublicId.from_str("valory/governatooorr_abci:0.1.0")

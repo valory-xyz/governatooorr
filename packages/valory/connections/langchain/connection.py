@@ -128,7 +128,7 @@ class LangchainConnection(BaseSyncConnection):
 
         :param envelope: the envelope to send.
         """
-        llm_message = envelope.message
+        llm_message = cast(LlmMessage, envelope.message)
 
         dialogue = self.dialogues.update(llm_message)
 

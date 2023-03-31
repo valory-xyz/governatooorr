@@ -156,8 +156,6 @@ class VerifyDelegationsBehaviour(ProposalCollectorBaseBehaviour):
                     delegation_data = {
                         "delegation_amount": d["delegation_amount"],
                         "voting_preference": d["voting_preference"],
-                        "user_address": d["user_address"],
-                        "token_address": d["token_address"],
                     }
 
                     # Token does not exist
@@ -257,6 +255,7 @@ class CollectActiveProposalsBehaviour(ProposalCollectorBaseBehaviour):
         """Get proposals mentions"""
 
         headers = {
+            "Content-Type": "application/json",
             "Accept": "application/json",
             "Api-key": "{api_key}".format(api_key=self.params.tally_api_key),
         }
@@ -321,7 +320,12 @@ class SelectProposalBehaviour(ProposalCollectorBaseBehaviour):
         with self.context.benchmark_tool.measure(self.behaviour_id).local():
 
             active_proposals = self.synchronized_data.active_proposals
-
+            # {
+            #  "token_addresses": {
+            #   "0x0": {}
+            #  }
+            # }
+            self.synchronized_data.current_token_to_delegations
             # TODO: we enter this round after a successful tx_submission
             # We need to check if that is the case and remove the first proposal
             # from the list.
@@ -351,14 +355,11 @@ class SelectProposalBehaviour(ProposalCollectorBaseBehaviour):
             )
 
             # Select the first proposal
-            proposal_id = sorted_proposals[0]["id"] if sorted_proposals else None
-
-            # Check whether we have delegations
-            if (
-                not proposal_id
-                or not self.synchronized_data.current_token_to_delegations
-            ):
-                proposal_id = SelectProposalRound.NO_PROPOSAL
+            proposal_id = (
+                sorted_proposals[0]["id"]
+                if sorted_proposals
+                else SelectProposalRound.NO_PROPOSAL
+            )
 
             sender = self.context.agent_address
             payload = SelectProposalPayload(sender=sender, proposal_id=proposal_id)

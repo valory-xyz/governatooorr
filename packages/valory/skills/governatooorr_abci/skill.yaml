@@ -32,7 +32,7 @@ skills:
 behaviours:
   main:
     args: {}
-    class_name: ImpactEvaluatorConsensusBehaviour
+    class_name: GovernatooorrConsensusBehaviour
 handlers:
   abci:
     args: {}

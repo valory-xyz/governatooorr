@@ -102,11 +102,11 @@ class SynchronizeDelegationsRound(CollectDifferentUntilAllRound):
             all_new_delegations = []
             agent_to_new_delegation_number = {}
 
-            for sender, payload in self.collection:
-                new_delegations = json.loads(payload)
+            for sender, payload in self.collection.items():
+                new_delegations = json.loads(payload.json["new_delegations"])
 
                 # Add this agent's new delegations
-                all_new_delegations += new_delegations
+                all_new_delegations.extend(new_delegations)
 
                 # Remember how many delegations this agent sent so we can
                 # remove them from its local state during next round
@@ -197,7 +197,7 @@ class CollectActiveProposalsRound(CollectSameUntilThresholdRound):
             if self.most_voted_payload == CollectActiveProposalsRound.ERROR_PAYLOAD:
                 return self.synchronized_data, Event.API_ERROR
 
-            active_proposals = json.loads(self.most_voted_payload)
+            active_proposals = json.loads(self.most_voted_payload)["active_proposals"]
 
             synchronized_data = self.synchronized_data.update(
                 synchronized_data_class=SynchronizedData,
@@ -225,7 +225,7 @@ class SelectProposalRound(CollectSameUntilThresholdRound):
         """Process the end of the block."""
         if self.threshold_reached:
 
-            proposal_id = self.most_voted_payload.proposal_id
+            proposal_id = self.most_voted_payload
 
             if proposal_id == SelectProposalRound.NO_PROPOSAL:
                 return self.synchronized_data, Event.NO_PROPOSAL

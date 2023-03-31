@@ -40,7 +40,8 @@ from packages.valory.skills.proposal_voter.payloads import (
 )
 
 from typing import cast
-from packages.valory.skills.proposal_voter.behaviours import VOTES_TO_CODE
+
+VOTES_TO_CODE = {"FOR": 0, "AGAINST": 1, "ABSTAIN": 2}
 
 
 class Event(Enum):

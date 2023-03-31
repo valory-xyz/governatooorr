@@ -262,7 +262,7 @@ class PrepareVoteTransactionBehaviour(ProposalVoterBaseBehaviour):
 
         # Get the raw transaction from the Bravo Delegate contract
         contract_api_msg = yield from self.get_contract_api_response(
-            performative=ContractApiMessage.Performative.GET_RAW_TRANSACTION,  # type: ignore
+            performative=ContractApiMessage.Performative.GET_STATE,  # type: ignore
             contract_address=governor_address,
             contract_id=str(DelegateContract.contract_id),
             contract_callable="get_cast_vote_data",
@@ -271,12 +271,12 @@ class PrepareVoteTransactionBehaviour(ProposalVoterBaseBehaviour):
         )
         if (
             contract_api_msg.performative
-            != ContractApiMessage.Performative.RAW_TRANSACTION
+            != ContractApiMessage.Performative.STATE
         ):  # pragma: nocover
             self.context.logger.warning("get_cast_vote_data unsuccessful!")
             return None
 
-        data = cast(bytes, contract_api_msg.raw_transaction.body["data"])
+        data = cast(bytes, contract_api_msg.state.body["data"])
 
         # Get the safe transaction hash
         ether_value = ETHER_VALUE

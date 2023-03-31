@@ -16,19 +16,54 @@
 #   limitations under the License.
 #
 # ------------------------------------------------------------------------------
+
 """Langchain connection and channel."""
-from typing import Any, Optional, Dict, cast
+
+from typing import Any, Dict, cast
 
 from aea.configurations.base import PublicId
-from aea.connections.base import BaseSyncConnection, Connection
+from aea.connections.base import BaseSyncConnection
 from aea.mail.base import Envelope
+from aea.protocols.base import Address, Message
+from aea.protocols.dialogue.base import Dialogue
 
 from langchain.llms import OpenAI
 from langchain.prompts import PromptTemplate
 from langchain.chains import LLMChain
+
+from packages.valory.protocols.llm.dialogues import LlmDialogues as BaseLlmDialogues, LlmDialogue
 from packages.valory.protocols.llm.message import LlmMessage
 
 CONNECTION_ID = PublicId.from_str("valory/langchain:0.1.0")
+
+
+class LlmDialogues(BaseLlmDialogues):
+    """A class to keep track of IPFS dialogues."""
+
+    def __init__(self, **kwargs: Any) -> None:
+        """
+        Initialize dialogues.
+
+        :param kwargs: keyword arguments
+        """
+
+        def role_from_first_message(  # pylint: disable=unused-argument
+            message: Message, receiver_address: Address
+        ) -> Dialogue.Role:
+            """Infer the role of the agent from an incoming/outgoing first message
+
+            :param message: an incoming/outgoing first message
+            :param receiver_address: the address of the receiving agent
+            :return: The role of the agent
+            """
+            return LlmDialogue.Role.CONNECTION
+
+        BaseLlmDialogues.__init__(
+            self,
+            self_address=str(kwargs.pop("connection_id")),
+            role_from_first_message=role_from_first_message,
+            **kwargs,
+        )
 
 
 class LangchainConnection(BaseSyncConnection):
@@ -57,9 +92,11 @@ class LangchainConnection(BaseSyncConnection):
         :param kwargs: keyword arguments passed to component base
         """
         super().__init__(*args, **kwargs)
-        # TODO: configurable temperature
-        # TODO: set API key
-        self.llm = OpenAI(temperature=0)
+        openai_settings = {
+            setting: self.configuration.config.get(setting) for setting in ("openai_api_key", "temperature")
+        }
+        self.llm = OpenAI(**openai_settings)
+        self.dialogues = LlmDialogues(connection_id=CONNECTION_ID)
 
     def main(self) -> None:
         """
@@ -92,11 +129,12 @@ class LangchainConnection(BaseSyncConnection):
 
         :param envelope: the envelope to send.
         """
-        llm_message = envelope.message
+        llm_message = cast(LlmMessage, envelope.message)
 
         dialogue = self.dialogues.update(llm_message)
 
         if llm_message.performative != LlmMessage.Performative.REQUEST:
+            self.logger.error(f"Performative `{llm_message.performative.value}` is not supported.")
             return
 
         vote = self._get_vote(

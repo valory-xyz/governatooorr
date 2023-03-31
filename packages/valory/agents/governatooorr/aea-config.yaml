@@ -20,7 +20,7 @@ connections:
 - valory/http_client:0.23.0:bafybeidykl4elwbcjkqn32wt5h4h7tlpeqovrcq3c5bcplt6nhpznhgczi
 - valory/ledger:0.19.0:bafybeicxcypcg2lxmtktbmuhqcyluzmasfsdeljyk2pvaabzc3h2jmcsui
 - valory/p2p_libp2p_client:0.1.0:bafybeidwcobzb7ut3efegoedad7jfckvt2n6prcmd4g7xnkm6hp6aafrva
-- valory/langchain:0.1.0:bafybeifjifwsk4wca2oqa7wqeh5bclgsziyjx7oysnnlf5sikgetnps4le
+- valory/langchain:0.1.0:bafybeifogvvmgq56oeytorp6hsy64s4ackyotncf6nxzhitcunjlopjkmq
 contracts:
 - valory/compound:0.1.0:bafybeid2u5baz3doyspgpumb3hzpzj5l5xoxa53d2jhhoa3u7iumtokn7a
 - valory/delegate:0.1.0:bafybeign6vhogurakzkzjym6ih6jmpnza5rcjids55uoxbkaowsf6un4ei
@@ -96,6 +96,12 @@ config:
       chain_id: ${CONNECTION_LEDGER_CONFIG_LEDGER_APIS_ETHEREUM_CHAIN_ID:int:31337}
       poa_chain: ${CONNECTION_LEDGER_CONFIG_LEDGER_APIS_ETHEREUM_POA_CHAIN:bool:false}
       default_gas_price_strategy: ${CONNECTION_LEDGER_CONFIG_LEDGER_APIS_ETHEREUM_DEFAULT_GAS_PRICE_STRATEGY:str:eip1559}
+---
+public_id: valory/langchain:0.1.0
+type: connection
+config:
+  openai_api_key: ${str:null}
+  temperature: ${float:0.7}
 ---
 public_id: valory/p2p_libp2p_client:0.1.0
 type: connection

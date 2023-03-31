@@ -1,8 +1,10 @@
 {
     "dev": {
         "skill/valory/proposal_collector/0.1.0": "bafybeie6clplqvltkdsord6yt3lpz5q34mz5f3nkzepgz3xcf7kz7td4y4",
+        "connection/valory/langchain/0.1.0": "bafybeia4axsa5nevk6cjoe3qaf6r35mymqiddnrd7n2eybjinnw2ob2tk4",
         "contract/valory/compound/0.1.0": "bafybeicrdbqoroflkcr3gg5py377r3lbsvo52tg3kypxbqjdhdsgihlzxi",
         "contract/valory/delegate/0.1.0": "bafybeiawsh2u6bhebtshyhvwy4vwairqwtyvsxze6isixxh2k6mgxxima4",
+        "protocol/valory/llm/1.0.0": "bafybeigafqnus3kvaashfdzrpybpqiumhvbs2dmdnukqzn7yqedga4x7ui",
         "skill/valory/proposal_voter/0.1.0": "bafybeihellfnj62r7febdat5kr5nvtcjz2blbvulebz3u6xwvcvzt4ctuq",
         "skill/valory/governatooorr_abci/0.1.0": "bafybeia4wrwluks27x2w6fwt3bdh6kgfzfezxpbhhesihdpxsy2zeyxx6y",
         "agent/valory/governatooorr/0.1.0": "bafybeic46ptob4xzpgdt5ksmbugrpmdsonmdk4yts2li52znynhfj2pdqq",

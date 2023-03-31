@@ -98,10 +98,27 @@ class EstablishVoteBehaviour(ProposalVoterBaseBehaviour):
                     f"Proposal with id {p_id} has not been found in the active proposals"
                 )
 
+            # We need the token address corresponding to the selected proposal
+            # We can get it from one of the delegations  # TODO: not the best way
+            governor_address = selected_proposal["governor"]["id"].split(":")[-1]
+            token_address = None
+            for (
+                address,
+                user_to_delegations,
+            ) in self.synchronized_data.current_token_to_delegations:
+                for delegation_data in user_to_delegations.values():
+                    if delegation_data["governor_address"] == governor_address:
+                        token_address = address
+                        break
+
+            if not token_address:
+                raise ValueError(
+                    f"Could not find the token address for this proposal: {selected_proposal}"
+                )
+
             # Get the service aggregated vote intention
-            token_adress = selected_proposal["token_address"]["id"]
             vote_intention = self._get_service_vote_intention(
-                token_adress
+                token_address
             )  # either GOOD or EVIL
             prompt_template = "Here is a voting proposal for a protocol: `{proposal}`. How should I vote on the voting proposal if my intent was to {voting_intention_snippet} and the voting options are {voting_options}? Please answer with only the voting option."
             voting_intention_snippet = (

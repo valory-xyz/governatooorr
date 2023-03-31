@@ -25,6 +25,7 @@ from aea.configurations.base import PublicId
 from aea.connections.base import BaseSyncConnection
 from aea.mail.base import Envelope
 from aea.protocols.base import Address, Message
+from aea.protocols.dialogue.base import Dialogue
 
 from langchain.llms import OpenAI
 from langchain.prompts import PromptTemplate
@@ -48,7 +49,7 @@ class LlmDialogues(BaseLlmDialogues):
 
         def role_from_first_message(  # pylint: disable=unused-argument
             message: Message, receiver_address: Address
-        ) -> LlmDialogue.Role:
+        ) -> Dialogue.Role:
             """Infer the role of the agent from an incoming/outgoing first message
 
             :param message: an incoming/outgoing first message

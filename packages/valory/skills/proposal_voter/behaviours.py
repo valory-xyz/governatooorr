@@ -284,8 +284,8 @@ class PrepareVoteTransactionBehaviour(ProposalVoterBaseBehaviour):
         to_address = self.params.delegate_contract_address
 
         contract_api_msg = yield from self.get_contract_api_response(
-            performative=ContractApiMessage.Performative.GET_RAW_TRANSACTION,  # type: ignore
-            contract_address=self.params.safe_contract_address,
+            performative=ContractApiMessage.Performative.GET_STATE,  # type: ignore
+            contract_address=self.synchronized_data.safe_contract_address,
             contract_id=str(GnosisSafeContract.contract_id),
             contract_callable="get_raw_safe_transaction_hash",
             to_address=to_address,
@@ -294,13 +294,12 @@ class PrepareVoteTransactionBehaviour(ProposalVoterBaseBehaviour):
             safe_tx_gas=safe_tx_gas,
         )
         if (
-            contract_api_msg.performative
-            != ContractApiMessage.Performative.RAW_TRANSACTION
+            contract_api_msg.performative != ContractApiMessage.Performative.STATE
         ):  # pragma: nocover
             self.context.logger.warning("get_raw_safe_transaction_hash unsuccessful!")
             return None
 
-        safe_tx_hash = cast(str, contract_api_msg.raw_transaction.body["tx_hash"])
+        safe_tx_hash = cast(str, contract_api_msg.state.body["tx_hash"])
         safe_tx_hash = safe_tx_hash[2:]
         self.context.logger.info(f"Hash of the Safe transaction: {safe_tx_hash}")
 

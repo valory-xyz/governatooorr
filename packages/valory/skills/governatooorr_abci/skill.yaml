@@ -20,7 +20,7 @@ protocols: []
 skills:
 - valory/abstract_round_abci:0.1.0:bafybeib2jw7hjccou42wis35orckwycb2dgjk7yw46anuqysf2h7su3fi4
 - valory/proposal_collector:0.1.0:bafybeiaovbmfj7mxknjx6lhda2apaao4hywf25dxeqfjz6eawi2jsegpea
-- valory/proposal_voter:0.1.0:bafybeidy34ply3r5266jyigchrhbjjeaflq7ccabkakw5gmctev2zakmkq
+- valory/proposal_voter:0.1.0:bafybeifcgcxbper43f7dho2umf3ddpmzqhjducxpku2zpuq26yu636xbma
 - valory/registration_abci:0.1.0:bafybeidgoqi7fa2gb56hdfsf74bbunfii63zgeo4qhggb66ofver2n2gya
 - valory/reset_pause_abci:0.1.0:bafybeievxhu6u5r5wlpjfzcwuowlbanhfbi25saf25qit53jauv4kq6gne
 - valory/transaction_settlement_abci:0.1.0:bafybeiftbgfzp36bknbwus3fx2equmhgmboy4qd5myex76xfc4ze6o7b54
@@ -98,6 +98,9 @@ models:
           version: {}
         voting_power: '10'
       history_end: null
+      history_check_timeout: 1205
+      init_fallback_gas: 0
+      keeper_allowed_retries: 3
       keeper_timeout: 30.0
       max_attempts: 10
       max_healthcheck: 120
@@ -128,8 +131,10 @@ models:
       tally_api_endpoint: https://api.tally.xyz/query
       tally_api_key: <tally_api_key>
       tendermint_check_sleep_delay: 3
+      validate_timeout: 1205
       tendermint_com_url: http://localhost:8080
       tendermint_max_retries: 5
+      finalize_timeout: 60.0
       tendermint_p2p_url: localhost:26656
       tendermint_url: http://localhost:26657
       tx_timeout: 10.0

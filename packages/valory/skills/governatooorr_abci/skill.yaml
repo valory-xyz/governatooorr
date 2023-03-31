@@ -24,11 +24,11 @@ contracts: []
 protocols: []
 skills:
 - valory/abstract_round_abci:0.1.0:bafybeib2jw7hjccou42wis35orckwycb2dgjk7yw46anuqysf2h7su3fi4
-- valory/proposal_collector:0.1.0:bafybeie6clplqvltkdsord6yt3lpz5q34mz5f3nkzepgz3xcf7kz7td4y4
-- valory/proposal_voter:0.1.0:bafybeihellfnj62r7febdat5kr5nvtcjz2blbvulebz3u6xwvcvzt4ctuq
+- valory/proposal_collector:0.1.0:bafybeifrxgovjdt2gzajnhj3tbrgdbr4fs5clrsqbu6io6iuqn44heom5q
+- valory/proposal_voter:0.1.0:bafybeigrmgixu7mge4446qfnjriwibmqtsbqfjnttmoboo2bjggydcmqhm
 - valory/registration_abci:0.1.0:bafybeidgoqi7fa2gb56hdfsf74bbunfii63zgeo4qhggb66ofver2n2gya
 - valory/reset_pause_abci:0.1.0:bafybeievxhu6u5r5wlpjfzcwuowlbanhfbi25saf25qit53jauv4kq6gne
-- valory/transaction_settlement_abci:0.1.0:bafybeig2roswhxl2sun37t5xjk4uuqnyus5w7wyrjybeiq3gdarn63lgkm
+- valory/transaction_settlement_abci:0.1.0:bafybeiftbgfzp36bknbwus3fx2equmhgmboy4qd5myex76xfc4ze6o7b54
 behaviours:
   main:
     args: {}

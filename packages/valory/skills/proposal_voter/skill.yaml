@@ -7,8 +7,8 @@ license: Apache-2.0
 aea_version: '>=1.0.0, <2.0.0'
 fingerprint:
   __init__.py: bafybeiavfndo4oyvnfhe4ssydszeu2xx73hz3l7wbo42gldgabrn54drwy
-  behaviours.py: bafybeiee443x6yzvkvvl6b76ue5xsk2omnszmwkt2uqkl2uengsg3x2tle
-  dialogues.py: bafybeifapweyl7ixvwhj4t7dz4jihhx4rpanhslinyllfhfpcgg2s7ipoa
+  behaviours.py: bafybeib5da2a3det5dxqwx7pcprbxu3dcx3f7wzwgdaskbnpvi2gh27gs4
+  dialogues.py: bafybeibvpsfq7v2afvoqodqyqhtit5zpkhw7pxvuyozvyk7e4nxad4dvry
   fsm_specification.yaml: bafybeid7nax5oywpoackufq5w2kklzer3ckecarfuxndoliryypt5ttq3e
   handlers.py: bafybeibyvr2so264jdc7nfzicieegtltl7gq7u5mxjaiodkuvvpux2rj3m
   models.py: bafybeifskytcqgqme5xt6puxbza7fkh54t7pnjmh3higamm2jvn2fyyo3a
@@ -26,7 +26,7 @@ fingerprint_ignore_patterns: []
 connections: []
 contracts:
 - valory/delegate:0.1.0:bafybeiawsh2u6bhebtshyhvwy4vwairqwtyvsxze6isixxh2k6mgxxima4
-- valory/gnosis_safe:0.1.0:bafybeihwwv5aodluykglsbuhhrwusvjof6vvnr37rznwvlutmfwtvoju34
+- valory/gnosis_safe:0.1.0:bafybeibzfhpib5fw3wady6dhq5bfgo37o437bi4s3hthbvvit7byvbalg4
 protocols:
 - valory/contract_api:1.0.0:bafybeidv6wxpjyb2sdyibnmmum45et4zcla6tl63bnol6ztyoqvpl4spmy
 skills:

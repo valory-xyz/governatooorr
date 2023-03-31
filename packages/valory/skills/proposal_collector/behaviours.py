@@ -156,6 +156,8 @@ class VerifyDelegationsBehaviour(ProposalCollectorBaseBehaviour):
                     delegation_data = {
                         "delegation_amount": d["delegation_amount"],
                         "voting_preference": d["voting_preference"],
+                        "user_address": d["user_address"],
+                        "token_address": d["token_address"],
                     }
 
                     # Token does not exist
@@ -355,11 +357,14 @@ class SelectProposalBehaviour(ProposalCollectorBaseBehaviour):
             )
 
             # Select the first proposal
-            proposal_id = (
-                sorted_proposals[0]["id"]
-                if sorted_proposals
-                else SelectProposalRound.NO_PROPOSAL
-            )
+            proposal_id = sorted_proposals[0]["id"] if sorted_proposals else None
+
+            # Check whether we have delegations
+            if (
+                not proposal_id
+                or not self.synchronized_data.current_token_to_delegations
+            ):
+                proposal_id = SelectProposalRound.NO_PROPOSAL
 
             sender = self.context.agent_address
             payload = SelectProposalPayload(sender=sender, proposal_id=proposal_id)

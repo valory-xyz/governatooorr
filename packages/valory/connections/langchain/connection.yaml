@@ -12,8 +12,8 @@ fingerprint:
 fingerprint_ignore_patterns: []
 connections: []
 protocols:
-- valory/http:1.0.0:bafybeifyoio7nlh5zzyn5yz7krkou56l22to3cwg7gw5v5o3vxwklibhty
-class_name: MyScaffoldAsyncConnection
+- valory/llm:1.0.0
+class_name: LangchainConnection
 config:
   foo: bar
 excluded_protocols: []

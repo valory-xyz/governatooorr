@@ -36,7 +36,7 @@ from packages.valory.skills.proposal_collector.models import (
     Params as ProposalCollectorAbciParams,
 )
 from packages.valory.skills.transaction_settlement_abci.models import (
-    TransactionParams as TransactionSettlementParams
+    TransactionParams as TransactionSettlementParams,
 )
 
 from packages.valory.skills.proposal_voter.rounds import Event as ProposalVoterEvent

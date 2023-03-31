@@ -270,8 +270,7 @@ class PrepareVoteTransactionBehaviour(ProposalVoterBaseBehaviour):
             support=self.synchronized_data.vote_code,
         )
         if (
-            contract_api_msg.performative
-            != ContractApiMessage.Performative.STATE
+            contract_api_msg.performative != ContractApiMessage.Performative.STATE
         ):  # pragma: nocover
             self.context.logger.warning("get_cast_vote_data unsuccessful!")
             return None

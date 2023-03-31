@@ -31,7 +31,10 @@ from langchain.llms import OpenAI
 from langchain.prompts import PromptTemplate
 from langchain.chains import LLMChain
 
-from packages.valory.protocols.llm.dialogues import LlmDialogues as BaseLlmDialogues, LlmDialogue
+from packages.valory.protocols.llm.dialogues import (
+    LlmDialogues as BaseLlmDialogues,
+    LlmDialogue,
+)
 from packages.valory.protocols.llm.message import LlmMessage
 
 CONNECTION_ID = PublicId.from_str("valory/langchain:0.1.0")
@@ -93,7 +96,8 @@ class LangchainConnection(BaseSyncConnection):
         """
         super().__init__(*args, **kwargs)
         openai_settings = {
-            setting: self.configuration.config.get(setting) for setting in ("openai_api_key", "temperature")
+            setting: self.configuration.config.get(setting)
+            for setting in ("openai_api_key", "temperature")
         }
         self.llm = OpenAI(**openai_settings)
         self.dialogues = LlmDialogues(connection_id=CONNECTION_ID)
@@ -134,7 +138,9 @@ class LangchainConnection(BaseSyncConnection):
         dialogue = self.dialogues.update(llm_message)
 
         if llm_message.performative != LlmMessage.Performative.REQUEST:
-            self.logger.error(f"Performative `{llm_message.performative.value}` is not supported.")
+            self.logger.error(
+                f"Performative `{llm_message.performative.value}` is not supported."
+            )
             return
 
         vote = self._get_vote(

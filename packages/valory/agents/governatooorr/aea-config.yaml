@@ -20,7 +20,7 @@ connections:
 - valory/http_client:0.23.0:bafybeidykl4elwbcjkqn32wt5h4h7tlpeqovrcq3c5bcplt6nhpznhgczi
 - valory/ledger:0.19.0:bafybeicxcypcg2lxmtktbmuhqcyluzmasfsdeljyk2pvaabzc3h2jmcsui
 - valory/p2p_libp2p_client:0.1.0:bafybeidwcobzb7ut3efegoedad7jfckvt2n6prcmd4g7xnkm6hp6aafrva
-- valory/langchain:0.1.0:bafybeia4axsa5nevk6cjoe3qaf6r35mymqiddnrd7n2eybjinnw2ob2tk4
+- valory/langchain:0.1.0:bafybeifjifwsk4wca2oqa7wqeh5bclgsziyjx7oysnnlf5sikgetnps4le
 contracts:
 - valory/compound:0.1.0:bafybeid2u5baz3doyspgpumb3hzpzj5l5xoxa53d2jhhoa3u7iumtokn7a
 - valory/delegate:0.1.0:bafybeign6vhogurakzkzjym6ih6jmpnza5rcjids55uoxbkaowsf6un4ei
@@ -39,9 +39,9 @@ protocols:
 skills:
 - valory/abstract_abci:0.1.0:bafybeihkrunmigvlcze7uxhafj2h3kvpf2kifggq7zqj42n2we4mcwuvou
 - valory/abstract_round_abci:0.1.0:bafybeib2jw7hjccou42wis35orckwycb2dgjk7yw46anuqysf2h7su3fi4
-- valory/governatooorr_abci:0.1.0:bafybeiav4p6a6atdwj4dtl6fo6sismo54cxy6eu4rbymgoqt2hd3rzx3yq
-- valory/proposal_collector:0.1.0:bafybeif5q5q2bll5d3ywzxc7xjo7224qsyjaeyics5aoiyqz2lrx5edymu
-- valory/proposal_voter:0.1.0:bafybeicvznnm2qhttkdq4lclzmktiinmksocydgxmhh526i73vbllae2ea
+- valory/governatooorr_abci:0.1.0:bafybeifll2ujv6xdbn7gyudmalmnprn7zdh5zlmhz62sgmfo6zaedasbam
+- valory/proposal_collector:0.1.0:bafybeiczfenas5z7muxdu36hndvkzquusdxtmalir42xjpmuxxztlsixzq
+- valory/proposal_voter:0.1.0:bafybeibax2fcq737hwg7oxyugy2neqqqbmrtrqwnslkcqxg5hdzz73upnq
 - valory/transaction_settlement_abci:0.1.0:bafybeiftbgfzp36bknbwus3fx2equmhgmboy4qd5myex76xfc4ze6o7b54
 - valory/registration_abci:0.1.0:bafybeidgoqi7fa2gb56hdfsf74bbunfii63zgeo4qhggb66ofver2n2gya
 - valory/reset_pause_abci:0.1.0:bafybeievxhu6u5r5wlpjfzcwuowlbanhfbi25saf25qit53jauv4kq6gne
@@ -147,7 +147,7 @@ models:
       keeper_timeout: 30.0
       max_attempts: 10
       max_healthcheck: 120
-      observation_interval: ${int:300}
+      observation_interval: ${int:10}
       on_chain_service_id: null
       reset_tendermint_after: 2
       retry_attempts: 400
@@ -158,7 +158,7 @@ models:
       service_id: governatooorr
       service_registry_address: null
       setup:
-        all_participants: ${list:[["0x0000000000000000000000000000000000000000"]]}
+        all_participants: ${list:[["0x10E867Ac2Fb0Aa156ca81eF440a5cdf373bE1AaC"]]}
         safe_contract_address: ${list:["0x0000000000000000000000000000000000000000"]}
         consensus_threshold:
         - null

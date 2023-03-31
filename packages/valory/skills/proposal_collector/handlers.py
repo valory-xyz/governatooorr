@@ -247,7 +247,7 @@ class HttpHandler(BaseHttpHandler):
                 "user_address": delegation_data["user_address"],
                 "token_address": delegation_data["token_address"],
                 "voting_preference": delegation_data["voting_preference"],
-                "governor_address": delegation_data["governor_address"]
+                "governor_address": delegation_data["governor_address"],
             }
         )
 
@@ -281,9 +281,11 @@ class HttpHandler(BaseHttpHandler):
         self, http_msg: HttpMessage, http_dialogue: HttpDialogue
     ) -> None:
 
-        active_proposals = self.synchronized_data.active_proposals
+        response_body_data = {
+            "active_proposals": self.synchronized_data.active_proposals
+        }
 
-        raise NotImplementedError
+        self._send_ok_response(http_msg, http_dialogue, response_body_data)
 
     def _handle_get_proposal(
         self, http_msg: HttpMessage, http_dialogue: HttpDialogue
@@ -298,9 +300,13 @@ class HttpHandler(BaseHttpHandler):
                 proposal = ap
                 break
 
+        if not proposal:
+            self._send_not_found_response(http_msg, http_dialogue)
+            return
 
+        response_body_data = {"proposal": proposal}
 
-
+        self._send_ok_response(http_msg, http_dialogue, response_body_data)
 
     def _send_ok_response(
         self, http_msg: HttpMessage, http_dialogue: HttpDialogue, data: Dict

@@ -91,7 +91,7 @@ class DelegateContract(Contract):
         ledger_api: LedgerApi,
         contract_address: str,
         proposal_id: int,
-        support: int
+        support: int,
     ) -> JSONLike:
         """
         Gets the current votes balance for `account`
@@ -106,5 +106,7 @@ class DelegateContract(Contract):
         :return: the number of votes cast
         """
         contract_instance = cls.get_instance(ledger_api, contract_address)
-        data = contract_instance.encodeABI(fn_name="castVote", args=[proposal_id, support])
+        data = contract_instance.encodeABI(
+            fn_name="castVote", args=[proposal_id, support]
+        )
         return {"data": bytes.fromhex(data[2:])}  # type: ignore

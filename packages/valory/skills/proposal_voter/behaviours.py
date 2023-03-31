@@ -198,7 +198,9 @@ class EstablishVoteBehaviour(ProposalVoterBaseBehaviour):
             vote_preference_counts.items(), key=lambda i: i[1], reverse=True
         )
 
-        self.context.logger.info(f"_get_service_vote_intention = {sorted_preferences[0][0]}")
+        self.context.logger.info(
+            f"_get_service_vote_intention = {sorted_preferences[0][0]}"
+        )
 
         # Return the option with most votes
         return sorted_preferences[0][0]
@@ -229,10 +231,22 @@ class PrepareVoteTransactionBehaviour(ProposalVoterBaseBehaviour):
 
     def _get_safe_tx_hash(self) -> Generator[None, None, Optional[str]]:
         """Get the transaction hash of the Safe tx."""
+
+        active_proposals = cast(
+            SynchronizedData, self.synchronized_data
+        ).active_proposals
+        selected_proposal_id = cast(
+            SynchronizedData, self.synchronized_data
+        ).selected_proposal_id
+        governor_address = None
+        for ap in active_proposals:
+            if ap["id"] == selected_proposal_id:
+                governor_address = ap["governor_address"]
+
         # Get the raw transaction from the Bravo Delegate contract
         contract_api_msg = yield from self.get_contract_api_response(
             performative=ContractApiMessage.Performative.GET_RAW_TRANSACTION,  # type: ignore
-            contract_address=self.params.delegate_contract_address,
+            contract_address=governor_address,
             contract_id=str(DelegateContract.contract_id),
             contract_callable="get_cast_vote_data",
             proposal_id=int(self.synchronized_data.selected_proposal_id),

@@ -84,6 +84,7 @@ class SynchronizedData(BaseSynchronizedData):
         """Get the most_voted_tx_hash."""
         return cast(str, self.db.get_strict("most_voted_tx_hash"))
 
+
 class EstablishVoteRound(CollectSameUntilThresholdRound):
     """EstablishVoteRound"""
 
@@ -100,8 +101,12 @@ class EstablishVoteRound(CollectSameUntilThresholdRound):
                 return self.synchronized_data, Event.CONTRACT_ERROR
 
             # Set the decided vote in the selected proposal # TODO: this should be done after the vote is verified
-            active_proposals = cast(SynchronizedData, self.synchronized_data).active_proposals
-            selected_proposal_id = cast(SynchronizedData, self.synchronized_data).selected_proposal_id
+            active_proposals = cast(
+                SynchronizedData, self.synchronized_data
+            ).active_proposals
+            selected_proposal_id = cast(
+                SynchronizedData, self.synchronized_data
+            ).selected_proposal_id
             vote = self.most_voted_payload
             vote_code = VOTES_TO_CODE[vote]
             for i in range(len(active_proposals)):

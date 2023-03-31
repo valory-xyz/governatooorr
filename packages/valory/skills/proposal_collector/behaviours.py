@@ -21,6 +21,7 @@
 
 import json
 from abc import ABC
+from copy import deepcopy
 from typing import Generator, List, Optional, Set, Type, cast
 
 from packages.valory.contracts.compound.contract import CompoundContract
@@ -46,7 +47,7 @@ from packages.valory.skills.proposal_collector.rounds import (
     VerifyDelegationsRound,
 )
 from packages.valory.skills.proposal_collector.tally import proposal_query
-from copy import deepcopy
+
 
 HTTP_OK = 200
 
@@ -123,7 +124,9 @@ class VerifyDelegationsBehaviour(ProposalCollectorBaseBehaviour):
             # Validate delegations on-chain
             validated_new_delegations = yield from self._get_validated_delegations()
 
-            self.context.logger.info(f"validated_new_delegations = {validated_new_delegations}")
+            self.context.logger.info(
+                f"validated_new_delegations = {validated_new_delegations}"
+            )
 
             if validated_new_delegations is None:
                 payload = VerifyDelegationsPayload(
@@ -183,9 +186,9 @@ class VerifyDelegationsBehaviour(ProposalCollectorBaseBehaviour):
                     ),
                 )
 
-                self.context.logger.info(f"new_token_to_delegations = {new_token_to_delegations}")
-
-
+                self.context.logger.info(
+                    f"new_token_to_delegations = {new_token_to_delegations}"
+                )
 
         with self.context.benchmark_tool.measure(self.behaviour_id).consensus():
             yield from self.send_a2a_transaction(payload)
@@ -241,7 +244,6 @@ class CollectActiveProposalsBehaviour(ProposalCollectorBaseBehaviour):
                 sender=sender, active_proposals=active_proposals
             )
             self.context.logger.info(f"active_proposals = {active_proposals}")
-
 
         with self.context.benchmark_tool.measure(self.behaviour_id).consensus():
             yield from self.send_a2a_transaction(payload)

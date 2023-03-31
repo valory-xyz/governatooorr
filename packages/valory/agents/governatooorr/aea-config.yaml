@@ -97,6 +97,12 @@ config:
       poa_chain: ${CONNECTION_LEDGER_CONFIG_LEDGER_APIS_ETHEREUM_POA_CHAIN:bool:false}
       default_gas_price_strategy: ${CONNECTION_LEDGER_CONFIG_LEDGER_APIS_ETHEREUM_DEFAULT_GAS_PRICE_STRATEGY:str:eip1559}
 ---
+public_id: valory/langchain:0.1.0
+type: connection
+config:
+  openai_api_key: ${str:null}
+  temperature: ${float:0.7}
+---
 public_id: valory/p2p_libp2p_client:0.1.0
 type: connection
 config:

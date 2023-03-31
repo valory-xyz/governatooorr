@@ -151,6 +151,8 @@ class EstablishVoteBehaviour(ProposalVoterBaseBehaviour):
         )
         vote = llm_response_message.value
 
+        vote = vote.strip("\n")
+
         if vote not in VOTES_TO_CODE:
             raise ValueError(f"Invalid vote: {vote}")
 

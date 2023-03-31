@@ -93,30 +93,34 @@ class LangchainConnection(BaseSyncConnection):
         :param envelope: the envelope to send.
         """
         llm_message = envelope.message
-        if llm_message.performative == LlmMessage.Performative.REQUEST:
-            vote = self._get_vote(
-                prompt_template=llm_message.prompt_template,
-                prompt_values=llm_message.prompt_values,
-            )
 
-            dialogue = self.dialogues.update(llm_message)
+        dialogue = self.dialogues.update(llm_message)
 
-            response_message = cast(
-                LlmMessage,
-                dialogue.reply(
-                    performative=LlmMessage.Performative.RESPONSE,
-                    value=vote,  # TODO: Is this ok?
-                ),
-            )
+        if llm_message.performative != LlmMessage.Performative.REQUEST:
+            return
 
-            response_envelope = Envelope(
-                to=envelope.sender,
-                sender=envelope.to,
-                message=response_message,
-                context=envelope.context,
-            )
+        vote = self._get_vote(
+            prompt_template=llm_message.prompt_template,
+            prompt_values=llm_message.prompt_values,
+        )
 
-            self.put_envelope(response_envelope)
+        response_message = cast(
+            LlmMessage,
+            dialogue.reply(
+                performative=LlmMessage.Performative.RESPONSE,
+                target_message=llm_message,
+                value=vote,
+            ),
+        )
+
+        response_envelope = Envelope(
+            to=envelope.sender,
+            sender=envelope.to,
+            message=response_message,
+            context=envelope.context,
+        )
+
+        self.put_envelope(response_envelope)
 
     def _get_vote(self, prompt_template: str, prompt_values: Dict[str, str]):
         """Get vote."""
@@ -128,7 +132,6 @@ class LangchainConnection(BaseSyncConnection):
         self.chain = LLMChain(llm=self.llm, prompt=prompt)
 
         result = self.chain.run(**prompt_values)
-        result = result.strip("\n")
         return result
 
     def on_connect(self) -> None:

@@ -158,7 +158,7 @@ models:
       service_id: governatooorr
       service_registry_address: null
       setup:
-        all_participants: ${list:[]}
+        all_participants: ${list:[["0x0000000000000000000000000000000000000000"]]}
         safe_contract_address: ${list:["0x0000000000000000000000000000000000000000"]}
         consensus_threshold:
         - null

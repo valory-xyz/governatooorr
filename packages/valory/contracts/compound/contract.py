@@ -107,7 +107,7 @@ class CompoundContract(Contract):
         votes = ledger_api.contract_method_call(
             contract_instance=contract_instance,
             method_name="getCurrentVotes",
-            address=address,
+            account=address,
         )
 
         return dict(votes=votes)

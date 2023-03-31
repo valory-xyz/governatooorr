@@ -8,7 +8,7 @@ aea_version: '>=1.0.0, <2.0.0'
 fingerprint:
   __init__.py: bafybeied73rq2fac7zwgdhfevcwjjxrqphrdkrbqzarvejsd3ayjza76w4
   build/Compound.json: bafybeiff3dqiqdbh67gl2lerwzf475ygtolxfk3hmnjiqz6zy67b54tjoe
-  contract.py: bafybeid2iflvy6aneuyjbxuultfo7ayrpwx5vyjx4zm7qmmg5jvosepbzm
+  contract.py: bafybeienqkc3uashs2tb5uvphhi4ajajdbztvzcpoo4gemruoucgvpjovu
 fingerprint_ignore_patterns: []
 class_name: CompoundContract
 contract_interface_paths:

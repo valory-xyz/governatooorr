@@ -23,7 +23,7 @@ connections:
 contracts:
 - valory/delegate:0.1.0:bafybeiawsh2u6bhebtshyhvwy4vwairqwtyvsxze6isixxh2k6mgxxima4
 - valory/gnosis_safe:0.1.0:bafybeibzfhpib5fw3wady6dhq5bfgo37o437bi4s3hthbvvit7byvbalg4
-- valory/compound:0.1.0:bafybeicrdbqoroflkcr3gg5py377r3lbsvo52tg3kypxbqjdhdsgihlzxi
+- valory/compound:0.1.0:bafybeigdcsmwcrcdkpbsfgs4cjkemvbjymy5y24mblgazta66iq37n3z6u
 protocols:
 - open_aea/signing:1.0.0:bafybeibqlfmikg5hk4phzak6gqzhpkt6akckx7xppbp53mvwt6r73h7tk4
 - valory/contract_api:1.0.0:bafybeidv6wxpjyb2sdyibnmmum45et4zcla6tl63bnol6ztyoqvpl4spmy
@@ -31,9 +31,9 @@ protocols:
 skills:
 - valory/abstract_abci:0.1.0:bafybeihkrunmigvlcze7uxhafj2h3kvpf2kifggq7zqj42n2we4mcwuvou
 - valory/abstract_round_abci:0.1.0:bafybeib2jw7hjccou42wis35orckwycb2dgjk7yw46anuqysf2h7su3fi4
-- valory/proposal_collector:0.1.0:bafybeifrxgovjdt2gzajnhj3tbrgdbr4fs5clrsqbu6io6iuqn44heom5q
+- valory/proposal_collector:0.1.0:bafybeiatvvapdtegym7fpvufq3pvyvb64d44vvw5g5jdtrcfem3w2v47zm
 - valory/proposal_voter:0.1.0:bafybeigrmgixu7mge4446qfnjriwibmqtsbqfjnttmoboo2bjggydcmqhm
-- valory/governatooorr_abci:0.1.0:bafybeihcmhhwruup4kkgcjgp4hxwkd2prgtshjgdmgxdzkwexvoaik43jm
+- valory/governatooorr_abci:0.1.0:bafybeidnfrzf2su2wqvomtky4edzkalfnujoskz43zp3hgexbz5xy5adta
 - valory/registration_abci:0.1.0:bafybeidgoqi7fa2gb56hdfsf74bbunfii63zgeo4qhggb66ofver2n2gya
 - valory/reset_pause_abci:0.1.0:bafybeievxhu6u5r5wlpjfzcwuowlbanhfbi25saf25qit53jauv4kq6gne
 default_ledger: ethereum

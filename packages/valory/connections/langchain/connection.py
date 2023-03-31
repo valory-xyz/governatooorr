@@ -133,6 +133,7 @@ class LangchainConnection(BaseSyncConnection):
         dialogue = self.dialogues.update(llm_message)
 
         if llm_message.performative != LlmMessage.Performative.REQUEST:
+            self.logger.error(f"Performative `{llm_message.performative.value}` is not supported.")
             return
 
         vote = self._get_vote(

@@ -5,10 +5,10 @@
         "contract/valory/compound/0.1.0": "bafybeid2u5baz3doyspgpumb3hzpzj5l5xoxa53d2jhhoa3u7iumtokn7a",
         "contract/valory/delegate/0.1.0": "bafybeign6vhogurakzkzjym6ih6jmpnza5rcjids55uoxbkaowsf6un4ei",
         "protocol/valory/llm/1.0.0": "bafybeigafqnus3kvaashfdzrpybpqiumhvbs2dmdnukqzn7yqedga4x7ui",
-        "skill/valory/proposal_voter/0.1.0": "bafybeigwuobrkajsi5wo6vqie2xpbf32u34t5stncfbpo5ww6raglrc2vy",
-        "skill/valory/governatooorr_abci/0.1.0": "bafybeicx22oe575uvis37iqyo5bgpeokjshieh46bvn6ymawmwrmhp3g34",
-        "agent/valory/governatooorr/0.1.0": "bafybeidlbaljur3pmcu2vk6pvryfmscrdqhmqiuelpjk5m2fxetadq5n2y",
-        "service/valory/governatooorr/0.1.0": "bafybeihco5gekvr7p6isjzoes74mtkbxcerzjctzxt4so3bssny4g4lxyq"
+        "skill/valory/proposal_voter/0.1.0": "bafybeidjpk652nfiqmvlei34xs2yjnje4kaewl7dsy2adogxbaac7am7fm",
+        "skill/valory/governatooorr_abci/0.1.0": "bafybeif45xvdsdpeckjex4o6jvep22bzqpbtjy2qtefm52f4x3su3wejbu",
+        "agent/valory/governatooorr/0.1.0": "bafybeiaqohd22zpcf4jt4erq4ezpuyvxgnhnqtse5akdrreqdvqk3ewwxm",
+        "service/valory/governatooorr/0.1.0": "bafybeiesjdxtftp6aseh2ilpw27qgzfq4leijva3sva2qhaywe4iqylkbm"
     },
     "third_party": {
         "protocol/open_aea/signing/1.0.0": "bafybeibqlfmikg5hk4phzak6gqzhpkt6akckx7xppbp53mvwt6r73h7tk4",

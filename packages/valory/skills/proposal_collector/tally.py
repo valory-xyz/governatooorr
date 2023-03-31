@@ -43,6 +43,9 @@ query Proposals(
       id
       type
       name
+      tokens {
+        id
+      }
     }
     eta
     voteStats {

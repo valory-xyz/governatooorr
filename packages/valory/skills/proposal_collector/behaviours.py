@@ -262,12 +262,18 @@ class CollectActiveProposalsBehaviour(ProposalCollectorBaseBehaviour):
             "Api-key": "{api_key}".format(api_key=self.params.tally_api_key),
         }
 
+        # Get all governors from the current delegations
+        governor_addresses = set()
+        for (
+            user_to_delegations
+        ) in self.synchronized_data.current_token_to_delegations.values():
+            for delegation in user_to_delegations.values():
+                governor_addresses.add(delegation["governor_address"])
+
         variables = {
             "chainId": "eip155:1",
             "proposers": [],
-            "governors": list(
-                self.synchronized_data.current_token_to_delegations.keys()  # TODO: still not sure about this one
-            ),
+            "governors": list(governor_addresses),
             "pagination": {"limit": 200, "offset": 0},
         }
 
@@ -294,11 +300,12 @@ class CollectActiveProposalsBehaviour(ProposalCollectorBaseBehaviour):
 
         response_json = json.loads(response.body)
 
-        # Filter out non-active proposals
-        # TODO: verify that necessary fields exist
+        # Filter out non-active proposals and those which use non-erc20 tokens
         active_proposals = list(
             filter(
-                lambda p: p["statusChanges"][-1]["type"] == "ACTIVE",
+                lambda p: p["statusChanges"][-1]["type"] == "ACTIVE"
+                and len(p["governor"]["tokens"]) == 1
+                and "erc20" in p["governor"]["tokens"][0]["id"],
                 response_json["data"]["proposals"],
             )
         )

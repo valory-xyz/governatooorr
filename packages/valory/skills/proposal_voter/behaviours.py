@@ -102,14 +102,11 @@ class EstablishVoteBehaviour(ProposalVoterBaseBehaviour):
             # We can get it from one of the delegations  # TODO: not the best way
             governor_address = selected_proposal["governor"]["id"].split(":")[-1]
             token_address = None
-            for (
-                address,
-                user_to_delegations,
-            ) in self.synchronized_data.current_token_to_delegations:
-                for delegation_data in user_to_delegations.values():
-                    if delegation_data["governor_address"] == governor_address:
-                        token_address = address
-                        break
+
+            for d in self.synchronized_data.current_delegations:
+                if d["governor_address"] == governor_address:
+                    token_address = d["token_address"]
+                    break
 
             if not token_address:
                 raise ValueError(
@@ -201,13 +198,16 @@ class EstablishVoteBehaviour(ProposalVoterBaseBehaviour):
 
         vote_preference_counts = {"GOOD": 0, "EVIL": 0}
 
+        current_delegations = self.synchronized_data.current_delegations
+        current_delegations = list(
+            filter(lambda d: d["token_address"] == token_address, current_delegations)
+        )
+
         # Count votes
-        for delegation_data in self.synchronized_data.current_token_to_delegations.get(
-            token_address, {}
-        ).values():
-            if delegation_data["voting_preference"] in vote_preference_counts:
-                vote_preference_counts[delegation_data["voting_preference"]] += int(
-                    delegation_data["delegation_amount"]
+        for delegation in current_delegations:
+            if delegation["voting_preference"] in vote_preference_counts:
+                vote_preference_counts[delegation["voting_preference"]] += int(
+                    delegation["delegated_amount"]
                 )
 
         # Sort the voring count by value
@@ -258,7 +258,7 @@ class PrepareVoteTransactionBehaviour(ProposalVoterBaseBehaviour):
         governor_address = None
         for ap in active_proposals:
             if ap["id"] == selected_proposal_id:
-                governor_address = ap["governor_address"]
+                governor_address = ap["governor"]["id"].split(":")[-1]
 
         # Get the raw transaction from the Bravo Delegate contract
         contract_api_msg = yield from self.get_contract_api_response(

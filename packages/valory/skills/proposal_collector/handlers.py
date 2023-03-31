@@ -248,6 +248,7 @@ class HttpHandler(BaseHttpHandler):
                 "token_address": delegation_data["token_address"],
                 "voting_preference": delegation_data["voting_preference"],
                 "governor_address": delegation_data["governor_address"],
+                "delegated_amount": delegation_data["delegated_amount"],
             }
         )
 

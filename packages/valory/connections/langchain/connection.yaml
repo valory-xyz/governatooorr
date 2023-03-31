@@ -15,7 +15,8 @@ protocols:
 - valory/llm:1.0.0:bafybeigafqnus3kvaashfdzrpybpqiumhvbs2dmdnukqzn7yqedga4x7ui
 class_name: LangchainConnection
 config:
-  foo: bar
+  openai_api_key: null
+  temperature: 0.7
 excluded_protocols: []
 restricted_to_protocols: []
 dependencies:

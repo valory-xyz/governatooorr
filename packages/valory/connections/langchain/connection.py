@@ -91,9 +91,10 @@ class LangchainConnection(BaseSyncConnection):
         :param kwargs: keyword arguments passed to component base
         """
         super().__init__(*args, **kwargs)
-        # TODO: configurable temperature
-        # TODO: set API key
-        self.llm = OpenAI(temperature=0)
+        openai_settings = {
+            setting: self.configuration.config.get(setting) for setting in ("openai_api_key", "temperature")
+        }
+        self.llm = OpenAI(**openai_settings)
         self.dialogues = LlmDialogues(connection_id=CONNECTION_ID)
 
     def main(self) -> None:

@@ -113,10 +113,17 @@ class EstablishVoteBehaviour(ProposalVoterBaseBehaviour):
                     f"Could not find the token address for this proposal: {selected_proposal}"
                 )
 
+            self.context.logger.info(
+                f"Getting vote intention for proposal {selected_proposal}"
+            )
+
             # Get the service aggregated vote intention
             vote_intention = self._get_service_vote_intention(
                 token_address
             )  # either GOOD or EVIL
+
+            self.context.logger.info(f"Vote intention is {vote_intention}")
+
             prompt_template = "Here is a voting proposal for a protocol: `{proposal}`. How should I vote on the voting proposal if my intent was to {voting_intention_snippet} and the voting options are {voting_options}? Please answer with only the voting option."
             voting_intention_snippet = (
                 "cause chaos to the protocol"
@@ -132,6 +139,8 @@ class EstablishVoteBehaviour(ProposalVoterBaseBehaviour):
             }
 
             vote = yield self._get_vote(prompt_template, prompt_values)
+
+            self.context.logger.info(f"Vote is {vote}")
 
             sender = self.context.agent_address
             payload = EstablishVotePayload(sender=sender, vote=vote)
@@ -161,6 +170,8 @@ class EstablishVoteBehaviour(ProposalVoterBaseBehaviour):
             request_llm_message, llm_dialogue
         )
         vote = llm_response_message.value
+
+        self.context.logger.info(f"Vote is {vote}")
 
         vote = vote.strip("\n")
 

@@ -111,7 +111,7 @@ class EstablishVoteRound(CollectSameUntilThresholdRound):
             vote = self.most_voted_payload
 
             # TODO: hardcoded vote
-            vote = "FOR"
+            # vote = "FOR"
 
             vote_code = VOTES_TO_CODE[vote]
             for i in range(len(active_proposals)):

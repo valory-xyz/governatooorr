@@ -24,8 +24,8 @@ contracts: []
 protocols: []
 skills:
 - valory/abstract_round_abci:0.1.0:bafybeib2jw7hjccou42wis35orckwycb2dgjk7yw46anuqysf2h7su3fi4
-- valory/proposal_collector:0.1.0:bafybeiatvvapdtegym7fpvufq3pvyvb64d44vvw5g5jdtrcfem3w2v47zm
-- valory/proposal_voter:0.1.0:bafybeigrmgixu7mge4446qfnjriwibmqtsbqfjnttmoboo2bjggydcmqhm
+- valory/proposal_collector:0.1.0:bafybeifzcscofakd5gsstx3aefia2czwo7yx2eypaz5ecjvwwsoy5xu6we
+- valory/proposal_voter:0.1.0:bafybeicrzmeeszxaw7lqb62655jopcjwm3yen7izkxk52xdi6xvhcjbb4e
 - valory/registration_abci:0.1.0:bafybeidgoqi7fa2gb56hdfsf74bbunfii63zgeo4qhggb66ofver2n2gya
 - valory/reset_pause_abci:0.1.0:bafybeievxhu6u5r5wlpjfzcwuowlbanhfbi25saf25qit53jauv4kq6gne
 - valory/transaction_settlement_abci:0.1.0:bafybeiftbgfzp36bknbwus3fx2equmhgmboy4qd5myex76xfc4ze6o7b54
@@ -78,9 +78,10 @@ models:
   params:
     args:
       broadcast_to_server: false
-      history_end: null
       cleanup_history_depth: 1
       cleanup_history_depth_current: null
+      compound_contract_address: '0xc00e94Cb662C3520282E6f5717214004A7f26888'
+      delegate_contract_address: '0xeF3B6E9e13706A8F01fe98fdCf66335dc5CfdEED'
       drand_public_key: 868f005eb8e6e4ca0a47c8a77ceaa5309a47978a7c71bc5cce96366b5d7a569937c529eeda66c7293784a9402801af31
       dynamic_contribution_contract_address: '0x5FbDB2315678afecb367f032d93F642f64180aa3'
       earliest_block_to_monitor: 8053690
@@ -101,6 +102,7 @@ models:
             - ed25519
           version: {}
         voting_power: '10'
+      history_end: null
       keeper_timeout: 30.0
       max_attempts: 10
       max_healthcheck: 120
@@ -116,6 +118,8 @@ models:
       retry_attempts: 400
       retry_timeout: 3
       round_timeout_seconds: 30.0
+      safe_contract_address: '0x0000000000000000000000000000000000000000'
+      service_endpoint_base: https://governatooorr.staging.autonolas.tech/
       service_id: governatooorr
       service_registry_address: null
       setup:
@@ -126,18 +130,14 @@ models:
         - null
       share_tm_config_on_startup: false
       sleep_time: 1
+      tally_api_endpoint: https://api.tally.xyz/query
+      tally_api_key: <tally_api_key>
       tendermint_check_sleep_delay: 3
       tendermint_com_url: http://localhost:8080
       tendermint_max_retries: 5
       tendermint_p2p_url: localhost:26656
       tendermint_url: http://localhost:26657
       tx_timeout: 10.0
-      delegate_contract_address: '0xeF3B6E9e13706A8F01fe98fdCf66335dc5CfdEED'
-      safe_contract_address: '0x0000000000000000000000000000000000000000'
-      tally_api_endpoint: https://api.tally.xyz/query
-      tally_api_key: <tally_api_key>
-      service_endpoint_base: https://governatooorr.staging.autonolas.tech/
-      compound_contract_address: '0xc00e94Cb662C3520282E6f5717214004A7f26888'
     class_name: Params
   randomness_api:
     args:

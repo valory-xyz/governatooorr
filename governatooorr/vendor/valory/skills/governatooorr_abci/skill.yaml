@@ -1,0 +1,168 @@
+name: governatooorr_abci
+author: valory
+version: 0.1.0
+type: skill
+description: The chained abci for the governatooorr skill.
+license: Apache-2.0
+aea_version: '>=1.0.0, <2.0.0'
+fingerprint:
+  __init__.py: bafybeigmhxenrqb2ysjhcm2au2lang4abyny6irkzqqg4dtclz6net6zpy
+  behaviours.py: bafybeigghmycwxlkv3vdzharwekqtmkt4n6oz2axnmj2ssurws7x5btbhq
+  composition.py: bafybeiaqbziebm4elyyvqxowohwhd77a7zcytcyw53mr6uwcht4aw7gkoa
+  dialogues.py: bafybeigpwuzku3we7axmxeamg7vn656maww6emuztau5pg3ebsoquyfdqm
+  fsm_specification.yaml: bafybeicfcrrbod4rr7mz6ix3av56arpzmvzdnmwqkk6mlierbmwo7lnbji
+  handlers.py: bafybeicbzmpz5ag75u7euupgaqkqsigcmmdv7nadii7p5li74igqmqchki
+  models.py: bafybeidha7ngcd5v5zp6cdexhxxv23gak5yymrk52y4oacnowzvx2glrwi
+  tests/__init__.py: bafybeievwzwojvq4aofk5kjpf4jzygfes7ew6s6svc6b6frktjnt3sicce
+  tests/test_behaviours.py: bafybeibna3nxdzeirmdvafntrog4qmyzbbmjswvjic3g5lnjb6dkgmlshi
+  tests/test_dialogues.py: bafybeids3nj5c2okwcobww3wkv4lyqxcmsyf5aqa2tzurjohifjodcdt44
+  tests/test_handlers.py: bafybeiftdzgcus6e2ta6cpr7ttu6jmsecthdmgga3qttic5okycy647tme
+  tests/test_models.py: bafybeiekoj4h5l6bowibzo6bpbtbyqmflprhceuhp7zvxyuyfgg7anmhvi
+fingerprint_ignore_patterns: []
+connections: []
+contracts: []
+protocols: []
+skills:
+- valory/abstract_round_abci:0.1.0:bafybeib2jw7hjccou42wis35orckwycb2dgjk7yw46anuqysf2h7su3fi4
+- valory/proposal_collector:0.1.0:bafybeifzcscofakd5gsstx3aefia2czwo7yx2eypaz5ecjvwwsoy5xu6we
+- valory/proposal_voter:0.1.0:bafybeicrzmeeszxaw7lqb62655jopcjwm3yen7izkxk52xdi6xvhcjbb4e
+- valory/registration_abci:0.1.0:bafybeidgoqi7fa2gb56hdfsf74bbunfii63zgeo4qhggb66ofver2n2gya
+- valory/reset_pause_abci:0.1.0:bafybeievxhu6u5r5wlpjfzcwuowlbanhfbi25saf25qit53jauv4kq6gne
+- valory/transaction_settlement_abci:0.1.0:bafybeiftbgfzp36bknbwus3fx2equmhgmboy4qd5myex76xfc4ze6o7b54
+behaviours:
+  main:
+    args: {}
+    class_name: GovernatooorrConsensusBehaviour
+handlers:
+  abci:
+    args: {}
+    class_name: ABCIRoundHandler
+  contract_api:
+    args: {}
+    class_name: ContractApiHandler
+  http:
+    args: {}
+    class_name: HttpHandler
+  ipfs:
+    args: {}
+    class_name: IpfsHandler
+  ledger_api:
+    args: {}
+    class_name: LedgerApiHandler
+  signing:
+    args: {}
+    class_name: SigningHandler
+  tendermint:
+    args: {}
+    class_name: TendermintHandler
+models:
+  abci_dialogues:
+    args: {}
+    class_name: AbciDialogues
+  benchmark_tool:
+    args:
+      log_dir: /logs
+    class_name: BenchmarkTool
+  contract_api_dialogues:
+    args: {}
+    class_name: ContractApiDialogues
+  http_dialogues:
+    args: {}
+    class_name: HttpDialogues
+  ipfs_dialogues:
+    args: {}
+    class_name: IpfsDialogues
+  ledger_api_dialogues:
+    args: {}
+    class_name: LedgerApiDialogues
+  params:
+    args:
+      broadcast_to_server: false
+      cleanup_history_depth: 1
+      cleanup_history_depth_current: null
+      compound_contract_address: '0xc00e94Cb662C3520282E6f5717214004A7f26888'
+      delegate_contract_address: '0xeF3B6E9e13706A8F01fe98fdCf66335dc5CfdEED'
+      drand_public_key: 868f005eb8e6e4ca0a47c8a77ceaa5309a47978a7c71bc5cce96366b5d7a569937c529eeda66c7293784a9402801af31
+      dynamic_contribution_contract_address: '0x5FbDB2315678afecb367f032d93F642f64180aa3'
+      earliest_block_to_monitor: 8053690
+      genesis_config:
+        genesis_time: '2022-09-26T00:00:00.000000000Z'
+        chain_id: chain-c4daS1
+        consensus_params:
+          block:
+            max_bytes: '22020096'
+            max_gas: '-1'
+            time_iota_ms: '1000'
+          evidence:
+            max_age_num_blocks: '100000'
+            max_age_duration: '172800000000000'
+            max_bytes: '1048576'
+          validator:
+            pub_key_types:
+            - ed25519
+          version: {}
+        voting_power: '10'
+      history_end: null
+      keeper_timeout: 30.0
+      max_attempts: 10
+      max_healthcheck: 120
+      observation_interval: 10
+      on_chain_service_id: null
+      points_to_image_hashes: '{"0": "bafybeiabtdl53v2a3irrgrg7eujzffjallpymli763wvhv6gceurfmcemm",
+        "100": "bafybeid46w6yzbehir7ackcnsyuasdkun5aq7jnckt4sknvmiewpph776q", "50000":
+        "bafybeigbxlwzljbxnlwteupmt6c6k7k2m4bbhunvxxa53dc7niuedilnr4", "100000": "bafybeiawxpq4mqckbau3mjwzd3ic2o7ywlhp6zqo7jnaft26zeqm3xsjjy",
+        "150000": "bafybeie6k53dupf7rf6622rzfxu3dmlv36hytqrmzs5yrilxwcrlhrml2m"}'
+      request_retry_delay: 1.0
+      request_timeout: 10.0
+      reset_tendermint_after: 2
+      retry_attempts: 400
+      retry_timeout: 3
+      round_timeout_seconds: 30.0
+      safe_contract_address: '0x0000000000000000000000000000000000000000'
+      service_endpoint_base: https://governatooorr.staging.autonolas.tech/
+      service_id: governatooorr
+      service_registry_address: null
+      setup:
+        all_participants: []
+        safe_contract_address:
+        - '0x0000000000000000000000000000000000000000'
+        consensus_threshold:
+        - null
+      share_tm_config_on_startup: false
+      sleep_time: 1
+      tally_api_endpoint: https://api.tally.xyz/query
+      tally_api_key: <tally_api_key>
+      tendermint_check_sleep_delay: 3
+      tendermint_com_url: http://localhost:8080
+      tendermint_max_retries: 5
+      tendermint_p2p_url: localhost:26656
+      tendermint_url: http://localhost:26657
+      tx_timeout: 10.0
+    class_name: Params
+  randomness_api:
+    args:
+      api_id: cloudflare
+      headers: {}
+      method: GET
+      parameters: {}
+      response_key: null
+      response_type: dict
+      retries: 5
+      url: https://drand.cloudflare.com/public/latest
+    class_name: RandomnessApi
+  requests:
+    args: {}
+    class_name: Requests
+  signing_dialogues:
+    args: {}
+    class_name: SigningDialogues
+  state:
+    args: {}
+    class_name: SharedState
+  tendermint_dialogues:
+    args: {}
+    class_name: TendermintDialogues
+dependencies:
+  open-aea-cli-ipfs:
+    version: <2.0.0,>=1.27.0
+is_abstract: false

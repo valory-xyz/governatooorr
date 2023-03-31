@@ -1,0 +1,27 @@
+name: langchain
+author: valory
+version: 0.1.0
+type: connection
+description: The langchain connection provides a wrapper around langchain.
+license: Apache-2.0
+aea_version: '>=1.0.0, <2.0.0'
+fingerprint:
+  __init__.py: bafybeidp5yxxngeckkuzwt5vssiozc5pty4uybf77irfri2mqcut4eeztm
+  connection.py: bafybeib5b2qapdaa2eltd6nfcpb7cmxoymotz7oyu47oraucl66im2zzfu
+  readme.md: bafybeihg5yfzgqvg5ngy7r2o5tfeqnelx2ffxw4po5hmheqjfhumpmxpoq
+fingerprint_ignore_patterns: []
+connections: []
+protocols:
+- valory/llm:1.0.0
+class_name: LangchainConnection
+config:
+  foo: bar
+excluded_protocols: []
+restricted_to_protocols: []
+dependencies:
+  langchain:
+    version: ==0.0.95
+  openai:
+    version: ==0.26.5
+is_abstract: false
+cert_requests: []

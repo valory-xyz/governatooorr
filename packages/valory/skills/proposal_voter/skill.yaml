@@ -7,14 +7,14 @@ license: Apache-2.0
 aea_version: '>=1.0.0, <2.0.0'
 fingerprint:
   __init__.py: bafybeiavfndo4oyvnfhe4ssydszeu2xx73hz3l7wbo42gldgabrn54drwy
-  behaviours.py: bafybeib5da2a3det5dxqwx7pcprbxu3dcx3f7wzwgdaskbnpvi2gh27gs4
+  behaviours.py: bafybeiemnlfyok2xagiswsgjwdd4kfjz2eqawhnozk3tdmdgm57shjfgvi
   dialogues.py: bafybeibvpsfq7v2afvoqodqyqhtit5zpkhw7pxvuyozvyk7e4nxad4dvry
   fsm_specification.yaml: bafybeid7nax5oywpoackufq5w2kklzer3ckecarfuxndoliryypt5ttq3e
   handlers.py: bafybeibyvr2so264jdc7nfzicieegtltl7gq7u5mxjaiodkuvvpux2rj3m
   models.py: bafybeifskytcqgqme5xt6puxbza7fkh54t7pnjmh3higamm2jvn2fyyo3a
   payload_tools.py: bafybeihk5tqqyn3z4qsvbu4clouclqyn26hklzb3djikxfifpdb6lcwaua
-  payloads.py: bafybeifqf6ij6hmlk5iauuhdooyccjhvtagwfgucesmtvosu6f4tcmknim
-  rounds.py: bafybeid2hcvxcawc5oombbxluhc4tthprma3fegpzela3iyl5653tu3osm
+  payloads.py: bafybeidonvuylmxad4mhk6hix2s7w3fjkabbtv5vkow6xwsrskvlt4ewuu
+  rounds.py: bafybeiggkurpjdbv4aoyubjwzmspoihtzqchyx6jsbqt4c5nvuzfqkutki
   tests/__init__.py: bafybeic6evwhxdwtdjvz7xv3dqqhdhd7uxyr55xhymeiqfe4ga7mfdptxm
   tests/test_behaviours.py: bafybeifgilmbi3nhu3ccxikuz25fxmwkcr52dnodgvyxzo7lkizt6vmlqe
   tests/test_dialogues.py: bafybeieleu64kg3bid2wvv6xelyre3dup4gml3czrh4pi773broxkzxjtq
@@ -25,7 +25,7 @@ fingerprint:
 fingerprint_ignore_patterns: []
 connections: []
 contracts:
-- valory/delegate:0.1.0:bafybeiawsh2u6bhebtshyhvwy4vwairqwtyvsxze6isixxh2k6mgxxima4
+- valory/delegate:0.1.0:bafybeiepnyxr43chj3dzgr36qknntppwoxhnl2efyfle24ofbxyn3qkmpy
 - valory/gnosis_safe:0.1.0:bafybeibzfhpib5fw3wady6dhq5bfgo37o437bi4s3hthbvvit7byvbalg4
 protocols:
 - valory/contract_api:1.0.0:bafybeidv6wxpjyb2sdyibnmmum45et4zcla6tl63bnol6ztyoqvpl4spmy
@@ -81,6 +81,7 @@ models:
     args:
       cleanup_history_depth: 1
       cleanup_history_depth_current: null
+      delegate_contract_address: '0xeF3B6E9e13706A8F01fe98fdCf66335dc5CfdEED'
       drand_public_key: 868f005eb8e6e4ca0a47c8a77ceaa5309a47978a7c71bc5cce96366b5d7a569937c529eeda66c7293784a9402801af31
       finalize_timeout: 60.0
       genesis_config:
@@ -114,6 +115,7 @@ models:
       retry_attempts: 400
       retry_timeout: 3
       round_timeout_seconds: 30.0
+      safe_contract_address: '0x0000000000000000000000000000000000000000'
       service_id: proposal_voter
       service_registry_address: null
       setup:
@@ -130,8 +132,6 @@ models:
       tendermint_url: http://localhost:26657
       tx_timeout: 10.0
       validate_timeout: 1205
-      delegate_contract_address: '0xeF3B6E9e13706A8F01fe98fdCf66335dc5CfdEED'
-      safe_contract_address: '0x0000000000000000000000000000000000000000'
     class_name: Params
   requests:
     args: {}

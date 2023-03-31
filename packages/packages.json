@@ -28,8 +28,8 @@
         "connection/valory/ledger/0.19.0": "bafybeicxcypcg2lxmtktbmuhqcyluzmasfsdeljyk2pvaabzc3h2jmcsui",
         "connection/valory/p2p_libp2p_client/0.1.0": "bafybeidwcobzb7ut3efegoedad7jfckvt2n6prcmd4g7xnkm6hp6aafrva",
         "connection/fetchai/http_server/0.22.0": "bafybeihaax5od5zo5jk2l62hv4jwuwtxloh5mijozudpsjombqc4ncmi6i",
-        "contract/valory/gnosis_safe_proxy_factory/0.1.0": "bafybeieuivicfjkow3asmrj57mygrqbvjnecxqaybyxf6egktdty7qxac4",
-        "contract/valory/gnosis_safe/0.1.0": "bafybeihwwv5aodluykglsbuhhrwusvjof6vvnr37rznwvlutmfwtvoju34",
-        "skill/valory/transaction_settlement_abci/0.1.0": "bafybeig2roswhxl2sun37t5xjk4uuqnyus5w7wyrjybeiq3gdarn63lgkm"
+        "contract/valory/gnosis_safe_proxy_factory/0.1.0": "bafybeidzdv6zjst5likperhuqdzsb4yix6ey5ir45nwdcquw3asuqmqdlu",
+        "contract/valory/gnosis_safe/0.1.0": "bafybeibzfhpib5fw3wady6dhq5bfgo37o437bi4s3hthbvvit7byvbalg4",
+        "skill/valory/transaction_settlement_abci/0.1.0": "bafybeiftbgfzp36bknbwus3fx2equmhgmboy4qd5myex76xfc4ze6o7b54"
     }
 }

@@ -1,0 +1,21 @@
+name: compound
+author: valory
+version: 0.1.0
+type: contract
+description: compound contract
+license: Apache-2.0
+aea_version: '>=1.0.0, <2.0.0'
+fingerprint:
+  __init__.py: bafybeied73rq2fac7zwgdhfevcwjjxrqphrdkrbqzarvejsd3ayjza76w4
+  build/Compound.json: bafybeiff3dqiqdbh67gl2lerwzf475ygtolxfk3hmnjiqz6zy67b54tjoe
+  contract.py: bafybeid2iflvy6aneuyjbxuultfo7ayrpwx5vyjx4zm7qmmg5jvosepbzm
+fingerprint_ignore_patterns: []
+class_name: CompoundContract
+contract_interface_paths:
+  ethereum: build/Compound.json
+dependencies:
+  open-aea-ledger-ethereum:
+    version: ==1.29.0
+  web3:
+    version: ==5.25.0
+contracts: []

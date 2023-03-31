@@ -18,7 +18,6 @@ packages/valory/connections/ipfs
 packages/valory/connections/ledger
 packages/valory/connections/p2p_libp2p_client
 packages/fetchai/connections/http_server
-packages/valory/contracts
 packages/valory/protocols/abci
 packages/valory/protocols/acn
 packages/valory/protocols/contract_api
@@ -41,3 +40,5 @@ packages/fetchai
 *.env
 
 packages/valory/protocols/__init__.py
+
+run_governatooorr.sh

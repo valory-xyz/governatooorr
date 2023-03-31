@@ -33,6 +33,7 @@ open-aea-test-autonomy = "==0.9.1"
 open-autonomy = {version = "==0.9.1", extras = [ "all"]}
 tomte = {version = "==0.2.2", extras = ["tox", "tests"]}
 openai = "==0.27.2"
+langchain = "==0.0.127"
 
 [requires]
 python_version = "3.10"

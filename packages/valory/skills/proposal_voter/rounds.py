@@ -40,6 +40,7 @@ from packages.valory.skills.proposal_voter.payloads import (
 )
 
 from typing import cast
+from packages.valory.skills.proposal_voter.behaviours import VOTES_TO_CODE
 
 
 class Event(Enum):
@@ -75,14 +76,13 @@ class SynchronizedData(BaseSynchronizedData):
 
     @property
     def vote_code(self) -> int:
-        """Get the vote code."""
+        """Get the vote vote_code."""
         return cast(int, self.db.get_strict("vote_code"))
 
     @property
     def most_voted_tx_hash(self) -> str:
         """Get the most_voted_tx_hash."""
         return cast(str, self.db.get_strict("most_voted_tx_hash"))
-
 
 class EstablishVoteRound(CollectSameUntilThresholdRound):
     """EstablishVoteRound"""
@@ -99,10 +99,20 @@ class EstablishVoteRound(CollectSameUntilThresholdRound):
             if self.most_voted_payload == EstablishVoteRound.ERROR_PAYLOAD:
                 return self.synchronized_data, Event.CONTRACT_ERROR
 
+            # Set the decided vote in the selected proposal # TODO: this should be done after the vote is verified
+            active_proposals = cast(SynchronizedData, self.synchronized_data).active_proposals
+            selected_proposal_id = cast(SynchronizedData, self.synchronized_data).selected_proposal_id
+            vote = self.most_voted_payload
+            vote_code = VOTES_TO_CODE[vote]
+            for i in range(len(active_proposals)):
+                if active_proposals[i]["id"] == selected_proposal_id:
+                    active_proposals[i]["vote"] = vote
+
             synchronized_data = self.synchronized_data.update(
                 synchronized_data_class=SynchronizedData,
                 **{
-                    get_name(SynchronizedData.vote_code): self.most_voted_payload,
+                    get_name(SynchronizedData.vote_code): vote_code,
+                    get_name(SynchronizedData.active_proposals): active_proposals,
                 }
             )
             return synchronized_data, Event.DONE
@@ -164,7 +174,7 @@ class ProposalVoterAbciApp(AbciApp[Event]):
     }
     final_states: Set[AppState] = {FinishedTransactionPreparationRound}
     event_to_timeout: EventToTimeout = {}
-    cross_period_persisted_keys: Set[str] = []
+    cross_period_persisted_keys: Set[str] = {"active_proposals"}
     db_pre_conditions: Dict[AppState, Set[str]] = {
         EstablishVoteRound: set(),
     }

@@ -246,8 +246,8 @@ class HttpHandler(BaseHttpHandler):
             {
                 "user_address": delegation_data["user_address"],
                 "token_address": delegation_data["token_address"],
-                "delegation_amount": delegation_data["delegation_amount"],
                 "voting_preference": delegation_data["voting_preference"],
+                "governor_address": delegation_data["governor_address"]
             }
         )
 
@@ -290,10 +290,17 @@ class HttpHandler(BaseHttpHandler):
     ) -> None:
 
         proposal_id = http_msg.url.split("/")[-1]
-
         active_proposals = self.synchronized_data.active_proposals
 
-        raise NotImplementedError
+        proposal = None
+        for ap in active_proposals:
+            if ap["id"] == proposal_id:
+                proposal = ap
+                break
+
+
+
+
 
     def _send_ok_response(
         self, http_msg: HttpMessage, http_dialogue: HttpDialogue, data: Dict

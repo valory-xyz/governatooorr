@@ -99,10 +99,7 @@ class EstablishVoteBehaviour(ProposalVoterBaseBehaviour):
                 )
 
             # Get the service aggregated vote intention
-            # TODO: is the governor address the same as the token address? No!
-            token_adress = selected_proposal["governor"]["id"].split(":")[
-                -1
-            ]  # id looks like eip155:1:0x35d9f4953748b318f18c30634bA299b237eeDfff
+            token_adress = selected_proposal["token_address"]["id"]
             vote_intention = self._get_service_vote_intention(
                 token_adress
             )  # either GOOD or EVIL
@@ -120,10 +117,10 @@ class EstablishVoteBehaviour(ProposalVoterBaseBehaviour):
                 "voting_options": VOTING_OPTIONS,
             }
 
-            vote_code = yield self._get_vote(prompt_template, prompt_values)
+            vote = yield self._get_vote(prompt_template, prompt_values)
 
             sender = self.context.agent_address
-            payload = EstablishVotePayload(sender=sender, vote_code=vote_code)
+            payload = EstablishVotePayload(sender=sender, vote=vote)
 
         with self.context.benchmark_tool.measure(self.behaviour_id).consensus():
             yield from self.send_a2a_transaction(payload)
@@ -133,7 +130,7 @@ class EstablishVoteBehaviour(ProposalVoterBaseBehaviour):
 
     def _get_vote(
         self, prompt_template: str, prompt_values: Dict[str, str]
-    ) -> Generator[None, None, int]:
+    ) -> Generator[None, None, str]:
         """Get the vote from LLM."""
         llm_dialogues = cast(LlmDialogues, self.context.llm_dialogues)
 
@@ -156,8 +153,7 @@ class EstablishVoteBehaviour(ProposalVoterBaseBehaviour):
         if vote not in VOTES_TO_CODE:
             raise ValueError(f"Invalid vote: {vote}")
 
-        vote_code = VOTES_TO_CODE[vote]
-        return vote_code
+        return vote
 
     def _do_request(
         self,
@@ -201,6 +197,8 @@ class EstablishVoteBehaviour(ProposalVoterBaseBehaviour):
         sorted_preferences = sorted(
             vote_preference_counts.items(), key=lambda i: i[1], reverse=True
         )
+
+        self.context.logger.info(f"_get_service_vote_intention = {sorted_preferences[0][0]}")
 
         # Return the option with most votes
         return sorted_preferences[0][0]

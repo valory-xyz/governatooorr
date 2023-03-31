@@ -7,13 +7,13 @@ license: Apache-2.0
 aea_version: '>=1.0.0, <2.0.0'
 fingerprint:
   __init__.py: bafybeihnvwxbo2ix5iac5gxahym3uomspy6336pylbwjnfkksatcuktxka
-  behaviours.py: bafybeicaiug3kh4df76ga5mfb5wmmh3i3yzfpv5x7obn6id22hvgq2iuzi
+  behaviours.py: bafybeia2rrxy5opboreyunwog2w3qx6nbxhp3pshz6mnerwrri6vqqib3i
   dialogues.py: bafybeighergy2hupd32ozp2ud5j4jujpccfkzk2l46a33xn7yi2ofk32m4
   fsm_specification.yaml: bafybeiemqe5x64sfaoeuqidxfdsa6hujzt3xqdx6hbshstu45pod37eq2a
   handlers.py: bafybeieifgrrew6dererlcp6w4qcv2mwle5r6zr5vwxv3chuawfy5znedu
   models.py: bafybeicxciwsc356hwtso3cdcv2u5j3pzvg5z33qlbsmptk3a6nzad7p7i
   payloads.py: bafybeiecovofuf66jino7kfoslpridq23ibmsmrjfbmmpffddfmk5kxhuq
-  rounds.py: bafybeidxyjhkmgdyds6emzgwyidz3k56ln5yrqyipzdy7dgdvhlwehe3nq
+  rounds.py: bafybeic646b6mmjttvblohpgmoysbfzwz4qvkkqqzybq76umz4dffkju3y
   tally.py: bafybeih3nqsky6sz4lko3yla6lmxytji2koz66di2fdri5jxqlavmbvuxi
   tests/__init__.py: bafybeic6evwhxdwtdjvz7xv3dqqhdhd7uxyr55xhymeiqfe4ga7mfdptxm
   tests/test_behaviours.py: bafybeifi7d56mo7t3uzppguzrpjwyuof5h7f4mwxnx5yna7afbct5tfjji
@@ -26,7 +26,7 @@ fingerprint_ignore_patterns: []
 connections:
 - fetchai/http_server:0.22.0:bafybeihaax5od5zo5jk2l62hv4jwuwtxloh5mijozudpsjombqc4ncmi6i
 contracts:
-- valory/compound:0.1.0:bafybeigdcsmwcrcdkpbsfgs4cjkemvbjymy5y24mblgazta66iq37n3z6u
+- valory/compound:0.1.0:bafybeid2u5baz3doyspgpumb3hzpzj5l5xoxa53d2jhhoa3u7iumtokn7a
 protocols:
 - valory/contract_api:1.0.0:bafybeidv6wxpjyb2sdyibnmmum45et4zcla6tl63bnol6ztyoqvpl4spmy
 - valory/http:1.0.0:bafybeifyoio7nlh5zzyn5yz7krkou56l22to3cwg7gw5v5o3vxwklibhty

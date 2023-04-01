@@ -147,6 +147,7 @@ class LangchainConnection(BaseSyncConnection):
             prompt_template=llm_message.prompt_template,
             prompt_values=llm_message.prompt_values,
         )
+        self.logger.info(f"Vote: {vote}")
 
         response_message = cast(
             LlmMessage,

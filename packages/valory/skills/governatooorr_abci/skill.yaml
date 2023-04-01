@@ -19,8 +19,8 @@ contracts: []
 protocols: []
 skills:
 - valory/abstract_round_abci:0.1.0:bafybeib7q4t5jh6gic3i2pzuzlk7q2xmnueyxjpftm4gl56vnnz4vs4f7a
-- valory/proposal_collector:0.1.0:bafybeiapumabljwer2fhd3lx7si3yhy2ob42j2efo2ixeufw3lyqzz77z4
-- valory/proposal_voter:0.1.0:bafybeievijumafxanbepzdnhpyhgxviww6dftn4rytev6f7xnkjawmwpby
+- valory/proposal_collector:0.1.0:bafybeidcv6nlxl7l3ytwsf26wqzwk76bsej7cxg6prmtywcp7yuvlgwvzm
+- valory/proposal_voter:0.1.0:bafybeig3tmvcshlxkyy56qmrk6bofeq4c3u2pfizhk73pnqcjdumzrh7e4
 - valory/registration_abci:0.1.0:bafybeidc6iv54mr2antvrw3r4tldm635othi62bhzeyyid7kejzxw4fwiq
 - valory/reset_pause_abci:0.1.0:bafybeige4ncfhwlqbthmfvdu7aogl2qqsozpz3h5el3xokmq4hcqujgsqy
 - valory/transaction_settlement_abci:0.1.0:bafybeihdgnqsiauhuuazmpnt7tawzxm3jnidfytifmb6yjbb6i3cqnafvy
@@ -78,8 +78,6 @@ models:
       compound_contract_address: '0xc00e94Cb662C3520282E6f5717214004A7f26888'
       delegate_contract_address: '0xeF3B6E9e13706A8F01fe98fdCf66335dc5CfdEED'
       drand_public_key: 868f005eb8e6e4ca0a47c8a77ceaa5309a47978a7c71bc5cce96366b5d7a569937c529eeda66c7293784a9402801af31
-      dynamic_contribution_contract_address: '0x5FbDB2315678afecb367f032d93F642f64180aa3'
-      earliest_block_to_monitor: 8053690
       finalize_timeout: 60.0
       genesis_config:
         genesis_time: '2022-09-26T00:00:00.000000000Z'
@@ -107,12 +105,9 @@ models:
       max_healthcheck: 120
       observation_interval: 10
       on_chain_service_id: null
-      points_to_image_hashes: '{"0": "bafybeiabtdl53v2a3irrgrg7eujzffjallpymli763wvhv6gceurfmcemm",
-        "100": "bafybeid46w6yzbehir7ackcnsyuasdkun5aq7jnckt4sknvmiewpph776q", "50000":
-        "bafybeigbxlwzljbxnlwteupmt6c6k7k2m4bbhunvxxa53dc7niuedilnr4", "100000": "bafybeiawxpq4mqckbau3mjwzd3ic2o7ywlhp6zqo7jnaft26zeqm3xsjjy",
-        "150000": "bafybeie6k53dupf7rf6622rzfxu3dmlv36hytqrmzs5yrilxwcrlhrml2m"}'
       request_retry_delay: 1.0
       request_timeout: 10.0
+      reset_pause_duration: 10
       reset_tendermint_after: 2
       retry_attempts: 400
       retry_timeout: 3

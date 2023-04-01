@@ -7,7 +7,7 @@ license: Apache-2.0
 aea_version: '>=1.0.0, <2.0.0'
 fingerprint:
   __init__.py: bafybeihnvwxbo2ix5iac5gxahym3uomspy6336pylbwjnfkksatcuktxka
-  behaviours.py: bafybeiguwgh6frwnocd7xdukvmknfccm76m5vjr4p7gsaqvxodqtsfqp7q
+  behaviours.py: bafybeia76txkpm3deuk5klpiaprw73tf2m4nfgsl3e4ffyeal3t2rqbce4
   dialogues.py: bafybeighergy2hupd32ozp2ud5j4jujpccfkzk2l46a33xn7yi2ofk32m4
   fsm_specification.yaml: bafybeiemqe5x64sfaoeuqidxfdsa6hujzt3xqdx6hbshstu45pod37eq2a
   handlers.py: bafybeiawrdmtiluzqchiiv5oiwbve7iaetesjcveruhcwe636pmhlflmp4
@@ -112,6 +112,7 @@ models:
       on_chain_service_id: null
       request_retry_delay: 1.0
       request_timeout: 10.0
+      reset_pause_duration: 10
       reset_tendermint_after: 2
       retry_attempts: 400
       retry_timeout: 3

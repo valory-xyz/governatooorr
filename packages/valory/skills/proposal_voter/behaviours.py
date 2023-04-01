@@ -44,7 +44,7 @@ from packages.valory.skills.proposal_voter.payload_tools import (
     hash_payload_to_hex,
 )
 from packages.valory.skills.proposal_voter.dialogues import LlmDialogues, LlmDialogue
-from packages.valory.connections.langchain.connection import (
+from packages.valory.connections.openai.connection import (
     CONNECTION_ID as LLM_CONNECTION_PUBLIC_ID,
 )
 from packages.valory.protocols.llm.message import LlmMessage

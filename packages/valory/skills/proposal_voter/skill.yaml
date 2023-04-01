@@ -7,7 +7,7 @@ license: Apache-2.0
 aea_version: '>=1.0.0, <2.0.0'
 fingerprint:
   __init__.py: bafybeiavfndo4oyvnfhe4ssydszeu2xx73hz3l7wbo42gldgabrn54drwy
-  behaviours.py: bafybeiftch3divxjxd2nw46uaezvcplyn7ske2hpx5gqhxrfkcs6z5wgra
+  behaviours.py: bafybeieym24me33ethsedxqjnva6czzz67c5bqa2bvyfli54likbb4fafi
   dialogues.py: bafybeibvpsfq7v2afvoqodqyqhtit5zpkhw7pxvuyozvyk7e4nxad4dvry
   fsm_specification.yaml: bafybeid7nax5oywpoackufq5w2kklzer3ckecarfuxndoliryypt5ttq3e
   handlers.py: bafybeibyvr2so264jdc7nfzicieegtltl7gq7u5mxjaiodkuvvpux2rj3m
@@ -24,15 +24,15 @@ fingerprint:
   tests/test_rounds.py: bafybeibu24ycdb6gbnpqdqj3ncylitrlu2cuntxe762xvnhbrz3tv3w6b4
 fingerprint_ignore_patterns: []
 connections:
-- valory/langchain:0.1.0:bafybeibmdrfnz6sjrmrfq6qqojsguz6p5t5qm7zif73tzfz6ij2evzxlpq
+- valory/openai:0.1.0:bafybeih3jln4ztrnm3mrsstr3ziogjmzexioddqdv6xghwgbakbnr3lb7q
 contracts:
-- valory/delegate:0.1.0:bafybeign6vhogurakzkzjym6ih6jmpnza5rcjids55uoxbkaowsf6un4ei
-- valory/gnosis_safe:0.1.0:bafybeibzfhpib5fw3wady6dhq5bfgo37o437bi4s3hthbvvit7byvbalg4
+- valory/delegate:0.1.0:bafybeiec25jv3ga72twomthx27hagrzvhdyj44oy3tapq2buxkyt3s6iiu
+- valory/gnosis_safe:0.1.0:bafybeidxabihujlxvmnbf3tztjbwybyr5rlwjeniihnr5edfi6bpyjnevi
 protocols:
 - valory/contract_api:1.0.0:bafybeidv6wxpjyb2sdyibnmmum45et4zcla6tl63bnol6ztyoqvpl4spmy
 - valory/llm:1.0.0:bafybeigafqnus3kvaashfdzrpybpqiumhvbs2dmdnukqzn7yqedga4x7ui
 skills:
-- valory/abstract_round_abci:0.1.0:bafybeib2jw7hjccou42wis35orckwycb2dgjk7yw46anuqysf2h7su3fi4
+- valory/abstract_round_abci:0.1.0:bafybeib7q4t5jh6gic3i2pzuzlk7q2xmnueyxjpftm4gl56vnnz4vs4f7a
 behaviours:
   main:
     args: {}
@@ -116,6 +116,7 @@ models:
       on_chain_service_id: null
       request_retry_delay: 1.0
       request_timeout: 10.0
+      reset_pause_duration: 10
       reset_tendermint_after: 2
       retry_attempts: 400
       retry_timeout: 3

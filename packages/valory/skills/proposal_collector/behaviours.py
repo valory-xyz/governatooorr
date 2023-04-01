@@ -71,6 +71,8 @@ class SynchronizeDelegationsBehaviour(ProposalCollectorBaseBehaviour):
     SynchronizeDelegations
 
     Synchronizes delegations across all agents.
+
+    When there are multiple agents in the service not all agents have necessarily the same data before synchronizing.
     """
 
     matching_round: Type[AbstractRound] = SynchronizeDelegationsRound
@@ -100,7 +102,10 @@ class VerifyDelegationsBehaviour(ProposalCollectorBaseBehaviour):
     """
     VerifyDelegations
 
+    We verify the delegations received from the frontend against the chain state.
 
+    After verification we optimistically assume no change in delegations until we re-enter this
+    behaviour.
     """
 
     matching_round: Type[AbstractRound] = VerifyDelegationsRound
@@ -241,7 +246,12 @@ class VerifyDelegationsBehaviour(ProposalCollectorBaseBehaviour):
 
 
 class CollectActiveProposalsBehaviour(ProposalCollectorBaseBehaviour):
-    """CollectActiveProposals"""
+    """
+    CollectActiveProposals
+
+    Behaviour used to collect active proposals from Tally for the governors
+    for which the Governatooorr has received delegations.
+    """
 
     matching_round: Type[AbstractRound] = CollectActiveProposalsRound
 
@@ -284,7 +294,7 @@ class CollectActiveProposalsBehaviour(ProposalCollectorBaseBehaviour):
         }
 
         self.context.logger.info(
-            f"Retrieving proposals from Tally API [{self.params.tally_api_endpoint}]"
+            f"Retrieving proposals from Tally API [{self.params.tally_api_endpoint}] for governors: {governor_addresses}"
         )
 
         # Make the request
@@ -307,6 +317,7 @@ class CollectActiveProposalsBehaviour(ProposalCollectorBaseBehaviour):
         response_json = json.loads(response.body)
 
         # Filter out non-active proposals and those which use non-erc20 tokens
+        # TOFIX: I think the second condition is not necessary, as we only allow valid governors
         active_proposals = list(
             filter(
                 lambda p: p["statusChanges"][-1]["type"] == "ACTIVE"
@@ -325,7 +336,11 @@ class CollectActiveProposalsBehaviour(ProposalCollectorBaseBehaviour):
 
 
 class SelectProposalBehaviour(ProposalCollectorBaseBehaviour):
-    """SelectProposal"""
+    """
+    SelectProposal
+
+    Select the proposal on which to vote.
+    """
 
     matching_round: Type[AbstractRound] = SelectProposalRound
 
@@ -339,6 +354,9 @@ class SelectProposalBehaviour(ProposalCollectorBaseBehaviour):
             # TODO: we enter this round after a successful tx_submission
             # We need to check if that is the case and remove the first proposal
             # from the list.
+            # TODO: we want to make sure we only vote towards the end of the voting period.
+            # But it would be great if we could get the voting intention right away, so we can
+            # display this on the frontend.
 
             # Some proposals have an ETA, some dont
             # We will prioritise those with it

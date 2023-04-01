@@ -17,7 +17,7 @@
 #
 # ------------------------------------------------------------------------------
 
-"""Langchain connection and channel."""
+"""OpenAI connection and channel."""
 
 from typing import Any, Dict, cast
 
@@ -27,9 +27,7 @@ from aea.mail.base import Envelope
 from aea.protocols.base import Address, Message
 from aea.protocols.dialogue.base import Dialogue
 
-from langchain.llms import OpenAI
-from langchain.prompts import PromptTemplate
-from langchain.chains import LLMChain
+import openai
 
 from packages.valory.protocols.llm.dialogues import (
     LlmDialogues as BaseLlmDialogues,
@@ -37,7 +35,7 @@ from packages.valory.protocols.llm.dialogues import (
 )
 from packages.valory.protocols.llm.message import LlmMessage
 
-CONNECTION_ID = PublicId.from_str("valory/langchain:0.1.0")
+CONNECTION_ID = PublicId.from_str("valory/openai:0.1.0")
 
 
 class LlmDialogues(BaseLlmDialogues):
@@ -69,8 +67,8 @@ class LlmDialogues(BaseLlmDialogues):
         )
 
 
-class LangchainConnection(BaseSyncConnection):
-    """Proxy to the functionality of the langchain SDK."""
+class OpenaiConnection(BaseSyncConnection):
+    """Proxy to the functionality of the openai SDK."""
 
     MAX_WORKER_THREADS = 1
 
@@ -95,11 +93,11 @@ class LangchainConnection(BaseSyncConnection):
         :param kwargs: keyword arguments passed to component base
         """
         super().__init__(*args, **kwargs)
-        openai_settings = {
+        self.openai_settings = {
             setting: self.configuration.config.get(setting)
-            for setting in ("openai_api_key", "temperature")
+            for setting in ("openai_api_key", "engine", "max_tokens", "temperature")
         }
-        self.llm = OpenAI(**openai_settings)
+        openai.api_key = self.openai_settings["your_openai_api_key"]
         self.dialogues = LlmDialogues(connection_id=CONNECTION_ID)
 
     def main(self) -> None:
@@ -147,6 +145,7 @@ class LangchainConnection(BaseSyncConnection):
             prompt_template=llm_message.prompt_template,
             prompt_values=llm_message.prompt_values,
         )
+        self.logger.info(f"Vote: {vote}")
 
         response_message = cast(
             LlmMessage,
@@ -168,14 +167,22 @@ class LangchainConnection(BaseSyncConnection):
 
     def _get_vote(self, prompt_template: str, prompt_values: Dict[str, str]):
         """Get vote."""
-        prompt_input_variables = list(prompt_values.keys())
-        prompt = PromptTemplate(
-            input_variables=prompt_input_variables,
-            template=prompt_template,
-        )
-        self.chain = LLMChain(llm=self.llm, prompt=prompt)
+        # Format the prompt using input variables and prompt_values
+        formatted_prompt = prompt_template.format(**prompt_values)
 
-        result = self.chain.run(**prompt_values)
+        # Call the OpenAI API
+        response = openai.Completion.create(
+            engine=self.openai_settings["engine"],
+            prompt=formatted_prompt,
+            max_tokens=self.openai_settings["max_tokens"],
+            n=1,
+            stop=None,
+            temperature=self.openai_settings["temperature"],
+        )
+
+        # Extract the result from the API response
+        result = response.choices[0].text
+
         return result
 
     def on_connect(self) -> None:

@@ -16,18 +16,57 @@
 #   limitations under the License.
 #
 # ------------------------------------------------------------------------------
+
 """Langchain connection and channel."""
-from typing import Any, Optional
+
+from typing import Any, Dict, cast
 
 from aea.configurations.base import PublicId
-from aea.connections.base import BaseSyncConnection, Connection
+from aea.connections.base import BaseSyncConnection
 from aea.mail.base import Envelope
+from aea.protocols.base import Address, Message
+from aea.protocols.dialogue.base import Dialogue
 
 from langchain.llms import OpenAI
 from langchain.prompts import PromptTemplate
 from langchain.chains import LLMChain
 
+from packages.valory.protocols.llm.dialogues import (
+    LlmDialogues as BaseLlmDialogues,
+    LlmDialogue,
+)
+from packages.valory.protocols.llm.message import LlmMessage
+
 CONNECTION_ID = PublicId.from_str("valory/langchain:0.1.0")
+
+
+class LlmDialogues(BaseLlmDialogues):
+    """A class to keep track of IPFS dialogues."""
+
+    def __init__(self, **kwargs: Any) -> None:
+        """
+        Initialize dialogues.
+
+        :param kwargs: keyword arguments
+        """
+
+        def role_from_first_message(  # pylint: disable=unused-argument
+            message: Message, receiver_address: Address
+        ) -> Dialogue.Role:
+            """Infer the role of the agent from an incoming/outgoing first message
+
+            :param message: an incoming/outgoing first message
+            :param receiver_address: the address of the receiving agent
+            :return: The role of the agent
+            """
+            return LlmDialogue.Role.CONNECTION
+
+        BaseLlmDialogues.__init__(
+            self,
+            self_address=str(kwargs.pop("connection_id")),
+            role_from_first_message=role_from_first_message,
+            **kwargs,
+        )
 
 
 class LangchainConnection(BaseSyncConnection):
@@ -56,7 +95,12 @@ class LangchainConnection(BaseSyncConnection):
         :param kwargs: keyword arguments passed to component base
         """
         super().__init__(*args, **kwargs)
-        self.llm = OpenAI(temperature=0)
+        openai_settings = {
+            setting: self.configuration.config.get(setting)
+            for setting in ("openai_api_key", "temperature")
+        }
+        self.llm = OpenAI(**openai_settings)
+        self.dialogues = LlmDialogues(connection_id=CONNECTION_ID)
 
     def main(self) -> None:
         """
@@ -89,13 +133,40 @@ class LangchainConnection(BaseSyncConnection):
 
         :param envelope: the envelope to send.
         """
-        llm_message = envelope.message
-        vote = self._get_vote(prompt_template=llm_message.prompt_template, prompt_values=llm_message.prompt_values)
+        llm_message = cast(LlmMessage, envelope.message)
 
-        response_message =
-        self.put_envelope(resp_envelope)
+        dialogue = self.dialogues.update(llm_message)
 
-    def _get_vote(prompt_template: str, prompt_values: Dict[str, str]):
+        if llm_message.performative != LlmMessage.Performative.REQUEST:
+            self.logger.error(
+                f"Performative `{llm_message.performative.value}` is not supported."
+            )
+            return
+
+        vote = self._get_vote(
+            prompt_template=llm_message.prompt_template,
+            prompt_values=llm_message.prompt_values,
+        )
+
+        response_message = cast(
+            LlmMessage,
+            dialogue.reply(
+                performative=LlmMessage.Performative.RESPONSE,
+                target_message=llm_message,
+                value=vote,
+            ),
+        )
+
+        response_envelope = Envelope(
+            to=envelope.sender,
+            sender=envelope.to,
+            message=response_message,
+            context=envelope.context,
+        )
+
+        self.put_envelope(response_envelope)
+
+    def _get_vote(self, prompt_template: str, prompt_values: Dict[str, str]):
         """Get vote."""
         prompt_input_variables = list(prompt_values.keys())
         prompt = PromptTemplate(
@@ -105,11 +176,6 @@ class LangchainConnection(BaseSyncConnection):
         self.chain = LLMChain(llm=self.llm, prompt=prompt)
 
         result = self.chain.run(**prompt_values)
-
-        result = result.strip("\n")
-
-        if not result in ["For", "Against", "Abstain"]:
-            raise ValueError(f"Invalid result: {result}")
         return result
 
     def on_connect(self) -> None:

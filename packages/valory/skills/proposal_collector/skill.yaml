@@ -7,14 +7,14 @@ license: Apache-2.0
 aea_version: '>=1.0.0, <2.0.0'
 fingerprint:
   __init__.py: bafybeihnvwxbo2ix5iac5gxahym3uomspy6336pylbwjnfkksatcuktxka
-  behaviours.py: bafybeid3x4wy3ch7nhyaqffbfs3omsm66vi676ixh577y724cmoqdwtbkq
+  behaviours.py: bafybeiguwgh6frwnocd7xdukvmknfccm76m5vjr4p7gsaqvxodqtsfqp7q
   dialogues.py: bafybeighergy2hupd32ozp2ud5j4jujpccfkzk2l46a33xn7yi2ofk32m4
   fsm_specification.yaml: bafybeiemqe5x64sfaoeuqidxfdsa6hujzt3xqdx6hbshstu45pod37eq2a
-  handlers.py: bafybeibdaebhv32hp5xfkyh5olfcauhdrn4wtkdogzobpwtg2mc4lzddoa
+  handlers.py: bafybeiawrdmtiluzqchiiv5oiwbve7iaetesjcveruhcwe636pmhlflmp4
   models.py: bafybeicxciwsc356hwtso3cdcv2u5j3pzvg5z33qlbsmptk3a6nzad7p7i
   payloads.py: bafybeiecovofuf66jino7kfoslpridq23ibmsmrjfbmmpffddfmk5kxhuq
-  rounds.py: bafybeieyz2xakkd5dfgs2zq2jrlbtocsnsi72wp53bkijtfuuqsrsec2g4
-  tally.py: bafybeih3nqsky6sz4lko3yla6lmxytji2koz66di2fdri5jxqlavmbvuxi
+  rounds.py: bafybeigpenv3ho6ljs53qyvjba5bocvct5i4tizbn66xspsjn5bwqjswzm
+  tally.py: bafybeifdse37wwsidxh2zpfnc756rni2yvqpbkclfvba2paz2dghirwqpe
   tests/__init__.py: bafybeic6evwhxdwtdjvz7xv3dqqhdhd7uxyr55xhymeiqfe4ga7mfdptxm
   tests/test_behaviours.py: bafybeifi7d56mo7t3uzppguzrpjwyuof5h7f4mwxnx5yna7afbct5tfjji
   tests/test_dialogues.py: bafybeihpz7bm7ihy4x4yiyb3m74sggxzpoioj2u6zmfldnyunzvrwbfism
@@ -26,7 +26,7 @@ fingerprint_ignore_patterns: []
 connections:
 - fetchai/http_server:0.22.0:bafybeihaax5od5zo5jk2l62hv4jwuwtxloh5mijozudpsjombqc4ncmi6i
 contracts:
-- valory/compound:0.1.0:bafybeicrdbqoroflkcr3gg5py377r3lbsvo52tg3kypxbqjdhdsgihlzxi
+- valory/compound:0.1.0:bafybeid2u5baz3doyspgpumb3hzpzj5l5xoxa53d2jhhoa3u7iumtokn7a
 protocols:
 - valory/contract_api:1.0.0:bafybeidv6wxpjyb2sdyibnmmum45et4zcla6tl63bnol6ztyoqvpl4spmy
 - valory/http:1.0.0:bafybeifyoio7nlh5zzyn5yz7krkou56l22to3cwg7gw5v5o3vxwklibhty
@@ -82,6 +82,7 @@ models:
     args:
       cleanup_history_depth: 1
       cleanup_history_depth_current: null
+      compound_contract_address: '0xc00e94Cb662C3520282E6f5717214004A7f26888'
       drand_public_key: 868f005eb8e6e4ca0a47c8a77ceaa5309a47978a7c71bc5cce96366b5d7a569937c529eeda66c7293784a9402801af31
       finalize_timeout: 60.0
       genesis_config:
@@ -115,6 +116,7 @@ models:
       retry_attempts: 400
       retry_timeout: 3
       round_timeout_seconds: 30.0
+      service_endpoint_base: https://governatooorr.staging.autonolas.tech/
       service_id: proposal_collector
       service_registry_address: null
       setup:
@@ -124,6 +126,8 @@ models:
         - '0x0000000000000000000000000000000000000000'
       share_tm_config_on_startup: false
       sleep_time: 1
+      tally_api_endpoint: https://api.tally.xyz/query
+      tally_api_key: <tally_api_key>
       tendermint_check_sleep_delay: 3
       tendermint_com_url: http://localhost:8080
       tendermint_max_retries: 5
@@ -131,10 +135,6 @@ models:
       tendermint_url: http://localhost:26657
       tx_timeout: 10.0
       validate_timeout: 1205
-      tally_api_endpoint: https://api.tally.xyz/query
-      tally_api_key: <tally_api_key>
-      service_endpoint_base: https://governatooorr.staging.autonolas.tech/
-      compound_contract_address: '0xc00e94Cb662C3520282E6f5717214004A7f26888'
     class_name: Params
   requests:
     args: {}

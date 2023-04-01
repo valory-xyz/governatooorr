@@ -244,10 +244,11 @@ class HttpHandler(BaseHttpHandler):
         # Add the new delegation to this agent's new delegation list
         self.context.state.new_delegations.append(
             {
-                "user_address": delegation_data["user_address"],
-                "token_address": delegation_data["token_address"],
-                "delegation_amount": delegation_data["delegation_amount"],
-                "voting_preference": delegation_data["voting_preference"],
+                "user_address": delegation_data["address"],
+                "token_address": delegation_data["delegatedToken"],
+                "voting_preference": delegation_data["votingPreference"].upper(),
+                "governor_address": delegation_data["governorAddress"],
+                "delegated_amount": int(delegation_data["tokenBalance"]),
             }
         )
 
@@ -281,15 +282,32 @@ class HttpHandler(BaseHttpHandler):
         self, http_msg: HttpMessage, http_dialogue: HttpDialogue
     ) -> None:
 
-        raise NotImplementedError
+        response_body_data = {
+            "active_proposals": self.synchronized_data.active_proposals
+        }
+
+        self._send_ok_response(http_msg, http_dialogue, response_body_data)
 
     def _handle_get_proposal(
         self, http_msg: HttpMessage, http_dialogue: HttpDialogue
     ) -> None:
 
         proposal_id = http_msg.url.split("/")[-1]
+        active_proposals = self.synchronized_data.active_proposals
 
-        raise NotImplementedError
+        proposal = None
+        for ap in active_proposals:
+            if ap["id"] == proposal_id:
+                proposal = ap
+                break
+
+        if not proposal:
+            self._send_not_found_response(http_msg, http_dialogue)
+            return
+
+        response_body_data = {"proposal": proposal}
+
+        self._send_ok_response(http_msg, http_dialogue, response_body_data)
 
     def _send_ok_response(
         self, http_msg: HttpMessage, http_dialogue: HttpDialogue, data: Dict

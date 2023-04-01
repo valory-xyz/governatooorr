@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # ------------------------------------------------------------------------------
 #
-#   Copyright 2023 Valory AG
+#   Copyright 2022-2023 Valory AG
 #
 #   Licensed under the Apache License, Version 2.0 (the "License");
 #   you may not use this file except in compliance with the License.
@@ -16,13 +16,5 @@
 #   limitations under the License.
 #
 # ------------------------------------------------------------------------------
-# pylint: skip-file
 
-"""This package contains round behaviours of the contribution skill."""
-from packages.valory.skills.governatooorr.behaviours import (  # noqa
-    GovernatooorrConsensusBehaviour,
-)
-
-
-def test_import() -> None:
-    """Test that the 'behaviours.py' of the contribution skill can be imported."""
+"""This module contains the support resources for the dynamic_contribution contract."""

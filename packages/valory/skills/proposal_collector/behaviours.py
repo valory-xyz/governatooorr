@@ -21,6 +21,7 @@
 
 import json
 from abc import ABC
+from copy import deepcopy
 from typing import Generator, List, Optional, Set, Type, cast
 
 from packages.valory.contracts.compound.contract import CompoundContract
@@ -82,10 +83,11 @@ class SynchronizeDelegationsBehaviour(ProposalCollectorBaseBehaviour):
                 self.context.state.new_delegations
             )  # no sorting needed here as there is no consensus over this data
             sender = self.context.agent_address
-            # TODO: we also need to reset the new_delegations.
+            # TODO: we also need to reset the new_delegations -> we do this on the next round (VerifyDelegationsRound), once every agent has all the data
             payload = SynchronizeDelegationsPayload(
                 sender=sender, new_delegations=new_delegations
             )
+            self.context.logger.info(f"New delegations = {new_delegations}")
 
         with self.context.benchmark_tool.measure(self.behaviour_id).consensus():
             yield from self.send_a2a_transaction(payload)
@@ -122,6 +124,10 @@ class VerifyDelegationsBehaviour(ProposalCollectorBaseBehaviour):
             # Validate delegations on-chain
             validated_new_delegations = yield from self._get_validated_delegations()
 
+            self.context.logger.info(
+                f"validated_new_delegations = {validated_new_delegations}"
+            )
+
             if validated_new_delegations is None:
                 payload = VerifyDelegationsPayload(
                     sender=sender,
@@ -150,6 +156,8 @@ class VerifyDelegationsBehaviour(ProposalCollectorBaseBehaviour):
                     delegation_data = {
                         "delegation_amount": d["delegation_amount"],
                         "voting_preference": d["voting_preference"],
+                        "user_address": d["user_address"],
+                        "token_address": d["token_address"],
                     }
 
                     # Token does not exist
@@ -180,6 +188,10 @@ class VerifyDelegationsBehaviour(ProposalCollectorBaseBehaviour):
                     ),
                 )
 
+                self.context.logger.info(
+                    f"new_token_to_delegations = {new_token_to_delegations}"
+                )
+
         with self.context.benchmark_tool.measure(self.behaviour_id).consensus():
             yield from self.send_a2a_transaction(payload)
             yield from self.wait_until_round_end()
@@ -191,29 +203,39 @@ class VerifyDelegationsBehaviour(ProposalCollectorBaseBehaviour):
     ) -> Generator[None, None, Optional[List]]:
         """Get token id to member data."""
 
+        # TODO: check for DelegateVotesChanged events to get the correct amount
+
         validated_delegations = []
 
         for d in self.synchronized_data.new_delegations:
 
-            address = d["user_address"]
+            user_address = d["user_address"]
+            token_address = d["token_address"]
 
-            self.context.logger.info(f"Retrieving delegations for wallet {address}")
+            self.context.logger.info(
+                f"Retrieving delegations for wallet {user_address}. Token: {token_address}"
+            )
             contract_api_msg = yield from self.get_contract_api_response(
                 performative=ContractApiMessage.Performative.GET_STATE,  # type: ignore
-                contract_address=self.params.compound_contract_address,
-                contract_id=str(CompoundContract.contract_id),
-                contract_callable="get_all_erc721_transfers",
-                address=address,
+                contract_address=token_address,
+                contract_id=str(
+                    CompoundContract.contract_id
+                ),  # Compound contract is an ERC20 contract
+                contract_callable="get_current_votes",
+                address=user_address,
             )
             if contract_api_msg.performative != ContractApiMessage.Performative.STATE:
-                self.context.logger.info("Error retrieving the delegations")
+                self.context.logger.info(
+                    f"Error retrieving the delegations {contract_api_msg.performative}"
+                )
                 return None  # TODO: should we return if just one fails?
 
-            delegation = cast(int, contract_api_msg.state.body["votes"])
+            votes = cast(int, contract_api_msg.state.body["votes"])
 
-            # We validate the delegation if the actual amount is equal or higher
-            if delegation >= int(d["delegation_amount"]):
-                validated_delegations.append(d)
+            # add the delegation amount for this user
+            delegation = deepcopy(d)
+            delegation["delegation_amount"] = int(votes)
+            validated_delegations.append(delegation)
 
         return validated_delegations
 
@@ -232,6 +254,7 @@ class CollectActiveProposalsBehaviour(ProposalCollectorBaseBehaviour):
             payload = CollectActiveProposalsPayload(
                 sender=sender, active_proposals=active_proposals
             )
+            self.context.logger.info(f"active_proposals = {active_proposals}")
 
         with self.context.benchmark_tool.measure(self.behaviour_id).consensus():
             yield from self.send_a2a_transaction(payload)
@@ -243,16 +266,20 @@ class CollectActiveProposalsBehaviour(ProposalCollectorBaseBehaviour):
         """Get proposals mentions"""
 
         headers = {
+            "Content-Type": "application/json",
             "Accept": "application/json",
             "Api-key": "{api_key}".format(api_key=self.params.tally_api_key),
         }
 
+        # Get all governors from the current delegations
+        governor_addresses = set()
+        for d in self.synchronized_data.current_delegations:
+            governor_addresses.add(d["governor_address"])
+
         variables = {
             "chainId": "eip155:1",
-            "proposers": list(
-                self.synchronized_data.current_token_to_delegations.keys()
-            ),  # TODO: are token addresses proposers or governors? Governors, so this is wrong
-            "governors": [],  # any governor
+            "proposers": [],
+            "governors": list(governor_addresses),
             "pagination": {"limit": 200, "offset": 0},
         }
 
@@ -279,11 +306,12 @@ class CollectActiveProposalsBehaviour(ProposalCollectorBaseBehaviour):
 
         response_json = json.loads(response.body)
 
-        # Filter out non-active proposals
-        # TODO: verify that necessary fields exist
+        # Filter out non-active proposals and those which use non-erc20 tokens
         active_proposals = list(
             filter(
-                lambda p: p["statusChanges"][-1]["type"] == "ACTIVE",
+                lambda p: p["statusChanges"][-1]["type"] == "ACTIVE"
+                and len(p["governor"]["tokens"]) == 1
+                and "erc20" in p["governor"]["tokens"][0]["id"],
                 response_json["data"]["proposals"],
             )
         )
@@ -337,14 +365,16 @@ class SelectProposalBehaviour(ProposalCollectorBaseBehaviour):
             )
 
             # Select the first proposal
-            proposal_id = (
-                sorted_proposals[0]["id"]
-                if sorted_proposals
-                else SelectProposalRound.NO_PROPOSAL
-            )
+            proposal_id = sorted_proposals[0]["id"] if sorted_proposals else None
+
+            # Check whether we have delegations
+            if not proposal_id or not self.synchronized_data.current_delegations:
+                proposal_id = SelectProposalRound.NO_PROPOSAL
 
             sender = self.context.agent_address
             payload = SelectProposalPayload(sender=sender, proposal_id=proposal_id)
+
+            self.context.logger.info(f"proposal_id = {proposal_id}")
 
         with self.context.benchmark_tool.measure(self.behaviour_id).consensus():
             yield from self.send_a2a_transaction(payload)
@@ -362,5 +392,4 @@ class ProposalCollectorRoundBehaviour(AbstractRoundBehaviour):
         CollectActiveProposalsBehaviour,
         SelectProposalBehaviour,
         SynchronizeDelegationsBehaviour,
-        VerifyDelegationsBehaviour,
     ]

@@ -24,15 +24,15 @@ fingerprint:
   tests/test_rounds.py: bafybeibu24ycdb6gbnpqdqj3ncylitrlu2cuntxe762xvnhbrz3tv3w6b4
 fingerprint_ignore_patterns: []
 connections:
-- valory/langchain:0.1.0:bafybeibmdrfnz6sjrmrfq6qqojsguz6p5t5qm7zif73tzfz6ij2evzxlpq
+- valory/langchain:0.1.0:bafybeib6jfleff2a7sr2cnwofwrpynyvw4rjgcxvozbdrkvgpvny272zrm
 contracts:
 - valory/delegate:0.1.0:bafybeign6vhogurakzkzjym6ih6jmpnza5rcjids55uoxbkaowsf6un4ei
-- valory/gnosis_safe:0.1.0:bafybeibzfhpib5fw3wady6dhq5bfgo37o437bi4s3hthbvvit7byvbalg4
+- valory/gnosis_safe:0.1.0:bafybeidxabihujlxvmnbf3tztjbwybyr5rlwjeniihnr5edfi6bpyjnevi
 protocols:
 - valory/contract_api:1.0.0:bafybeidv6wxpjyb2sdyibnmmum45et4zcla6tl63bnol6ztyoqvpl4spmy
 - valory/llm:1.0.0:bafybeigafqnus3kvaashfdzrpybpqiumhvbs2dmdnukqzn7yqedga4x7ui
 skills:
-- valory/abstract_round_abci:0.1.0:bafybeib2jw7hjccou42wis35orckwycb2dgjk7yw46anuqysf2h7su3fi4
+- valory/abstract_round_abci:0.1.0:bafybeib7q4t5jh6gic3i2pzuzlk7q2xmnueyxjpftm4gl56vnnz4vs4f7a
 behaviours:
   main:
     args: {}

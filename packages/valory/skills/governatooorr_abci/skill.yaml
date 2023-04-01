@@ -18,12 +18,12 @@ connections: []
 contracts: []
 protocols: []
 skills:
-- valory/abstract_round_abci:0.1.0:bafybeib2jw7hjccou42wis35orckwycb2dgjk7yw46anuqysf2h7su3fi4
-- valory/proposal_collector:0.1.0:bafybeigrxu6423tm77r4mspykk5i7vwul2yvearx2zwtmwdoosvshdrdz4
-- valory/proposal_voter:0.1.0:bafybeidjpk652nfiqmvlei34xs2yjnje4kaewl7dsy2adogxbaac7am7fm
-- valory/registration_abci:0.1.0:bafybeidgoqi7fa2gb56hdfsf74bbunfii63zgeo4qhggb66ofver2n2gya
-- valory/reset_pause_abci:0.1.0:bafybeievxhu6u5r5wlpjfzcwuowlbanhfbi25saf25qit53jauv4kq6gne
-- valory/transaction_settlement_abci:0.1.0:bafybeiftbgfzp36bknbwus3fx2equmhgmboy4qd5myex76xfc4ze6o7b54
+- valory/abstract_round_abci:0.1.0:bafybeib7q4t5jh6gic3i2pzuzlk7q2xmnueyxjpftm4gl56vnnz4vs4f7a
+- valory/proposal_collector:0.1.0:bafybeiapumabljwer2fhd3lx7si3yhy2ob42j2efo2ixeufw3lyqzz77z4
+- valory/proposal_voter:0.1.0:bafybeievijumafxanbepzdnhpyhgxviww6dftn4rytev6f7xnkjawmwpby
+- valory/registration_abci:0.1.0:bafybeidc6iv54mr2antvrw3r4tldm635othi62bhzeyyid7kejzxw4fwiq
+- valory/reset_pause_abci:0.1.0:bafybeige4ncfhwlqbthmfvdu7aogl2qqsozpz3h5el3xokmq4hcqujgsqy
+- valory/transaction_settlement_abci:0.1.0:bafybeihdgnqsiauhuuazmpnt7tawzxm3jnidfytifmb6yjbb6i3cqnafvy
 behaviours:
   main:
     args: {}
@@ -80,6 +80,7 @@ models:
       drand_public_key: 868f005eb8e6e4ca0a47c8a77ceaa5309a47978a7c71bc5cce96366b5d7a569937c529eeda66c7293784a9402801af31
       dynamic_contribution_contract_address: '0x5FbDB2315678afecb367f032d93F642f64180aa3'
       earliest_block_to_monitor: 8053690
+      finalize_timeout: 60.0
       genesis_config:
         genesis_time: '2022-09-26T00:00:00.000000000Z'
         chain_id: chain-c4daS1
@@ -97,8 +98,8 @@ models:
             - ed25519
           version: {}
         voting_power: '10'
-      history_end: null
       history_check_timeout: 1205
+      history_end: null
       init_fallback_gas: 0
       keeper_allowed_retries: 3
       keeper_timeout: 30.0
@@ -131,13 +132,12 @@ models:
       tally_api_endpoint: https://api.tally.xyz/query
       tally_api_key: <tally_api_key>
       tendermint_check_sleep_delay: 3
-      validate_timeout: 1205
       tendermint_com_url: http://localhost:8080
       tendermint_max_retries: 5
-      finalize_timeout: 60.0
       tendermint_p2p_url: localhost:26656
       tendermint_url: http://localhost:26657
       tx_timeout: 10.0
+      validate_timeout: 1205
     class_name: Params
   randomness_api:
     args:

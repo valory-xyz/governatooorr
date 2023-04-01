@@ -21,8 +21,8 @@ excluded_protocols: []
 restricted_to_protocols: []
 dependencies:
   langchain:
-    version: ==0.0.95
+    version: ==0.0.127
   openai:
-    version: ==0.26.5
+    version: ==0.27.2
 is_abstract: false
 cert_requests: []

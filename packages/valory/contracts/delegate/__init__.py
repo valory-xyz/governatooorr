@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # ------------------------------------------------------------------------------
 #
-#   Copyright 2023 Valory AG
+#   Copyright 2022-2023 Valory AG
 #
 #   Licensed under the Apache License, Version 2.0 (the "License");
 #   you may not use this file except in compliance with the License.
@@ -17,10 +17,4 @@
 #
 # ------------------------------------------------------------------------------
 
-"""Test the handlers.py module of the contribution skill."""
-
-import packages.valory.skills.governatooorr.handlers  # pylint: disable=unused-import # noqa: F401
-
-
-def test_import() -> None:
-    """Test that the 'handlers.py' of the contribution skill can be imported."""
+"""This module contains the support resources for the dynamic_contribution contract."""

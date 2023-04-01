@@ -21,12 +21,10 @@
 
 from packages.valory.skills.abstract_round_abci.models import (
     BenchmarkTool as BaseBenchmarkTool,
+    ApiSpecs,
 )
 from packages.valory.skills.abstract_round_abci.models import Requests as BaseRequests
-from packages.valory.skills.abstract_round_abci.models import (
-    SharedState as BaseSharedState,
-)
-from packages.valory.skills.governatooorr.composition import (
+from packages.valory.skills.governatooorr_abci.composition import (
     GovernatooorrAbciApp,
 )
 from packages.valory.skills.reset_pause_abci.rounds import Event as ResetPauseEvent
@@ -37,9 +35,14 @@ from packages.valory.skills.proposal_collector.rounds import (
 from packages.valory.skills.proposal_collector.models import (
     Params as ProposalCollectorAbciParams,
 )
-
+from packages.valory.skills.transaction_settlement_abci.models import (
+    TransactionParams as TransactionSettlementParams,
+)
 
 from packages.valory.skills.proposal_voter.rounds import Event as ProposalVoterEvent
+from packages.valory.skills.proposal_collector.models import (
+    SharedState as BaseSharedState,
+)
 from packages.valory.skills.proposal_voter.models import (
     Params as ProposalVoterAbciParams,
 )
@@ -50,6 +53,11 @@ ProposalVoterParams = ProposalVoterAbciParams
 
 Requests = BaseRequests
 BenchmarkTool = BaseBenchmarkTool
+
+
+class RandomnessApi(ApiSpecs):
+    """A model that wraps ApiSpecs for randomness api specifications."""
+
 
 MARGIN = 5
 
@@ -76,5 +84,5 @@ class SharedState(BaseSharedState):
         ] = (self.context.params.observation_interval + MARGIN)
 
 
-class Params(ProposalCollectorParams, ProposalVoterParams):
+class Params(ProposalCollectorParams, ProposalVoterParams, TransactionSettlementParams):
     """A model to represent params for multiple abci apps."""

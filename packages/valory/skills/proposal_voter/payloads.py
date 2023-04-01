@@ -28,7 +28,7 @@ from packages.valory.skills.abstract_round_abci.base import BaseTxPayload
 class EstablishVotePayload(BaseTxPayload):
     """Represent a transaction payload for the EstablishVoteRound."""
 
-    vote_code: int
+    vote: str
 
 
 @dataclass(frozen=True)

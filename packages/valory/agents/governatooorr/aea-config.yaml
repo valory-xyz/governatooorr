@@ -20,20 +20,29 @@ connections:
 - valory/http_client:0.23.0:bafybeidykl4elwbcjkqn32wt5h4h7tlpeqovrcq3c5bcplt6nhpznhgczi
 - valory/ledger:0.19.0:bafybeicxcypcg2lxmtktbmuhqcyluzmasfsdeljyk2pvaabzc3h2jmcsui
 - valory/p2p_libp2p_client:0.1.0:bafybeidwcobzb7ut3efegoedad7jfckvt2n6prcmd4g7xnkm6hp6aafrva
+- valory/langchain:0.1.0:bafybeibmdrfnz6sjrmrfq6qqojsguz6p5t5qm7zif73tzfz6ij2evzxlpq
 contracts:
-- valory/delegate:0.1.0:bafybeiawsh2u6bhebtshyhvwy4vwairqwtyvsxze6isixxh2k6mgxxima4
-- valory/gnosis_safe:0.1.0:bafybeihwwv5aodluykglsbuhhrwusvjof6vvnr37rznwvlutmfwtvoju34
-- valory/compound:0.1.0:bafybeicrdbqoroflkcr3gg5py377r3lbsvo52tg3kypxbqjdhdsgihlzxi
+- valory/compound:0.1.0:bafybeid2u5baz3doyspgpumb3hzpzj5l5xoxa53d2jhhoa3u7iumtokn7a
+- valory/delegate:0.1.0:bafybeign6vhogurakzkzjym6ih6jmpnza5rcjids55uoxbkaowsf6un4ei
+- valory/gnosis_safe:0.1.0:bafybeibzfhpib5fw3wady6dhq5bfgo37o437bi4s3hthbvvit7byvbalg4
+- valory/gnosis_safe_proxy_factory:0.1.0:bafybeidzdv6zjst5likperhuqdzsb4yix6ey5ir45nwdcquw3asuqmqdlu
 protocols:
 - open_aea/signing:1.0.0:bafybeibqlfmikg5hk4phzak6gqzhpkt6akckx7xppbp53mvwt6r73h7tk4
+- valory/abci:0.1.0:bafybeig3dj5jhsowlvg3t73kgobf6xn4nka7rkttakdb2gwsg5bp7rt7q4
+- valory/acn:1.1.0:bafybeignmc5uh3vgpuckljcj2tgg7hdqyytkm6m5b6v6mxtazdcvubibva
 - valory/contract_api:1.0.0:bafybeidv6wxpjyb2sdyibnmmum45et4zcla6tl63bnol6ztyoqvpl4spmy
 - valory/http:1.0.0:bafybeifyoio7nlh5zzyn5yz7krkou56l22to3cwg7gw5v5o3vxwklibhty
+- valory/ipfs:0.1.0:bafybeihlgai5pbmkb6mjhvgy4gkql5uvpwvxbpdowczgz4ovxat6vajrq4
+- valory/ledger_api:1.0.0:bafybeih6hfzj2obw5oajnt6ng6355edgvi5ngoaub44vpuszqoplfvyaom
+- valory/tendermint:0.1.0:bafybeicusvezoqlmyt6iqomcbwaz3xkhk2qf3d56q5zprmj3xdxfy64k54
+- valory/llm:1.0.0:bafybeigafqnus3kvaashfdzrpybpqiumhvbs2dmdnukqzn7yqedga4x7ui
 skills:
 - valory/abstract_abci:0.1.0:bafybeihkrunmigvlcze7uxhafj2h3kvpf2kifggq7zqj42n2we4mcwuvou
 - valory/abstract_round_abci:0.1.0:bafybeib2jw7hjccou42wis35orckwycb2dgjk7yw46anuqysf2h7su3fi4
-- valory/proposal_collector:0.1.0:bafybeie6clplqvltkdsord6yt3lpz5q34mz5f3nkzepgz3xcf7kz7td4y4
-- valory/proposal_voter:0.1.0:bafybeihellfnj62r7febdat5kr5nvtcjz2blbvulebz3u6xwvcvzt4ctuq
-- valory/governatooorr_abci:0.1.0:bafybeia4wrwluks27x2w6fwt3bdh6kgfzfezxpbhhesihdpxsy2zeyxx6y
+- valory/governatooorr_abci:0.1.0:bafybeif45xvdsdpeckjex4o6jvep22bzqpbtjy2qtefm52f4x3su3wejbu
+- valory/proposal_collector:0.1.0:bafybeigrxu6423tm77r4mspykk5i7vwul2yvearx2zwtmwdoosvshdrdz4
+- valory/proposal_voter:0.1.0:bafybeidjpk652nfiqmvlei34xs2yjnje4kaewl7dsy2adogxbaac7am7fm
+- valory/transaction_settlement_abci:0.1.0:bafybeiftbgfzp36bknbwus3fx2equmhgmboy4qd5myex76xfc4ze6o7b54
 - valory/registration_abci:0.1.0:bafybeidgoqi7fa2gb56hdfsf74bbunfii63zgeo4qhggb66ofver2n2gya
 - valory/reset_pause_abci:0.1.0:bafybeievxhu6u5r5wlpjfzcwuowlbanhfbi25saf25qit53jauv4kq6gne
 default_ledger: ethereum
@@ -84,9 +93,15 @@ config:
   ledger_apis:
     ethereum:
       address: ${CONNECTION_LEDGER_CONFIG_LEDGER_APIS_ETHEREUM_ADDRESS:str:http://localhost:8545}
-      chain_id: ${CONNECTION_LEDGER_CONFIG_LEDGER_APIS_ETHEREUM_CHAIN_ID:int:31337}
+      chain_id: ${CONNECTION_LEDGER_CONFIG_LEDGER_APIS_ETHEREUM_CHAIN_ID:int:1}
       poa_chain: ${CONNECTION_LEDGER_CONFIG_LEDGER_APIS_ETHEREUM_POA_CHAIN:bool:false}
       default_gas_price_strategy: ${CONNECTION_LEDGER_CONFIG_LEDGER_APIS_ETHEREUM_DEFAULT_GAS_PRICE_STRATEGY:str:eip1559}
+---
+public_id: valory/langchain:0.1.0
+type: connection
+config:
+  openai_api_key: ${str:null}
+  temperature: ${float:0.7}
 ---
 public_id: valory/p2p_libp2p_client:0.1.0
 type: connection
@@ -138,7 +153,7 @@ models:
       keeper_timeout: 30.0
       max_attempts: 10
       max_healthcheck: 120
-      observation_interval: ${int:300}
+      observation_interval: ${int:10}
       on_chain_service_id: null
       reset_tendermint_after: 2
       retry_attempts: 400
@@ -149,8 +164,8 @@ models:
       service_id: governatooorr
       service_registry_address: null
       setup:
-        all_participants: ${list:[]}
-        safe_contract_address: ${list:["0x0000000000000000000000000000000000000000"]}
+        all_participants: ${list:[["0x10E867Ac2Fb0Aa156ca81eF440a5cdf373bE1AaC"]]}
+        safe_contract_address: ${list:["0x7b2a08Fae878E88efE0aa82599C167E9B0e9BdC4"]}
         consensus_threshold:
         - null
       share_tm_config_on_startup: ${bool:false}
@@ -162,7 +177,7 @@ models:
       tendermint_p2p_url: localhost:26656
       tx_timeout: 10.0
       delegate_contract_address: ${str:0xeF3B6E9e13706A8F01fe98fdCf66335dc5CfdEED}
-      safe_contract_address: ${str:0x0000000000000000000000000000000000000000}
+      safe_contract_address: ${str:0x7b2a08Fae878E88efE0aa82599C167E9B0e9BdC4}
       tally_api_endpoint: ${str:https://api.tally.xyz/query}
       tally_api_key: ${str:<tally_api_key>}
       service_endpoint_base: ${str:https://governatooorr.staging.autonolas.tech/}

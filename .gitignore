@@ -12,9 +12,22 @@ Pipfile.lock
 abci_build/
 keys.json
 leak_report
-packages/valory/connections
-packages/valory/contracts
-packages/valory/protocols
+packages/valory/connections/abci
+packages/valory/connections/http_client
+packages/valory/connections/ipfs
+packages/valory/connections/ledger
+packages/valory/connections/p2p_libp2p_client
+packages/fetchai/connections/http_server
+packages/valory/contracts/gnosis_safe
+packages/valory/contracts/gnosis_safe_proxy_factory
+packages/valory/contracts/service_registry
+packages/valory/protocols/abci
+packages/valory/protocols/acn
+packages/valory/protocols/contract_api
+packages/valory/protocols/http
+packages/valory/protocols/ipfs
+packages/valory/protocols/ledger_api
+packages/valory/protocols/tendermint
 packages/valory/skills/abstract_abci
 packages/valory/skills/abstract_round_abci
 packages/valory/skills/registration_abci
@@ -28,3 +41,11 @@ packages/fetchai
 .coverage*
 
 *.env
+
+packages/valory/protocols/__init__.py
+
+run_governatooorr.sh
+
+governatooorr/
+
+run_agent.sh

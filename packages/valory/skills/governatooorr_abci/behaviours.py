@@ -24,7 +24,7 @@ from packages.valory.skills.abstract_round_abci.behaviours import (
     AbstractRoundBehaviour,
     BaseBehaviour,
 )
-from packages.valory.skills.governatooorr.composition import (
+from packages.valory.skills.governatooorr_abci.composition import (
     GovernatooorrAbciApp,
 )
 from packages.valory.skills.registration_abci.behaviours import (

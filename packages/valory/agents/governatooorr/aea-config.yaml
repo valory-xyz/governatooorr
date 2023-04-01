@@ -18,8 +18,8 @@ connections:
 - fetchai/http_server:0.22.0:bafybeihaax5od5zo5jk2l62hv4jwuwtxloh5mijozudpsjombqc4ncmi6i
 - valory/abci:0.1.0:bafybeidyfpwu7hpanfj74zn6nkzmzoz2qharxfsnxzjr7bfldho2xzualu
 - valory/http_client:0.23.0:bafybeidykl4elwbcjkqn32wt5h4h7tlpeqovrcq3c5bcplt6nhpznhgczi
-- valory/langchain:0.1.0:bafybeicwd6gucqhfpsif2x6tczi43k76ldpjgsi3fxzvb4k2m4alpa6ybq
 - valory/ledger:0.19.0:bafybeighon6i2qfl2xrg7t3lbdzlkyo4v2a7ayvwso7m5w7pf2hvjfs2ma
+- valory/openai:0.1.0:bafybeih3jln4ztrnm3mrsstr3ziogjmzexioddqdv6xghwgbakbnr3lb7q
 - valory/p2p_libp2p_client:0.1.0:bafybeidwcobzb7ut3efegoedad7jfckvt2n6prcmd4g7xnkm6hp6aafrva
 contracts:
 - valory/compound:0.1.0:bafybeid2u5baz3doyspgpumb3hzpzj5l5xoxa53d2jhhoa3u7iumtokn7a
@@ -39,9 +39,9 @@ protocols:
 skills:
 - valory/abstract_abci:0.1.0:bafybeiai2t36ht3blisjneahv5almyfieqokl4auj2n43rj4k5chun2i44
 - valory/abstract_round_abci:0.1.0:bafybeib7q4t5jh6gic3i2pzuzlk7q2xmnueyxjpftm4gl56vnnz4vs4f7a
-- valory/governatooorr_abci:0.1.0:bafybeihgff2dxftwkvcoanqg44tvwtdmfbncnahkstg5jdqfuiqxyrz7lq
+- valory/governatooorr_abci:0.1.0:bafybeigjzz4er5xt6bz6gcb4u7ejgfz6bd25nrek5yw4jcncuaabqo3yki
 - valory/proposal_collector:0.1.0:bafybeidcv6nlxl7l3ytwsf26wqzwk76bsej7cxg6prmtywcp7yuvlgwvzm
-- valory/proposal_voter:0.1.0:bafybeig3tmvcshlxkyy56qmrk6bofeq4c3u2pfizhk73pnqcjdumzrh7e4
+- valory/proposal_voter:0.1.0:bafybeigqnzvjbjuenig2nf6v37irrsxf2rtsxpsoa5hrxy4miw4t6ghlku
 - valory/registration_abci:0.1.0:bafybeidc6iv54mr2antvrw3r4tldm635othi62bhzeyyid7kejzxw4fwiq
 - valory/reset_pause_abci:0.1.0:bafybeige4ncfhwlqbthmfvdu7aogl2qqsozpz3h5el3xokmq4hcqujgsqy
 - valory/transaction_settlement_abci:0.1.0:bafybeihdgnqsiauhuuazmpnt7tawzxm3jnidfytifmb6yjbb6i3cqnafvy
@@ -97,7 +97,7 @@ config:
       poa_chain: ${CONNECTION_LEDGER_CONFIG_LEDGER_APIS_ETHEREUM_POA_CHAIN:bool:false}
       default_gas_price_strategy: ${CONNECTION_LEDGER_CONFIG_LEDGER_APIS_ETHEREUM_DEFAULT_GAS_PRICE_STRATEGY:str:eip1559}
 ---
-public_id: valory/langchain:0.1.0
+public_id: valory/openai:0.1.0
 type: connection
 config:
   openai_api_key: ${str:null}

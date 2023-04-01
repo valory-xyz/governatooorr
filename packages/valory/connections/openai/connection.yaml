@@ -1,27 +1,27 @@
-name: langchain
+name: openai
 author: valory
 version: 0.1.0
 type: connection
-description: The langchain connection provides a wrapper around langchain.
+description: The openai connection provides a wrapper around OpenAI SDK.
 license: Apache-2.0
 aea_version: '>=1.0.0, <2.0.0'
 fingerprint:
-  __init__.py: bafybeidp5yxxngeckkuzwt5vssiozc5pty4uybf77irfri2mqcut4eeztm
-  connection.py: bafybeierl3o7hgh5lxg7lagck3s66ppvmasjiq2qgb2rg4lnibwmjacjxy
-  readme.md: bafybeihg5yfzgqvg5ngy7r2o5tfeqnelx2ffxw4po5hmheqjfhumpmxpoq
+  __init__.py: bafybeie4qjnhmvzlfsemkp557uiptwbhvhzt5rsd4rxwlbohsiwsdlpzyi
+  connection.py: bafybeich7hr7sh2rzn34m7oj3ysmepmyks5hq7zerkcpadozkged6vdzam
+  readme.md: bafybeibqbvpfn6i2w7vxk2m65gizd2hcofu7mdzp2yusx7uupelztme724
 fingerprint_ignore_patterns: []
 connections: []
 protocols:
 - valory/llm:1.0.0:bafybeigafqnus3kvaashfdzrpybpqiumhvbs2dmdnukqzn7yqedga4x7ui
-class_name: LangchainConnection
+class_name: OpenaiConnection
 config:
+  engine: gpt-3.5-turbo
+  max_tokens: 500
   openai_api_key: null
   temperature: 0.7
 excluded_protocols: []
 restricted_to_protocols: []
 dependencies:
-  langchain:
-    version: ==0.0.127
   openai:
     version: ==0.27.2
 is_abstract: false

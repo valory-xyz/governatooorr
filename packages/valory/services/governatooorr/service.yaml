@@ -8,7 +8,7 @@ license: Apache-2.0
 fingerprint:
   README.md: bafybeicw7npqf36nxy3ocmmjfntgjn5dskgespnpw6o2rw62aof2x5oxvm
 fingerprint_ignore_patterns: []
-agent: valory/governatooorr:0.1.0:bafybeiefqt6vfp4okexdswlu3tggugwhj24dtckrfvv2pes7snfhysm7fe
+agent: valory/governatooorr:0.1.0:bafybeibaratkozbm57eqivdzcgdo4ynb3hernesijygbo7qibthrwpr56q
 number_of_agents: 4
 deployment:
   agent:
@@ -96,7 +96,7 @@ config:
       poa_chain: ${ETHEREUM_LEDGER_IS_POA_CHAIN:bool:false}
       default_gas_price_strategy: ${ETHEREUM_LEDGER_PRICING:str:eip1559}
 ---
-public_id: valory/langchain:0.1.0
+public_id: valory/openai:0.1.0
 type: connection
 config:
   openai_api_key: ${OPENAI_API_KEY:null}

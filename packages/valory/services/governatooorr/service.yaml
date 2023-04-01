@@ -8,8 +8,8 @@ license: Apache-2.0
 fingerprint:
   README.md: bafybeicw7npqf36nxy3ocmmjfntgjn5dskgespnpw6o2rw62aof2x5oxvm
 fingerprint_ignore_patterns: []
-agent: valory/governatooorr:0.1.0:bafybeian26d2n7wspqyzmvpd4tlg6dcdkje6n3o43bspm7zx5ip3qk2n6i
-number_of_agents: 4
+agent: valory/governatooorr:0.1.0:bafybeicei52tpsrhel3oejaiuhwltpbuyqfgrw7wrmd4vhaspb2ox5hhey
+number_of_agents: 1
 deployment:
   agent:
     ports:
@@ -99,8 +99,8 @@ config:
 public_id: valory/openai:0.1.0
 type: connection
 config:
-  openai_api_key: ${OPENAI_API_KEY:null}
-  temperature: ${TEMPERATURE:0.7}
+  openai_api_key: ${OPENAI_API_KEY:str:null}
+  temperature: ${TEMPERATURE:float:0.7}
 ---
 public_id: valory/p2p_libp2p_client:0.1.0
 type: connection

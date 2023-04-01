@@ -97,7 +97,7 @@ class OpenaiConnection(BaseSyncConnection):
             setting: self.configuration.config.get(setting)
             for setting in ("openai_api_key", "engine", "max_tokens", "temperature")
         }
-        openai.api_key = self.openai_settings["your_openai_api_key"]
+        openai.api_key = self.openai_settings["openai_api_key"]
         self.dialogues = LlmDialogues(connection_id=CONNECTION_ID)
 
     def main(self) -> None:

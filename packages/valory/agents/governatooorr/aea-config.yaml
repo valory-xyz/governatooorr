@@ -19,7 +19,7 @@ connections:
 - valory/abci:0.1.0:bafybeidyfpwu7hpanfj74zn6nkzmzoz2qharxfsnxzjr7bfldho2xzualu
 - valory/http_client:0.23.0:bafybeidykl4elwbcjkqn32wt5h4h7tlpeqovrcq3c5bcplt6nhpznhgczi
 - valory/ledger:0.19.0:bafybeighon6i2qfl2xrg7t3lbdzlkyo4v2a7ayvwso7m5w7pf2hvjfs2ma
-- valory/openai:0.1.0:bafybeih3jln4ztrnm3mrsstr3ziogjmzexioddqdv6xghwgbakbnr3lb7q
+- valory/openai:0.1.0:bafybeigvfuv5uxx6jhorz3a2zdthm553qopszdhm2dcj235ohcnn2jsnty
 - valory/p2p_libp2p_client:0.1.0:bafybeidwcobzb7ut3efegoedad7jfckvt2n6prcmd4g7xnkm6hp6aafrva
 contracts:
 - valory/compound:0.1.0:bafybeiageeem6sf2z3eganjazrp72v6bibjhpagvhozw2wo34ozncihudu
@@ -39,9 +39,9 @@ protocols:
 skills:
 - valory/abstract_abci:0.1.0:bafybeiai2t36ht3blisjneahv5almyfieqokl4auj2n43rj4k5chun2i44
 - valory/abstract_round_abci:0.1.0:bafybeib7q4t5jh6gic3i2pzuzlk7q2xmnueyxjpftm4gl56vnnz4vs4f7a
-- valory/governatooorr_abci:0.1.0:bafybeibannwotcs3p2sh5zychpmsa6luhinbjzkls2mgyrq5fajg6v3smy
+- valory/governatooorr_abci:0.1.0:bafybeihce5ejiljurnpumxwojyumm2yrr7wixuknplzxwl5vdkux4pfpau
 - valory/proposal_collector:0.1.0:bafybeieumytuomn5puq3qsv56prdhqeffd4oq3uf2aca276lbd76plqnxq
-- valory/proposal_voter:0.1.0:bafybeih3wca6lay3rtf55xhuupu6htfw4wt7ao4huplpvxu346jzyyy24m
+- valory/proposal_voter:0.1.0:bafybeihr7sa42dbau6wlccpmn2uiwvlfjfh4ipdh2u3y7czm7nvh5nof5m
 - valory/registration_abci:0.1.0:bafybeidc6iv54mr2antvrw3r4tldm635othi62bhzeyyid7kejzxw4fwiq
 - valory/reset_pause_abci:0.1.0:bafybeige4ncfhwlqbthmfvdu7aogl2qqsozpz3h5el3xokmq4hcqujgsqy
 - valory/transaction_settlement_abci:0.1.0:bafybeihdgnqsiauhuuazmpnt7tawzxm3jnidfytifmb6yjbb6i3cqnafvy

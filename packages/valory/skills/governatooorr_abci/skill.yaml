@@ -12,15 +12,15 @@ fingerprint:
   dialogues.py: bafybeigpwuzku3we7axmxeamg7vn656maww6emuztau5pg3ebsoquyfdqm
   fsm_specification.yaml: bafybeicfcrrbod4rr7mz6ix3av56arpzmvzdnmwqkk6mlierbmwo7lnbji
   handlers.py: bafybeicbzmpz5ag75u7euupgaqkqsigcmmdv7nadii7p5li74igqmqchki
-  models.py: bafybeie3mjtuf3qipgu3zmhp2i4g6z2ny2wnpp62j6p36xnrqctxo2tvoq
+  models.py: bafybeihhrq6tdqmt7wtmsaaeljacdcseno7vnyaqm3onmnfwdqq4o2yglq
 fingerprint_ignore_patterns: []
 connections: []
 contracts: []
 protocols: []
 skills:
 - valory/abstract_round_abci:0.1.0:bafybeib2jw7hjccou42wis35orckwycb2dgjk7yw46anuqysf2h7su3fi4
-- valory/proposal_collector:0.1.0:bafybeiczfenas5z7muxdu36hndvkzquusdxtmalir42xjpmuxxztlsixzq
-- valory/proposal_voter:0.1.0:bafybeieslpuhjbkmdjl5ngve2l6n5mpj63w33pqfemv4o42ng7lkh2tmxm
+- valory/proposal_collector:0.1.0:bafybeigrxu6423tm77r4mspykk5i7vwul2yvearx2zwtmwdoosvshdrdz4
+- valory/proposal_voter:0.1.0:bafybeidjpk652nfiqmvlei34xs2yjnje4kaewl7dsy2adogxbaac7am7fm
 - valory/registration_abci:0.1.0:bafybeidgoqi7fa2gb56hdfsf74bbunfii63zgeo4qhggb66ofver2n2gya
 - valory/reset_pause_abci:0.1.0:bafybeievxhu6u5r5wlpjfzcwuowlbanhfbi25saf25qit53jauv4kq6gne
 - valory/transaction_settlement_abci:0.1.0:bafybeiftbgfzp36bknbwus3fx2equmhgmboy4qd5myex76xfc4ze6o7b54
@@ -98,6 +98,9 @@ models:
           version: {}
         voting_power: '10'
       history_end: null
+      history_check_timeout: 1205
+      init_fallback_gas: 0
+      keeper_allowed_retries: 3
       keeper_timeout: 30.0
       max_attempts: 10
       max_healthcheck: 120
@@ -128,8 +131,10 @@ models:
       tally_api_endpoint: https://api.tally.xyz/query
       tally_api_key: <tally_api_key>
       tendermint_check_sleep_delay: 3
+      validate_timeout: 1205
       tendermint_com_url: http://localhost:8080
       tendermint_max_retries: 5
+      finalize_timeout: 60.0
       tendermint_p2p_url: localhost:26656
       tendermint_url: http://localhost:26657
       tx_timeout: 10.0

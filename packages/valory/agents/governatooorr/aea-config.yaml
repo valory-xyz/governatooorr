@@ -20,7 +20,7 @@ connections:
 - valory/http_client:0.23.0:bafybeidykl4elwbcjkqn32wt5h4h7tlpeqovrcq3c5bcplt6nhpznhgczi
 - valory/ledger:0.19.0:bafybeicxcypcg2lxmtktbmuhqcyluzmasfsdeljyk2pvaabzc3h2jmcsui
 - valory/p2p_libp2p_client:0.1.0:bafybeidwcobzb7ut3efegoedad7jfckvt2n6prcmd4g7xnkm6hp6aafrva
-- valory/langchain:0.1.0:bafybeifogvvmgq56oeytorp6hsy64s4ackyotncf6nxzhitcunjlopjkmq
+- valory/langchain:0.1.0:bafybeibmdrfnz6sjrmrfq6qqojsguz6p5t5qm7zif73tzfz6ij2evzxlpq
 contracts:
 - valory/compound:0.1.0:bafybeid2u5baz3doyspgpumb3hzpzj5l5xoxa53d2jhhoa3u7iumtokn7a
 - valory/delegate:0.1.0:bafybeign6vhogurakzkzjym6ih6jmpnza5rcjids55uoxbkaowsf6un4ei
@@ -39,9 +39,9 @@ protocols:
 skills:
 - valory/abstract_abci:0.1.0:bafybeihkrunmigvlcze7uxhafj2h3kvpf2kifggq7zqj42n2we4mcwuvou
 - valory/abstract_round_abci:0.1.0:bafybeib2jw7hjccou42wis35orckwycb2dgjk7yw46anuqysf2h7su3fi4
-- valory/governatooorr_abci:0.1.0:bafybeiaeo5fv7pod2m2sklzguzqcqtqr74wfrrb2d6pnmhjhyru35xfzae
-- valory/proposal_collector:0.1.0:bafybeiczfenas5z7muxdu36hndvkzquusdxtmalir42xjpmuxxztlsixzq
-- valory/proposal_voter:0.1.0:bafybeieslpuhjbkmdjl5ngve2l6n5mpj63w33pqfemv4o42ng7lkh2tmxm
+- valory/governatooorr_abci:0.1.0:bafybeif45xvdsdpeckjex4o6jvep22bzqpbtjy2qtefm52f4x3su3wejbu
+- valory/proposal_collector:0.1.0:bafybeigrxu6423tm77r4mspykk5i7vwul2yvearx2zwtmwdoosvshdrdz4
+- valory/proposal_voter:0.1.0:bafybeidjpk652nfiqmvlei34xs2yjnje4kaewl7dsy2adogxbaac7am7fm
 - valory/transaction_settlement_abci:0.1.0:bafybeiftbgfzp36bknbwus3fx2equmhgmboy4qd5myex76xfc4ze6o7b54
 - valory/registration_abci:0.1.0:bafybeidgoqi7fa2gb56hdfsf74bbunfii63zgeo4qhggb66ofver2n2gya
 - valory/reset_pause_abci:0.1.0:bafybeievxhu6u5r5wlpjfzcwuowlbanhfbi25saf25qit53jauv4kq6gne
@@ -93,7 +93,7 @@ config:
   ledger_apis:
     ethereum:
       address: ${CONNECTION_LEDGER_CONFIG_LEDGER_APIS_ETHEREUM_ADDRESS:str:http://localhost:8545}
-      chain_id: ${CONNECTION_LEDGER_CONFIG_LEDGER_APIS_ETHEREUM_CHAIN_ID:int:31337}
+      chain_id: ${CONNECTION_LEDGER_CONFIG_LEDGER_APIS_ETHEREUM_CHAIN_ID:int:1}
       poa_chain: ${CONNECTION_LEDGER_CONFIG_LEDGER_APIS_ETHEREUM_POA_CHAIN:bool:false}
       default_gas_price_strategy: ${CONNECTION_LEDGER_CONFIG_LEDGER_APIS_ETHEREUM_DEFAULT_GAS_PRICE_STRATEGY:str:eip1559}
 ---
@@ -165,7 +165,7 @@ models:
       service_registry_address: null
       setup:
         all_participants: ${list:[["0x10E867Ac2Fb0Aa156ca81eF440a5cdf373bE1AaC"]]}
-        safe_contract_address: ${list:["0x0000000000000000000000000000000000000000"]}
+        safe_contract_address: ${list:["0x7b2a08Fae878E88efE0aa82599C167E9B0e9BdC4"]}
         consensus_threshold:
         - null
       share_tm_config_on_startup: ${bool:false}
@@ -177,7 +177,7 @@ models:
       tendermint_p2p_url: localhost:26656
       tx_timeout: 10.0
       delegate_contract_address: ${str:0xeF3B6E9e13706A8F01fe98fdCf66335dc5CfdEED}
-      safe_contract_address: ${str:0x0000000000000000000000000000000000000000}
+      safe_contract_address: ${str:0x7b2a08Fae878E88efE0aa82599C167E9B0e9BdC4}
       tally_api_endpoint: ${str:https://api.tally.xyz/query}
       tally_api_key: ${str:<tally_api_key>}
       service_endpoint_base: ${str:https://governatooorr.staging.autonolas.tech/}

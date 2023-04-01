@@ -7,14 +7,14 @@ license: Apache-2.0
 aea_version: '>=1.0.0, <2.0.0'
 fingerprint:
   __init__.py: bafybeiavfndo4oyvnfhe4ssydszeu2xx73hz3l7wbo42gldgabrn54drwy
-  behaviours.py: bafybeicz33y5djfpeqb3e2c2te5ch2fmktfkqwspzbawbdg3d5264ropp4
+  behaviours.py: bafybeiftch3divxjxd2nw46uaezvcplyn7ske2hpx5gqhxrfkcs6z5wgra
   dialogues.py: bafybeibvpsfq7v2afvoqodqyqhtit5zpkhw7pxvuyozvyk7e4nxad4dvry
   fsm_specification.yaml: bafybeid7nax5oywpoackufq5w2kklzer3ckecarfuxndoliryypt5ttq3e
   handlers.py: bafybeibyvr2so264jdc7nfzicieegtltl7gq7u5mxjaiodkuvvpux2rj3m
   models.py: bafybeifskytcqgqme5xt6puxbza7fkh54t7pnjmh3higamm2jvn2fyyo3a
   payload_tools.py: bafybeihk5tqqyn3z4qsvbu4clouclqyn26hklzb3djikxfifpdb6lcwaua
   payloads.py: bafybeidonvuylmxad4mhk6hix2s7w3fjkabbtv5vkow6xwsrskvlt4ewuu
-  rounds.py: bafybeih6ctah2iusro5j54gt7gvwiftttom6rk34quafy2jwc6oy7oykha
+  rounds.py: bafybeidoenxq5qoylqymcvaoz57yxnayy7qxyuf3iwnpuy5ckxuay4lcly
   tests/__init__.py: bafybeic6evwhxdwtdjvz7xv3dqqhdhd7uxyr55xhymeiqfe4ga7mfdptxm
   tests/test_behaviours.py: bafybeifgilmbi3nhu3ccxikuz25fxmwkcr52dnodgvyxzo7lkizt6vmlqe
   tests/test_dialogues.py: bafybeieleu64kg3bid2wvv6xelyre3dup4gml3czrh4pi773broxkzxjtq
@@ -24,7 +24,7 @@ fingerprint:
   tests/test_rounds.py: bafybeibu24ycdb6gbnpqdqj3ncylitrlu2cuntxe762xvnhbrz3tv3w6b4
 fingerprint_ignore_patterns: []
 connections:
-- valory/langchain:0.1.0:bafybeifogvvmgq56oeytorp6hsy64s4ackyotncf6nxzhitcunjlopjkmq
+- valory/langchain:0.1.0:bafybeibmdrfnz6sjrmrfq6qqojsguz6p5t5qm7zif73tzfz6ij2evzxlpq
 contracts:
 - valory/delegate:0.1.0:bafybeign6vhogurakzkzjym6ih6jmpnza5rcjids55uoxbkaowsf6un4ei
 - valory/gnosis_safe:0.1.0:bafybeibzfhpib5fw3wady6dhq5bfgo37o437bi4s3hthbvvit7byvbalg4
@@ -79,6 +79,9 @@ models:
   ledger_api_dialogues:
     args: {}
     class_name: LedgerApiDialogues
+  llm_dialogues:
+    args: {}
+    class_name: LlmDialogues
   params:
     args:
       cleanup_history_depth: 1

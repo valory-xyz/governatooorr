@@ -71,9 +71,9 @@ class SynchronizedData(BaseSynchronizedData):
         return cast(str, self.db.get_strict("selected_proposal_id"))
 
     @property
-    def current_token_to_delegations(self) -> dict:
+    def current_delegations(self) -> list:
         """Get the current delegations."""
-        return cast(dict, self.db.get("current_token_to_delegations", {}))
+        return cast(list, self.db.get("current_delegations", {}))
 
     @property
     def vote_code(self) -> int:
@@ -109,6 +109,10 @@ class EstablishVoteRound(CollectSameUntilThresholdRound):
                 SynchronizedData, self.synchronized_data
             ).selected_proposal_id
             vote = self.most_voted_payload
+
+            # TODO: hardcoded vote
+            # vote = "FOR"
+
             vote_code = VOTES_TO_CODE[vote]
             for i in range(len(active_proposals)):
                 if active_proposals[i]["id"] == selected_proposal_id:

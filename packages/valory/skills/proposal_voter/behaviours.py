@@ -102,24 +102,28 @@ class EstablishVoteBehaviour(ProposalVoterBaseBehaviour):
             # We can get it from one of the delegations  # TODO: not the best way
             governor_address = selected_proposal["governor"]["id"].split(":")[-1]
             token_address = None
-            for (
-                address,
-                user_to_delegations,
-            ) in self.synchronized_data.current_token_to_delegations:
-                for delegation_data in user_to_delegations.values():
-                    if delegation_data["governor_address"] == governor_address:
-                        token_address = address
-                        break
+
+            for d in self.synchronized_data.current_delegations:
+                if d["governor_address"] == governor_address:
+                    token_address = d["token_address"]
+                    break
 
             if not token_address:
                 raise ValueError(
                     f"Could not find the token address for this proposal: {selected_proposal}"
                 )
 
+            self.context.logger.info(
+                f"Getting vote intention for proposal {selected_proposal}"
+            )
+
             # Get the service aggregated vote intention
             vote_intention = self._get_service_vote_intention(
                 token_address
             )  # either GOOD or EVIL
+
+            self.context.logger.info(f"Vote intention is {vote_intention}")
+
             prompt_template = "Here is a voting proposal for a protocol: `{proposal}`. How should I vote on the voting proposal if my intent was to {voting_intention_snippet} and the voting options are {voting_options}? Please answer with only the voting option."
             voting_intention_snippet = (
                 "cause chaos to the protocol"
@@ -134,7 +138,9 @@ class EstablishVoteBehaviour(ProposalVoterBaseBehaviour):
                 "voting_options": VOTING_OPTIONS,
             }
 
-            vote = yield self._get_vote(prompt_template, prompt_values)
+            vote = yield from self._get_vote(prompt_template, prompt_values)
+
+            self.context.logger.info(f"Vote is {vote}")
 
             sender = self.context.agent_address
             payload = EstablishVotePayload(sender=sender, vote=vote)
@@ -164,6 +170,8 @@ class EstablishVoteBehaviour(ProposalVoterBaseBehaviour):
             request_llm_message, llm_dialogue
         )
         vote = llm_response_message.value
+
+        self.context.logger.info(f"Vote is {vote}")
 
         vote = vote.strip("\n")
 
@@ -201,13 +209,16 @@ class EstablishVoteBehaviour(ProposalVoterBaseBehaviour):
 
         vote_preference_counts = {"GOOD": 0, "EVIL": 0}
 
+        current_delegations = self.synchronized_data.current_delegations
+        current_delegations = list(
+            filter(lambda d: d["token_address"] == token_address, current_delegations)
+        )
+
         # Count votes
-        for delegation_data in self.synchronized_data.current_token_to_delegations.get(
-            token_address, {}
-        ).values():
-            if delegation_data["voting_preference"] in vote_preference_counts:
-                vote_preference_counts[delegation_data["voting_preference"]] += int(
-                    delegation_data["delegation_amount"]
+        for delegation in current_delegations:
+            if delegation["voting_preference"] in vote_preference_counts:
+                vote_preference_counts[delegation["voting_preference"]] += int(
+                    delegation["delegated_amount"]
                 )
 
         # Sort the voring count by value
@@ -258,11 +269,11 @@ class PrepareVoteTransactionBehaviour(ProposalVoterBaseBehaviour):
         governor_address = None
         for ap in active_proposals:
             if ap["id"] == selected_proposal_id:
-                governor_address = ap["governor_address"]
+                governor_address = ap["governor"]["id"].split(":")[-1]
 
         # Get the raw transaction from the Bravo Delegate contract
         contract_api_msg = yield from self.get_contract_api_response(
-            performative=ContractApiMessage.Performative.GET_RAW_TRANSACTION,  # type: ignore
+            performative=ContractApiMessage.Performative.GET_STATE,  # type: ignore
             contract_address=governor_address,
             contract_id=str(DelegateContract.contract_id),
             contract_callable="get_cast_vote_data",
@@ -270,13 +281,12 @@ class PrepareVoteTransactionBehaviour(ProposalVoterBaseBehaviour):
             support=self.synchronized_data.vote_code,
         )
         if (
-            contract_api_msg.performative
-            != ContractApiMessage.Performative.RAW_TRANSACTION
+            contract_api_msg.performative != ContractApiMessage.Performative.STATE
         ):  # pragma: nocover
             self.context.logger.warning("get_cast_vote_data unsuccessful!")
             return None
 
-        data = cast(bytes, contract_api_msg.raw_transaction.body["data"])
+        data = cast(bytes, contract_api_msg.state.body["data"])
 
         # Get the safe transaction hash
         ether_value = ETHER_VALUE
@@ -284,8 +294,8 @@ class PrepareVoteTransactionBehaviour(ProposalVoterBaseBehaviour):
         to_address = self.params.delegate_contract_address
 
         contract_api_msg = yield from self.get_contract_api_response(
-            performative=ContractApiMessage.Performative.GET_RAW_TRANSACTION,  # type: ignore
-            contract_address=self.params.safe_contract_address,
+            performative=ContractApiMessage.Performative.GET_STATE,  # type: ignore
+            contract_address=self.synchronized_data.safe_contract_address,
             contract_id=str(GnosisSafeContract.contract_id),
             contract_callable="get_raw_safe_transaction_hash",
             to_address=to_address,
@@ -294,13 +304,12 @@ class PrepareVoteTransactionBehaviour(ProposalVoterBaseBehaviour):
             safe_tx_gas=safe_tx_gas,
         )
         if (
-            contract_api_msg.performative
-            != ContractApiMessage.Performative.RAW_TRANSACTION
+            contract_api_msg.performative != ContractApiMessage.Performative.STATE
         ):  # pragma: nocover
             self.context.logger.warning("get_raw_safe_transaction_hash unsuccessful!")
             return None
 
-        safe_tx_hash = cast(str, contract_api_msg.raw_transaction.body["tx_hash"])
+        safe_tx_hash = cast(str, contract_api_msg.state.body["tx_hash"])
         safe_tx_hash = safe_tx_hash[2:]
         self.context.logger.info(f"Hash of the Safe transaction: {safe_tx_hash}")
 

@@ -244,10 +244,11 @@ class HttpHandler(BaseHttpHandler):
         # Add the new delegation to this agent's new delegation list
         self.context.state.new_delegations.append(
             {
-                "user_address": delegation_data["user_address"],
-                "token_address": delegation_data["token_address"],
-                "voting_preference": delegation_data["voting_preference"],
-                "governor_address": delegation_data["governor_address"],
+                "user_address": delegation_data["address"],
+                "token_address": delegation_data["delegatedToken"],
+                "voting_preference": delegation_data["votingPreference"].upper(),
+                "governor_address": delegation_data["governorAddress"],
+                "delegated_amount": int(delegation_data["tokenBalance"]),
             }
         )
 

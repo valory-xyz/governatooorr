@@ -26,7 +26,7 @@ fingerprint_ignore_patterns: []
 connections:
 - valory/openai:0.1.0:bafybeih3jln4ztrnm3mrsstr3ziogjmzexioddqdv6xghwgbakbnr3lb7q
 contracts:
-- valory/delegate:0.1.0:bafybeign6vhogurakzkzjym6ih6jmpnza5rcjids55uoxbkaowsf6un4ei
+- valory/delegate:0.1.0:bafybeiec25jv3ga72twomthx27hagrzvhdyj44oy3tapq2buxkyt3s6iiu
 - valory/gnosis_safe:0.1.0:bafybeidxabihujlxvmnbf3tztjbwybyr5rlwjeniihnr5edfi6bpyjnevi
 protocols:
 - valory/contract_api:1.0.0:bafybeidv6wxpjyb2sdyibnmmum45et4zcla6tl63bnol6ztyoqvpl4spmy

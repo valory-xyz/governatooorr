@@ -28,8 +28,8 @@ from packages.valory.skills.abstract_round_abci.base import BaseTxPayload
 from packages.valory.skills.abstract_round_abci.test_tools.rounds import (
     BaseCollectSameUntilThresholdRoundTest,
 )
-from packages.valory.skills.proposal_voter.payloads import EstablishVotePayload
-from packages.valory.skills.proposal_voter.rounds import (
+from packages.valory.skills.proposal_voter_abci.payloads import EstablishVotePayload
+from packages.valory.skills.proposal_voter_abci.rounds import (
     EstablishVoteRound,
     Event,
     SynchronizedData,

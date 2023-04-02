@@ -52,11 +52,11 @@ from packages.valory.skills.abstract_round_abci.handlers import (
 from packages.valory.skills.abstract_round_abci.handlers import (
     TendermintHandler as BaseTendermintHandler,
 )
-from packages.valory.skills.proposal_collector.dialogues import (
+from packages.valory.skills.proposal_collector_abci.dialogues import (
     HttpDialogue,
     HttpDialogues,
 )
-from packages.valory.skills.proposal_collector.rounds import SynchronizedData
+from packages.valory.skills.proposal_collector_abci.rounds import SynchronizedData
 
 
 ABCIRoundHandler = BaseABCIRoundHandler

@@ -31,14 +31,14 @@ from packages.valory.skills.abstract_round_abci.behaviours import (
     AbstractRoundBehaviour,
     BaseBehaviour,
 )
-from packages.valory.skills.proposal_collector.models import Params
-from packages.valory.skills.proposal_collector.payloads import (
+from packages.valory.skills.proposal_collector_abci.models import Params
+from packages.valory.skills.proposal_collector_abci.payloads import (
     CollectActiveProposalsPayload,
     SelectProposalPayload,
     SynchronizeDelegationsPayload,
     VerifyDelegationsPayload,
 )
-from packages.valory.skills.proposal_collector.rounds import (
+from packages.valory.skills.proposal_collector_abci.rounds import (
     CollectActiveProposalsRound,
     ProposalCollectorAbciApp,
     SelectProposalRound,
@@ -46,14 +46,14 @@ from packages.valory.skills.proposal_collector.rounds import (
     SynchronizedData,
     VerifyDelegationsRound,
 )
-from packages.valory.skills.proposal_collector.tally import proposal_query
+from packages.valory.skills.proposal_collector_abci.tally import proposal_query
 
 
 HTTP_OK = 200
 
 
 class ProposalCollectorBaseBehaviour(BaseBehaviour, ABC):
-    """Base behaviour for the proposal_collector skill."""
+    """Base behaviour for the proposal_collector_abci skill."""
 
     @property
     def synchronized_data(self) -> SynchronizedData:

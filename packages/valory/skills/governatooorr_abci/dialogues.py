@@ -61,10 +61,10 @@ from packages.valory.skills.abstract_round_abci.dialogues import (
 from packages.valory.skills.abstract_round_abci.dialogues import (
     TendermintDialogues as BaseTendermintDialogues,
 )
-from packages.valory.skills.proposal_voter.dialogues import (
+from packages.valory.skills.proposal_voter_abci.dialogues import (
     LlmDialogue as BaseLlmDialogue,
 )
-from packages.valory.skills.proposal_voter.dialogues import (
+from packages.valory.skills.proposal_voter_abci.dialogues import (
     LlmDialogues as BaseLlmDialogues,
 )
 

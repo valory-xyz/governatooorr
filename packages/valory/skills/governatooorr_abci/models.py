@@ -25,19 +25,21 @@ from packages.valory.skills.abstract_round_abci.models import (
 )
 from packages.valory.skills.abstract_round_abci.models import Requests as BaseRequests
 from packages.valory.skills.governatooorr_abci.composition import GovernatooorrAbciApp
-from packages.valory.skills.proposal_collector.models import (
+from packages.valory.skills.proposal_collector_abci.models import (
     Params as ProposalCollectorAbciParams,
 )
-from packages.valory.skills.proposal_collector.models import (
+from packages.valory.skills.proposal_collector_abci.models import (
     SharedState as BaseSharedState,
 )
-from packages.valory.skills.proposal_collector.rounds import (
+from packages.valory.skills.proposal_collector_abci.rounds import (
     Event as ProposalCollectorEvent,
 )
-from packages.valory.skills.proposal_voter.models import (
+from packages.valory.skills.proposal_voter_abci.models import (
     Params as ProposalVoterAbciParams,
 )
-from packages.valory.skills.proposal_voter.rounds import Event as ProposalVoterEvent
+from packages.valory.skills.proposal_voter_abci.rounds import (
+    Event as ProposalVoterEvent,
+)
 from packages.valory.skills.reset_pause_abci.rounds import Event as ResetPauseEvent
 from packages.valory.skills.transaction_settlement_abci.models import (
     TransactionParams as TransactionSettlementParams,

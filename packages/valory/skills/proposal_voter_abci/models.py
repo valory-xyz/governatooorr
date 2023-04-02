@@ -29,7 +29,7 @@ from packages.valory.skills.abstract_round_abci.models import Requests as BaseRe
 from packages.valory.skills.abstract_round_abci.models import (
     SharedState as BaseSharedState,
 )
-from packages.valory.skills.proposal_voter.rounds import ProposalVoterAbciApp
+from packages.valory.skills.proposal_voter_abci.rounds import ProposalVoterAbciApp
 
 
 class SharedState(BaseSharedState):

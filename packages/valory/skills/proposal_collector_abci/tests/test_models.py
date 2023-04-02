@@ -17,9 +17,15 @@
 #
 # ------------------------------------------------------------------------------
 
-"""This module contains the implementation of the default skill."""
+"""Test the models.py module of the ProposalCollector."""
 
-from aea.configurations.base import PublicId
+from packages.valory.skills.abstract_round_abci.test_tools.base import DummyContext
+from packages.valory.skills.proposal_collector_abci.models import SharedState
 
 
-PUBLIC_ID = PublicId.from_str("valory/proposal_collector:0.1.0")
+class TestSharedState:
+    """Test SharedState of ProposalCollector."""
+
+    def test_initialization(self) -> None:
+        """Test initialization."""
+        SharedState(name="", skill_context=DummyContext())

@@ -37,10 +37,12 @@ from packages.valory.skills.abstract_round_abci.handlers import (
 from packages.valory.skills.abstract_round_abci.handlers import (
     TendermintHandler as BaseTendermintHandler,
 )
-from packages.valory.skills.proposal_collector.handlers import (
+from packages.valory.skills.proposal_collector_abci.handlers import (
     HttpHandler as BaseHttpHandler,
 )
-from packages.valory.skills.proposal_voter.handlers import LlmHandler as BaseLlmHandler
+from packages.valory.skills.proposal_voter_abci.handlers import (
+    LlmHandler as BaseLlmHandler,
+)
 
 
 ABCIRoundHandler = BaseABCIRoundHandler

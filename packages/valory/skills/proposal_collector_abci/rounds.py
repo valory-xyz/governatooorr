@@ -34,7 +34,7 @@ from packages.valory.skills.abstract_round_abci.base import (
     EventToTimeout,
     get_name,
 )
-from packages.valory.skills.proposal_collector.payloads import (
+from packages.valory.skills.proposal_collector_abci.payloads import (
     CollectActiveProposalsPayload,
     SelectProposalPayload,
     SynchronizeDelegationsPayload,
@@ -85,6 +85,11 @@ class SynchronizedData(BaseSynchronizedData):
     def selected_proposal_id(self) -> str:
         """Get the selected_proposal_id."""
         return cast(str, self.db.get_strict("selected_proposal_id"))
+
+    @property
+    def current_token_to_delegations(self) -> dict:
+        """Get the current_token_to_delegations."""
+        return cast(dict, self.db.get_strict("current_token_to_delegations"))
 
 
 class SynchronizeDelegationsRound(CollectDifferentUntilAllRound):

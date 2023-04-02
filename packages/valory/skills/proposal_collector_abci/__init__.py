@@ -17,30 +17,9 @@
 #
 # ------------------------------------------------------------------------------
 
-"""This package contains payload tests for the ProposalCollectorAbciApp."""
+"""This module contains the implementation of the default skill."""
 
-from dataclasses import dataclass
-from typing import Hashable, Type
-
-import pytest
-
-from packages.valory.skills.proposal_collector.payloads import BaseTxPayload
+from aea.configurations.base import PublicId
 
 
-@dataclass
-class PayloadTestCase:
-    """PayloadTestCase"""
-
-    name: str
-    payload_cls: Type[BaseTxPayload]
-    content: Hashable
-
-
-# TODO: provide test cases
-@pytest.mark.parametrize("test_case", [])
-def test_payloads(test_case: PayloadTestCase) -> None:
-    """Tests for ProposalCollectorAbciApp payloads"""
-
-    payload = test_case.payload_cls(sender="sender", content=test_case.content)
-    assert payload.sender == "sender"
-    assert payload.from_json(payload.json) == payload
+PUBLIC_ID = PublicId.from_str("valory/proposal_collector_abci:0.1.0")

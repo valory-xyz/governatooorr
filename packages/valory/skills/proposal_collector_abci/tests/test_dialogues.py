@@ -17,9 +17,10 @@
 #
 # ------------------------------------------------------------------------------
 
-"""This module contains the implementation of the default skill."""
+"""Test the dialogues.py module of the ProposalCollector."""
 
-from aea.configurations.base import PublicId
+import packages.valory.skills.proposal_collector_abci.dialogues  # noqa
 
 
-PUBLIC_ID = PublicId.from_str("valory/proposal_voter:0.1.0")
+def test_import() -> None:
+    """Test that the 'dialogues.py' of the ProposalCollector can be imported."""

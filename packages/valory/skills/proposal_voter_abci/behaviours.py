@@ -35,10 +35,13 @@ from packages.valory.skills.abstract_round_abci.behaviours import (
     BaseBehaviour,
 )
 from packages.valory.skills.abstract_round_abci.models import Requests
-from packages.valory.skills.proposal_voter.dialogues import LlmDialogue, LlmDialogues
-from packages.valory.skills.proposal_voter.models import Params
-from packages.valory.skills.proposal_voter.payload_tools import hash_payload_to_hex
-from packages.valory.skills.proposal_voter.rounds import (
+from packages.valory.skills.proposal_voter_abci.dialogues import (
+    LlmDialogue,
+    LlmDialogues,
+)
+from packages.valory.skills.proposal_voter_abci.models import Params
+from packages.valory.skills.proposal_voter_abci.payload_tools import hash_payload_to_hex
+from packages.valory.skills.proposal_voter_abci.rounds import (
     EstablishVotePayload,
     EstablishVoteRound,
     PrepareVoteTransactionPayload,
@@ -56,7 +59,7 @@ VOTES_TO_CODE = {"FOR": 0, "AGAINST": 1, "ABSTAIN": 2}
 
 
 class ProposalVoterBaseBehaviour(BaseBehaviour, ABC):
-    """Base behaviour for the proposal_voter skill."""
+    """Base behaviour for the proposal_voter_abci skill."""
 
     @property
     def synchronized_data(self) -> SynchronizedData:

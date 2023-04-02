@@ -17,15 +17,30 @@
 #
 # ------------------------------------------------------------------------------
 
-"""Test the models.py module of the ProposalCollector."""
+"""This package contains payload tests for the ProposalCollectorAbciApp."""
 
-from packages.valory.skills.abstract_round_abci.test_tools.base import DummyContext
-from packages.valory.skills.proposal_collector.models import SharedState
+from dataclasses import dataclass
+from typing import Hashable, Type
+
+import pytest
+
+from packages.valory.skills.proposal_collector_abci.payloads import BaseTxPayload
 
 
-class TestSharedState:
-    """Test SharedState of ProposalCollector."""
+@dataclass
+class PayloadTestCase:
+    """PayloadTestCase"""
 
-    def test_initialization(self) -> None:
-        """Test initialization."""
-        SharedState(name="", skill_context=DummyContext())
+    name: str
+    payload_cls: Type[BaseTxPayload]
+    content: Hashable
+
+
+# TODO: provide test cases
+@pytest.mark.parametrize("test_case", [])
+def test_payloads(test_case: PayloadTestCase) -> None:
+    """Tests for ProposalCollectorAbciApp payloads"""
+
+    payload = test_case.payload_cls(sender="sender", content=test_case.content)
+    assert payload.sender == "sender"
+    assert payload.from_json(payload.json) == payload

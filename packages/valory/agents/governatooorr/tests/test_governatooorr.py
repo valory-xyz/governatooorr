@@ -54,13 +54,13 @@ from packages.valory.agents.governatooorr.tests.helpers.fixtures import (  # noq
     UseHardHatImpactEvaluatorBaseTest,
     UseMockTwitterApiBaseTest,
 )
-from packages.valory.skills.proposal_collector.rounds import (
+from packages.valory.skills.proposal_collector_abci.rounds import (
     CollectActiveProposalsRound,
     SelectProposalRound,
     SynchronizeDelegationsRound,
     VerifyDelegationsRound,
 )
-from packages.valory.skills.proposal_voter.rounds import (
+from packages.valory.skills.proposal_voter_abci.rounds import (
     EstablishVoteRound,
     PrepareVoteTransactionRound,
 )

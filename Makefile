@@ -79,7 +79,7 @@ common-checks-1:
 
 .PHONY: test
 test:
-	pytest -rfE packages/valory/skills/dynamic_nft_abci/tests -rfE packages/valory/skills/proposal_collector/tests --cov=packages.valory.skills.proposal_collector  --cov-report=xml --cov-report=term --cov-report=term-missing --cov-config=.coveragerc
+	pytest -rfE packages/valory/skills/dynamic_nft_abci/tests -rfE packages/valory/skills/proposal_collector_abci/tests --cov=packages.valory.skills.proposal_collector_abci  --cov-report=xml --cov-report=term --cov-report=term-missing --cov-config=.coveragerc
 	find . -name ".coverage*" -not -name ".coveragerc" -exec rm -fr "{}" \;
 
 v := $(shell pip -V | grep virtualenvs)
@@ -105,7 +105,7 @@ new_env: clean
 
 .PHONY: fix-abci-app-specs
 fix-abci-app-specs:
-	export PYTHONPATH=${PYTHONPATH}:${PWD} && autonomy analyse fsm-specs --update --app-class ProposalCollectorAbciApp --package packages/valory/skills/proposal_collector/ || (echo "Failed to check proposal_collector abci consistency" && exit 1)
+	export PYTHONPATH=${PYTHONPATH}:${PWD} && autonomy analyse fsm-specs --update --app-class ProposalCollectorAbciApp --package packages/valory/skills/proposal_collector_abci/ || (echo "Failed to check proposal_collector_abci abci consistency" && exit 1)
 
 .PHONY: all-linters
 all-linters:

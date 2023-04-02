@@ -31,7 +31,9 @@ from packages.valory.skills.abstract_round_abci.models import Requests as BaseRe
 from packages.valory.skills.abstract_round_abci.models import (
     SharedState as BaseSharedState,
 )
-from packages.valory.skills.proposal_collector.rounds import ProposalCollectorAbciApp
+from packages.valory.skills.proposal_collector_abci.rounds import (
+    ProposalCollectorAbciApp,
+)
 
 
 class SharedState(BaseSharedState):

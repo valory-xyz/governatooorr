@@ -17,10 +17,15 @@
 #
 # ------------------------------------------------------------------------------
 
-"""Test the handlers.py module of the ProposalVoter."""
+"""Test the models.py module of the ProposalVoter."""
 
-import packages.valory.skills.proposal_voter.handlers  # noqa
+from packages.valory.skills.abstract_round_abci.test_tools.base import DummyContext
+from packages.valory.skills.proposal_voter_abci.models import SharedState
 
 
-def test_import() -> None:
-    """Test that the 'handlers.py' of the ProposalVoter can be imported."""
+class TestSharedState:
+    """Test SharedState of ProposalVoter."""
+
+    def test_initialization(self) -> None:
+        """Test initialization."""
+        SharedState(name="", skill_context=DummyContext())

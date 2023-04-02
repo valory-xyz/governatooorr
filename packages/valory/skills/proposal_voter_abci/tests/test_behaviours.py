@@ -38,12 +38,12 @@ from packages.valory.skills.abstract_round_abci.behaviours import (
 from packages.valory.skills.abstract_round_abci.test_tools.base import (
     FSMBehaviourBaseCase,
 )
-from packages.valory.skills.proposal_voter.behaviours import (
+from packages.valory.skills.proposal_voter_abci.behaviours import (
     EstablishVoteBehaviour,
     PrepareVoteTransactionBehaviour,
     ProposalVoterBaseBehaviour,
 )
-from packages.valory.skills.proposal_voter.rounds import (
+from packages.valory.skills.proposal_voter_abci.rounds import (
     Event,
     FinishedTransactionPreparationRound,
     SynchronizedData,

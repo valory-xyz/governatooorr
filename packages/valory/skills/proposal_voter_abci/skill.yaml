@@ -1,4 +1,4 @@
-name: proposal_collector
+name: proposal_voter_abci
 author: valory
 version: 0.1.0
 type: skill
@@ -6,40 +6,41 @@ description: The scaffold skill is a scaffold for your own skill implementation.
 license: Apache-2.0
 aea_version: '>=1.0.0, <2.0.0'
 fingerprint:
-  __init__.py: bafybeihnvwxbo2ix5iac5gxahym3uomspy6336pylbwjnfkksatcuktxka
-  behaviours.py: bafybeigzwrmgitpehj762rwsbagufanaub5hbqvsvtiqfwutcgyg2ezy7e
-  dialogues.py: bafybeighergy2hupd32ozp2ud5j4jujpccfkzk2l46a33xn7yi2ofk32m4
-  fsm_specification.yaml: bafybeiemqe5x64sfaoeuqidxfdsa6hujzt3xqdx6hbshstu45pod37eq2a
-  handlers.py: bafybeida3ko3qxcr3yj7xrk4pkd72cgkezqoli7nkvk53aatlixqctvgue
-  models.py: bafybeiay5qfxkrbtjjelj6tn3smcerqixzbmlsficc6j34wgek2zs6bvce
-  payloads.py: bafybeiecovofuf66jino7kfoslpridq23ibmsmrjfbmmpffddfmk5kxhuq
-  rounds.py: bafybeihcs42r3gypyq66vw2pedvx6ppoaqaypfrddv4lju4bwdlyvnbb5m
-  tally.py: bafybeifdse37wwsidxh2zpfnc756rni2yvqpbkclfvba2paz2dghirwqpe
+  __init__.py: bafybeifps6e4vfc55iyb5jaab7dxem7y3a2wyflai32pyzf4z75m5ngym4
+  behaviours.py: bafybeiehou72ovgswtc6qazvszruyu4if7tddbs43fbvpvicdkwmo23obi
+  dialogues.py: bafybeihdakfnmps5o7n5rgepn3fl3lzttqsddhiny7mh7ddwhniutri6bq
+  fsm_specification.yaml: bafybeid7nax5oywpoackufq5w2kklzer3ckecarfuxndoliryypt5ttq3e
+  handlers.py: bafybeihex227foehp7a7wfc6vh25ahk5g65b5itu325hph2xj33mgp6kue
+  models.py: bafybeiagzjoea2lipowsp3ohrzx5fgc6uiyn7ipnm3akd2ora4muoc4m44
+  payload_tools.py: bafybeihk5tqqyn3z4qsvbu4clouclqyn26hklzb3djikxfifpdb6lcwaua
+  payloads.py: bafybeidonvuylmxad4mhk6hix2s7w3fjkabbtv5vkow6xwsrskvlt4ewuu
+  rounds.py: bafybeigdprpetshe2zbg7vu5sumkv7i5naqoh3xtiyq2ebdkhpbu2k2roe
   tests/__init__.py: bafybeifm6ovwj3lklctxjwim242lln35ayldnejz2xbq27jp77hchjjh7i
-  tests/test_behaviours.py: bafybeicqlyochdj3ickfrmlq7x3rsmp6ihts5w7oaatuby36kuszgihski
-  tests/test_dialogues.py: bafybeihpz7bm7ihy4x4yiyb3m74sggxzpoioj2u6zmfldnyunzvrwbfism
-  tests/test_handlers.py: bafybeibxrben4j2hybywlul4qd4xny7jsrbz7moyq2t4ff7ckd47p7gh5i
-  tests/test_models.py: bafybeibojvlosi2qfn3ulnabxapzqs5mtotzo7worp2m5vauu7h3sp3pya
-  tests/test_payloads.py: bafybeidzdjytxgyrovqdlei2fy5qsjxf3sssgbtlposzb2woap664jd7oe
-  tests/test_rounds.py: bafybeicn47fjbvuq4avpb5r3hciead7ob75rantxp7wzpemd6o22cyjjju
+  tests/test_behaviours.py: bafybeihm3b3aqz7lg7tfrdcca3mhymfagkhmrkvqkkajqhehvoepjiv5l4
+  tests/test_dialogues.py: bafybeifsq25maspkhxglycqau7abjghcvblwd4kuqegzimfwinckuukpgm
+  tests/test_handlers.py: bafybeieemhj3gf622rg5zntzggiqpxbcbgsyafak4izrfowypjctnosh74
+  tests/test_models.py: bafybeicydaxa4iugeexbkim2iqa3u5q763zluvcmnh34ynm2rcckm3gd34
+  tests/test_payloads.py: bafybeidkghsl7jerqbofj2hkqph3a7epty2l4qf5m6uoxeea3atdyb3zma
+  tests/test_rounds.py: bafybeifyhmfregepjbf6xzkzeiscjxsymjwc73dxuec33p7arjrchu7lra
 fingerprint_ignore_patterns: []
 connections:
-- fetchai/http_server:0.22.0:bafybeihaax5od5zo5jk2l62hv4jwuwtxloh5mijozudpsjombqc4ncmi6i
+- valory/openai:0.1.0:bafybeifhmsahjrckszszka46e6nopbowvoioufkfqi5lb36j4jcye2543e
 contracts:
-- valory/compound:0.1.0:bafybeifgsst56fbst6icg4ivoembqnssadnndhk3u4hyu5xm6j7ohlarzi
+- valory/delegate:0.1.0:bafybeifxbl33nv5yphkbmih25xpmthayvblknqoluwexfralz6irxsrqna
+- valory/gnosis_safe:0.1.0:bafybeidxabihujlxvmnbf3tztjbwybyr5rlwjeniihnr5edfi6bpyjnevi
 protocols:
 - valory/contract_api:1.0.0:bafybeidv6wxpjyb2sdyibnmmum45et4zcla6tl63bnol6ztyoqvpl4spmy
-- valory/http:1.0.0:bafybeifyoio7nlh5zzyn5yz7krkou56l22to3cwg7gw5v5o3vxwklibhty
+- valory/llm:1.0.0:bafybeigafqnus3kvaashfdzrpybpqiumhvbs2dmdnukqzn7yqedga4x7ui
 skills:
 - valory/abstract_round_abci:0.1.0:bafybeib7q4t5jh6gic3i2pzuzlk7q2xmnueyxjpftm4gl56vnnz4vs4f7a
 behaviours:
   main:
     args: {}
-    class_name: ProposalCollectorRoundBehaviour
+    class_name: ProposalVoterRoundBehaviour
 handlers:
   abci:
     args: {}
-    class_name: ABCIRoundHandler
+    class_name: ABCIHandler
   contract_api:
     args: {}
     class_name: ContractApiHandler
@@ -52,6 +53,9 @@ handlers:
   ledger_api:
     args: {}
     class_name: LedgerApiHandler
+  llm:
+    args: {}
+    class_name: LlmHandler
   signing:
     args: {}
     class_name: SigningHandler
@@ -78,11 +82,14 @@ models:
   ledger_api_dialogues:
     args: {}
     class_name: LedgerApiDialogues
+  llm_dialogues:
+    args: {}
+    class_name: LlmDialogues
   params:
     args:
       cleanup_history_depth: 1
       cleanup_history_depth_current: null
-      compound_contract_address: '0xc00e94Cb662C3520282E6f5717214004A7f26888'
+      delegate_contract_address: '0xeF3B6E9e13706A8F01fe98fdCf66335dc5CfdEED'
       drand_public_key: 868f005eb8e6e4ca0a47c8a77ceaa5309a47978a7c71bc5cce96366b5d7a569937c529eeda66c7293784a9402801af31
       finalize_timeout: 60.0
       genesis_config:
@@ -116,8 +123,7 @@ models:
       retry_attempts: 400
       retry_timeout: 3
       round_timeout_seconds: 30.0
-      service_endpoint_base: https://governatooorr.staging.autonolas.tech/
-      service_id: proposal_collector
+      service_id: proposal_voter_abci
       service_registry_address: null
       setup:
         all_participants: []
@@ -125,8 +131,6 @@ models:
         consensus_threshold: null
       share_tm_config_on_startup: false
       sleep_time: 1
-      tally_api_endpoint: https://api.tally.xyz/query
-      tally_api_key: <tally_api_key>
       tendermint_check_sleep_delay: 3
       tendermint_com_url: http://localhost:8080
       tendermint_max_retries: 5

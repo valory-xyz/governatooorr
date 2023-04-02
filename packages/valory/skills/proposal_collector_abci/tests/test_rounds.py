@@ -29,8 +29,10 @@ from packages.valory.skills.abstract_round_abci.base import BaseTxPayload
 from packages.valory.skills.abstract_round_abci.test_tools.rounds import (
     BaseCollectSameUntilThresholdRoundTest,
 )
-from packages.valory.skills.proposal_collector.payloads import VerifyDelegationsPayload
-from packages.valory.skills.proposal_collector.rounds import (
+from packages.valory.skills.proposal_collector_abci.payloads import (
+    VerifyDelegationsPayload,
+)
+from packages.valory.skills.proposal_collector_abci.rounds import (
     Event,
     SynchronizedData,
     VerifyDelegationsRound,

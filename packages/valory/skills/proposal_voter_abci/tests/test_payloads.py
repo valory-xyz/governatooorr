@@ -17,10 +17,30 @@
 #
 # ------------------------------------------------------------------------------
 
-"""Test the dialogues.py module of the ProposalVoter."""
+"""This package contains payload tests for the ProposalVoterAbciApp."""
 
-import packages.valory.skills.proposal_voter.dialogues  # noqa
+from dataclasses import dataclass
+from typing import Hashable, Type
+
+import pytest
+
+from packages.valory.skills.proposal_voter_abci.payloads import BaseTxPayload
 
 
-def test_import() -> None:
-    """Test that the 'dialogues.py' of the ProposalVoter can be imported."""
+@dataclass
+class PayloadTestCase:
+    """PayloadTestCase"""
+
+    name: str
+    payload_cls: Type[BaseTxPayload]
+    content: Hashable
+
+
+# TODO: provide test cases
+@pytest.mark.parametrize("test_case", [])
+def test_payloads(test_case: PayloadTestCase) -> None:
+    """Tests for ProposalVoterAbciApp payloads"""
+
+    payload = test_case.payload_cls(sender="sender", content=test_case.content)
+    assert payload.sender == "sender"
+    assert payload.from_json(payload.json) == payload

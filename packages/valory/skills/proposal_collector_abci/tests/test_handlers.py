@@ -33,8 +33,8 @@ from packages.fetchai.connections.http_server.connection import (
     PUBLIC_ID as HTTP_SERVER_PUBLIC_ID,
 )
 from packages.valory.protocols.http.message import HttpMessage
-from packages.valory.skills.proposal_collector.dialogues import HttpDialogues
-from packages.valory.skills.proposal_collector.handlers import HttpHandler
+from packages.valory.skills.proposal_collector_abci.dialogues import HttpDialogues
+from packages.valory.skills.proposal_collector_abci.handlers import HttpHandler
 
 
 PACKAGE_DIR = Path(__file__).parent.parent

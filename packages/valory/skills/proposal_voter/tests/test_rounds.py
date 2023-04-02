@@ -19,43 +19,21 @@
 
 """This package contains the tests for rounds of ProposalVoter."""
 
-from typing import Any, Type, Dict, List, Callable, Hashable, Mapping
 from dataclasses import dataclass, field
+from typing import Any, Callable, Dict, FrozenSet, Hashable, List, Mapping, Optional
 
 import pytest
 
-from packages.valory.skills.proposal_voter.payloads import (
-    EstablishVotePayload,
-    PrepareVoteTransactionPayload,
-)
-from packages.valory.skills.proposal_voter.rounds import (
-    AbstractRound,
-    Event,
-    SynchronizedData,
-    EstablishVoteRound,
-    PrepareVoteTransactionRound,
-)
-from packages.valory.skills.abstract_round_abci.base import (
-    BaseTxPayload,
-)
+from packages.valory.skills.abstract_round_abci.base import BaseTxPayload
 from packages.valory.skills.abstract_round_abci.test_tools.rounds import (
-    BaseRoundTestClass,
-    BaseOnlyKeeperSendsRoundTest,
-    BaseCollectDifferentUntilThresholdRoundTest,
     BaseCollectSameUntilThresholdRoundTest,
 )
-from typing import (
-    Any,
-    Callable,
-    Dict,
-    FrozenSet,
-    Hashable,
-    List,
-    Mapping,
-    Optional,
-    Type,
+from packages.valory.skills.proposal_voter.payloads import EstablishVotePayload
+from packages.valory.skills.proposal_voter.rounds import (
+    EstablishVoteRound,
+    Event,
+    SynchronizedData,
 )
-import json
 
 
 def get_participants() -> FrozenSet[str]:
@@ -75,6 +53,7 @@ def get_payloads(
 
 
 def get_dummy_establish_vote_payload_serialized():
+    """Get dummy establish vote payload serialized."""
     return 0
 
 

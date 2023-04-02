@@ -8,7 +8,7 @@ aea_version: '>=1.0.0, <2.0.0'
 fingerprint:
   __init__.py: bafybeied73rq2fac7zwgdhfevcwjjxrqphrdkrbqzarvejsd3ayjza76w4
   build/Delegate.json: bafybeifgp4n5fyg4j3ebtaf5zbkiairiiccd4tabvutcrggbu2yrr6h4k4
-  contract.py: bafybeifuuefyhyxagdr257yspm7rmxlxpmytuiouxq32c34tqwkc6ijpau
+  contract.py: bafybeigs4d672q4alyw7q5zfbkwv2e27jg2f65qb5umaxpunyichy6nnh4
 fingerprint_ignore_patterns: []
 class_name: DelegateContract
 contract_interface_paths:

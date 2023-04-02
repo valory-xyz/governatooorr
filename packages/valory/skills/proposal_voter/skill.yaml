@@ -7,26 +7,26 @@ license: Apache-2.0
 aea_version: '>=1.0.0, <2.0.0'
 fingerprint:
   __init__.py: bafybeiavfndo4oyvnfhe4ssydszeu2xx73hz3l7wbo42gldgabrn54drwy
-  behaviours.py: bafybeifks7fruky3mprpn35pkp2itamq7vaiwexi4liho5hijtwnwe47z4
-  dialogues.py: bafybeibvpsfq7v2afvoqodqyqhtit5zpkhw7pxvuyozvyk7e4nxad4dvry
+  behaviours.py: bafybeifh6edwrolsuvqmwuob2or4ogbrvmb66gj4fvrjswo3lczylt2zee
+  dialogues.py: bafybeihdakfnmps5o7n5rgepn3fl3lzttqsddhiny7mh7ddwhniutri6bq
   fsm_specification.yaml: bafybeid7nax5oywpoackufq5w2kklzer3ckecarfuxndoliryypt5ttq3e
-  handlers.py: bafybeibyvr2so264jdc7nfzicieegtltl7gq7u5mxjaiodkuvvpux2rj3m
-  models.py: bafybeidg6dqtmwnepz3kslbdl2aswzwrpar24xat6hac46agxsfutmupje
+  handlers.py: bafybeihex227foehp7a7wfc6vh25ahk5g65b5itu325hph2xj33mgp6kue
+  models.py: bafybeiflhgvp34c6mhqejjp3dhonhrs266jxshc2ttkdtmw6bj3nn5452u
   payload_tools.py: bafybeihk5tqqyn3z4qsvbu4clouclqyn26hklzb3djikxfifpdb6lcwaua
   payloads.py: bafybeidonvuylmxad4mhk6hix2s7w3fjkabbtv5vkow6xwsrskvlt4ewuu
-  rounds.py: bafybeidoenxq5qoylqymcvaoz57yxnayy7qxyuf3iwnpuy5ckxuay4lcly
-  tests/__init__.py: bafybeic6evwhxdwtdjvz7xv3dqqhdhd7uxyr55xhymeiqfe4ga7mfdptxm
-  tests/test_behaviours.py: bafybeifgilmbi3nhu3ccxikuz25fxmwkcr52dnodgvyxzo7lkizt6vmlqe
+  rounds.py: bafybeib7pgwtef2o4xbsmbth4pptr5mdiyk7j5bxulsj5tqbijbdwjv5gy
+  tests/__init__.py: bafybeifm6ovwj3lklctxjwim242lln35ayldnejz2xbq27jp77hchjjh7i
+  tests/test_behaviours.py: bafybeidl2jayotw5y36ip7eqv6xsvc5seuv55huvmc4gzc36rzbaty5m34
   tests/test_dialogues.py: bafybeieleu64kg3bid2wvv6xelyre3dup4gml3czrh4pi773broxkzxjtq
   tests/test_handlers.py: bafybeif3btpbnupq6g7frbwjcjj2qos73p2zy2kkvvqyavf5n5phrtjtku
   tests/test_models.py: bafybeiaovu6k2c5hmzcmwg4sxrx3ejgm7yujvb57muvywgbo46qlt646hm
-  tests/test_payloads.py: bafybeigmldarsbljiyl5q4yh5yskcnpv62jeefv5dzqbq3d4cioacke7xe
-  tests/test_rounds.py: bafybeibu24ycdb6gbnpqdqj3ncylitrlu2cuntxe762xvnhbrz3tv3w6b4
+  tests/test_payloads.py: bafybeiaoazumo3pgcfwmtp4vs22gkjb2szuuelwuzd7fsxlxhfms5mopye
+  tests/test_rounds.py: bafybeiax6snyq576rocpkplftbaakugrkjkr54xeu7w5mvoioin5l2xsre
 fingerprint_ignore_patterns: []
 connections:
-- valory/openai:0.1.0:bafybeihtyio5swes2yj6kzkxideyet4yguvpnnkygakayufgt7lb3fglia
+- valory/openai:0.1.0:bafybeifhmsahjrckszszka46e6nopbowvoioufkfqi5lb36j4jcye2543e
 contracts:
-- valory/delegate:0.1.0:bafybeiec25jv3ga72twomthx27hagrzvhdyj44oy3tapq2buxkyt3s6iiu
+- valory/delegate:0.1.0:bafybeifxbl33nv5yphkbmih25xpmthayvblknqoluwexfralz6irxsrqna
 - valory/gnosis_safe:0.1.0:bafybeidxabihujlxvmnbf3tztjbwybyr5rlwjeniihnr5edfi6bpyjnevi
 protocols:
 - valory/contract_api:1.0.0:bafybeidv6wxpjyb2sdyibnmmum45et4zcla6tl63bnol6ztyoqvpl4spmy
@@ -53,6 +53,9 @@ handlers:
   ledger_api:
     args: {}
     class_name: LedgerApiHandler
+  llm:
+    args: {}
+    class_name: LlmHandler
   signing:
     args: {}
     class_name: SigningHandler

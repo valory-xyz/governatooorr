@@ -19,13 +19,11 @@
 
 """Test the handlers.py module of the DynamicNFT skill."""
 
-import datetime
-import json
 import logging
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Dict, cast
-from unittest.mock import Mock, patch
+from unittest.mock import patch
 
 import pytest
 from aea.protocols.dialogue.base import DialogueMessage
@@ -36,12 +34,7 @@ from packages.fetchai.connections.http_server.connection import (
 )
 from packages.valory.protocols.http.message import HttpMessage
 from packages.valory.skills.proposal_collector.dialogues import HttpDialogues
-from packages.valory.skills.proposal_collector.handlers import (
-    BAD_REQUEST_CODE,
-    HttpHandler,
-    NOT_FOUND_CODE,
-    OK_CODE,
-)
+from packages.valory.skills.proposal_collector.handlers import HttpHandler
 
 
 PACKAGE_DIR = Path(__file__).parent.parent

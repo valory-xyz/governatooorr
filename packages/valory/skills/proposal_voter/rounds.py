@@ -20,26 +20,23 @@
 """This package contains the rounds of ProposalVoterAbciApp."""
 
 from enum import Enum
-from typing import Dict, List, Optional, Set, Tuple
+from typing import Dict, Optional, Set, Tuple, cast
 
 from packages.valory.skills.abstract_round_abci.base import (
     AbciApp,
     AbciAppTransitionFunction,
-    AbstractRound,
-    CollectSameUntilThresholdRound,
     AppState,
     BaseSynchronizedData,
+    CollectSameUntilThresholdRound,
     DegenerateRound,
     EventToTimeout,
     get_name,
 )
-
 from packages.valory.skills.proposal_voter.payloads import (
     EstablishVotePayload,
     PrepareVoteTransactionPayload,
 )
 
-from typing import cast
 
 VOTES_TO_CODE = {"FOR": 0, "AGAINST": 1, "ABSTAIN": 2}
 
@@ -109,9 +106,6 @@ class EstablishVoteRound(CollectSameUntilThresholdRound):
                 SynchronizedData, self.synchronized_data
             ).selected_proposal_id
             vote = self.most_voted_payload
-
-            # TODO: hardcoded vote
-            # vote = "FOR"
 
             vote_code = VOTES_TO_CODE[vote]
             for i in range(len(active_proposals)):

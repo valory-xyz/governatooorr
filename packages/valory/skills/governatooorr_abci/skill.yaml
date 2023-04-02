@@ -7,20 +7,20 @@ license: Apache-2.0
 aea_version: '>=1.0.0, <2.0.0'
 fingerprint:
   __init__.py: bafybeigk2kb335wy5vmgapbrqmfotvwqm4dqsuqr7gt7qic4v4npx2pqxy
-  behaviours.py: bafybeigcq5d235jq2j34jh7tuebwmv4ovypqkbzacortps35aaywhxhml4
-  composition.py: bafybeiaqbziebm4elyyvqxowohwhd77a7zcytcyw53mr6uwcht4aw7gkoa
+  behaviours.py: bafybeiaujb6lncnzjolujlmpb2ejafa55wxxs5fe2meg7c5tad5tvq5caa
+  composition.py: bafybeieg4uepeciraowp5pzhjrqqnwebu6k3r2zxeewlb7lokopwese2su
   dialogues.py: bafybeifbufsnq67tl4lbdfbjgzho5jpvagklvjlzh6nrpzwybv2rljf76u
   fsm_specification.yaml: bafybeicfcrrbod4rr7mz6ix3av56arpzmvzdnmwqkk6mlierbmwo7lnbji
-  handlers.py: bafybeicbzmpz5ag75u7euupgaqkqsigcmmdv7nadii7p5li74igqmqchki
-  models.py: bafybeihgj6r72aaz6mrv74kvqlvxbgnrzbkwevldp274tobsauj5m5vtwy
+  handlers.py: bafybeih7icyvpjuni2ojnhs66vcxtbuvoqequgonmppyeo4yxwilwsknse
+  models.py: bafybeibl74i7bbweb7lgu6jjjse2uiblleccatn5wormzuz344g4mrspwy
 fingerprint_ignore_patterns: []
 connections: []
 contracts: []
 protocols: []
 skills:
 - valory/abstract_round_abci:0.1.0:bafybeib7q4t5jh6gic3i2pzuzlk7q2xmnueyxjpftm4gl56vnnz4vs4f7a
-- valory/proposal_collector:0.1.0:bafybeib4u5yz23gjkmqb3shjcy7uojh6tkfo3cbqbwukgftlztckqe7cpi
-- valory/proposal_voter:0.1.0:bafybeihknw5zfriknfvexhb2c7bm6x4is6hvpepof2h3qsdlo3xrz5llby
+- valory/proposal_collector:0.1.0:bafybeibls44ag22e4hllbna3t3zdljl6xduf7se3mk6vylm2rwo5lvouci
+- valory/proposal_voter:0.1.0:bafybeiejhm3ouk3slzz4g4swxms6yrpwgee4zsbbdcqiz5monymi4ll7iy
 - valory/registration_abci:0.1.0:bafybeidc6iv54mr2antvrw3r4tldm635othi62bhzeyyid7kejzxw4fwiq
 - valory/reset_pause_abci:0.1.0:bafybeige4ncfhwlqbthmfvdu7aogl2qqsozpz3h5el3xokmq4hcqujgsqy
 - valory/transaction_settlement_abci:0.1.0:bafybeihdgnqsiauhuuazmpnt7tawzxm3jnidfytifmb6yjbb6i3cqnafvy
@@ -44,6 +44,9 @@ handlers:
   ledger_api:
     args: {}
     class_name: LedgerApiHandler
+  llm:
+    args: {}
+    class_name: LlmHandler
   signing:
     args: {}
     class_name: SigningHandler

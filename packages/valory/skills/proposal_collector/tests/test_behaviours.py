@@ -20,9 +20,9 @@
 """This package contains round behaviours of ProposalCollectorAbciApp."""
 
 import json
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from pathlib import Path
-from typing import Any, Dict, Hashable, Optional, Type
+from typing import Any, Dict, Optional, Type
 
 import pytest
 
@@ -31,8 +31,6 @@ from packages.valory.protocols.contract_api import ContractApiMessage
 from packages.valory.protocols.contract_api.custom_types import State
 from packages.valory.skills.abstract_round_abci.base import AbciAppDB
 from packages.valory.skills.abstract_round_abci.behaviours import (
-    AbstractRoundBehaviour,
-    BaseBehaviour,
     make_degenerate_behaviour,
 )
 from packages.valory.skills.abstract_round_abci.test_tools.base import (
@@ -41,22 +39,14 @@ from packages.valory.skills.abstract_round_abci.test_tools.base import (
 from packages.valory.skills.proposal_collector.behaviours import (
     CollectActiveProposalsBehaviour,
     ProposalCollectorBaseBehaviour,
-    ProposalCollectorRoundBehaviour,
     SelectProposalBehaviour,
     SynchronizeDelegationsBehaviour,
     VerifyDelegationsBehaviour,
 )
 from packages.valory.skills.proposal_collector.rounds import (
-    CollectActiveProposalsRound,
-    DegenerateRound,
     Event,
-    FinishedProposalSelectionDoneRound,
     FinishedProposalSelectionVoteRound,
-    ProposalCollectorAbciApp,
-    SelectProposalRound,
-    SynchronizeDelegationsRound,
     SynchronizedData,
-    VerifyDelegationsRound,
 )
 
 
@@ -88,6 +78,7 @@ DUMMY_NEW_DELEGATIONS = [
 def generate_proposal(
     _id: str = "1", status: str = "PENDING", eta: Optional[str] = None
 ):
+    """Method to generate a proposal."""
     return {
         "id": _id,
         "title": "dummy_title",

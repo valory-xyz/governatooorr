@@ -24,9 +24,11 @@ from packages.valory.skills.abstract_round_abci.behaviours import (
     AbstractRoundBehaviour,
     BaseBehaviour,
 )
-from packages.valory.skills.governatooorr_abci.composition import (
-    GovernatooorrAbciApp,
+from packages.valory.skills.governatooorr_abci.composition import GovernatooorrAbciApp
+from packages.valory.skills.proposal_collector.behaviours import (
+    ProposalCollectorRoundBehaviour,
 )
+from packages.valory.skills.proposal_voter.behaviours import ProposalVoterRoundBehaviour
 from packages.valory.skills.registration_abci.behaviours import (
     AgentRegistrationRoundBehaviour,
     RegistrationStartupBehaviour,
@@ -34,10 +36,6 @@ from packages.valory.skills.registration_abci.behaviours import (
 from packages.valory.skills.reset_pause_abci.behaviours import (
     ResetPauseABCIConsensusBehaviour,
 )
-from packages.valory.skills.proposal_collector.behaviours import (
-    ProposalCollectorRoundBehaviour,
-)
-from packages.valory.skills.proposal_voter.behaviours import ProposalVoterRoundBehaviour
 from packages.valory.skills.transaction_settlement_abci.behaviours import (
     TransactionSettlementRoundBehaviour,
 )

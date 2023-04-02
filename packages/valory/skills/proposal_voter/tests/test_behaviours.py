@@ -19,47 +19,41 @@
 
 """This package contains round behaviours of ProposalVoterAbciApp."""
 
+from dataclasses import dataclass
 from pathlib import Path
-from typing import Any, Dict, Hashable, Optional, Type
-from dataclasses import dataclass, field
-from packages.valory.protocols.contract_api.message import ContractApiMessage
-import pytest
+from typing import Any, Dict, Optional, Type
 
+import pytest
+from aea.helpers.transaction.base import RawTransaction
+
+from packages.valory.contracts.delegate.contract import DelegateContract
+from packages.valory.contracts.gnosis_safe.contract import (
+    PUBLIC_ID as GNOSIS_SAFE_CONTRACT_ID,
+)
+from packages.valory.protocols.contract_api.message import ContractApiMessage
 from packages.valory.skills.abstract_round_abci.base import AbciAppDB
 from packages.valory.skills.abstract_round_abci.behaviours import (
-    AbstractRoundBehaviour,
-    BaseBehaviour,
     make_degenerate_behaviour,
 )
-from packages.valory.skills.proposal_voter.behaviours import (
-    ProposalVoterBaseBehaviour,
-    ProposalVoterRoundBehaviour,
-    EstablishVoteBehaviour,
-    PrepareVoteTransactionBehaviour,
-)
-from packages.valory.skills.proposal_voter.rounds import (
-    SynchronizedData,
-    DegenerateRound,
-    Event,
-    ProposalVoterAbciApp,
-    EstablishVoteRound,
-    FinishedTransactionPreparationRound,
-    PrepareVoteTransactionRound,
-)
-
 from packages.valory.skills.abstract_round_abci.test_tools.base import (
     FSMBehaviourBaseCase,
 )
-from packages.valory.contracts.delegate.contract import DelegateContract
-from aea.helpers.transaction.base import RawTransaction
-from packages.valory.contracts.gnosis_safe.contract import (
-    PUBLIC_ID as GNOSIS_SAFE_CONTRACT_ID,
+from packages.valory.skills.proposal_voter.behaviours import (
+    EstablishVoteBehaviour,
+    PrepareVoteTransactionBehaviour,
+    ProposalVoterBaseBehaviour,
+)
+from packages.valory.skills.proposal_voter.rounds import (
+    Event,
+    FinishedTransactionPreparationRound,
+    SynchronizedData,
 )
 
 
 def generate_proposal(
     _id: str = "1", status: str = "PENDING", eta: Optional[str] = None
 ):
+    """Generate a proposal."""
     return {
         "id": _id,
         "title": "dummy_title",

@@ -24,13 +24,7 @@ from typing import Hashable, Type
 
 import pytest
 
-from packages.valory.skills.proposal_collector.payloads import (
-    BaseTxPayload,
-    CollectActiveProposalsPayload,
-    SelectProposalPayload,
-    SynchronizeDelegationsPayload,
-    VerifyDelegationsPayload,
-)
+from packages.valory.skills.proposal_collector.payloads import BaseTxPayload
 
 
 @dataclass

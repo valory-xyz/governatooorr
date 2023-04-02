@@ -20,37 +20,33 @@
 """This package contains round behaviours of ProposalVoterAbciApp."""
 
 from abc import ABC
-from typing import Generator, Set, Type, cast, Optional, Dict
+from typing import Dict, Generator, Optional, Set, Type, cast
+
+from packages.valory.connections.openai.connection import (
+    CONNECTION_ID as LLM_CONNECTION_PUBLIC_ID,
+)
 from packages.valory.contracts.delegate.contract import DelegateContract
+from packages.valory.contracts.gnosis_safe.contract import GnosisSafeContract
+from packages.valory.protocols.contract_api import ContractApiMessage
+from packages.valory.protocols.llm.message import LlmMessage
 from packages.valory.skills.abstract_round_abci.base import AbstractRound
 from packages.valory.skills.abstract_round_abci.behaviours import (
     AbstractRoundBehaviour,
     BaseBehaviour,
 )
-from packages.valory.contracts.gnosis_safe.contract import GnosisSafeContract
-from packages.valory.protocols.contract_api import ContractApiMessage
+from packages.valory.skills.abstract_round_abci.models import Requests
+from packages.valory.skills.proposal_voter.dialogues import LlmDialogue, LlmDialogues
 from packages.valory.skills.proposal_voter.models import Params
-from packages.valory.skills.proposal_voter.rounds import (
-    SynchronizedData,
-    ProposalVoterAbciApp,
-    EstablishVoteRound,
-    PrepareVoteTransactionRound,
-)
+from packages.valory.skills.proposal_voter.payload_tools import hash_payload_to_hex
 from packages.valory.skills.proposal_voter.rounds import (
     EstablishVotePayload,
+    EstablishVoteRound,
     PrepareVoteTransactionPayload,
+    PrepareVoteTransactionRound,
+    ProposalVoterAbciApp,
+    SynchronizedData,
 )
-from packages.valory.skills.proposal_voter.payload_tools import (
-    hash_payload_to_hex,
-)
-from packages.valory.skills.proposal_voter.dialogues import LlmDialogues, LlmDialogue
-from packages.valory.connections.openai.connection import (
-    CONNECTION_ID as LLM_CONNECTION_PUBLIC_ID,
-)
-from packages.valory.protocols.llm.message import LlmMessage
-from packages.valory.skills.abstract_round_abci.models import (
-    Requests,
-)
+
 
 SAFE_TX_GAS = 0
 ETHER_VALUE = 0

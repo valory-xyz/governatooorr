@@ -19,7 +19,6 @@
 
 """This module contains the handlers for the skill of DynamicNFTAbciApp."""
 
-import datetime
 import json
 import re
 from enum import Enum
@@ -57,7 +56,6 @@ from packages.valory.skills.proposal_collector.dialogues import (
     HttpDialogue,
     HttpDialogues,
 )
-from packages.valory.skills.proposal_collector.models import SharedState
 from packages.valory.skills.proposal_collector.rounds import SynchronizedData
 
 
@@ -237,7 +235,7 @@ class HttpHandler(BaseHttpHandler):
         self, http_msg: HttpMessage, http_dialogue: HttpDialogue
     ) -> None:
 
-        self.context.logger.info(f"Received delegation")
+        self.context.logger.info("Received delegation")
 
         delegation_data = json.loads(http_msg.body)  # TODO: is this ok?
 

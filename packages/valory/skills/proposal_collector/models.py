@@ -21,7 +21,7 @@
 
 from typing import Any, List
 
-from aea.skills.base import Model, SkillContext
+from aea.skills.base import SkillContext
 
 from packages.valory.skills.abstract_round_abci.models import BaseParams
 from packages.valory.skills.abstract_round_abci.models import (
@@ -44,20 +44,20 @@ class SharedState(BaseSharedState):
         super().__init__(*args, skill_context=skill_context, **kwargs)
 
         # Example of delegations
-        # new_delegations = [
-        #     {
-        #         "user_address": "user_address_a",
-        #         "token_address": "token_address_a",
-        #         "delegation_amount": 1000,
-        #         "voting_preference": "Good"
-        #     },
-        #     {
-        #         "user_address": "user_address_b",
-        #         "token_address": "token_address_b",
-        #         "delegation_amount": 1500,
-        #         "voting_preference": "Evil"
-        #     }
-        # ]
+        # new_delegations = [  # noqa: E800
+        #     {  # noqa: E800
+        #         "user_address": "user_address_a",  # noqa: E800
+        #         "token_address": "token_address_a",  # noqa: E800
+        #         "delegation_amount": 1000,  # noqa: E800
+        #         "voting_preference": "Good"  # noqa: E800
+        #     },  # noqa: E800
+        #     {  # noqa: E800
+        #         "user_address": "user_address_b",  # noqa: E800
+        #         "token_address": "token_address_b",  # noqa: E800
+        #         "delegation_amount": 1500,  # noqa: E800
+        #         "voting_preference": "Evil"  # noqa: E800
+        #     }  # noqa: E800
+        # ]  # noqa: E800
 
         self.new_delegations: List = []
 

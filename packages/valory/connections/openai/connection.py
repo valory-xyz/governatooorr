@@ -21,19 +21,17 @@
 
 from typing import Any, Dict, cast
 
+import openai
 from aea.configurations.base import PublicId
 from aea.connections.base import BaseSyncConnection
 from aea.mail.base import Envelope
 from aea.protocols.base import Address, Message
 from aea.protocols.dialogue.base import Dialogue
 
-import openai
-
-from packages.valory.protocols.llm.dialogues import (
-    LlmDialogues as BaseLlmDialogues,
-    LlmDialogue,
-)
+from packages.valory.protocols.llm.dialogues import LlmDialogue
+from packages.valory.protocols.llm.dialogues import LlmDialogues as BaseLlmDialogues
 from packages.valory.protocols.llm.message import LlmMessage
+
 
 CONNECTION_ID = PublicId.from_str("valory/openai:0.1.0")
 

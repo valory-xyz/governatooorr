@@ -19,9 +19,9 @@
 
 """This package contains round behaviours of GovernatooorrAbciApp."""
 import packages.valory.skills.proposal_collector.rounds as ProposalCollectorAbciApp
+import packages.valory.skills.proposal_voter.rounds as ProposalVoterAbciApp
 import packages.valory.skills.registration_abci.rounds as RegistrationAbci
 import packages.valory.skills.reset_pause_abci.rounds as ResetAndPauseAbci
-import packages.valory.skills.proposal_voter.rounds as ProposalVoterAbciApp
 import packages.valory.skills.transaction_settlement_abci.rounds as TransactionSubmissionAbciApp
 from packages.valory.skills.abstract_round_abci.abci_app_chain import (
     AbciAppTransitionMapping,

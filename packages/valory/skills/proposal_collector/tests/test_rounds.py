@@ -21,39 +21,17 @@
 
 import json
 from dataclasses import dataclass, field
-from typing import (
-    Any,
-    Callable,
-    Dict,
-    FrozenSet,
-    Hashable,
-    List,
-    Mapping,
-    Optional,
-    Type,
-)
+from typing import Any, Callable, Dict, FrozenSet, Hashable, List, Mapping, Optional
 
 import pytest
 
 from packages.valory.skills.abstract_round_abci.base import BaseTxPayload
 from packages.valory.skills.abstract_round_abci.test_tools.rounds import (
-    BaseCollectDifferentUntilThresholdRoundTest,
     BaseCollectSameUntilThresholdRoundTest,
-    BaseOnlyKeeperSendsRoundTest,
-    BaseRoundTestClass,
 )
-from packages.valory.skills.proposal_collector.payloads import (
-    CollectActiveProposalsPayload,
-    SelectProposalPayload,
-    SynchronizeDelegationsPayload,
-    VerifyDelegationsPayload,
-)
+from packages.valory.skills.proposal_collector.payloads import VerifyDelegationsPayload
 from packages.valory.skills.proposal_collector.rounds import (
-    AbstractRound,
-    CollectActiveProposalsRound,
     Event,
-    SelectProposalRound,
-    SynchronizeDelegationsRound,
     SynchronizedData,
     VerifyDelegationsRound,
 )

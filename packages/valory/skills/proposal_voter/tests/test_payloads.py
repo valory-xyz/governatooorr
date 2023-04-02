@@ -19,16 +19,12 @@
 
 """This package contains payload tests for the ProposalVoterAbciApp."""
 
-from typing import Type, Hashable
 from dataclasses import dataclass
+from typing import Hashable, Type
 
 import pytest
 
-from packages.valory.skills.proposal_voter.payloads import (
-    BaseTxPayload,
-    EstablishVotePayload,
-    PrepareVoteTransactionPayload,
-)
+from packages.valory.skills.proposal_voter.payloads import BaseTxPayload
 
 
 @dataclass

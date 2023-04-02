@@ -142,16 +142,16 @@ class VerifyDelegationsBehaviour(ProposalCollectorBaseBehaviour):
             else:
                 # Create the new_token_to_delegations mapping from the validated_new_delegations
 
-                # new_token_to_delegations = {
-                #     "token_address_a": {
-                #         "user_address_a": {
-                #             "delegation_amount": 1000,
-                #             "voting_preference": "Good",
-                #         },
-                #         ...
-                #     },
-                #     ...
-                # }
+                # new_token_to_delegations = {  # noqa: E800
+                #     "token_address_a": {  # noqa: E800
+                #         "user_address_a": {  # noqa: E800
+                #             "delegation_amount": 1000,  # noqa: E800
+                #             "voting_preference": "Good",  # noqa: E800
+                #         },  # noqa: E800
+                #         ...  # noqa: E800
+                #     },  # noqa: E800
+                #     ...  # noqa: E800
+                # }  # noqa: E800
                 new_token_to_delegations = {}
                 for d in validated_new_delegations:
 

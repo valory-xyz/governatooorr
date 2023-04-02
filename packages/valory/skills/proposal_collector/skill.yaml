@@ -7,26 +7,26 @@ license: Apache-2.0
 aea_version: '>=1.0.0, <2.0.0'
 fingerprint:
   __init__.py: bafybeihnvwxbo2ix5iac5gxahym3uomspy6336pylbwjnfkksatcuktxka
-  behaviours.py: bafybeia76txkpm3deuk5klpiaprw73tf2m4nfgsl3e4ffyeal3t2rqbce4
+  behaviours.py: bafybeigzwrmgitpehj762rwsbagufanaub5hbqvsvtiqfwutcgyg2ezy7e
   dialogues.py: bafybeighergy2hupd32ozp2ud5j4jujpccfkzk2l46a33xn7yi2ofk32m4
   fsm_specification.yaml: bafybeiemqe5x64sfaoeuqidxfdsa6hujzt3xqdx6hbshstu45pod37eq2a
-  handlers.py: bafybeiawrdmtiluzqchiiv5oiwbve7iaetesjcveruhcwe636pmhlflmp4
-  models.py: bafybeicxciwsc356hwtso3cdcv2u5j3pzvg5z33qlbsmptk3a6nzad7p7i
+  handlers.py: bafybeida3ko3qxcr3yj7xrk4pkd72cgkezqoli7nkvk53aatlixqctvgue
+  models.py: bafybeiay5qfxkrbtjjelj6tn3smcerqixzbmlsficc6j34wgek2zs6bvce
   payloads.py: bafybeiecovofuf66jino7kfoslpridq23ibmsmrjfbmmpffddfmk5kxhuq
-  rounds.py: bafybeigpenv3ho6ljs53qyvjba5bocvct5i4tizbn66xspsjn5bwqjswzm
+  rounds.py: bafybeihcs42r3gypyq66vw2pedvx6ppoaqaypfrddv4lju4bwdlyvnbb5m
   tally.py: bafybeifdse37wwsidxh2zpfnc756rni2yvqpbkclfvba2paz2dghirwqpe
-  tests/__init__.py: bafybeic6evwhxdwtdjvz7xv3dqqhdhd7uxyr55xhymeiqfe4ga7mfdptxm
-  tests/test_behaviours.py: bafybeifi7d56mo7t3uzppguzrpjwyuof5h7f4mwxnx5yna7afbct5tfjji
+  tests/__init__.py: bafybeifm6ovwj3lklctxjwim242lln35ayldnejz2xbq27jp77hchjjh7i
+  tests/test_behaviours.py: bafybeicqlyochdj3ickfrmlq7x3rsmp6ihts5w7oaatuby36kuszgihski
   tests/test_dialogues.py: bafybeihpz7bm7ihy4x4yiyb3m74sggxzpoioj2u6zmfldnyunzvrwbfism
-  tests/test_handlers.py: bafybeigfxbkli73ykz6gftorsud44jyxzaqqsrocsmisj2u73oy5tzhq64
+  tests/test_handlers.py: bafybeibxrben4j2hybywlul4qd4xny7jsrbz7moyq2t4ff7ckd47p7gh5i
   tests/test_models.py: bafybeibojvlosi2qfn3ulnabxapzqs5mtotzo7worp2m5vauu7h3sp3pya
-  tests/test_payloads.py: bafybeiapuzxj47fre5u4kmqhpnvkzwskupnha6mgftcdrclbu6uuqbuyim
-  tests/test_rounds.py: bafybeialhdnydnqexs7wr23qdndgh27unksjtn2j37yccx2xeff5o6hesu
+  tests/test_payloads.py: bafybeidzdjytxgyrovqdlei2fy5qsjxf3sssgbtlposzb2woap664jd7oe
+  tests/test_rounds.py: bafybeicn47fjbvuq4avpb5r3hciead7ob75rantxp7wzpemd6o22cyjjju
 fingerprint_ignore_patterns: []
 connections:
 - fetchai/http_server:0.22.0:bafybeihaax5od5zo5jk2l62hv4jwuwtxloh5mijozudpsjombqc4ncmi6i
 contracts:
-- valory/compound:0.1.0:bafybeiageeem6sf2z3eganjazrp72v6bibjhpagvhozw2wo34ozncihudu
+- valory/compound:0.1.0:bafybeifgsst56fbst6icg4ivoembqnssadnndhk3u4hyu5xm6j7ohlarzi
 protocols:
 - valory/contract_api:1.0.0:bafybeidv6wxpjyb2sdyibnmmum45et4zcla6tl63bnol6ztyoqvpl4spmy
 - valory/http:1.0.0:bafybeifyoio7nlh5zzyn5yz7krkou56l22to3cwg7gw5v5o3vxwklibhty

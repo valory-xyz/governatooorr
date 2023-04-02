@@ -21,21 +21,19 @@
 
 from typing import Any, Dict, cast
 
+import openai
 from aea.configurations.base import PublicId
 from aea.connections.base import BaseSyncConnection
 from aea.mail.base import Envelope
 from aea.protocols.base import Address, Message
 from aea.protocols.dialogue.base import Dialogue
 
-import openai
-
-from packages.valory.protocols.llm.dialogues import (
-    LlmDialogues as BaseLlmDialogues,
-    LlmDialogue,
-)
+from packages.valory.protocols.llm.dialogues import LlmDialogue
+from packages.valory.protocols.llm.dialogues import LlmDialogues as BaseLlmDialogues
 from packages.valory.protocols.llm.message import LlmMessage
 
-CONNECTION_ID = PublicId.from_str("valory/openai:0.1.0")
+
+PUBLIC_ID = PublicId.from_str("valory/openai:0.1.0")
 
 
 class LlmDialogues(BaseLlmDialogues):
@@ -72,7 +70,7 @@ class OpenaiConnection(BaseSyncConnection):
 
     MAX_WORKER_THREADS = 1
 
-    connection_id = CONNECTION_ID
+    connection_id = PUBLIC_ID
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:  # pragma: no cover
         """
@@ -98,7 +96,7 @@ class OpenaiConnection(BaseSyncConnection):
             for setting in ("openai_api_key", "engine", "max_tokens", "temperature")
         }
         openai.api_key = self.openai_settings["openai_api_key"]
-        self.dialogues = LlmDialogues(connection_id=CONNECTION_ID)
+        self.dialogues = LlmDialogues(connection_id=PUBLIC_ID)
 
     def main(self) -> None:
         """

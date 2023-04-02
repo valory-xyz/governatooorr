@@ -50,11 +50,10 @@ formatters:
 # flake8: wrapper around various code checks, https://flake8.pycqa.org/en/latest/user/error-codes.html
 # mypy: static type checker
 # pylint: code analysis for code smells and refactoring suggestions
-# vulture: finds dead code
 # darglint: docstring linter
 .PHONY: code-checks
 code-checks:
-	tox -p -e black-check -e isort-check -e flake8 -e mypy -e pylint -e vulture -e darglint
+	tox -p -e black-check -e isort-check -e flake8 -e mypy -e pylint -e darglint
 
 # safety: checks dependencies for known security vulnerabilities
 # bandit: security linter
@@ -80,7 +79,7 @@ common-checks-1:
 
 .PHONY: test
 test:
-	pytest -rfE packages/valory/skills/dynamic_nft_abci/tests -rfE packages/valory/skills/proposal_collector/tests --cov=packages.valory.skills.proposal_collector  --cov-report=xml --cov-report=term --cov-report=term-missing --cov-config=.coveragerc
+	pytest -rfE packages/valory/skills/proposal_voter_abci/tests -rfE packages/valory/skills/proposal_collector_abci/tests --cov=packages.valory.skills.proposal_collector_abci  --cov=packages.valory.skills.proposal_voter_abci --cov-report=xml --cov-report=term --cov-report=term-missing --cov-config=.coveragerc
 	find . -name ".coverage*" -not -name ".coveragerc" -exec rm -fr "{}" \;
 
 v := $(shell pip -V | grep virtualenvs)
@@ -106,7 +105,9 @@ new_env: clean
 
 .PHONY: fix-abci-app-specs
 fix-abci-app-specs:
-	export PYTHONPATH=${PYTHONPATH}:${PWD} && autonomy analyse fsm-specs --update --app-class ProposalCollectorAbciApp --package packages/valory/skills/proposal_collector/ || (echo "Failed to check proposal_collector abci consistency" && exit 1)
+	export PYTHONPATH=${PYTHONPATH}:${PWD} && autonomy analyse fsm-specs --update --app-class ProposalCollectorAbciApp --package packages/valory/skills/proposal_collector_abci/ || (echo "Failed to check proposal_collector_abci abci consistency" && exit 1)
+	export PYTHONPATH=${PYTHONPATH}:${PWD} && autonomy analyse fsm-specs --update --app-class ProposalVoterAbciApp --package packages/valory/skills/proposal_voter_abci/ || (echo "Failed to check proposal_voter_abci abci consistency" && exit 1)
+		export PYTHONPATH=${PYTHONPATH}:${PWD} && autonomy analyse fsm-specs --update --app-class GovernatooorrAbciApp --package packages/valory/skills/governatooorr_abci/ || (echo "Failed to check governatooorr_abci abci consistency" && exit 1)
 
 .PHONY: all-linters
 all-linters:

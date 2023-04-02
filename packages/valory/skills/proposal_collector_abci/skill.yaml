@@ -1,33 +1,41 @@
-name: governatooorr_abci
+name: proposal_collector_abci
 author: valory
 version: 0.1.0
 type: skill
-description: The chained abci for the governatooorr skill.
+description: The scaffold skill is a scaffold for your own skill implementation.
 license: Apache-2.0
 aea_version: '>=1.0.0, <2.0.0'
 fingerprint:
-  __init__.py: bafybeigk2kb335wy5vmgapbrqmfotvwqm4dqsuqr7gt7qic4v4npx2pqxy
-  behaviours.py: bafybeibrnnnutvhwhvfxrgjqdfeidb3fxwqhyuo7tmdyafzrejpvv5w2bq
-  composition.py: bafybeib4cxq6dmvepaxhmw2dgscgfwsko4ys3hn5tbpujplta73ul62nam
-  dialogues.py: bafybeiayva5koyr6upomicnhbfefypjk2sebogk7ew24wxwwnccuqktcki
-  fsm_specification.yaml: bafybeid77b3f2tmjpiuyg4b4tqrohjlpgl7rdgmzetc2orzlx7563enjry
-  handlers.py: bafybeiefhvk666md6clddjpkv6ccnletnxmekptz2p5qjjnubfokwlofia
-  models.py: bafybeibjxoz5miyhzdcvvn6jyncgca6gfnjicpjvtepdzabynt64nbpaoa
+  __init__.py: bafybeickrxtcqbivmneh54iq7ymaoq6xzwdouvnoon3h234vzp574qouvu
+  behaviours.py: bafybeict5ezr3ajozstziwsi7c42beauumpxa7aje7dev45vrsvw76y7ey
+  dialogues.py: bafybeighergy2hupd32ozp2ud5j4jujpccfkzk2l46a33xn7yi2ofk32m4
+  fsm_specification.yaml: bafybeig24qxwd5q47pohoe4yrgbjo37b3dmodtysewmzf2ktw4xo5iyyze
+  handlers.py: bafybeibn7uchlzm4ytlqjjzy2isdonxaa6gpm7urapjofms2rk5d2vneim
+  models.py: bafybeibnb3uj34o2o65css2ilqetfzlwbnunjedkgeapldwosukobv7cjy
+  payloads.py: bafybeiecovofuf66jino7kfoslpridq23ibmsmrjfbmmpffddfmk5kxhuq
+  rounds.py: bafybeibqpub6tzs65terilp5cnful37lwbja3mrjwxktxizzco4iru7h4y
+  tally.py: bafybeifdse37wwsidxh2zpfnc756rni2yvqpbkclfvba2paz2dghirwqpe
+  tests/__init__.py: bafybeifm6ovwj3lklctxjwim242lln35ayldnejz2xbq27jp77hchjjh7i
+  tests/test_behaviours.py: bafybeifyjejg7bhidvftriflv2juzxgrmpawx7k667khgeukgmntt4vgwa
+  tests/test_dialogues.py: bafybeigrzrw263ozak44iipfmvj3ji5jc7zb3in7skdezudsphm2ngk3de
+  tests/test_handlers.py: bafybeieghy3jm5pxir7zhq6svvrrokhbl5qh2tr5ps7pnfg3pzjclh6664
+  tests/test_models.py: bafybeibuvmdsjerdhgnhbsfxicm62qnjnvumaihmuc7j2v2pa2uad6vavm
+  tests/test_payloads.py: bafybeihlkx54t5xufitmzrkqbihqukf5huhw6r63qgsdabwr4auzhicrre
+  tests/test_rounds.py: bafybeiewvm2txsezssbpdz4oxdms5gdisftywqlcjxvtdaf2ogqhrkqc2u
 fingerprint_ignore_patterns: []
-connections: []
-contracts: []
-protocols: []
+connections:
+- fetchai/http_server:0.22.0:bafybeihaax5od5zo5jk2l62hv4jwuwtxloh5mijozudpsjombqc4ncmi6i
+contracts:
+- valory/compound:0.1.0:bafybeifenymvubvjge36es63feunwvqphyrjrnn7icfiu3b7a7rrbf2vma
+protocols:
+- valory/contract_api:1.0.0:bafybeidv6wxpjyb2sdyibnmmum45et4zcla6tl63bnol6ztyoqvpl4spmy
+- valory/http:1.0.0:bafybeifyoio7nlh5zzyn5yz7krkou56l22to3cwg7gw5v5o3vxwklibhty
 skills:
 - valory/abstract_round_abci:0.1.0:bafybeib7q4t5jh6gic3i2pzuzlk7q2xmnueyxjpftm4gl56vnnz4vs4f7a
-- valory/proposal_collector_abci:0.1.0:bafybeiacroc4dlvftfv7nifhwgm6o3asgh2k5at3xht2u7bqxdd7rc7sqe
-- valory/proposal_voter_abci:0.1.0:bafybeiavx6wvdcwtiaysk74e55xzlnwm7k3eonxvht6l2vg3enk6nyv5nu
-- valory/registration_abci:0.1.0:bafybeidc6iv54mr2antvrw3r4tldm635othi62bhzeyyid7kejzxw4fwiq
-- valory/reset_pause_abci:0.1.0:bafybeige4ncfhwlqbthmfvdu7aogl2qqsozpz3h5el3xokmq4hcqujgsqy
-- valory/transaction_settlement_abci:0.1.0:bafybeihdgnqsiauhuuazmpnt7tawzxm3jnidfytifmb6yjbb6i3cqnafvy
 behaviours:
   main:
     args: {}
-    class_name: GovernatooorrConsensusBehaviour
+    class_name: ProposalCollectorRoundBehaviour
 handlers:
   abci:
     args: {}
@@ -44,9 +52,6 @@ handlers:
   ledger_api:
     args: {}
     class_name: LedgerApiHandler
-  llm:
-    args: {}
-    class_name: LlmHandler
   signing:
     args: {}
     class_name: SigningHandler
@@ -73,19 +78,14 @@ models:
   ledger_api_dialogues:
     args: {}
     class_name: LedgerApiDialogues
-  llm_dialogues:
-    args: {}
-    class_name: LlmDialogues
   params:
     args:
       cleanup_history_depth: 1
       cleanup_history_depth_current: null
       compound_contract_address: '0xc00e94Cb662C3520282E6f5717214004A7f26888'
-      delegate_contract_address: '0xeF3B6E9e13706A8F01fe98fdCf66335dc5CfdEED'
       drand_public_key: 868f005eb8e6e4ca0a47c8a77ceaa5309a47978a7c71bc5cce96366b5d7a569937c529eeda66c7293784a9402801af31
       finalize_timeout: 60.0
       genesis_config:
-        genesis_time: '2022-09-26T00:00:00.000000000Z'
         chain_id: chain-c4daS1
         consensus_params:
           block:
@@ -93,16 +93,17 @@ models:
             max_gas: '-1'
             time_iota_ms: '1000'
           evidence:
-            max_age_num_blocks: '100000'
             max_age_duration: '172800000000000'
+            max_age_num_blocks: '100000'
             max_bytes: '1048576'
           validator:
             pub_key_types:
             - ed25519
           version: {}
+        genesis_time: '2022-05-20T16:00:21.735122717Z'
         voting_power: '10'
       history_check_timeout: 1205
-      init_fallback_gas: 0
+      ipfs_domain_name: null
       keeper_allowed_retries: 3
       keeper_timeout: 30.0
       max_attempts: 10
@@ -116,7 +117,7 @@ models:
       retry_timeout: 3
       round_timeout_seconds: 30.0
       service_endpoint_base: https://governatooorr.staging.autonolas.tech/
-      service_id: governatooorr
+      service_id: proposal_collector_abci
       service_registry_address: null
       setup:
         all_participants: []
@@ -135,17 +136,6 @@ models:
       use_termination: false
       validate_timeout: 1205
     class_name: Params
-  randomness_api:
-    args:
-      api_id: cloudflare
-      headers: {}
-      method: GET
-      parameters: {}
-      response_key: null
-      response_type: dict
-      retries: 5
-      url: https://drand.cloudflare.com/public/latest
-    class_name: RandomnessApi
   requests:
     args: {}
     class_name: Requests
@@ -158,7 +148,5 @@ models:
   tendermint_dialogues:
     args: {}
     class_name: TendermintDialogues
-dependencies:
-  open-aea-cli-ipfs:
-    version: <2.0.0,>=1.27.0
-is_abstract: false
+dependencies: {}
+is_abstract: true

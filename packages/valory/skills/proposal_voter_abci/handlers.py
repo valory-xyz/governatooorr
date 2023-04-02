@@ -17,13 +17,22 @@
 #
 # ------------------------------------------------------------------------------
 
-"""This module contains the handlers for the skill of AutonomousFundAbciApp."""
+"""This module contains the handlers for the skill of ProposalVoterAbciApp."""
 
+from typing import Optional
+
+from aea.configurations.data_types import PublicId
+
+from packages.valory.protocols.llm import LlmMessage
 from packages.valory.skills.abstract_round_abci.handlers import (
     ABCIRoundHandler as BaseABCIRoundHandler,
 )
+from packages.valory.skills.abstract_round_abci.handlers import AbstractResponseHandler
 from packages.valory.skills.abstract_round_abci.handlers import (
     ContractApiHandler as BaseContractApiHandler,
+)
+from packages.valory.skills.abstract_round_abci.handlers import (
+    HttpHandler as BaseHttpHandler,
 )
 from packages.valory.skills.abstract_round_abci.handlers import (
     IpfsHandler as BaseIpfsHandler,
@@ -37,19 +46,24 @@ from packages.valory.skills.abstract_round_abci.handlers import (
 from packages.valory.skills.abstract_round_abci.handlers import (
     TendermintHandler as BaseTendermintHandler,
 )
-from packages.valory.skills.proposal_collector_abci.handlers import (
-    HttpHandler as BaseHttpHandler,
-)
-from packages.valory.skills.proposal_voter_abci.handlers import (
-    LlmHandler as BaseLlmHandler,
-)
 
 
-ABCIRoundHandler = BaseABCIRoundHandler
+ABCIHandler = BaseABCIRoundHandler
 HttpHandler = BaseHttpHandler
 SigningHandler = BaseSigningHandler
 LedgerApiHandler = BaseLedgerApiHandler
 ContractApiHandler = BaseContractApiHandler
 TendermintHandler = BaseTendermintHandler
 IpfsHandler = BaseIpfsHandler
-LlmHandler = BaseLlmHandler
+
+
+class LlmHandler(AbstractResponseHandler):
+    """A class for handling LLLM messages."""
+
+    SUPPORTED_PROTOCOL: Optional[PublicId] = LlmMessage.protocol_id
+    allowed_response_performatives = frozenset(
+        {
+            LlmMessage.Performative.REQUEST,
+            LlmMessage.Performative.RESPONSE,
+        }
+    )

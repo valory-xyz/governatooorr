@@ -28,11 +28,11 @@ from aea_test_autonomy.docker.base import launch_image
 
 from packages.valory.agents.governatooorr.tests.helpers.constants import ACCOUNTS
 from packages.valory.agents.governatooorr.tests.helpers.docker import (
-    ImpactEvaluatorNetworkDockerImage,
     DEFAULT_HARDHAT_ADDR,
     DEFAULT_HARDHAT_PORT,
     DEFAULT_JSON_SERVER_ADDR,
     DEFAULT_JSON_SERVER_PORT,
+    ImpactEvaluatorNetworkDockerImage,
     MockTwitterApi,
 )
 

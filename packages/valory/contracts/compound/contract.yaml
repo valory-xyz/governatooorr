@@ -8,7 +8,7 @@ aea_version: '>=1.0.0, <2.0.0'
 fingerprint:
   __init__.py: bafybeied73rq2fac7zwgdhfevcwjjxrqphrdkrbqzarvejsd3ayjza76w4
   build/Compound.json: bafybeidc7hpg6kpahymoxyimsdb6fn443r5vz7ip32fm67s7jidnjvao2a
-  contract.py: bafybeienqkc3uashs2tb5uvphhi4ajajdbztvzcpoo4gemruoucgvpjovu
+  contract.py: bafybeiflwtsb6wabw7g37ommyv7qhlwzwbqjhjxmglsw3c4o7rhzedrgky
 fingerprint_ignore_patterns: []
 class_name: CompoundContract
 contract_interface_paths:
@@ -16,6 +16,4 @@ contract_interface_paths:
 dependencies:
   open-aea-ledger-ethereum:
     version: ==1.31.0
-  web3:
-    version: ==5.25.0
 contracts: []

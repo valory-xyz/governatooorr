@@ -21,6 +21,7 @@
 
 from pathlib import Path
 from typing import Tuple
+
 import pytest
 from aea.configurations.data_types import PublicId
 from aea_test_autonomy.base_test_classes.agents import (
@@ -37,34 +38,33 @@ from aea_test_autonomy.fixture_helpers import ganache_scope_class  # noqa: F401
 from aea_test_autonomy.fixture_helpers import ganache_scope_function  # noqa: F401
 from aea_test_autonomy.fixture_helpers import hardhat_addr  # noqa: F401
 from aea_test_autonomy.fixture_helpers import hardhat_port  # noqa: F401
+from aea_test_autonomy.fixture_helpers import ipfs_daemon  # noqa: F401
+from aea_test_autonomy.fixture_helpers import ipfs_domain  # noqa: F401
 from aea_test_autonomy.fixture_helpers import key_pairs  # noqa: F401
 from aea_test_autonomy.fixture_helpers import tendermint  # noqa: F401
 from aea_test_autonomy.fixture_helpers import tendermint_port  # noqa: F401
-from aea_test_autonomy.fixture_helpers import ipfs_daemon  # noqa: F401
-from aea_test_autonomy.fixture_helpers import ipfs_domain  # noqa: F401
-from packages.valory.agents.governatooorr.tests.helpers.fixtures import (  # noqa: F401
-    UseHardHatImpactEvaluatorBaseTest,
-    UseMockTwitterApiBaseTest,
-)
+
 from packages.valory.agents.governatooorr.tests.helpers.docker import (
     DEFAULT_JSON_SERVER_ADDR as _DEFAULT_JSON_SERVER_ADDR,
 )
 from packages.valory.agents.governatooorr.tests.helpers.docker import (
     DEFAULT_JSON_SERVER_PORT as _DEFAULT_JSON_SERVER_PORT,
 )
-from packages.valory.skills.registration_abci.rounds import RegistrationStartupRound
-from packages.valory.skills.reset_pause_abci.rounds import ResetAndPauseRound
-
-from packages.valory.skills.proposal_collector.rounds import (
-    SynchronizeDelegationsRound,
-    VerifyDelegationsRound,
+from packages.valory.agents.governatooorr.tests.helpers.fixtures import (  # noqa: F401
+    UseHardHatImpactEvaluatorBaseTest,
+    UseMockTwitterApiBaseTest,
+)
+from packages.valory.skills.proposal_collector_abci.rounds import (
     CollectActiveProposalsRound,
     SelectProposalRound,
+    SynchronizeDelegationsRound,
+    VerifyDelegationsRound,
 )
-from packages.valory.skills.proposal_voter.rounds import (
+from packages.valory.skills.proposal_voter_abci.rounds import (
     EstablishVoteRound,
     PrepareVoteTransactionRound,
 )
+from packages.valory.skills.registration_abci.rounds import RegistrationStartupRound
 
 
 HAPPY_PATH: Tuple[RoundChecks, ...] = (

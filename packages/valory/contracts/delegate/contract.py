@@ -19,14 +19,13 @@
 
 """This module contains the dynamic_contribution contract definition."""
 
-from typing import Any, cast
+from typing import Any
 
 from aea.common import JSONLike
 from aea.configurations.base import PublicId
 from aea.contracts.base import Contract
 from aea.crypto.base import LedgerApi
 from aea_ledger_ethereum import EthereumApi
-from web3.types import BlockIdentifier
 
 
 class DelegateContract(Contract):
@@ -105,6 +104,8 @@ class DelegateContract(Contract):
         :param support: the vote
         :return: the number of votes cast
         """
+        if not isinstance(ledger_api, EthereumApi):
+            raise ValueError(f"Only EthereumApi is supported, got {type(ledger_api)}")
         contract_instance = cls.get_instance(ledger_api, contract_address)
         data = contract_instance.encodeABI(
             fn_name="castVote", args=[proposal_id, support]

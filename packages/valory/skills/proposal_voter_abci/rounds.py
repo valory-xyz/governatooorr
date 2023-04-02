@@ -167,17 +167,19 @@ class ProposalVoterAbciApp(AbciApp[Event]):
             Event.DONE: PrepareVoteTransactionRound,
             Event.NO_MAJORITY: EstablishVoteRound,
             Event.ROUND_TIMEOUT: EstablishVoteRound,
+            Event.CONTRACT_ERROR: EstablishVoteRound,
         },
         PrepareVoteTransactionRound: {
             Event.DONE: FinishedTransactionPreparationRound,
             Event.NO_MAJORITY: PrepareVoteTransactionRound,
             Event.ROUND_TIMEOUT: PrepareVoteTransactionRound,
-            Event.CONTRACT_ERROR: PrepareVoteTransactionRound,
         },
         FinishedTransactionPreparationRound: {},
     }
     final_states: Set[AppState] = {FinishedTransactionPreparationRound}
-    event_to_timeout: EventToTimeout = {}
+    event_to_timeout: EventToTimeout = {
+        Event.ROUND_TIMEOUT: 30.0,
+    }
     cross_period_persisted_keys: Set[str] = {"active_proposals"}
     db_pre_conditions: Dict[AppState, Set[str]] = {
         EstablishVoteRound: set(),

@@ -172,7 +172,7 @@ class EstablishVoteBehaviour(ProposalVoterBaseBehaviour):
 
         self.context.logger.info(f"Vote is {vote}")
 
-        vote = vote.strip("\n")
+        vote = vote.strip()
 
         if vote not in VOTES_TO_CODE:
             raise ValueError(f"Invalid vote: {vote}")

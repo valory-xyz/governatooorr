@@ -121,7 +121,7 @@ class EstablishVoteBehaviour(ProposalVoterBaseBehaviour):
                 token_address
             )  # either GOOD or EVIL
 
-            self.context.logger.info(f"Vote intention is {vote_intention}")
+            self.context.logger.info(f"Vote intention: {vote_intention}")
 
             prompt_template = "Here is a voting proposal for a protocol: `{proposal}`. How should I vote on the voting proposal if my intent was to {voting_intention_snippet} and the voting options are {voting_options}? Please answer with only the voting option."
             voting_intention_snippet = (
@@ -139,7 +139,7 @@ class EstablishVoteBehaviour(ProposalVoterBaseBehaviour):
 
             vote = yield from self._get_vote(prompt_template, prompt_values)
 
-            self.context.logger.info(f"Vote is {vote}")
+            self.context.logger.info(f"Vote: {vote}")
 
             sender = self.context.agent_address
             payload = EstablishVotePayload(sender=sender, vote=vote)
@@ -169,8 +169,6 @@ class EstablishVoteBehaviour(ProposalVoterBaseBehaviour):
             request_llm_message, llm_dialogue
         )
         vote = llm_response_message.value
-
-        self.context.logger.info(f"Vote is {vote}")
 
         vote = vote.strip()
         vote = vote.upper()

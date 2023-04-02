@@ -11,7 +11,7 @@ fingerprint:
   dialogues.py: bafybeibvpsfq7v2afvoqodqyqhtit5zpkhw7pxvuyozvyk7e4nxad4dvry
   fsm_specification.yaml: bafybeid7nax5oywpoackufq5w2kklzer3ckecarfuxndoliryypt5ttq3e
   handlers.py: bafybeibyvr2so264jdc7nfzicieegtltl7gq7u5mxjaiodkuvvpux2rj3m
-  models.py: bafybeifskytcqgqme5xt6puxbza7fkh54t7pnjmh3higamm2jvn2fyyo3a
+  models.py: bafybeidg6dqtmwnepz3kslbdl2aswzwrpar24xat6hac46agxsfutmupje
   payload_tools.py: bafybeihk5tqqyn3z4qsvbu4clouclqyn26hklzb3djikxfifpdb6lcwaua
   payloads.py: bafybeidonvuylmxad4mhk6hix2s7w3fjkabbtv5vkow6xwsrskvlt4ewuu
   rounds.py: bafybeidoenxq5qoylqymcvaoz57yxnayy7qxyuf3iwnpuy5ckxuay4lcly
@@ -112,7 +112,6 @@ models:
       keeper_timeout: 30.0
       max_attempts: 10
       max_healthcheck: 120
-      observation_interval: 10
       on_chain_service_id: null
       request_retry_delay: 1.0
       request_timeout: 10.0
@@ -121,14 +120,12 @@ models:
       retry_attempts: 400
       retry_timeout: 3
       round_timeout_seconds: 30.0
-      safe_contract_address: '0x0000000000000000000000000000000000000000'
       service_id: proposal_voter
       service_registry_address: null
       setup:
-        all_participants:
-        - - '0x0000000000000000000000000000000000000000'
-        safe_contract_address:
-        - '0x0000000000000000000000000000000000000000'
+        all_participants: []
+        safe_contract_address: '0x0000000000000000000000000000000000000000'
+        consensus_threshold: null
       share_tm_config_on_startup: false
       sleep_time: 1
       tendermint_check_sleep_delay: 3
@@ -137,6 +134,7 @@ models:
       tendermint_p2p_url: localhost:26656
       tendermint_url: http://localhost:26657
       tx_timeout: 10.0
+      use_termination: false
       validate_timeout: 1205
     class_name: Params
   requests:

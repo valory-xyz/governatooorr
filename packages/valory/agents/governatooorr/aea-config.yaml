@@ -39,9 +39,9 @@ protocols:
 skills:
 - valory/abstract_abci:0.1.0:bafybeiai2t36ht3blisjneahv5almyfieqokl4auj2n43rj4k5chun2i44
 - valory/abstract_round_abci:0.1.0:bafybeib7q4t5jh6gic3i2pzuzlk7q2xmnueyxjpftm4gl56vnnz4vs4f7a
-- valory/governatooorr_abci:0.1.0:bafybeihce5ejiljurnpumxwojyumm2yrr7wixuknplzxwl5vdkux4pfpau
-- valory/proposal_collector:0.1.0:bafybeieumytuomn5puq3qsv56prdhqeffd4oq3uf2aca276lbd76plqnxq
-- valory/proposal_voter:0.1.0:bafybeihr7sa42dbau6wlccpmn2uiwvlfjfh4ipdh2u3y7czm7nvh5nof5m
+- valory/governatooorr_abci:0.1.0:bafybeigzdc5spxtcpwe7e7fqkaztvstnvgtz32v53guhurtxwkb7vdkwdi
+- valory/proposal_collector:0.1.0:bafybeib4u5yz23gjkmqb3shjcy7uojh6tkfo3cbqbwukgftlztckqe7cpi
+- valory/proposal_voter:0.1.0:bafybeib52y2x3rbikuntloi5kolll2u42wp5tnia3bwhbwgaqr6sml65um
 - valory/registration_abci:0.1.0:bafybeidc6iv54mr2antvrw3r4tldm635othi62bhzeyyid7kejzxw4fwiq
 - valory/reset_pause_abci:0.1.0:bafybeige4ncfhwlqbthmfvdu7aogl2qqsozpz3h5el3xokmq4hcqujgsqy
 - valory/transaction_settlement_abci:0.1.0:bafybeihdgnqsiauhuuazmpnt7tawzxm3jnidfytifmb6yjbb6i3cqnafvy
@@ -127,8 +127,6 @@ models:
       log_dir: /logs
   params:
     args:
-      broadcast_to_server: false
-      history_end: null
       cleanup_history_depth: 1
       cleanup_history_depth_current: null
       drand_public_key: 868f005eb8e6e4ca0a47c8a77ceaa5309a47978a7c71bc5cce96366b5d7a569937c529eeda66c7293784a9402801af31
@@ -156,7 +154,6 @@ models:
       keeper_timeout: 30.0
       max_attempts: 10
       max_healthcheck: 120
-      observation_interval: ${int:10}
       on_chain_service_id: null
       reset_tendermint_after: 2
       retry_attempts: 400
@@ -168,10 +165,9 @@ models:
       service_id: governatooorr
       service_registry_address: null
       setup:
-        all_participants: ${list:[["0x10E867Ac2Fb0Aa156ca81eF440a5cdf373bE1AaC"]]}
-        safe_contract_address: ${list:["0x7b2a08Fae878E88efE0aa82599C167E9B0e9BdC4"]}
-        consensus_threshold:
-        - null
+        all_participants: ${list:[]}
+        safe_contract_address: ${str:"0x0000000000000000000000000000000000000000"}
+        consensus_threshold: ${int:null}
       share_tm_config_on_startup: ${bool:false}
       sleep_time: 1
       tendermint_check_sleep_delay: 3
@@ -180,8 +176,8 @@ models:
       tendermint_url: ${TENDERMINT_URL:str:http://localhost:26657}
       tendermint_p2p_url: localhost:26656
       tx_timeout: 10.0
+      use_termination: ${bool:false}
       delegate_contract_address: ${str:0xeF3B6E9e13706A8F01fe98fdCf66335dc5CfdEED}
-      safe_contract_address: ${str:0x7b2a08Fae878E88efE0aa82599C167E9B0e9BdC4}
       tally_api_endpoint: ${str:https://api.tally.xyz/query}
       tally_api_key: ${str:<tally_api_key>}
       service_endpoint_base: ${str:https://governatooorr.staging.autonolas.tech/}

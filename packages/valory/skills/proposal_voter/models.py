@@ -45,7 +45,6 @@ class Params(BaseParams):
         self.delegate_contract_address = self._ensure(
             "delegate_contract_address", kwargs, str
         )
-        self.safe_contract_address = self._ensure("safe_contract_address", kwargs, str)
         super().__init__(*args, **kwargs)
 
 

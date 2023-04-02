@@ -12,15 +12,15 @@ fingerprint:
   dialogues.py: bafybeigpwuzku3we7axmxeamg7vn656maww6emuztau5pg3ebsoquyfdqm
   fsm_specification.yaml: bafybeicfcrrbod4rr7mz6ix3av56arpzmvzdnmwqkk6mlierbmwo7lnbji
   handlers.py: bafybeicbzmpz5ag75u7euupgaqkqsigcmmdv7nadii7p5li74igqmqchki
-  models.py: bafybeihhrq6tdqmt7wtmsaaeljacdcseno7vnyaqm3onmnfwdqq4o2yglq
+  models.py: bafybeihgj6r72aaz6mrv74kvqlvxbgnrzbkwevldp274tobsauj5m5vtwy
 fingerprint_ignore_patterns: []
 connections: []
 contracts: []
 protocols: []
 skills:
 - valory/abstract_round_abci:0.1.0:bafybeib7q4t5jh6gic3i2pzuzlk7q2xmnueyxjpftm4gl56vnnz4vs4f7a
-- valory/proposal_collector:0.1.0:bafybeieumytuomn5puq3qsv56prdhqeffd4oq3uf2aca276lbd76plqnxq
-- valory/proposal_voter:0.1.0:bafybeihr7sa42dbau6wlccpmn2uiwvlfjfh4ipdh2u3y7czm7nvh5nof5m
+- valory/proposal_collector:0.1.0:bafybeib4u5yz23gjkmqb3shjcy7uojh6tkfo3cbqbwukgftlztckqe7cpi
+- valory/proposal_voter:0.1.0:bafybeib52y2x3rbikuntloi5kolll2u42wp5tnia3bwhbwgaqr6sml65um
 - valory/registration_abci:0.1.0:bafybeidc6iv54mr2antvrw3r4tldm635othi62bhzeyyid7kejzxw4fwiq
 - valory/reset_pause_abci:0.1.0:bafybeige4ncfhwlqbthmfvdu7aogl2qqsozpz3h5el3xokmq4hcqujgsqy
 - valory/transaction_settlement_abci:0.1.0:bafybeihdgnqsiauhuuazmpnt7tawzxm3jnidfytifmb6yjbb6i3cqnafvy
@@ -72,7 +72,6 @@ models:
     class_name: LedgerApiDialogues
   params:
     args:
-      broadcast_to_server: false
       cleanup_history_depth: 1
       cleanup_history_depth_current: null
       compound_contract_address: '0xc00e94Cb662C3520282E6f5717214004A7f26888'
@@ -97,13 +96,11 @@ models:
           version: {}
         voting_power: '10'
       history_check_timeout: 1205
-      history_end: null
       init_fallback_gas: 0
       keeper_allowed_retries: 3
       keeper_timeout: 30.0
       max_attempts: 10
       max_healthcheck: 120
-      observation_interval: 10
       on_chain_service_id: null
       request_retry_delay: 1.0
       request_timeout: 10.0
@@ -112,16 +109,13 @@ models:
       retry_attempts: 400
       retry_timeout: 3
       round_timeout_seconds: 30.0
-      safe_contract_address: '0x0000000000000000000000000000000000000000'
       service_endpoint_base: https://governatooorr.staging.autonolas.tech/
       service_id: governatooorr
       service_registry_address: null
       setup:
         all_participants: []
-        safe_contract_address:
-        - '0x0000000000000000000000000000000000000000'
-        consensus_threshold:
-        - null
+        safe_contract_address: '0x0000000000000000000000000000000000000000'
+        consensus_threshold: null
       share_tm_config_on_startup: false
       sleep_time: 1
       tally_api_endpoint: https://api.tally.xyz/query
@@ -132,6 +126,7 @@ models:
       tendermint_p2p_url: localhost:26656
       tendermint_url: http://localhost:26657
       tx_timeout: 10.0
+      use_termination: false
       validate_timeout: 1205
     class_name: Params
   randomness_api:

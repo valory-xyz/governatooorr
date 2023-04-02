@@ -108,7 +108,6 @@ models:
       keeper_timeout: 30.0
       max_attempts: 10
       max_healthcheck: 120
-      observation_interval: 10
       on_chain_service_id: null
       request_retry_delay: 1.0
       request_timeout: 10.0
@@ -121,10 +120,9 @@ models:
       service_id: proposal_collector
       service_registry_address: null
       setup:
-        all_participants:
-        - - '0x0000000000000000000000000000000000000000'
-        safe_contract_address:
-        - '0x0000000000000000000000000000000000000000'
+        all_participants: []
+        safe_contract_address: '0x0000000000000000000000000000000000000000'
+        consensus_threshold: null
       share_tm_config_on_startup: false
       sleep_time: 1
       tally_api_endpoint: https://api.tally.xyz/query
@@ -135,6 +133,7 @@ models:
       tendermint_p2p_url: localhost:26656
       tendermint_url: http://localhost:26657
       tx_timeout: 10.0
+      use_termination: false
       validate_timeout: 1205
     class_name: Params
   requests:

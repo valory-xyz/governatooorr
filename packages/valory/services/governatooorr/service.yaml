@@ -8,7 +8,7 @@ license: Apache-2.0
 fingerprint:
   README.md: bafybeicw7npqf36nxy3ocmmjfntgjn5dskgespnpw6o2rw62aof2x5oxvm
 fingerprint_ignore_patterns: []
-agent: valory/governatooorr:0.1.0:bafybeicei52tpsrhel3oejaiuhwltpbuyqfgrw7wrmd4vhaspb2ox5hhey
+agent: valory/governatooorr:0.1.0:bafybeicmdju3ju6jq2ezsqjk6guiuyr7f3wrfimcnz4m7p43d5ztvrchri
 number_of_agents: 1
 deployment:
   agent:
@@ -24,8 +24,6 @@ models:
       log_dir: /logs
   params:
     args:
-      broadcast_to_server: false
-      history_end: null
       cleanup_history_depth: 1
       cleanup_history_depth_current: null
       drand_public_key: 868f005eb8e6e4ca0a47c8a77ceaa5309a47978a7c71bc5cce96366b5d7a569937c529eeda66c7293784a9402801af31
@@ -53,12 +51,11 @@ models:
       keeper_timeout: 30.0
       max_attempts: 10
       max_healthcheck: 120
-      observation_interval: ${OBSERVATION_INTERVAL:int:300}
       on_chain_service_id: null
       reset_tendermint_after: 2
       retry_attempts: 400
       retry_timeout: 3
-      reset_pause_duration: 10
+      reset_pause_duration: ${RESET_PAUSE_DURATION:int:10}
       request_retry_delay: 1.0
       request_timeout: 10.0
       round_timeout_seconds: 30.0
@@ -66,10 +63,8 @@ models:
       service_registry_address: null
       setup:
         all_participants: ${ALL_PARTICIPANTS:list:[]}
-        safe_contract_address:
-        - '0x0000000000000000000000000000000000000000'
-        consensus_threshold:
-        - null
+        safe_contract_address: ${SAFE_CONTRACT_ADDRESS:str:0x0000000000000000000000000000000000000000}
+        consensus_threshold: null
       share_tm_config_on_startup: ${USE_ACN:bool:false}
       sleep_time: 1
       tendermint_check_sleep_delay: 3
@@ -78,8 +73,8 @@ models:
       tendermint_url: ${TENDERMINT_URL:str:http://localhost:26657}
       tendermint_p2p_url: localhost:26656
       tx_timeout: 10.0
+      use_termination: ${USE_TERMINATION:bool:false}
       delegate_contract_address: ${DELEGATE_CONTRACT_ADDRESS:str:0xeF3B6E9e13706A8F01fe98fdCf66335dc5CfdEED}
-      safe_contract_address: ${SAFE_CONTRACT_ADDRESS:str:0x0000000000000000000000000000000000000000}
       tally_api_endpoint: ${TALLY_API_ENDPOINT:str:https://api.tally.xyz/query}
       tally_api_key: ${TALLY_API_KEY:str:<tally_api_key>}
       service_endpoint_base: ${SERVICE_ENDPOINT_BASE:str:https://governatooorr.staging.autonolas.tech/}

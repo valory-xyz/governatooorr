@@ -83,19 +83,19 @@ public_id: valory/abci:0.1.0
 type: connection
 config:
   target_skill_id: valory/governatooorr_abci:0.1.0
-  host: ${ABCI_HOST:str:localhost}
-  port: ${ABCI_PORT:int:26658}
-  use_tendermint: ${ABCI_USE_TENDERMINT:bool:false}
+  host: ${str:localhost}
+  port: ${int:26658}
+  use_tendermint: ${bool:false}
 ---
 public_id: valory/ledger:0.19.0
 type: connection
 config:
   ledger_apis:
     ethereum:
-      address: ${CONNECTION_LEDGER_CONFIG_LEDGER_APIS_ETHEREUM_ADDRESS:str:http://localhost:8545}
-      chain_id: ${CONNECTION_LEDGER_CONFIG_LEDGER_APIS_ETHEREUM_CHAIN_ID:int:1}
-      poa_chain: ${CONNECTION_LEDGER_CONFIG_LEDGER_APIS_ETHEREUM_POA_CHAIN:bool:false}
-      default_gas_price_strategy: ${CONNECTION_LEDGER_CONFIG_LEDGER_APIS_ETHEREUM_DEFAULT_GAS_PRICE_STRATEGY:str:eip1559}
+      address: ${str:http://localhost:8545}
+      chain_id: ${int:1}
+      poa_chain: ${bool:false}
+      default_gas_price_strategy: ${str:eip1559}
 ---
 public_id: valory/openai:0.1.0
 type: connection
@@ -171,9 +171,9 @@ models:
       share_tm_config_on_startup: ${bool:false}
       sleep_time: 1
       tendermint_check_sleep_delay: 3
-      tendermint_com_url: ${TENDERMINT_COM_URL:str:http://localhost:8080}
+      tendermint_com_url: ${str:http://localhost:8080}
       tendermint_max_retries: 5
-      tendermint_url: ${TENDERMINT_URL:str:http://localhost:26657}
+      tendermint_url: ${str:http://localhost:26657}
       tendermint_p2p_url: localhost:26656
       tx_timeout: 10.0
       use_termination: ${bool:false}

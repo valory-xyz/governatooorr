@@ -7,8 +7,8 @@
         "protocol/valory/llm/1.0.0": "bafybeigafqnus3kvaashfdzrpybpqiumhvbs2dmdnukqzn7yqedga4x7ui",
         "skill/valory/proposal_voter/0.1.0": "bafybeib52y2x3rbikuntloi5kolll2u42wp5tnia3bwhbwgaqr6sml65um",
         "skill/valory/governatooorr_abci/0.1.0": "bafybeigzdc5spxtcpwe7e7fqkaztvstnvgtz32v53guhurtxwkb7vdkwdi",
-        "agent/valory/governatooorr/0.1.0": "bafybeicmdju3ju6jq2ezsqjk6guiuyr7f3wrfimcnz4m7p43d5ztvrchri",
-        "service/valory/governatooorr/0.1.0": "bafybeiewcf3mzfs42py36gwynz5fp2zal527feia3dz4ymysvwtgg5mtba"
+        "agent/valory/governatooorr/0.1.0": "bafybeif2dy5hiiwlethnuabcji2en4mzgo3pvso2av5h4dehrxurgskawa",
+        "service/valory/governatooorr/0.1.0": "bafybeia4evfdx75hkt6qcoicdregvffp2vk6nwidz4f7udyw5xpc2bogje"
     },
     "third_party": {
         "protocol/open_aea/signing/1.0.0": "bafybeibqlfmikg5hk4phzak6gqzhpkt6akckx7xppbp53mvwt6r73h7tk4",

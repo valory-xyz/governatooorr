@@ -19,11 +19,11 @@ connections:
 - valory/abci:0.1.0:bafybeidyfpwu7hpanfj74zn6nkzmzoz2qharxfsnxzjr7bfldho2xzualu
 - valory/http_client:0.23.0:bafybeidykl4elwbcjkqn32wt5h4h7tlpeqovrcq3c5bcplt6nhpznhgczi
 - valory/ledger:0.19.0:bafybeighon6i2qfl2xrg7t3lbdzlkyo4v2a7ayvwso7m5w7pf2hvjfs2ma
-- valory/openai:0.1.0:bafybeifhmsahjrckszszka46e6nopbowvoioufkfqi5lb36j4jcye2543e
+- valory/openai:0.1.0:bafybeihbltspf42nk2crrrejoyu6hipdys3dqkf42ewgtct4wg7olsedhi
 - valory/p2p_libp2p_client:0.1.0:bafybeidwcobzb7ut3efegoedad7jfckvt2n6prcmd4g7xnkm6hp6aafrva
 contracts:
-- valory/compound:0.1.0:bafybeifgsst56fbst6icg4ivoembqnssadnndhk3u4hyu5xm6j7ohlarzi
-- valory/delegate:0.1.0:bafybeifxbl33nv5yphkbmih25xpmthayvblknqoluwexfralz6irxsrqna
+- valory/compound:0.1.0:bafybeifenymvubvjge36es63feunwvqphyrjrnn7icfiu3b7a7rrbf2vma
+- valory/delegate:0.1.0:bafybeigbp3oowq4agg4gd3s5raopebtbctizl4piqeaqm5ekt665fl6xxy
 - valory/gnosis_safe:0.1.0:bafybeidxabihujlxvmnbf3tztjbwybyr5rlwjeniihnr5edfi6bpyjnevi
 - valory/gnosis_safe_proxy_factory:0.1.0:bafybeiefq2lcrixbbqz5cji5vpnriydt4kfx5vvawg2vnmeadel2ar7yga
 protocols:
@@ -39,9 +39,9 @@ protocols:
 skills:
 - valory/abstract_abci:0.1.0:bafybeiai2t36ht3blisjneahv5almyfieqokl4auj2n43rj4k5chun2i44
 - valory/abstract_round_abci:0.1.0:bafybeib7q4t5jh6gic3i2pzuzlk7q2xmnueyxjpftm4gl56vnnz4vs4f7a
-- valory/governatooorr_abci:0.1.0:bafybeihehccpfhs3koqgahw5p7ybpeadjwgzqhfbihuod73xvcewlz5n5y
-- valory/proposal_collector_abci:0.1.0:bafybeicaobw3kr6qliz6mggut32rl3lftbyzoxvhwgcykyp4whhh5xxcka
-- valory/proposal_voter_abci:0.1.0:bafybeiawwbsfxzpb2kfdzibu4vq3whjuk22gy7upzjwqny3kubuk7zipei
+- valory/governatooorr_abci:0.1.0:bafybeig2fqn25iu7oylbzfroqvm2sxvcamhwbcwwygpsuailuvynqfqhaq
+- valory/proposal_collector_abci:0.1.0:bafybeiacroc4dlvftfv7nifhwgm6o3asgh2k5at3xht2u7bqxdd7rc7sqe
+- valory/proposal_voter_abci:0.1.0:bafybeiavx6wvdcwtiaysk74e55xzlnwm7k3eonxvht6l2vg3enk6nyv5nu
 - valory/registration_abci:0.1.0:bafybeidc6iv54mr2antvrw3r4tldm635othi62bhzeyyid7kejzxw4fwiq
 - valory/reset_pause_abci:0.1.0:bafybeige4ncfhwlqbthmfvdu7aogl2qqsozpz3h5el3xokmq4hcqujgsqy
 - valory/transaction_settlement_abci:0.1.0:bafybeihdgnqsiauhuuazmpnt7tawzxm3jnidfytifmb6yjbb6i3cqnafvy

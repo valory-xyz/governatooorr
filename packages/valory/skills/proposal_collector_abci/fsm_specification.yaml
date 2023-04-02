@@ -1,6 +1,5 @@
 alphabet_in:
 - API_ERROR
-- CONTRACT_ERROR
 - DONE
 - NO_MAJORITY
 - NO_PROPOSAL
@@ -20,7 +19,6 @@ states:
 - FinishedProposalSelectionVoteRound
 - SelectProposalRound
 - SynchronizeDelegationsRound
-- VerifyDelegationsRound
 transition_func:
     (CollectActiveProposalsRound, API_ERROR): CollectActiveProposalsRound
     (CollectActiveProposalsRound, DONE): SelectProposalRound
@@ -30,10 +28,6 @@ transition_func:
     (SelectProposalRound, NO_PROPOSAL): FinishedProposalSelectionDoneRound
     (SelectProposalRound, ROUND_TIMEOUT): SelectProposalRound
     (SelectProposalRound, VOTE): FinishedProposalSelectionVoteRound
-    (SynchronizeDelegationsRound, DONE): VerifyDelegationsRound
+    (SynchronizeDelegationsRound, DONE): CollectActiveProposalsRound
     (SynchronizeDelegationsRound, NO_MAJORITY): SynchronizeDelegationsRound
     (SynchronizeDelegationsRound, ROUND_TIMEOUT): SynchronizeDelegationsRound
-    (VerifyDelegationsRound, CONTRACT_ERROR): VerifyDelegationsRound
-    (VerifyDelegationsRound, DONE): CollectActiveProposalsRound
-    (VerifyDelegationsRound, NO_MAJORITY): VerifyDelegationsRound
-    (VerifyDelegationsRound, ROUND_TIMEOUT): VerifyDelegationsRound

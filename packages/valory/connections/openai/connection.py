@@ -33,7 +33,7 @@ from packages.valory.protocols.llm.dialogues import LlmDialogues as BaseLlmDialo
 from packages.valory.protocols.llm.message import LlmMessage
 
 
-CONNECTION_ID = PublicId.from_str("valory/openai:0.1.0")
+PUBLIC_ID = PublicId.from_str("valory/openai:0.1.0")
 
 
 class LlmDialogues(BaseLlmDialogues):
@@ -70,7 +70,7 @@ class OpenaiConnection(BaseSyncConnection):
 
     MAX_WORKER_THREADS = 1
 
-    connection_id = CONNECTION_ID
+    connection_id = PUBLIC_ID
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:  # pragma: no cover
         """
@@ -96,7 +96,7 @@ class OpenaiConnection(BaseSyncConnection):
             for setting in ("openai_api_key", "engine", "max_tokens", "temperature")
         }
         openai.api_key = self.openai_settings["openai_api_key"]
-        self.dialogues = LlmDialogues(connection_id=CONNECTION_ID)
+        self.dialogues = LlmDialogues(connection_id=PUBLIC_ID)
 
     def main(self) -> None:
         """

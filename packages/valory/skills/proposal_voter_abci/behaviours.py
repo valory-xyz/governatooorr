@@ -23,7 +23,7 @@ from abc import ABC
 from typing import Dict, Generator, Optional, Set, Type, cast
 
 from packages.valory.connections.openai.connection import (
-    CONNECTION_ID as LLM_CONNECTION_PUBLIC_ID,
+    PUBLIC_ID as LLM_CONNECTION_PUBLIC_ID,
 )
 from packages.valory.contracts.delegate.contract import DelegateContract
 from packages.valory.contracts.gnosis_safe.contract import GnosisSafeContract

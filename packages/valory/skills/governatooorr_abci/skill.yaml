@@ -9,7 +9,7 @@ fingerprint:
   __init__.py: bafybeigk2kb335wy5vmgapbrqmfotvwqm4dqsuqr7gt7qic4v4npx2pqxy
   behaviours.py: bafybeigcq5d235jq2j34jh7tuebwmv4ovypqkbzacortps35aaywhxhml4
   composition.py: bafybeiaqbziebm4elyyvqxowohwhd77a7zcytcyw53mr6uwcht4aw7gkoa
-  dialogues.py: bafybeigpwuzku3we7axmxeamg7vn656maww6emuztau5pg3ebsoquyfdqm
+  dialogues.py: bafybeifbufsnq67tl4lbdfbjgzho5jpvagklvjlzh6nrpzwybv2rljf76u
   fsm_specification.yaml: bafybeicfcrrbod4rr7mz6ix3av56arpzmvzdnmwqkk6mlierbmwo7lnbji
   handlers.py: bafybeicbzmpz5ag75u7euupgaqkqsigcmmdv7nadii7p5li74igqmqchki
   models.py: bafybeihgj6r72aaz6mrv74kvqlvxbgnrzbkwevldp274tobsauj5m5vtwy
@@ -20,7 +20,7 @@ protocols: []
 skills:
 - valory/abstract_round_abci:0.1.0:bafybeib7q4t5jh6gic3i2pzuzlk7q2xmnueyxjpftm4gl56vnnz4vs4f7a
 - valory/proposal_collector:0.1.0:bafybeib4u5yz23gjkmqb3shjcy7uojh6tkfo3cbqbwukgftlztckqe7cpi
-- valory/proposal_voter:0.1.0:bafybeib52y2x3rbikuntloi5kolll2u42wp5tnia3bwhbwgaqr6sml65um
+- valory/proposal_voter:0.1.0:bafybeihknw5zfriknfvexhb2c7bm6x4is6hvpepof2h3qsdlo3xrz5llby
 - valory/registration_abci:0.1.0:bafybeidc6iv54mr2antvrw3r4tldm635othi62bhzeyyid7kejzxw4fwiq
 - valory/reset_pause_abci:0.1.0:bafybeige4ncfhwlqbthmfvdu7aogl2qqsozpz3h5el3xokmq4hcqujgsqy
 - valory/transaction_settlement_abci:0.1.0:bafybeihdgnqsiauhuuazmpnt7tawzxm3jnidfytifmb6yjbb6i3cqnafvy
@@ -70,6 +70,9 @@ models:
   ledger_api_dialogues:
     args: {}
     class_name: LedgerApiDialogues
+  llm_dialogues:
+    args: {}
+    class_name: LlmDialogues
   params:
     args:
       cleanup_history_depth: 1

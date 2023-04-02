@@ -8,7 +8,7 @@ license: Apache-2.0
 fingerprint:
   README.md: bafybeicw7npqf36nxy3ocmmjfntgjn5dskgespnpw6o2rw62aof2x5oxvm
 fingerprint_ignore_patterns: []
-agent: valory/governatooorr:0.1.0:bafybeif2dy5hiiwlethnuabcji2en4mzgo3pvso2av5h4dehrxurgskawa
+agent: valory/governatooorr:0.1.0:bafybeie5tyguwbejhc65ngcton6gm3ll2vtgjqqtbx56um57aryiak6xji
 number_of_agents: 1
 deployment:
   agent:
@@ -94,6 +94,8 @@ config:
 public_id: valory/openai:0.1.0
 type: connection
 config:
+  engine: ${ENGINE:str:text-davinci-003}
+  max_tokens: ${MAX_TOKENS:int:500}
   openai_api_key: ${OPENAI_API_KEY:str:null}
   temperature: ${TEMPERATURE:float:0.7}
 ---

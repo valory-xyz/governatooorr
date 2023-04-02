@@ -134,7 +134,7 @@ class EstablishVoteBehaviour(ProposalVoterBaseBehaviour):
                 "proposal": selected_proposal["title"]
                 + "\n"
                 + selected_proposal["description"],
-                "voting_intention": voting_intention_snippet,
+                "voting_intention_snippet": voting_intention_snippet,
                 "voting_options": VOTING_OPTIONS,
             }
 

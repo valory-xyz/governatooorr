@@ -15,7 +15,7 @@ protocols:
 - valory/llm:1.0.0:bafybeigafqnus3kvaashfdzrpybpqiumhvbs2dmdnukqzn7yqedga4x7ui
 class_name: OpenaiConnection
 config:
-  engine: gpt-3.5-turbo
+  engine: text-davinci-003
   max_tokens: 500
   openai_api_key: null
   temperature: 0.7

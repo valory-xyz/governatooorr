@@ -139,18 +139,16 @@ class OpenaiConnection(BaseSyncConnection):
             )
             return
 
-        vote = self._get_vote(
+        value = self._get_response(
             prompt_template=llm_message.prompt_template,
             prompt_values=llm_message.prompt_values,
         )
-        self.logger.info(f"Vote: {vote}")
-
         response_message = cast(
             LlmMessage,
             dialogue.reply(
                 performative=LlmMessage.Performative.RESPONSE,
                 target_message=llm_message,
-                value=vote,
+                value=value,
             ),
         )
 
@@ -163,8 +161,8 @@ class OpenaiConnection(BaseSyncConnection):
 
         self.put_envelope(response_envelope)
 
-    def _get_vote(self, prompt_template: str, prompt_values: Dict[str, str]):
-        """Get vote."""
+    def _get_response(self, prompt_template: str, prompt_values: Dict[str, str]):
+        """Get response from openai."""
         # Format the prompt using input variables and prompt_values
         formatted_prompt = prompt_template.format(**prompt_values)
 

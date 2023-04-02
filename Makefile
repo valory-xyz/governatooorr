@@ -107,7 +107,7 @@ new_env: clean
 fix-abci-app-specs:
 	export PYTHONPATH=${PYTHONPATH}:${PWD} && autonomy analyse fsm-specs --update --app-class ProposalCollectorAbciApp --package packages/valory/skills/proposal_collector_abci/ || (echo "Failed to check proposal_collector_abci abci consistency" && exit 1)
 	export PYTHONPATH=${PYTHONPATH}:${PWD} && autonomy analyse fsm-specs --update --app-class ProposalVoterAbciApp --package packages/valory/skills/proposal_voter_abci/ || (echo "Failed to check proposal_voter_abci abci consistency" && exit 1)
-		export PYTHONPATH=${PYTHONPATH}:${PWD} && autonomy analyse fsm-specs --update --app-class GovernatooorrAbciApp --package packages/valory/skills/governatooorr_abci/ || (echo "Failed to check governatooorr_abci abci consistency" && exit 1)
+	export PYTHONPATH=${PYTHONPATH}:${PWD} && autonomy analyse fsm-specs --update --app-class GovernatooorrAbciApp --package packages/valory/skills/governatooorr_abci/ || (echo "Failed to check governatooorr_abci abci consistency" && exit 1)
 
 .PHONY: all-linters
 all-linters:

@@ -312,7 +312,9 @@ class ProposalCollectorAbciApp(AbciApp[Event]):
         FinishedProposalSelectionDoneRound,
         FinishedProposalSelectionVoteRound,
     }
-    event_to_timeout: EventToTimeout = {}
+    event_to_timeout: EventToTimeout = {
+        Event.ROUND_TIMEOUT: 30.0,
+    }
     cross_period_persisted_keys: Set[str] = {
         "current_delegations",
         "active_proposals",

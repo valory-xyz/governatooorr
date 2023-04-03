@@ -223,7 +223,9 @@ class PrepareVoteTransactionBehaviour(ProposalVoterBaseBehaviour):
             tx_hash = yield from self._get_safe_tx_hash()
 
             if not tx_hash:
-                tx_hash = EstablishVoteRound.ERROR_PAYLOAD
+                tx_hash = PrepareVoteTransactionRound.ERROR_PAYLOAD
+
+            self.context.logger.info(f"tx_hash is {tx_hash}")
 
             sender = self.context.agent_address
             payload = PrepareVoteTransactionPayload(sender=sender, tx_hash=tx_hash)

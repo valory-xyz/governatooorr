@@ -131,9 +131,14 @@ class PrepareVoteTransactionRound(CollectSameUntilThresholdRound):
     payload_class = PrepareVoteTransactionPayload
     synchronized_data_class = SynchronizedData
 
+    ERROR_PAYLOAD = "ERROR"
+
     def end_block(self) -> Optional[Tuple[BaseSynchronizedData, Event]]:
         """Process the end of the block."""
         if self.threshold_reached:
+
+            if self.most_voted_payload == PrepareVoteTransactionRound.ERROR_PAYLOAD:
+                return self.synchronized_data, Event.CONTRACT_ERROR
 
             synchronized_data = self.synchronized_data.update(
                 synchronized_data_class=SynchronizedData,
@@ -171,6 +176,7 @@ class ProposalVoterAbciApp(AbciApp[Event]):
             Event.DONE: FinishedTransactionPreparationRound,
             Event.NO_MAJORITY: PrepareVoteTransactionRound,
             Event.ROUND_TIMEOUT: PrepareVoteTransactionRound,
+            Event.CONTRACT_ERROR: PrepareVoteTransactionRound,
         },
         FinishedTransactionPreparationRound: {},
     }

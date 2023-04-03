@@ -21,11 +21,8 @@
 
 import json
 from abc import ABC
-from copy import deepcopy
-from typing import Generator, List, Optional, Set, Type, cast
+from typing import Generator, Set, Type, cast
 
-from packages.valory.contracts.compound.contract import CompoundContract
-from packages.valory.protocols.contract_api import ContractApiMessage
 from packages.valory.skills.abstract_round_abci.base import AbstractRound
 from packages.valory.skills.abstract_round_abci.behaviours import (
     AbstractRoundBehaviour,
@@ -36,7 +33,6 @@ from packages.valory.skills.proposal_collector_abci.payloads import (
     CollectActiveProposalsPayload,
     SelectProposalPayload,
     SynchronizeDelegationsPayload,
-    VerifyDelegationsPayload,
 )
 from packages.valory.skills.proposal_collector_abci.rounds import (
     CollectActiveProposalsRound,

@@ -19,7 +19,7 @@ contracts: []
 protocols: []
 skills:
 - valory/abstract_round_abci:0.1.0:bafybeib7q4t5jh6gic3i2pzuzlk7q2xmnueyxjpftm4gl56vnnz4vs4f7a
-- valory/proposal_collector_abci:0.1.0:bafybeifcsh4eb5mkbjqql77aqrgtc4gbdlljnhqusqbjlwt3bonzo66bj4
+- valory/proposal_collector_abci:0.1.0:bafybeicxipgg7zfeohhfrijlrej76wv64fqxkgnnhtqf7ji436ygxw3jk4
 - valory/proposal_voter_abci:0.1.0:bafybeihi2xfeh4atqateqs7o3oxurtjsow6vrnge3ltotx5ipjmlsqworm
 - valory/registration_abci:0.1.0:bafybeidc6iv54mr2antvrw3r4tldm635othi62bhzeyyid7kejzxw4fwiq
 - valory/reset_pause_abci:0.1.0:bafybeige4ncfhwlqbthmfvdu7aogl2qqsozpz3h5el3xokmq4hcqujgsqy
@@ -80,7 +80,6 @@ models:
     args:
       cleanup_history_depth: 1
       cleanup_history_depth_current: null
-      compound_contract_address: '0xc00e94Cb662C3520282E6f5717214004A7f26888'
       drand_public_key: 868f005eb8e6e4ca0a47c8a77ceaa5309a47978a7c71bc5cce96366b5d7a569937c529eeda66c7293784a9402801af31
       finalize_timeout: 60.0
       genesis_config:

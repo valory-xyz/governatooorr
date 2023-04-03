@@ -7,19 +7,18 @@ license: Apache-2.0
 aea_version: '>=1.0.0, <2.0.0'
 fingerprint:
   __init__.py: bafybeickrxtcqbivmneh54iq7ymaoq6xzwdouvnoon3h234vzp574qouvu
-  behaviours.py: bafybeicaersknjwrkhtkgzz3jsipxkfyvbks3kkki5vdzokkih7hjejaia
+  behaviours.py: bafybeiefzsokec3kbg5hktd3l5qewwpbsbulwybuvcxct637ocwgmdrd2m
   dialogues.py: bafybeighergy2hupd32ozp2ud5j4jujpccfkzk2l46a33xn7yi2ofk32m4
   fsm_specification.yaml: bafybeig24qxwd5q47pohoe4yrgbjo37b3dmodtysewmzf2ktw4xo5iyyze
   handlers.py: bafybeidya7ezt7gi4c7e4xqq2vnv7ppmp2zzs4ivsshubkxtzjhgu4qd7m
-  models.py: bafybeibnb3uj34o2o65css2ilqetfzlwbnunjedkgeapldwosukobv7cjy
-  payloads.py: bafybeiecovofuf66jino7kfoslpridq23ibmsmrjfbmmpffddfmk5kxhuq
-  rounds.py: bafybeichspnrs5e7cksnvwvtge34wkbkjykby7oy47l3occkghzar33sju
+  models.py: bafybeicolnipyzownntfxff64ns6svzffgquh4wgxxplrcv5oq7j6bvjrm
+  payloads.py: bafybeibtlekt7kvkuouslec3b5gobpe6kpoe6qjhp6ctxnhoq3dtijo7du
+  rounds.py: bafybeieepohonbujaaaojkbvgqicipvtf4ntrun4m6v2ts2yzhij7arqxe
   tally.py: bafybeifdse37wwsidxh2zpfnc756rni2yvqpbkclfvba2paz2dghirwqpe
 fingerprint_ignore_patterns: []
 connections:
 - fetchai/http_server:0.22.0:bafybeihaax5od5zo5jk2l62hv4jwuwtxloh5mijozudpsjombqc4ncmi6i
-contracts:
-- valory/compound:0.1.0:bafybeifenymvubvjge36es63feunwvqphyrjrnn7icfiu3b7a7rrbf2vma
+contracts: []
 protocols:
 - valory/contract_api:1.0.0:bafybeidv6wxpjyb2sdyibnmmum45et4zcla6tl63bnol6ztyoqvpl4spmy
 - valory/http:1.0.0:bafybeifyoio7nlh5zzyn5yz7krkou56l22to3cwg7gw5v5o3vxwklibhty
@@ -75,7 +74,6 @@ models:
     args:
       cleanup_history_depth: 1
       cleanup_history_depth_current: null
-      compound_contract_address: '0xc00e94Cb662C3520282E6f5717214004A7f26888'
       drand_public_key: 868f005eb8e6e4ca0a47c8a77ceaa5309a47978a7c71bc5cce96366b5d7a569937c529eeda66c7293784a9402801af31
       finalize_timeout: 60.0
       genesis_config:

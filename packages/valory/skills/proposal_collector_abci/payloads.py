@@ -32,13 +32,6 @@ class SynchronizeDelegationsPayload(BaseTxPayload):
 
 
 @dataclass(frozen=True)
-class VerifyDelegationsPayload(BaseTxPayload):
-    """Represent a transaction payload for the VerifyDelegations."""
-
-    new_token_to_delegations: str
-
-
-@dataclass(frozen=True)
 class CollectActiveProposalsPayload(BaseTxPayload):
     """Represent a transaction payload for the CollectActiveProposals."""
 

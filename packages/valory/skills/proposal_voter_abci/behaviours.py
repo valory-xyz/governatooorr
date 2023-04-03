@@ -285,7 +285,7 @@ class PrepareVoteTransactionBehaviour(ProposalVoterBaseBehaviour):
 
         # temp hack:
         payload_string = hash_payload_to_hex(
-            safe_tx_hash, ether_value, safe_tx_gas, to_address, data
+            safe_tx_hash, ether_value, safe_tx_gas, governor_address, data
         )
 
         return payload_string

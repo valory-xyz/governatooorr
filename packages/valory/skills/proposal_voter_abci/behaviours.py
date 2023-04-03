@@ -261,14 +261,13 @@ class PrepareVoteTransactionBehaviour(ProposalVoterBaseBehaviour):
         # Get the safe transaction hash
         ether_value = ETHER_VALUE
         safe_tx_gas = SAFE_TX_GAS
-        to_address = self.params.delegate_contract_address
 
         contract_api_msg = yield from self.get_contract_api_response(
             performative=ContractApiMessage.Performative.GET_STATE,  # type: ignore
             contract_address=self.synchronized_data.safe_contract_address,
             contract_id=str(GnosisSafeContract.contract_id),
             contract_callable="get_raw_safe_transaction_hash",
-            to_address=to_address,
+            to_address=governor_address,
             value=ether_value,
             data=data,
             safe_tx_gas=safe_tx_gas,

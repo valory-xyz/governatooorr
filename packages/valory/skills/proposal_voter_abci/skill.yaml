@@ -7,11 +7,11 @@ license: Apache-2.0
 aea_version: '>=1.0.0, <2.0.0'
 fingerprint:
   __init__.py: bafybeifps6e4vfc55iyb5jaab7dxem7y3a2wyflai32pyzf4z75m5ngym4
-  behaviours.py: bafybeibuu3aj22xo5d2fdxr5tb4q5fpikfdmgt4tadeiqkfv47dqddbirq
+  behaviours.py: bafybeid2y7y5tmzumouyp2ciy5e52yasmnixum6wafw5kh5cn4yrlfcyw4
   dialogues.py: bafybeihdakfnmps5o7n5rgepn3fl3lzttqsddhiny7mh7ddwhniutri6bq
   fsm_specification.yaml: bafybeiawahkdaetj4r67g2ptavc2hqlaun4ujhutwxurwadxen6u5n77dy
   handlers.py: bafybeihex227foehp7a7wfc6vh25ahk5g65b5itu325hph2xj33mgp6kue
-  models.py: bafybeiagzjoea2lipowsp3ohrzx5fgc6uiyn7ipnm3akd2ora4muoc4m44
+  models.py: bafybeid6zzqlv5ptmklqfo5ned6b4aeptxmted72isfmwnqzvic34z7wci
   payload_tools.py: bafybeihk5tqqyn3z4qsvbu4clouclqyn26hklzb3djikxfifpdb6lcwaua
   payloads.py: bafybeidonvuylmxad4mhk6hix2s7w3fjkabbtv5vkow6xwsrskvlt4ewuu
   rounds.py: bafybeifg57tofpoe6pcuybq7hh5qallryzyy667ikph646y52fmccdzfpq
@@ -89,7 +89,6 @@ models:
     args:
       cleanup_history_depth: 1
       cleanup_history_depth_current: null
-      delegate_contract_address: '0xeF3B6E9e13706A8F01fe98fdCf66335dc5CfdEED'
       drand_public_key: 868f005eb8e6e4ca0a47c8a77ceaa5309a47978a7c71bc5cce96366b5d7a569937c529eeda66c7293784a9402801af31
       finalize_timeout: 60.0
       genesis_config:

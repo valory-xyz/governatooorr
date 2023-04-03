@@ -38,16 +38,6 @@ class SharedState(BaseSharedState):
     abci_app_cls = ProposalVoterAbciApp
 
 
-class Params(BaseParams):
-    """Parameters."""
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        """Initialize the parameters object."""
-        self.delegate_contract_address = self._ensure(
-            "delegate_contract_address", kwargs, str
-        )
-        super().__init__(*args, **kwargs)
-
-
+Params = BaseParams
 Requests = BaseRequests
 BenchmarkTool = BaseBenchmarkTool

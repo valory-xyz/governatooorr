@@ -40,7 +40,6 @@ from packages.valory.skills.proposal_voter_abci.dialogues import (
     LlmDialogues,
 )
 from packages.valory.skills.proposal_voter_abci.models import Params
-from packages.valory.skills.proposal_voter_abci.payload_tools import hash_payload_to_hex
 from packages.valory.skills.proposal_voter_abci.rounds import (
     EstablishVotePayload,
     EstablishVoteRound,
@@ -49,7 +48,7 @@ from packages.valory.skills.proposal_voter_abci.rounds import (
     ProposalVoterAbciApp,
     SynchronizedData,
 )
-
+from packages.valory.skills.transaction_settlement_abci.payload_tools import hash_payload_to_hex
 
 SAFE_TX_GAS = 0
 ETHER_VALUE = 0

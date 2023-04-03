@@ -8,7 +8,7 @@ license: Apache-2.0
 fingerprint:
   README.md: bafybeicw7npqf36nxy3ocmmjfntgjn5dskgespnpw6o2rw62aof2x5oxvm
 fingerprint_ignore_patterns: []
-agent: valory/governatooorr:0.1.0:bafybeib25kqgdgp6ulroc3432v3cn4cysqunhz5ib4nvuomvdfeqb4y3vy
+agent: valory/governatooorr:0.1.0:bafybeidcfaljps6fywzhkespz6blpqo7w2jmrctoefsecwcbd2o3akjaka
 number_of_agents: 1
 deployment:
   agent:
@@ -74,7 +74,6 @@ models:
       tendermint_p2p_url: localhost:26656
       tx_timeout: 10.0
       use_termination: ${USE_TERMINATION:bool:false}
-      delegate_contract_address: ${DELEGATE_CONTRACT_ADDRESS:str:0xeF3B6E9e13706A8F01fe98fdCf66335dc5CfdEED}
       tally_api_endpoint: ${TALLY_API_ENDPOINT:str:https://api.tally.xyz/query}
       tally_api_key: ${TALLY_API_KEY:str:<tally_api_key>}
       service_endpoint_base: ${SERVICE_ENDPOINT_BASE:str:https://governatooorr.staging.autonolas.tech/}

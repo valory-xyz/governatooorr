@@ -40,7 +40,6 @@ from packages.valory.skills.proposal_voter_abci.dialogues import (
     LlmDialogues,
 )
 from packages.valory.skills.proposal_voter_abci.models import Params
-from packages.valory.skills.proposal_voter_abci.payload_tools import hash_payload_to_hex
 from packages.valory.skills.proposal_voter_abci.rounds import (
     EstablishVotePayload,
     EstablishVoteRound,
@@ -48,6 +47,9 @@ from packages.valory.skills.proposal_voter_abci.rounds import (
     PrepareVoteTransactionRound,
     ProposalVoterAbciApp,
     SynchronizedData,
+)
+from packages.valory.skills.transaction_settlement_abci.payload_tools import (
+    hash_payload_to_hex,
 )
 
 
@@ -83,34 +85,11 @@ class EstablishVoteBehaviour(ProposalVoterBaseBehaviour):
         with self.context.benchmark_tool.measure(self.behaviour_id).local():
 
             # Get the selected proposal
-            selected_proposal = None
-            p_id = self.synchronized_data.selected_proposal_id
+            selected_proposal = self.synchronized_data.proposals[
+                self.synchronized_data.selected_proposal_id
+            ]
 
-            for p in self.synchronized_data.active_proposals:
-                if p["id"] == p_id:
-                    selected_proposal = p
-                    break
-
-            # This should never fail
-            if not selected_proposal:
-                raise ValueError(
-                    f"Proposal with id {p_id} has not been found in the active proposals"
-                )
-
-            # We need the token address corresponding to the selected proposal
-            # We can get it from one of the delegations  # TODO: not the best way
-            governor_address = selected_proposal["governor"]["id"].split(":")[-1]
-            token_address = None
-
-            for d in self.synchronized_data.current_delegations:
-                if d["governor_address"] == governor_address:
-                    token_address = d["token_address"]
-                    break
-
-            if not token_address:
-                raise ValueError(
-                    f"Could not find the token address for this proposal: {selected_proposal}"
-                )
+            proposal_token = selected_proposal["governor"]["tokens"][0]["id"]
 
             self.context.logger.info(
                 f"Getting vote intention for proposal {selected_proposal}"
@@ -118,7 +97,7 @@ class EstablishVoteBehaviour(ProposalVoterBaseBehaviour):
 
             # Get the service aggregated vote intention
             vote_intention = self._get_service_vote_intention(
-                token_address
+                proposal_token
             )  # either GOOD or EVIL
 
             self.context.logger.info(f"Vote intention: {vote_intention}")
@@ -207,7 +186,7 @@ class EstablishVoteBehaviour(ProposalVoterBaseBehaviour):
 
         vote_preference_counts = {"GOOD": 0, "EVIL": 0}
 
-        current_delegations = self.synchronized_data.current_delegations
+        current_delegations = self.synchronized_data.delegations
         current_delegations = list(
             filter(lambda d: d["token_address"] == token_address, current_delegations)
         )
@@ -244,7 +223,9 @@ class PrepareVoteTransactionBehaviour(ProposalVoterBaseBehaviour):
             tx_hash = yield from self._get_safe_tx_hash()
 
             if not tx_hash:
-                tx_hash = EstablishVoteRound.ERROR_PAYLOAD
+                tx_hash = PrepareVoteTransactionRound.ERROR_PAYLOAD
+
+            self.context.logger.info(f"tx_hash is {tx_hash}")
 
             sender = self.context.agent_address
             payload = PrepareVoteTransactionPayload(sender=sender, tx_hash=tx_hash)
@@ -258,16 +239,9 @@ class PrepareVoteTransactionBehaviour(ProposalVoterBaseBehaviour):
     def _get_safe_tx_hash(self) -> Generator[None, None, Optional[str]]:
         """Get the transaction hash of the Safe tx."""
 
-        active_proposals = cast(
-            SynchronizedData, self.synchronized_data
-        ).active_proposals
-        selected_proposal_id = cast(
-            SynchronizedData, self.synchronized_data
-        ).selected_proposal_id
-        governor_address = None
-        for ap in active_proposals:
-            if ap["id"] == selected_proposal_id:
-                governor_address = ap["governor"]["id"].split(":")[-1]
+        governor_address = self.synchronized_data.proposals[
+            self.synchronized_data.selected_proposal_id
+        ]["governor"]["id"].split(":")[-1]
 
         # Get the raw transaction from the Bravo Delegate contract
         contract_api_msg = yield from self.get_contract_api_response(
@@ -281,7 +255,9 @@ class PrepareVoteTransactionBehaviour(ProposalVoterBaseBehaviour):
         if (
             contract_api_msg.performative != ContractApiMessage.Performative.STATE
         ):  # pragma: nocover
-            self.context.logger.warning("get_cast_vote_data unsuccessful!")
+            self.context.logger.warning(
+                f"get_cast_vote_data unsuccessful!: {contract_api_msg}"
+            )
             return None
 
         data = cast(bytes, contract_api_msg.state.body["data"])
@@ -289,14 +265,13 @@ class PrepareVoteTransactionBehaviour(ProposalVoterBaseBehaviour):
         # Get the safe transaction hash
         ether_value = ETHER_VALUE
         safe_tx_gas = SAFE_TX_GAS
-        to_address = self.params.delegate_contract_address
 
         contract_api_msg = yield from self.get_contract_api_response(
             performative=ContractApiMessage.Performative.GET_STATE,  # type: ignore
             contract_address=self.synchronized_data.safe_contract_address,
             contract_id=str(GnosisSafeContract.contract_id),
             contract_callable="get_raw_safe_transaction_hash",
-            to_address=to_address,
+            to_address=governor_address,
             value=ether_value,
             data=data,
             safe_tx_gas=safe_tx_gas,
@@ -304,7 +279,9 @@ class PrepareVoteTransactionBehaviour(ProposalVoterBaseBehaviour):
         if (
             contract_api_msg.performative != ContractApiMessage.Performative.STATE
         ):  # pragma: nocover
-            self.context.logger.warning("get_raw_safe_transaction_hash unsuccessful!")
+            self.context.logger.warning(
+                f"get_raw_safe_transaction_hash unsuccessful!: {contract_api_msg}"
+            )
             return None
 
         safe_tx_hash = cast(str, contract_api_msg.state.body["tx_hash"])
@@ -313,7 +290,7 @@ class PrepareVoteTransactionBehaviour(ProposalVoterBaseBehaviour):
 
         # temp hack:
         payload_string = hash_payload_to_hex(
-            safe_tx_hash, ether_value, safe_tx_gas, to_address, data
+            safe_tx_hash, ether_value, safe_tx_gas, governor_address, data
         )
 
         return payload_string

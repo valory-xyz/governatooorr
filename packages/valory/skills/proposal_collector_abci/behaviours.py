@@ -259,6 +259,10 @@ class CollectActiveProposalsBehaviour(ProposalCollectorBaseBehaviour):
         """Do the act, supporting asynchronous execution."""
 
         with self.context.benchmark_tool.measure(self.behaviour_id).local():
+
+            # Clear the new delegations # TODO: move this elsewhere
+            self.context.state.new_delegations = []
+
             active_proposals = yield from self._get_active_proposals()
             sender = self.context.agent_address
             payload = CollectActiveProposalsPayload(
@@ -281,20 +285,16 @@ class CollectActiveProposalsBehaviour(ProposalCollectorBaseBehaviour):
             "Api-key": "{api_key}".format(api_key=self.params.tally_api_key),
         }
 
-        # Get all governors from the current delegations
-        governor_addresses = set()
-        for d in self.synchronized_data.current_delegations:
-            governor_addresses.add(d["governor_address"])
-
+        # Get all the proposals
         variables = {
             "chainId": "eip155:1",
             "proposers": [],
-            "governors": list(governor_addresses),
+            "governors": [],
             "pagination": {"limit": 200, "offset": 0},
         }
 
         self.context.logger.info(
-            f"Retrieving proposals from Tally API [{self.params.tally_api_endpoint}] for governors: {governor_addresses}"
+            f"Retrieving proposals from Tally API [{self.params.tally_api_endpoint}]"
         )
 
         # Make the request
@@ -316,8 +316,13 @@ class CollectActiveProposalsBehaviour(ProposalCollectorBaseBehaviour):
 
         response_json = json.loads(response.body)
 
+        self.context.logger.info(f"Response from Tally API: {response_json}")
+
+        if "errors" in response_json:
+            self.context.logger.error("Got errors while retrieving the data from Tally")
+            return CollectActiveProposalsRound.ERROR_PAYLOAD
+
         # Filter out non-active proposals and those which use non-erc20 tokens
-        # TOFIX: I think the second condition is not necessary, as we only allow valid governors
         active_proposals = list(
             filter(
                 lambda p: p["statusChanges"][-1]["type"] == "ACTIVE"
@@ -326,6 +331,10 @@ class CollectActiveProposalsBehaviour(ProposalCollectorBaseBehaviour):
                 response_json["data"]["proposals"],
             )
         )
+
+        p_ids = [p["id"] for p in active_proposals]
+
+        self.context.logger.info(f"Retrieved active proposals: {p_ids}")
 
         return json.dumps(
             {
@@ -349,8 +358,6 @@ class SelectProposalBehaviour(ProposalCollectorBaseBehaviour):
 
         with self.context.benchmark_tool.measure(self.behaviour_id).local():
 
-            active_proposals = self.synchronized_data.active_proposals
-
             # TODO: we enter this round after a successful tx_submission
             # We need to check if that is the case and remove the first proposal
             # from the list.
@@ -358,13 +365,30 @@ class SelectProposalBehaviour(ProposalCollectorBaseBehaviour):
             # But it would be great if we could get the voting intention right away, so we can
             # display this on the frontend.
 
+            # Get all the governors from the current delegations
+            delegation_governors = [
+                d["governor_address"] for d in self.synchronized_data.delegations
+            ]
+
+            # Get the proposals where we can vote:
+            # - Active
+            # - Not voted before
+            # - Governor in the delegation list
+            votable_active_proposals = {
+                p_id: p
+                for p_id, p in self.synchronized_data.proposals.items()
+                if p["active"]
+                and not p["vote"]
+                and p["governor"]["id"].split(":")[-1] in delegation_governors
+            }
+
             # Some proposals have an ETA, some dont
             # We will prioritise those with it
             active_proposals_with_eta = list(
-                filter(lambda p: p["eta"] != "", active_proposals)
+                filter(lambda p: p["eta"] != "", votable_active_proposals.values())
             )
             active_proposals_no_eta = list(
-                filter(lambda p: p["eta"] == "", active_proposals)
+                filter(lambda p: p["eta"] == "", votable_active_proposals.values())
             )
 
             # Sort by ETA
@@ -386,7 +410,7 @@ class SelectProposalBehaviour(ProposalCollectorBaseBehaviour):
             proposal_id = sorted_proposals[0]["id"] if sorted_proposals else None
 
             # Check whether we have delegations
-            if not proposal_id or not self.synchronized_data.current_delegations:
+            if not proposal_id:
                 proposal_id = SelectProposalRound.NO_PROPOSAL
 
             sender = self.context.agent_address

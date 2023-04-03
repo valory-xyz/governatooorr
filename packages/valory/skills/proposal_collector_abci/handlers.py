@@ -106,7 +106,7 @@ class HttpHandler(BaseHttpHandler):
 
         # Routes
         self.routes = {
-            (HttpMethod.POST.value): [
+            (HttpMethod.POST.value,): [
                 (delegate_url_regex, self._handle_post_delegate),
             ],
             (HttpMethod.GET.value, HttpMethod.HEAD.value): [
@@ -259,20 +259,17 @@ class HttpHandler(BaseHttpHandler):
     ) -> None:
 
         # Get the token address
-        address = http_msg.url.split("/")[-1]
+        address = http_msg.url.split("/")[
+            -1
+        ]  # TODO: is this the user or the token address?
 
-        # Unknown token
-        if address not in self.synchronized_data.current_token_to_delegations:
-            self.context.logger.info(
-                f"Requested token {address} is not present in current_token_to_delegations"
-            )
-            self._send_not_found_response(http_msg, http_dialogue)
-            return
+        delegations = [
+            d
+            for d in self.synchronized_data.delegations
+            if d["user_address"] == address
+        ]
 
-        # Retrieve delegations
-        response_body_data = {
-            "delegations": self.synchronized_data.current_token_to_delegations[address]
-        }
+        response_body_data = {"delegations": delegations}
 
         self._send_ok_response(http_msg, http_dialogue, response_body_data)
 
@@ -280,9 +277,7 @@ class HttpHandler(BaseHttpHandler):
         self, http_msg: HttpMessage, http_dialogue: HttpDialogue
     ) -> None:
 
-        response_body_data = {
-            "active_proposals": self.synchronized_data.active_proposals
-        }
+        response_body_data = {"proposals": self.synchronized_data.proposals}
 
         self._send_ok_response(http_msg, http_dialogue, response_body_data)
 
@@ -291,13 +286,11 @@ class HttpHandler(BaseHttpHandler):
     ) -> None:
 
         proposal_id = http_msg.url.split("/")[-1]
-        active_proposals = self.synchronized_data.active_proposals
-
-        proposal = None
-        for ap in active_proposals:
-            if ap["id"] == proposal_id:
-                proposal = ap
-                break
+        proposal = (
+            None
+            if proposal_id not in self.synchronized_data.proposals
+            else self.synchronized_data.proposals[proposal_id]
+        )
 
         if not proposal:
             self._send_not_found_response(http_msg, http_dialogue)

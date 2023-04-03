@@ -18,6 +18,7 @@ transition_func:
     (EstablishVoteRound, DONE): PrepareVoteTransactionRound
     (EstablishVoteRound, NO_MAJORITY): EstablishVoteRound
     (EstablishVoteRound, ROUND_TIMEOUT): EstablishVoteRound
+    (PrepareVoteTransactionRound, CONTRACT_ERROR): PrepareVoteTransactionRound
     (PrepareVoteTransactionRound, DONE): FinishedTransactionPreparationRound
     (PrepareVoteTransactionRound, NO_MAJORITY): PrepareVoteTransactionRound
     (PrepareVoteTransactionRound, ROUND_TIMEOUT): PrepareVoteTransactionRound

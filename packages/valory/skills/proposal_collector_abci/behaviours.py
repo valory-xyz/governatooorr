@@ -259,6 +259,10 @@ class CollectActiveProposalsBehaviour(ProposalCollectorBaseBehaviour):
         """Do the act, supporting asynchronous execution."""
 
         with self.context.benchmark_tool.measure(self.behaviour_id).local():
+
+            # Clear the new delegations # TODO: move this elsewhere
+            self.context.state.new_delegations = []
+
             active_proposals = yield from self._get_active_proposals()
             sender = self.context.agent_address
             payload = CollectActiveProposalsPayload(

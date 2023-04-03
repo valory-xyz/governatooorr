@@ -106,7 +106,7 @@ class HttpHandler(BaseHttpHandler):
 
         # Routes
         self.routes = {
-            (HttpMethod.POST.value): [
+            (HttpMethod.POST.value,): [
                 (delegate_url_regex, self._handle_post_delegate),
             ],
             (HttpMethod.GET.value, HttpMethod.HEAD.value): [

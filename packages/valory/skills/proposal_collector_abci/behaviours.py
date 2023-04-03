@@ -314,6 +314,10 @@ class CollectActiveProposalsBehaviour(ProposalCollectorBaseBehaviour):
 
         self.context.logger.info(f"Response from Tally API: {response_json}")
 
+        if "errors" in response_json:
+            self.context.logger.error("Got errors while retrieving the data from Tally")
+            return CollectActiveProposalsRound.ERROR_PAYLOAD
+
         # Filter out non-active proposals and those which use non-erc20 tokens
         active_proposals = list(
             filter(

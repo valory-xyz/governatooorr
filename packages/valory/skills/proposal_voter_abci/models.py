@@ -19,8 +19,6 @@
 
 """This module contains the shared state for the abci skill of ProposalVoterAbciApp."""
 
-from typing import Any
-
 from packages.valory.skills.abstract_round_abci.models import BaseParams
 from packages.valory.skills.abstract_round_abci.models import (
     BenchmarkTool as BaseBenchmarkTool,

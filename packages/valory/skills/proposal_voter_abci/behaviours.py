@@ -251,7 +251,9 @@ class PrepareVoteTransactionBehaviour(ProposalVoterBaseBehaviour):
         if (
             contract_api_msg.performative != ContractApiMessage.Performative.STATE
         ):  # pragma: nocover
-            self.context.logger.warning("get_cast_vote_data unsuccessful!")
+            self.context.logger.warning(
+                f"get_cast_vote_data unsuccessful!: {contract_api_msg}"
+            )
             return None
 
         data = cast(bytes, contract_api_msg.state.body["data"])
@@ -274,7 +276,9 @@ class PrepareVoteTransactionBehaviour(ProposalVoterBaseBehaviour):
         if (
             contract_api_msg.performative != ContractApiMessage.Performative.STATE
         ):  # pragma: nocover
-            self.context.logger.warning("get_raw_safe_transaction_hash unsuccessful!")
+            self.context.logger.warning(
+                f"get_raw_safe_transaction_hash unsuccessful!: {contract_api_msg}"
+            )
             return None
 
         safe_tx_hash = cast(str, contract_api_msg.state.body["tx_hash"])

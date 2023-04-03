@@ -62,34 +62,19 @@ class SynchronizedData(BaseSynchronizedData):
     """
 
     @property
-    def new_delegations(self) -> list:
+    def delegations(self) -> list:
         """Get the delegations."""
-        return cast(list, self.db.get("new_delegations", []))
+        return cast(list, self.db.get("delegations", []))
 
     @property
-    def agent_to_new_delegation_number(self) -> dict:
-        """Get the number of delegations each agent has added."""
-        return cast(dict, self.db.get("agent_to_new_delegation_number", {}))
-
-    @property
-    def current_delegations(self) -> list:
-        """Get the current delegations."""
-        return cast(list, self.db.get("current_delegations", []))
-
-    @property
-    def active_proposals(self) -> dict:
-        """Get the active proposals."""
-        return cast(dict, self.db.get("active_proposals", {}))
+    def proposals(self) -> dict:
+        """Get the proposals."""
+        return cast(dict, self.db.get("proposals", {}))
 
     @property
     def selected_proposal_id(self) -> str:
         """Get the selected_proposal_id."""
         return cast(str, self.db.get_strict("selected_proposal_id"))
-
-    @property
-    def current_token_to_delegations(self) -> dict:
-        """Get the current_token_to_delegations."""
-        return cast(dict, self.db.get_strict("current_token_to_delegations"))
 
 
 class SynchronizeDelegationsRound(CollectDifferentUntilAllRound):
@@ -103,46 +88,30 @@ class SynchronizeDelegationsRound(CollectDifferentUntilAllRound):
 
         if self.collection_threshold_reached:
 
-            all_new_delegations = []
-            agent_to_new_delegation_number = {}
+            delegations = cast(SynchronizedData, self.synchronized_data).delegations
 
             for sender, payload in self.collection.items():
                 new_delegations = json.loads(payload.json["new_delegations"])
 
                 # Add this agent's new delegations
-                all_new_delegations.extend(new_delegations)
-
-                # Remember how many delegations this agent sent so we can
-                # remove them from its local state during next round
-                agent_to_new_delegation_number[sender] = len(new_delegations)
+                delegations.extend(new_delegations)
 
             # TODO: remove!
             # Hardcoding some delegations
-            all_new_delegations = [
-                {
-                    "user_address": "0x999999cf1046e68e36E1aA2E0E07105eDDD1f08E",
-                    "token_address": "0x610210AA5D51bf26CBce146A5992D2FEeBc27dB1",
-                    "voting_preference": "EVIL",
-                    "governor_address": "0x1C9a7ced4CAdb9c5a65E564e73091912aaec7494",
-                    "delegated_amount": 100,
-                }
-            ]
-
-            current_delegations = cast(
-                SynchronizedData, self.synchronized_data
-            ).current_delegations
-            current_delegations.extend(all_new_delegations)
+            # delegations = [
+            #     {
+            #         "user_address": "0x999999cf1046e68e36E1aA2E0E07105eDDD1f08E",
+            #         "token_address": "0x610210AA5D51bf26CBce146A5992D2FEeBc27dB1",
+            #         "voting_preference": "EVIL",
+            #         "governor_address": "0x1C9a7ced4CAdb9c5a65E564e73091912aaec7494",
+            #         "delegated_amount": 100,
+            #     }
+            # ]
 
             synchronized_data = self.synchronized_data.update(
                 synchronized_data_class=SynchronizedData,
                 **{
-                    get_name(SynchronizedData.current_delegations): current_delegations,
-                    get_name(
-                        SynchronizedData.new_delegations
-                    ): [],  # we have already added these into current delegations
-                    get_name(
-                        SynchronizedData.agent_to_new_delegation_number
-                    ): {},  # empty this to avoid deleting already synced delegations multiple times
+                    get_name(SynchronizedData.delegations): delegations,
                 }
             )
             return synchronized_data, Event.DONE
@@ -222,11 +191,27 @@ class CollectActiveProposalsRound(CollectSameUntilThresholdRound):
                 return self.synchronized_data, Event.API_ERROR
 
             active_proposals = json.loads(self.most_voted_payload)["active_proposals"]
+            proposals = cast(SynchronizedData, self.synchronized_data).proposals
+
+            # Set all the proposals "active" field to False
+            for p in proposals.values():
+                p["active"] = False
+
+            for p in active_proposals:
+                if p["id"] not in proposals:
+                    proposals[p["id"]] = p  # add the proposal
+                    proposals[p["id"]]["active"] = True  # set it to active
+                    proposals[p["id"]][
+                        "vote"
+                    ] = None  # we have not voted for this one yet
+                else:
+                    # The proposal is still active
+                    proposals[p["id"]]["active"] = True
 
             synchronized_data = self.synchronized_data.update(
                 synchronized_data_class=SynchronizedData,
                 **{
-                    get_name(SynchronizedData.active_proposals): active_proposals,
+                    get_name(SynchronizedData.proposals): proposals,
                 }
             )
             return synchronized_data, Event.DONE
@@ -316,8 +301,8 @@ class ProposalCollectorAbciApp(AbciApp[Event]):
         Event.ROUND_TIMEOUT: 30.0,
     }
     cross_period_persisted_keys: Set[str] = {
-        "current_delegations",
-        "active_proposals",
+        "delegations",
+        "proposals",
     }
     db_pre_conditions: Dict[AppState, Set[str]] = {
         SynchronizeDelegationsRound: set(),

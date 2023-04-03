@@ -83,34 +83,11 @@ class EstablishVoteBehaviour(ProposalVoterBaseBehaviour):
         with self.context.benchmark_tool.measure(self.behaviour_id).local():
 
             # Get the selected proposal
-            selected_proposal = None
-            p_id = self.synchronized_data.selected_proposal_id
+            selected_proposal = self.synchronized_data.proposals[
+                self.synchronized_data.selected_proposal_id
+            ]
 
-            for p in self.synchronized_data.active_proposals:
-                if p["id"] == p_id:
-                    selected_proposal = p
-                    break
-
-            # This should never fail
-            if not selected_proposal:
-                raise ValueError(
-                    f"Proposal with id {p_id} has not been found in the active proposals"
-                )
-
-            # We need the token address corresponding to the selected proposal
-            # We can get it from one of the delegations  # TODO: not the best way
-            governor_address = selected_proposal["governor"]["id"].split(":")[-1]
-            token_address = None
-
-            for d in self.synchronized_data.current_delegations:
-                if d["governor_address"] == governor_address:
-                    token_address = d["token_address"]
-                    break
-
-            if not token_address:
-                raise ValueError(
-                    f"Could not find the token address for this proposal: {selected_proposal}"
-                )
+            proposal_token = selected_proposal["governor"]["tokens"][0]["id"]
 
             self.context.logger.info(
                 f"Getting vote intention for proposal {selected_proposal}"
@@ -118,7 +95,7 @@ class EstablishVoteBehaviour(ProposalVoterBaseBehaviour):
 
             # Get the service aggregated vote intention
             vote_intention = self._get_service_vote_intention(
-                token_address
+                proposal_token
             )  # either GOOD or EVIL
 
             self.context.logger.info(f"Vote intention: {vote_intention}")
@@ -207,7 +184,7 @@ class EstablishVoteBehaviour(ProposalVoterBaseBehaviour):
 
         vote_preference_counts = {"GOOD": 0, "EVIL": 0}
 
-        current_delegations = self.synchronized_data.current_delegations
+        current_delegations = self.synchronized_data.delegations
         current_delegations = list(
             filter(lambda d: d["token_address"] == token_address, current_delegations)
         )
@@ -258,16 +235,9 @@ class PrepareVoteTransactionBehaviour(ProposalVoterBaseBehaviour):
     def _get_safe_tx_hash(self) -> Generator[None, None, Optional[str]]:
         """Get the transaction hash of the Safe tx."""
 
-        active_proposals = cast(
-            SynchronizedData, self.synchronized_data
-        ).active_proposals
-        selected_proposal_id = cast(
-            SynchronizedData, self.synchronized_data
-        ).selected_proposal_id
-        governor_address = None
-        for ap in active_proposals:
-            if ap["id"] == selected_proposal_id:
-                governor_address = ap["governor"]["id"].split(":")[-1]
+        governor_address = self.synchronized_data.proposals[
+            self.synchronized_data.selected_proposal_id
+        ]["governor"]["id"].split(":")[-1]
 
         # Get the raw transaction from the Bravo Delegate contract
         contract_api_msg = yield from self.get_contract_api_response(

@@ -167,7 +167,7 @@ models:
       service_id: governatooorr
       service_registry_address: null
       setup:
-        all_participants: ${list:["0x10E867Ac2Fb0Aa156ca81eF440a5cdf373bE1AaC"]}
+        all_participants: ${list:["0xBfE475AF374AB552ff22F995b8732DFee25694ea"]}
         safe_contract_address: ${str:"0x0000000000000000000000000000000000000000"}
         consensus_threshold: ${int:null}
       share_tm_config_on_startup: ${bool:false}

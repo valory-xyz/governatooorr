@@ -110,59 +110,6 @@ class SynchronizeDelegationsRound(CollectDifferentUntilAllRound):
         return None
 
 
-class VerifyDelegationsRound(CollectSameUntilThresholdRound):
-    """VerifyDelegations"""
-
-    payload_class = VerifyDelegationsPayload
-    synchronized_data_class = SynchronizedData
-
-    ERROR_PAYLOAD = "ERROR_PAYLOAD"
-
-    def end_block(self) -> Optional[Tuple[BaseSynchronizedData, Event]]:
-        """Process the end of the block."""
-        if self.threshold_reached:
-
-            if self.most_voted_payload == VerifyDelegationsRound.ERROR_PAYLOAD:
-                return self.synchronized_data, Event.CONTRACT_ERROR
-
-            new_token_to_delegations = json.loads(self.most_voted_payload)
-
-            current_token_to_delegations = cast(
-                SynchronizedData, self.synchronized_data
-            ).current_token_to_delegations
-
-            for token_address, delegation_data in new_token_to_delegations.items():
-                # Token not in current delegations
-                if token_address not in current_token_to_delegations:
-                    current_token_to_delegations[token_address] = delegation_data
-                    continue
-
-                # Token already in current delegations
-                # This will overwrite previous user delegatiosn for the same token
-                current_token_to_delegations[token_address].update(delegation_data)
-
-            synchronized_data = self.synchronized_data.update(
-                synchronized_data_class=SynchronizedData,
-                **{
-                    get_name(
-                        SynchronizedData.current_token_to_delegations
-                    ): current_token_to_delegations,
-                    get_name(
-                        SynchronizedData.new_delegations
-                    ): [],  # we have already added these into current delegations
-                    get_name(
-                        SynchronizedData.agent_to_new_delegation_number
-                    ): {},  # empty this to avoid deleting already synced delegations multiple times
-                }
-            )
-            return synchronized_data, Event.DONE
-        if not self.is_majority_possible(
-            self.collection, self.synchronized_data.nb_participants
-        ):
-            return self.synchronized_data, Event.NO_MAJORITY
-        return None
-
-
 class CollectActiveProposalsRound(CollectSameUntilThresholdRound):
     """CollectActiveProposals"""
 
@@ -260,12 +207,6 @@ class ProposalCollectorAbciApp(AbciApp[Event]):
             Event.NO_MAJORITY: SynchronizeDelegationsRound,
             Event.ROUND_TIMEOUT: SynchronizeDelegationsRound,
         },
-        # VerifyDelegationsRound: {
-        #     Event.DONE: CollectActiveProposalsRound,
-        #     Event.CONTRACT_ERROR: VerifyDelegationsRound,
-        #     Event.NO_MAJORITY: VerifyDelegationsRound,
-        #     Event.ROUND_TIMEOUT: VerifyDelegationsRound,
-        # },
         CollectActiveProposalsRound: {
             Event.DONE: SelectProposalRound,
             Event.API_ERROR: CollectActiveProposalsRound,

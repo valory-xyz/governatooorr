@@ -44,7 +44,6 @@ from packages.valory.skills.proposal_collector_abci.rounds import (
     SelectProposalRound,
     SynchronizeDelegationsRound,
     SynchronizedData,
-    VerifyDelegationsRound,
 )
 from packages.valory.skills.proposal_collector_abci.tally import proposal_query
 
@@ -85,7 +84,7 @@ class SynchronizeDelegationsBehaviour(ProposalCollectorBaseBehaviour):
                 self.context.state.new_delegations
             )  # no sorting needed here as there is no consensus over this data
             sender = self.context.agent_address
-            # TODO: we also need to reset the new_delegations -> we do this on the next round (VerifyDelegationsRound), once every agent has all the data
+            # TODO: we also need to reset the new_delegations -> we do this on the next round , once every agent has all the data
             payload = SynchronizeDelegationsPayload(
                 sender=sender, new_delegations=new_delegations
             )
@@ -96,153 +95,6 @@ class SynchronizeDelegationsBehaviour(ProposalCollectorBaseBehaviour):
             yield from self.wait_until_round_end()
 
         self.set_done()
-
-
-class VerifyDelegationsBehaviour(ProposalCollectorBaseBehaviour):
-    """
-    VerifyDelegations
-
-    We verify the delegations received from the frontend against the chain state.
-
-    After verification we optimistically assume no change in delegations until we re-enter this
-    behaviour.
-    """
-
-    matching_round: Type[AbstractRound] = VerifyDelegationsRound
-
-    def async_act(self) -> Generator:
-        """Do the act, supporting asynchronous execution."""
-
-        with self.context.benchmark_tool.measure(self.behaviour_id).local():
-
-            sender = self.context.agent_address
-
-            # FIX: Not sure this makes sense... the new_delegations can constantly change...
-            # Remove delegations that have already been added to the synchronized data from the agent
-            delegation_number = self.synchronized_data.agent_to_new_delegation_number[
-                sender
-            ]
-            self.context.state.new_delegations = self.context.state.new_delegations[
-                delegation_number:
-            ]
-
-            # Validate delegations on-chain
-            validated_new_delegations = yield from self._get_validated_delegations()
-
-            self.context.logger.info(
-                f"validated_new_delegations = {validated_new_delegations}"
-            )
-
-            if validated_new_delegations is None:
-                payload = VerifyDelegationsPayload(
-                    sender=sender,
-                    new_token_to_delegations=VerifyDelegationsRound.ERROR_PAYLOAD,
-                )
-
-            else:
-                # Create the new_token_to_delegations mapping from the validated_new_delegations
-
-                # new_token_to_delegations = {  # noqa: E800
-                #     "token_address_a": {  # noqa: E800
-                #         "user_address_a": {  # noqa: E800
-                #             "delegation_amount": 1000,  # noqa: E800
-                #             "voting_preference": "Good",  # noqa: E800
-                #         },  # noqa: E800
-                #         ...  # noqa: E800
-                #     },  # noqa: E800
-                #     ...  # noqa: E800
-                # }  # noqa: E800
-                new_token_to_delegations = {}
-                for d in validated_new_delegations:
-
-                    token_address = d["token_address"]
-                    user_address = d["user_address"]
-
-                    delegation_data = {
-                        "delegation_amount": d["delegation_amount"],
-                        "voting_preference": d["voting_preference"],
-                        "user_address": d["user_address"],
-                        "token_address": d["token_address"],
-                    }
-
-                    # Token does not exist
-                    if token_address not in new_token_to_delegations:
-                        new_token_to_delegations[token_address] = {
-                            user_address: delegation_data,
-                        }
-                        continue
-
-                    # Token exists, user does not exist
-                    if user_address not in new_token_to_delegations[token_address]:
-                        new_token_to_delegations[token_address][
-                            user_address
-                        ] = delegation_data
-                        continue
-
-                    # Token exists, user exists
-                    # We should not reach here as that means that an user has
-                    # multiple delegations for the same token
-                    raise ValueError(
-                        f"User {user_address} has multiple delegations for token {token_address}"
-                    )
-
-                payload = VerifyDelegationsPayload(
-                    sender=sender,
-                    new_token_to_delegations=json.dumps(
-                        new_token_to_delegations, sort_keys=True
-                    ),
-                )
-
-                self.context.logger.info(
-                    f"new_token_to_delegations = {new_token_to_delegations}"
-                )
-
-        with self.context.benchmark_tool.measure(self.behaviour_id).consensus():
-            yield from self.send_a2a_transaction(payload)
-            yield from self.wait_until_round_end()
-
-        self.set_done()
-
-    def _get_validated_delegations(
-        self,
-    ) -> Generator[None, None, Optional[List]]:
-        """Get token id to member data."""
-
-        # TODO: check for DelegateVotesChanged events to get the correct amount
-
-        validated_delegations = []
-
-        for d in self.synchronized_data.new_delegations:
-
-            user_address = d["user_address"]
-            token_address = d["token_address"]
-
-            self.context.logger.info(
-                f"Retrieving delegations for wallet {user_address}. Token: {token_address}"
-            )
-            contract_api_msg = yield from self.get_contract_api_response(
-                performative=ContractApiMessage.Performative.GET_STATE,  # type: ignore
-                contract_address=token_address,
-                contract_id=str(
-                    CompoundContract.contract_id
-                ),  # Compound contract is an ERC20 contract
-                contract_callable="get_current_votes",
-                address=user_address,
-            )
-            if contract_api_msg.performative != ContractApiMessage.Performative.STATE:
-                self.context.logger.info(
-                    f"Error retrieving the delegations {contract_api_msg.performative}"
-                )
-                return None  # TODO: should we return if just one fails?
-
-            votes = cast(int, contract_api_msg.state.body["votes"])
-
-            # add the delegation amount for this user
-            delegation = deepcopy(d)
-            delegation["delegation_amount"] = int(votes)
-            validated_delegations.append(delegation)
-
-        return validated_delegations
 
 
 class CollectActiveProposalsBehaviour(ProposalCollectorBaseBehaviour):

@@ -39,8 +39,8 @@ protocols:
 skills:
 - valory/abstract_abci:0.1.0:bafybeiai2t36ht3blisjneahv5almyfieqokl4auj2n43rj4k5chun2i44
 - valory/abstract_round_abci:0.1.0:bafybeib7q4t5jh6gic3i2pzuzlk7q2xmnueyxjpftm4gl56vnnz4vs4f7a
-- valory/governatooorr_abci:0.1.0:bafybeif6ryanggi4ilowfh6roofxmuzsspzlt6hlj4qm3tsmxop2cc6gay
-- valory/proposal_collector_abci:0.1.0:bafybeihznytb625qfmkpube24k6b27znverracnguxnbx3qbz23u2ujruy
+- valory/governatooorr_abci:0.1.0:bafybeieeecagmk34n7gsanyh5ytflyum3fx4l4ntzgqebl2rczdozgp7iq
+- valory/proposal_collector_abci:0.1.0:bafybeiewyxqdtxbgqm5uqssub7qzchh23r5q6a5ixx6x5mqqcvgtdc4qaq
 - valory/proposal_voter_abci:0.1.0:bafybeig3ypgzjwwis4sfk2hsuahxpyjuj5p6nhw4wlicjbd3nel46fm6yu
 - valory/registration_abci:0.1.0:bafybeidc6iv54mr2antvrw3r4tldm635othi62bhzeyyid7kejzxw4fwiq
 - valory/reset_pause_abci:0.1.0:bafybeige4ncfhwlqbthmfvdu7aogl2qqsozpz3h5el3xokmq4hcqujgsqy

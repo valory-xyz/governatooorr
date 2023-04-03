@@ -12,7 +12,6 @@ fingerprint:
   tests/helpers/data/json_server/data.json: bafybeics26yd33ng22lhzb3had4eevbfkfdj2jbp3qhvjpygwhkwlzhrq4
   tests/helpers/docker.py: bafybeibbi6m47mzsl43bmix4k7o7oyekzhzsljuf3dkwk23bfns6k7odkm
   tests/helpers/fixtures.py: bafybeiarm4ezp54po7nv5m4e2w3eghetma5xymnzgoovvdwh7hp2lcitqu
-  tests/test_governatooorr.py: bafybeicmcjze4rhtrmkse6szppmgancd4ou27h2eaczmsd4innkjsel3fi
 fingerprint_ignore_patterns: []
 connections:
 - fetchai/http_server:0.22.0:bafybeihaax5od5zo5jk2l62hv4jwuwtxloh5mijozudpsjombqc4ncmi6i
@@ -22,7 +21,6 @@ connections:
 - valory/openai:0.1.0:bafybeicqubow644xihuov2vypmmdd4zf6jvvbjb4f2w6hhekxrhb4chjaa
 - valory/p2p_libp2p_client:0.1.0:bafybeidwcobzb7ut3efegoedad7jfckvt2n6prcmd4g7xnkm6hp6aafrva
 contracts:
-- valory/compound:0.1.0:bafybeifenymvubvjge36es63feunwvqphyrjrnn7icfiu3b7a7rrbf2vma
 - valory/delegate:0.1.0:bafybeigbp3oowq4agg4gd3s5raopebtbctizl4piqeaqm5ekt665fl6xxy
 - valory/gnosis_safe:0.1.0:bafybeidxabihujlxvmnbf3tztjbwybyr5rlwjeniihnr5edfi6bpyjnevi
 - valory/gnosis_safe_proxy_factory:0.1.0:bafybeiefq2lcrixbbqz5cji5vpnriydt4kfx5vvawg2vnmeadel2ar7yga
@@ -39,9 +37,9 @@ protocols:
 skills:
 - valory/abstract_abci:0.1.0:bafybeiai2t36ht3blisjneahv5almyfieqokl4auj2n43rj4k5chun2i44
 - valory/abstract_round_abci:0.1.0:bafybeib7q4t5jh6gic3i2pzuzlk7q2xmnueyxjpftm4gl56vnnz4vs4f7a
-- valory/governatooorr_abci:0.1.0:bafybeihf6skvntoxozlukqqverjbh6f3tla72ucy2mn4w2ipduyi3ksda4
-- valory/proposal_collector_abci:0.1.0:bafybeigghfv7juzefj6qdwaburkl4jqsyx3herby35cm3hxii7z3vcqjxq
-- valory/proposal_voter_abci:0.1.0:bafybeifk3nic4ekcorng4ekxi3fsblxmfmkjvzyna6dja6wt3gj7zy36wy
+- valory/governatooorr_abci:0.1.0:bafybeibn6nzjiw2nshptvrduk74eumw7dvjyn5wmcwqqwch42owv4i7ap4
+- valory/proposal_collector_abci:0.1.0:bafybeigasfxwauixkb2cdzqslmmeuvba5pecrqzmoy4vtnqyvcf46hujwa
+- valory/proposal_voter_abci:0.1.0:bafybeihi2xfeh4atqateqs7o3oxurtjsow6vrnge3ltotx5ipjmlsqworm
 - valory/registration_abci:0.1.0:bafybeidc6iv54mr2antvrw3r4tldm635othi62bhzeyyid7kejzxw4fwiq
 - valory/reset_pause_abci:0.1.0:bafybeige4ncfhwlqbthmfvdu7aogl2qqsozpz3h5el3xokmq4hcqujgsqy
 - valory/transaction_settlement_abci:0.1.0:bafybeihdgnqsiauhuuazmpnt7tawzxm3jnidfytifmb6yjbb6i3cqnafvy
@@ -182,7 +180,6 @@ models:
       tally_api_endpoint: ${str:https://api.tally.xyz/query}
       tally_api_key: ${str:<tally_api_key>}
       service_endpoint_base: ${str:https://governatooorr.staging.autonolas.tech/}
-      compound_contract_address: ${str:0xc00e94Cb662C3520282E6f5717214004A7f26888}
       validate_timeout: 1205
 ---
 public_id: fetchai/http_server:0.22.0:bafybeicblltx7ha3ulthg7bzfccuqqyjmihhrvfeztlgrlcoxhr7kf6nbq

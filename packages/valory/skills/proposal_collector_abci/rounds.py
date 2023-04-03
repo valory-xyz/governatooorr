@@ -90,23 +90,11 @@ class SynchronizeDelegationsRound(CollectDifferentUntilAllRound):
 
             delegations = cast(SynchronizedData, self.synchronized_data).delegations
 
-            for sender, payload in self.collection.items():
+            for payload in self.collection.values():
                 new_delegations = json.loads(payload.json["new_delegations"])
 
                 # Add this agent's new delegations
                 delegations.extend(new_delegations)
-
-            # TODO: remove!
-            # Hardcoding some delegations
-            # delegations = [
-            #     {
-            #         "user_address": "0x999999cf1046e68e36E1aA2E0E07105eDDD1f08E",
-            #         "token_address": "0x610210AA5D51bf26CBce146A5992D2FEeBc27dB1",
-            #         "voting_preference": "EVIL",
-            #         "governor_address": "0x1C9a7ced4CAdb9c5a65E564e73091912aaec7494",
-            #         "delegated_amount": 100,
-            #     }
-            # ]
 
             synchronized_data = self.synchronized_data.update(
                 synchronized_data_class=SynchronizedData,

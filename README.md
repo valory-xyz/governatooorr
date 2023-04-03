@@ -64,14 +64,14 @@ Deploy a Safe setting your agent's address as owner. Then run the following comm
       SAFE_CONTRACT_ADDRESS=<your_service_safe_address>
       ```
 7. `autonomy deploy build keys.json -ltm`
-8. Run a Ganache fork of mainnet:
+8. Run a Ganache fork of mainnet. Your agent address will have a balance of 1ETH:
 
       `ganache --fork.network mainnet --wallet.deterministic=true --chain.chainId 1 --fork.blockNumber 16968287 --wallet.accounts <your_agent_private_key>,1000000000000000000 --server.host 0.0.0.0`
 
 9. `autonomy deploy run --build-dir abci_build/`
 10. in separate terminal: `docker logs abci0 --follow`
 
-11. Test the service endpoints:
+11. Test the service endpoints (in another terminal):
       ```bash
       # Get the current active proposals
       curl localhost:8000/proposals | jq

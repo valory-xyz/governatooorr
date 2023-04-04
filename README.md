@@ -41,7 +41,7 @@ Install Ganache, curl and (optionally) jq:
 - `sudo apt install curl jq`
 
 Ensure that the packages are hashed and configured:
-- `autonomy analyse service --public-id valory/governatooorr:0.1.0`
+- `autonomy analyse service --public-id valory/governatooorr_local:0.1.0`
 - `autonomy hash all`
 - `autonomy packages lock`
 - `autonomy push-all --remote`
@@ -54,31 +54,37 @@ Deploy a Safe setting your agent's address as owner:
 - Sign the transaction with your wallet.
 
 Then run the following commands:
-1. `autonomy fetch valory/governatooorr:0.1.0 --service --local`
-2. `cd governatooorr/`
+1. `autonomy fetch valory/governatooorr_local:0.1.0 --service --local`
+2. `cd governatooorr_local/`
 3. `autonomy build-image`
-4. `touch keys.json`
-5. copy keys: https://docs.autonolas.network/open-autonomy/guides/deploy_service/#local-deployment
+4. Create the agent's key:
+    ```bash
+    cat > keys.json << EOF
+    [
+      {
+          "address": "0xBfE475AF374AB552ff22F995b8732DFee25694ea",
+          "private_key": "0x73a3d2d5e1dc33e88a9c1c0d78a253471bc2ba37fe346cace0bafa21954f3bfb"
+      }
+    ]
+    EOF
+    ```
+    More info in: https://docs.autonolas.network/open-autonomy/guides/deploy_service/#local-deployment
+    Note: this pkey is public which means that it should not be used in production
 
-6. Prepare a `.env` file containing the following variables:
+5. Prepare a `.env` file containing the following variables:
       ```
       OPENAI_API_KEY=<your_api_key>
-      ETHEREUM_LEDGER_RPC=http://host.docker.internal:8545
-      ETHEREUM_LEDGER_CHAIN_ID=1
-      ALL_PARTICIPANTS='["<your_agent_public_address>"]'
-      RESET_PAUSE_DURATION=10
       TALLY_API_KEY=<your_api_key>
-      SAFE_CONTRACT_ADDRESS=<your_service_safe_address>
       ```
-7. `autonomy deploy build keys.json -ltm`
-8. Run a Ganache fork of mainnet. Your agent address will have a balance of 1ETH:
+6. `autonomy deploy build keys.json -ltm`
+7. Run a Ganache fork of mainnet. Your agent address will have a balance of 1ETH:
 
-      `ganache --fork.network mainnet --wallet.deterministic=true --chain.chainId 1 --fork.blockNumber 16968287 --wallet.accounts <your_agent_private_key>,1000000000000000000 --server.host 0.0.0.0`
+      `ganache --fork.network mainnet --wallet.deterministic=true --chain.chainId 1 --fork.blockNumber 16968287 --wallet.accounts 0x73a3d2d5e1dc33e88a9c1c0d78a253471bc2ba37fe346cace0bafa21954f3bfb,1000000000000000000 --server.host 0.0.0.0`
 
-9. `autonomy deploy run --build-dir abci_build/`
-10. in separate terminal: `docker logs abci0 --follow`
+8. `autonomy deploy run --build-dir abci_build/`
+9. in separate terminal: `docker logs abci0 -f`
 
-11. Test the service endpoints (in another terminal):
+10. Test the service endpoints (in another terminal):
       ```bash
       # Get the current active proposals
       curl localhost:8000/proposals | jq

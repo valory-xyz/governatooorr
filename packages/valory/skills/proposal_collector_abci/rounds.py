@@ -32,6 +32,7 @@ from packages.valory.skills.abstract_round_abci.base import (
     CollectSameUntilThresholdRound,
     DegenerateRound,
     EventToTimeout,
+    TransactionNotValidError,
     get_name,
 )
 from packages.valory.skills.proposal_collector_abci.payloads import (
@@ -82,6 +83,32 @@ class SynchronizeDelegationsRound(CollectDifferentUntilAllRound):
     payload_class = SynchronizeDelegationsPayload
     synchronized_data_class = SynchronizedData
 
+    def check_payload(self, payload: SynchronizeDelegationsPayload) -> None:
+        """Check Payload"""
+        new = payload.values
+        existing = [
+            collection_payload.values
+            for collection_payload in self.collection.values()
+            # do not consider empty delegations
+            if json.loads(collection_payload.json["new_delegations"])
+        ]
+
+        if payload.sender not in self.collection and new in existing:
+            raise TransactionNotValidError(
+                f"`CollectDifferentUntilAllRound` encountered a value {new!r} that already exists. "
+                f"All values: {existing}"
+            )
+
+        if payload.round_count != self.synchronized_data.round_count:
+            raise TransactionNotValidError(
+                f"Expected round count {self.synchronized_data.round_count} and got {payload.round_count}."
+            )
+
+        if payload.sender in self.collection:
+            raise TransactionNotValidError(
+                f"sender {payload.sender} has already sent value for round: {self.round_id}"
+            )
+
     def end_block(self) -> Optional[Tuple[BaseSynchronizedData, Event]]:
         """Process the end of the block."""
 
@@ -112,7 +139,7 @@ class SynchronizeDelegationsRound(CollectDifferentUntilAllRound):
                 synchronized_data_class=SynchronizedData,
                 **{
                     get_name(SynchronizedData.delegations): delegations,
-                }
+                },
             )
             return synchronized_data, Event.DONE
         if not self.is_majority_possible(
@@ -159,7 +186,7 @@ class CollectActiveProposalsRound(CollectSameUntilThresholdRound):
                 synchronized_data_class=SynchronizedData,
                 **{
                     get_name(SynchronizedData.proposals): proposals,
-                }
+                },
             )
             return synchronized_data, Event.DONE
         if not self.is_majority_possible(
@@ -190,7 +217,7 @@ class SelectProposalRound(CollectSameUntilThresholdRound):
                 synchronized_data_class=SynchronizedData,
                 **{
                     get_name(SynchronizedData.selected_proposal_id): proposal_id,
-                }
+                },
             )
             return synchronized_data, Event.VOTE
         if not self.is_majority_possible(

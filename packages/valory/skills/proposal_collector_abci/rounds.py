@@ -116,11 +116,24 @@ class SynchronizeDelegationsRound(CollectDifferentUntilAllRound):
 
             delegations = cast(SynchronizedData, self.synchronized_data).delegations
 
+            new_delegations = []
             for payload in self.collection.values():
-                new_delegations = json.loads(payload.json["new_delegations"])
-
                 # Add this agent's new delegations
-                delegations.extend(new_delegations)
+                new_delegations.extend(json.loads(payload.json["new_delegations"]))
+
+            for nd in new_delegations:
+                # Check if new delegation needs to replace a previous one
+                existing = False
+                for i, d in enumerate(delegations):
+                    if (
+                        nd["user_address"] == d["user_address"]
+                        and nd["token_address"] == d["token_address"]
+                    ):
+                        delegations[i] = nd
+                        existing = True
+                        break
+                if not existing:
+                    delegations.append(nd)
 
             synchronized_data = self.synchronized_data.update(
                 synchronized_data_class=SynchronizedData,

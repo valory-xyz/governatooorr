@@ -7,7 +7,7 @@ license: Apache-2.0
 fingerprint:
   README.md: bafybeid6vqhnovhpsrjwws2wcb67i7fwr4dq54rpowqgrf3njt2anp5nc4
 fingerprint_ignore_patterns: []
-agent: valory/governatooorr:0.1.0:bafybeieukdj67sblzgg72bdo5bxkexrml56dh76ywldgjnuqbay6ira7wu
+agent: valory/governatooorr:0.1.0:bafybeieh2ggjqdqex6rewj3ut4x7de4s2aim3szwqvl6cq6g5gt5zjqo74
 number_of_agents: 4
 deployment:
   agent:
@@ -82,6 +82,7 @@ type: skill
         use_termination: ${USE_TERMINATION:bool:false}
         tally_api_endpoint: ${TALLY_API_ENDPOINT:str:https://api.tally.xyz/query}
         tally_api_key: ${TALLY_API_KEY_0:str:<tally_api_key>}
+        tracked_governors: ${TRACKED_GOVERNORS:list:null}
         service_endpoint_base: ${SERVICE_ENDPOINT_BASE:str:https://governatooorr.staging.autonolas.tech/}
         validate_timeout: 1205
 1:
@@ -122,6 +123,7 @@ type: skill
         use_termination: ${USE_TERMINATION:bool:false}
         tally_api_endpoint: ${TALLY_API_ENDPOINT:str:https://api.tally.xyz/query}
         tally_api_key: ${TALLY_API_KEY_1:str:<tally_api_key>}
+        tracked_governors: ${TRACKED_GOVERNORS:list:null}
         service_endpoint_base: ${SERVICE_ENDPOINT_BASE:str:https://governatooorr.staging.autonolas.tech/}
         validate_timeout: 1205
 2:
@@ -162,6 +164,7 @@ type: skill
         use_termination: ${USE_TERMINATION:bool:false}
         tally_api_endpoint: ${TALLY_API_ENDPOINT:str:https://api.tally.xyz/query}
         tally_api_key: ${TALLY_API_KEY_2:str:<tally_api_key>}
+        tracked_governors: ${TRACKED_GOVERNORS:list:null}
         service_endpoint_base: ${SERVICE_ENDPOINT_BASE:str:https://governatooorr.staging.autonolas.tech/}
         validate_timeout: 1205
 3:
@@ -202,6 +205,7 @@ type: skill
         use_termination: ${USE_TERMINATION:bool:false}
         tally_api_endpoint: ${TALLY_API_ENDPOINT:str:https://api.tally.xyz/query}
         tally_api_key: ${TALLY_API_KEY_3:str:<tally_api_key>}
+        tracked_governors: ${TRACKED_GOVERNORS:list:null}
         service_endpoint_base: ${SERVICE_ENDPOINT_BASE:str:https://governatooorr.staging.autonolas.tech/}
         validate_timeout: 1205
 ---

@@ -80,7 +80,7 @@ Then run the following commands:
 
       `ganache --fork.network mainnet --wallet.deterministic=true --chain.chainId 1 --fork.blockNumber 16968287 --wallet.accounts <your_agent_private_key>,1000000000000000000 --server.host 0.0.0.0`
 
-8. `autonomy deploy run`
+8. `autonomy deploy run --build-dir abci_build/`
 9. in separate terminal: `docker logs abci0 -f`
 
 10. Test the service endpoints (in another terminal):

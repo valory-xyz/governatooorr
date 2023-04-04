@@ -7,13 +7,13 @@ license: Apache-2.0
 aea_version: '>=1.0.0, <2.0.0'
 fingerprint:
   __init__.py: bafybeickrxtcqbivmneh54iq7ymaoq6xzwdouvnoon3h234vzp574qouvu
-  behaviours.py: bafybeiefzsokec3kbg5hktd3l5qewwpbsbulwybuvcxct637ocwgmdrd2m
+  behaviours.py: bafybeicsvz4mphb5w47jmxwj7nbh663tpb7yvbjtfh2lmqbonrf4ql65ba
   dialogues.py: bafybeighergy2hupd32ozp2ud5j4jujpccfkzk2l46a33xn7yi2ofk32m4
   fsm_specification.yaml: bafybeig24qxwd5q47pohoe4yrgbjo37b3dmodtysewmzf2ktw4xo5iyyze
-  handlers.py: bafybeidya7ezt7gi4c7e4xqq2vnv7ppmp2zzs4ivsshubkxtzjhgu4qd7m
-  models.py: bafybeicolnipyzownntfxff64ns6svzffgquh4wgxxplrcv5oq7j6bvjrm
+  handlers.py: bafybeif7guoqcit2muhr7urcwpu6f2ofmka75louxgecikdpvsnx4hz7o4
+  models.py: bafybeierzoabnj5vjtcqubhscjn3epp3qzwsr2yrlaf7zeujgyvdkpfuvy
   payloads.py: bafybeibtlekt7kvkuouslec3b5gobpe6kpoe6qjhp6ctxnhoq3dtijo7du
-  rounds.py: bafybeieepohonbujaaaojkbvgqicipvtf4ntrun4m6v2ts2yzhij7arqxe
+  rounds.py: bafybeigtyxo5ayinrfry2p4hl42nwz37x4zrrde6w2wompouseg2ybzly4
   tally.py: bafybeifdse37wwsidxh2zpfnc756rni2yvqpbkclfvba2paz2dghirwqpe
 fingerprint_ignore_patterns: []
 connections:
@@ -122,6 +122,7 @@ models:
       tendermint_max_retries: 5
       tendermint_p2p_url: localhost:26656
       tendermint_url: http://localhost:26657
+      tracked_governors: null
       tx_timeout: 10.0
       use_termination: false
       validate_timeout: 1205

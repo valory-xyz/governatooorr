@@ -137,12 +137,14 @@ class CollectActiveProposalsBehaviour(ProposalCollectorBaseBehaviour):
         variables = {
             "chainId": "eip155:1",
             "proposers": [],
-            "governors": [],
+            "governors": []
+            if not self.params.tracked_governors
+            else self.params.tracked_governors,
             "pagination": {"limit": 200, "offset": 0},
         }
 
         self.context.logger.info(
-            f"Retrieving proposals from Tally API [{self.params.tally_api_endpoint}]"
+            f"Retrieving proposals from Tally API [{self.params.tally_api_endpoint}]. Request variables: {variables}"
         )
 
         # Make the request
@@ -163,8 +165,6 @@ class CollectActiveProposalsBehaviour(ProposalCollectorBaseBehaviour):
             return CollectActiveProposalsRound.ERROR_PAYLOAD
 
         response_json = json.loads(response.body)
-
-        self.context.logger.info(f"Response from Tally API: {response_json}")
 
         if "errors" in response_json:
             self.context.logger.error("Got errors while retrieving the data from Tally")

@@ -49,3 +49,7 @@ run_governatooorr.sh
 governatooorr/
 
 run_agent.sh
+
+.4env
+
+run_governatooorr4.sh

@@ -41,7 +41,10 @@ from packages.valory.skills.proposal_collector_abci.rounds import (
     SynchronizeDelegationsRound,
     SynchronizedData,
 )
-from packages.valory.skills.proposal_collector_abci.tally import proposal_query
+from packages.valory.skills.proposal_collector_abci.tally import (
+    governor_query,
+    proposal_query,
+)
 
 
 HTTP_OK = 200
@@ -133,18 +136,17 @@ class CollectActiveProposalsBehaviour(ProposalCollectorBaseBehaviour):
             "Api-key": "{api_key}".format(api_key=self.params.tally_api_key),
         }
 
-        # Get all the proposals
+        # Get all the governors, sorted by number of active proposals
         variables = {
-            "chainId": "eip155:1",
-            "proposers": [],
-            "governors": []
-            if not self.params.tracked_governors
-            else self.params.tracked_governors,
+            "chainIds": "eip155:1",
+            "addresses": [],
+            "includeInactive": False,
+            "sort": {"field": "ACTIVE_PROPOSALS", "order": "DESC"},
             "pagination": {"limit": 200, "offset": 0},
         }
 
         self.context.logger.info(
-            f"Retrieving proposals from Tally API [{self.params.tally_api_endpoint}]. Request variables: {variables}"
+            f"Retrieving governors from Tally API [{self.params.tally_api_endpoint}]. Request variables: {variables}"
         )
 
         # Make the request
@@ -153,7 +155,7 @@ class CollectActiveProposalsBehaviour(ProposalCollectorBaseBehaviour):
             url=self.params.tally_api_endpoint,
             headers=headers,
             content=json.dumps(
-                {"query": proposal_query, "variables": variables}
+                {"query": governor_query, "variables": variables}
             ).encode("utf-8"),
         )
 
@@ -170,19 +172,73 @@ class CollectActiveProposalsBehaviour(ProposalCollectorBaseBehaviour):
             self.context.logger.error("Got errors while retrieving the data from Tally")
             return CollectActiveProposalsRound.ERROR_PAYLOAD
 
-        # Filter out non-active proposals and those which use non-erc20 tokens
-        active_proposals = list(
-            filter(
-                lambda p: p["statusChanges"][-1]["type"] == "ACTIVE"
-                and len(p["governor"]["tokens"]) == 1
-                and "erc20" in p["governor"]["tokens"][0]["id"],
-                response_json["data"]["proposals"],
-            )
+        # Filter out governors with no active proposals
+        governors = response_json["data"]["governors"]
+
+        governors_with_active_proposals = list(
+            filter(lambda g: int(g["proposalStats"]["active"]) > 0, governors)
+        )
+        governor_ids = [g["id"].split(":")[-1] for g in governors_with_active_proposals]
+
+        self.context.logger.info(
+            f"Retrieved governors with active proposals: {governor_ids}"
         )
 
-        p_ids = [p["id"] for p in active_proposals]
+        active_proposals = []
+        for gid in governor_ids:
 
-        self.context.logger.info(f"Retrieved active proposals: {p_ids}")
+            # Get all the proposals for this governor
+            variables = {
+                "chainId": "eip155:1",
+                "proposers": [],
+                "governors": gid,
+                "pagination": {"limit": 200, "offset": 0},
+            }
+
+            self.context.logger.info(
+                f"Retrieving proposals from Tally API [{self.params.tally_api_endpoint}]. Request variables: {variables}"
+            )
+
+            # Make the request
+            response = yield from self.get_http_response(
+                method="POST",
+                url=self.params.tally_api_endpoint,
+                headers=headers,
+                content=json.dumps(
+                    {"query": proposal_query, "variables": variables}
+                ).encode("utf-8"),
+            )
+
+            if response.status_code != HTTP_OK:
+                self.context.logger.error(
+                    f"Could not retrieve data from Tally API. "
+                    f"Received status code {response.status_code}."
+                )
+                return CollectActiveProposalsRound.ERROR_PAYLOAD
+
+            response_json = json.loads(response.body)
+
+            if "errors" in response_json:
+                self.context.logger.error(
+                    "Got errors while retrieving the data from Tally"
+                )
+                return CollectActiveProposalsRound.ERROR_PAYLOAD
+
+            # Filter out non-active proposals and those which use non-erc20 tokens
+            filtered_proposals = list(
+                filter(
+                    lambda p: p["statusChanges"][-1]["type"] == "ACTIVE"
+                    and len(p["governor"]["tokens"]) == 1
+                    and "erc20" in p["governor"]["tokens"][0]["id"],
+                    response_json["data"]["proposals"],
+                )
+            )
+
+            p_ids = [p["id"] for p in filtered_proposals]
+
+            self.context.logger.info(f"Retrieved active proposals: {p_ids}")
+
+            active_proposals.extend(filtered_proposals)
 
         return json.dumps(
             {

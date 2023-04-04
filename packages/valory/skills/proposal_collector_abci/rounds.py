@@ -126,7 +126,7 @@ class SynchronizeDelegationsRound(CollectDifferentUntilAllRound):
                 synchronized_data_class=SynchronizedData,
                 **{
                     get_name(SynchronizedData.delegations): delegations,
-                }
+                },
             )
             return synchronized_data, Event.DONE
         if not self.is_majority_possible(
@@ -173,7 +173,7 @@ class CollectActiveProposalsRound(CollectSameUntilThresholdRound):
                 synchronized_data_class=SynchronizedData,
                 **{
                     get_name(SynchronizedData.proposals): proposals,
-                }
+                },
             )
             return synchronized_data, Event.DONE
         if not self.is_majority_possible(
@@ -204,7 +204,7 @@ class SelectProposalRound(CollectSameUntilThresholdRound):
                 synchronized_data_class=SynchronizedData,
                 **{
                     get_name(SynchronizedData.selected_proposal_id): proposal_id,
-                }
+                },
             )
             return synchronized_data, Event.VOTE
         if not self.is_majority_possible(

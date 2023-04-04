@@ -5,9 +5,9 @@ description: Local governatooorr service
 aea_version: '>=1.0.0, <2.0.0'
 license: Apache-2.0
 fingerprint:
-  README.md: bafybeicw7npqf36nxy3ocmmjfntgjn5dskgespnpw6o2rw62aof2x5oxvm
+  README.md: bafybeifvddbrix4wlzp5mfaxjg7bargwbcqxjdfvaz5tctxfvzowggkusu
 fingerprint_ignore_patterns: []
-agent: valory/governatooorr:0.1.0:bafybeiaciz5mees2o34wjiyevhnxubgeijppephifetwwfdgk7jm7tdr5y
+agent: valory/governatooorr:0.1.0:bafybeieukdj67sblzgg72bdo5bxkexrml56dh76ywldgjnuqbay6ira7wu
 number_of_agents: 1
 deployment:
   agent:

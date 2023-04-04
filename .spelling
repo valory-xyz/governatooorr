@@ -18,6 +18,7 @@ leaderboard
 OpenAPI
 v0.1.0
 0.2.0.post1
+0.1.0alpha1
 AEAs
 Tendermint
 mempool
@@ -346,6 +347,7 @@ serializer
 0.2.1.post1
 0.5.0.post1
 0.5.0.post2
+0.1.0alpha1
 liccheck
 shebangs
  - docs/control_flow.md

@@ -73,6 +73,7 @@ AVERAGE_PERIOD_SECONDS = 10
 
 
 def delegation_to_camel_case(delegation):
+    """Converts delegations to camel case"""
     return {
         "address": delegation["user_address"],
         "delegatedToken": delegation["token_address"],

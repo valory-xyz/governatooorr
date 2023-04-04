@@ -22,7 +22,7 @@
 import json
 import re
 from enum import Enum
-from typing import Callable, Dict, Optional, Tuple, cast
+from typing import Callable, Dict, List, Optional, Tuple, Union, cast
 from urllib.parse import urlparse
 
 from aea.protocols.base import Message
@@ -70,6 +70,16 @@ OK_CODE = 200
 NOT_FOUND_CODE = 404
 BAD_REQUEST_CODE = 400
 AVERAGE_PERIOD_SECONDS = 10
+
+
+def delegation_to_camel_case(delegation):
+    return {
+        "address": delegation["user_address"],
+        "delegatedToken": delegation["token_address"],
+        "votingPreference": delegation["voting_preference"],
+        "governorAddress": delegation["governor_address"],
+        "tokenBalance": delegation["delegated_amount"],
+    }
 
 
 class HttpMethod(Enum):
@@ -259,17 +269,15 @@ class HttpHandler(BaseHttpHandler):
     ) -> None:
 
         # Get the token address
-        address = http_msg.url.split("/")[
-            -1
-        ]  # TODO: is this the user or the token address?
+        address = http_msg.url.split("/")[-1]
 
         delegations = [
-            d
+            delegation_to_camel_case(d)
             for d in self.synchronized_data.delegations
             if d["user_address"] == address
         ]
 
-        response_body_data = {"delegations": delegations}
+        response_body_data = delegations
 
         self._send_ok_response(http_msg, http_dialogue, response_body_data)
 
@@ -277,7 +285,7 @@ class HttpHandler(BaseHttpHandler):
         self, http_msg: HttpMessage, http_dialogue: HttpDialogue
     ) -> None:
 
-        response_body_data = {"proposals": self.synchronized_data.proposals}
+        response_body_data = list(self.synchronized_data.proposals.values())
 
         self._send_ok_response(http_msg, http_dialogue, response_body_data)
 
@@ -296,12 +304,15 @@ class HttpHandler(BaseHttpHandler):
             self._send_not_found_response(http_msg, http_dialogue)
             return
 
-        response_body_data = {"proposal": proposal}
+        response_body_data = proposal
 
         self._send_ok_response(http_msg, http_dialogue, response_body_data)
 
     def _send_ok_response(
-        self, http_msg: HttpMessage, http_dialogue: HttpDialogue, data: Dict
+        self,
+        http_msg: HttpMessage,
+        http_dialogue: HttpDialogue,
+        data: Union[Dict, List],
     ) -> None:
         """Send an OK response with the provided data"""
         http_response = http_dialogue.reply(

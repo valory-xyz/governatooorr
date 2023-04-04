@@ -69,6 +69,7 @@ Then run the following commands:
     EOF
     ```
     More info in: https://docs.autonolas.network/open-autonomy/guides/deploy_service/#local-deployment
+    Note: this pkey is public which means that it should not be used in production
 
 5. Prepare a `.env` file containing the following variables:
       ```

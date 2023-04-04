@@ -19,7 +19,7 @@
 
 """This module contains the shared state for the abci skill of ProposalCollectorAbciApp."""
 
-from typing import Any, List, Optional
+from typing import Any, List
 
 from aea.skills.base import SkillContext
 

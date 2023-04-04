@@ -72,9 +72,6 @@ class Params(BaseParams):
         self.tally_api_endpoint = self._ensure("tally_api_endpoint", kwargs, str)
         self.tally_api_key = kwargs.pop("tally_api_key", None)
         self.service_endpoint_base = self._ensure("service_endpoint_base", kwargs, str)
-        self.tracked_governors = self._ensure(
-            "tracked_governors", kwargs, Optional[list]
-        )
         super().__init__(*args, **kwargs)
 
 

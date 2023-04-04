@@ -57,3 +57,34 @@ query Proposals(
   }
 }
 """
+
+governor_query = """
+query Governors(
+  $chainIds: [ChainID!],
+  $addresses: [Address!],
+  $ids: [AccountID!],
+  $includeInactive: Boolean,
+  $pagination: Pagination,
+  $sort: GovernorSort
+) {
+  governors(
+    chainIds: $chainIds,
+    addresses: $addresses,
+    ids: $ids,
+    includeInactive: $includeInactive,
+    pagination: $pagination,
+    sort: $sort
+  ) {
+    id
+    type
+    name
+    slug
+    proposalStats {
+      total
+      active
+      failed
+      passed
+    }
+  }
+}
+"""

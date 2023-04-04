@@ -8,7 +8,7 @@ license: Apache-2.0
 fingerprint:
   README.md: bafybeicw7npqf36nxy3ocmmjfntgjn5dskgespnpw6o2rw62aof2x5oxvm
 fingerprint_ignore_patterns: []
-agent: valory/governatooorr:0.1.0:bafybeicemrflpr6kj522wjyrnfe66ax3nrjiy7voza3f6zaek55zhhksde
+agent: valory/governatooorr:0.1.0:bafybeihxyemwrw3ttxxh4fwvqhgukuav7ul5lhoxeqtxr6cqqtbsgh3lby
 number_of_agents: 1
 deployment:
   agent:
@@ -76,6 +76,7 @@ models:
       use_termination: ${USE_TERMINATION:bool:false}
       tally_api_endpoint: ${TALLY_API_ENDPOINT:str:https://api.tally.xyz/query}
       tally_api_key: ${TALLY_API_KEY:str:<tally_api_key>}
+      tracked_governors: ${TRACKED_GOVERNORS:list:null}
       service_endpoint_base: ${SERVICE_ENDPOINT_BASE:str:https://governatooorr.staging.autonolas.tech/}
       validate_timeout: 1205
 ---

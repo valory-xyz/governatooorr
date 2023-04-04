@@ -16,3 +16,9 @@ c8156e3097f853ac95b34e892b9f47128cff52e8:packages/valory/skills/proposal_collect
 c8156e3097f853ac95b34e892b9f47128cff52e8:packages/valory/skills/proposal_voter/skill.yaml:generic-api-key:84
 49768df9ba3e749531e9fc003a0ce9d1a72fb24f:packages/valory/skills/proposal_collector_abci/rounds.py:generic-api-key:104
 18c4ded1511c0f3c25e5dc169c1a1994f790b50c:README.md:generic-api-key:83
+95ecc403468287489577d98b22c815eb5e0a3582:README.md:generic-api-key:66
+b5079660f0b5c671cb0d1161624d99332d6972dd:packages/valory/services/governatooorr_local/service.yaml:generic-api-key:28
+b5079660f0b5c671cb0d1161624d99332d6972dd:packages/valory/services/governatooorr/service.yaml:generic-api-key:35
+b5079660f0b5c671cb0d1161624d99332d6972dd:packages/valory/services/governatooorr/service.yaml:generic-api-key:94
+b5079660f0b5c671cb0d1161624d99332d6972dd:packages/valory/services/governatooorr/service.yaml:generic-api-key:134
+b5079660f0b5c671cb0d1161624d99332d6972dd:packages/valory/services/governatooorr/service.yaml:generic-api-key:174

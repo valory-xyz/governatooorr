@@ -37,7 +37,7 @@ The Governatooorr is an autonomous, AI-powered delegate that votes on on-chain g
 ### Testing service locally against a local mainnet fork
 
 Install Ganache, curl and (optionally) jq:
-- `sudo npm install ganache --global`
+- `sudo npm install ganache@7.7.7 --global`
 - `sudo apt install curl jq`
 
 Ensure that the packages are hashed and configured:
@@ -46,7 +46,14 @@ Ensure that the packages are hashed and configured:
 - `autonomy packages lock`
 - `autonomy push-all --remote`
 
-Deploy a Safe setting your agent's address as owner. Then run the following commands:
+Deploy a Safe setting your agent's address as owner:
+- Create an Ethereum private key - public key pair for your agent
+- Go to the [Safe webapp](https://app.safe.global/) and click on "Create new safe".
+- You'll be asked to connect your wallet (i.e., Metamask).
+- Set your agent's public address af the safe owner.
+- Sign the transaction with your wallet.
+
+Then run the following commands:
 1. `autonomy fetch valory/governatooorr:0.1.0 --service --local`
 2. `cd governatooorr/`
 3. `autonomy build-image`

@@ -61,8 +61,9 @@ models:
       service_id: governatooorr
       service_registry_address: null
       setup:
-        all_participants: ${ALL_PARTICIPANTS:list:[]}
-        safe_contract_address: ${SAFE_CONTRACT_ADDRESS:str:0x0000000000000000000000000000000000000000}
+        all_participants:
+        - '0xBfE475AF374AB552ff22F995b8732DFee25694ea'
+        safe_contract_address: '0x7b2a08Fae878E88efE0aa82599C167E9B0e9BdC4'
         consensus_threshold: null
       share_tm_config_on_startup: ${USE_ACN:bool:false}
       sleep_time: 1
@@ -84,7 +85,7 @@ config:
   ledger_apis:
     ethereum:
       address: ${ETHEREUM_LEDGER_RPC:str:http://host.docker.internal:8545}
-      chain_id: ${ETHEREUM_LEDGER_CHAIN_ID:int:31337}
+      chain_id: ${ETHEREUM_LEDGER_CHAIN_ID:int:1}
       poa_chain: ${ETHEREUM_LEDGER_IS_POA_CHAIN:bool:false}
       default_gas_price_strategy: ${ETHEREUM_LEDGER_PRICING:str:eip1559}
 ---

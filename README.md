@@ -79,7 +79,7 @@ Then run the following commands:
 6. `autonomy deploy build keys.json -ltm`
 7. Run a Ganache fork of mainnet. Your agent address will have a balance of 1ETH:
 
-      `ganache --fork.network mainnet --wallet.deterministic=true --chain.chainId 1 --fork.blockNumber 16968287 --wallet.accounts <your_agent_private_key>,1000000000000000000 --server.host 0.0.0.0`
+      `ganache --fork.network mainnet --wallet.deterministic=true --chain.chainId 1 --fork.blockNumber 16968287 --wallet.accounts 0x73a3d2d5e1dc33e88a9c1c0d78a253471bc2ba37fe346cace0bafa21954f3bfb,1000000000000000000 --server.host 0.0.0.0`
 
 8. `autonomy deploy run --build-dir abci_build/`
 9. in separate terminal: `docker logs abci0 -f`

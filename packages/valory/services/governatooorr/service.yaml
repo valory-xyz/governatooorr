@@ -57,7 +57,7 @@ type: skill
         keeper_timeout: 30.0
         max_attempts: 10
         max_healthcheck: 120
-        on_chain_service_id: null
+        on_chain_service_id: ${ON_CHAIN_SERVICE_ID:int:null}
         reset_tendermint_after: 2
         retry_attempts: 400
         retry_timeout: 3
@@ -65,7 +65,7 @@ type: skill
         request_retry_delay: 1.0
         request_timeout: 10.0
         round_timeout_seconds: 30.0
-        service_id: ${SERVICE_ID:int:null}
+        service_id: governatooorr
         service_registry_address: ${SERVICE_REGISTRY_ADDRESS:str:0x0000000000000000000000000000000000000000}
         setup: &id003
           all_participants: ${ALL_PARTICIPANTS:list:[]}
@@ -100,7 +100,7 @@ type: skill
         keeper_timeout: 30.0
         max_attempts: 10
         max_healthcheck: 120
-        on_chain_service_id: null
+        on_chain_service_id: ${ON_CHAIN_SERVICE_ID:int:null}
         reset_tendermint_after: 2
         retry_attempts: 400
         retry_timeout: 3
@@ -108,7 +108,7 @@ type: skill
         request_retry_delay: 1.0
         request_timeout: 10.0
         round_timeout_seconds: 30.0
-        service_id: ${SERVICE_ID:int:null}
+        service_id: governatooorr
         service_registry_address: ${SERVICE_REGISTRY_ADDRESS:str:0x0000000000000000000000000000000000000000}
         setup: *id003
         share_tm_config_on_startup: ${USE_ACN:bool:false}
@@ -140,7 +140,7 @@ type: skill
         keeper_timeout: 30.0
         max_attempts: 10
         max_healthcheck: 120
-        on_chain_service_id: null
+        on_chain_service_id: ${ON_CHAIN_SERVICE_ID:int:null}
         reset_tendermint_after: 2
         retry_attempts: 400
         retry_timeout: 3
@@ -148,7 +148,7 @@ type: skill
         request_retry_delay: 1.0
         request_timeout: 10.0
         round_timeout_seconds: 30.0
-        service_id: ${SERVICE_ID:int:null}
+        service_id: governatooorr
         service_registry_address: ${SERVICE_REGISTRY_ADDRESS:str:0x0000000000000000000000000000000000000000}
         setup: *id003
         share_tm_config_on_startup: ${USE_ACN:bool:false}
@@ -180,7 +180,7 @@ type: skill
         keeper_timeout: 30.0
         max_attempts: 10
         max_healthcheck: 120
-        on_chain_service_id: null
+        on_chain_service_id: ${ON_CHAIN_SERVICE_ID:int:null}
         reset_tendermint_after: 2
         retry_attempts: 400
         retry_timeout: 3
@@ -188,7 +188,7 @@ type: skill
         request_retry_delay: 1.0
         request_timeout: 10.0
         round_timeout_seconds: 30.0
-        service_id: ${SERVICE_ID:int:null}
+        service_id: governatooorr
         service_registry_address: ${SERVICE_REGISTRY_ADDRESS:str:0x0000000000000000000000000000000000000000}
         setup: *id003
         share_tm_config_on_startup: ${USE_ACN:bool:false}

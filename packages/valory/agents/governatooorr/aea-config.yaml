@@ -37,9 +37,9 @@ protocols:
 skills:
 - valory/abstract_abci:0.1.0:bafybeiai2t36ht3blisjneahv5almyfieqokl4auj2n43rj4k5chun2i44
 - valory/abstract_round_abci:0.1.0:bafybeib7q4t5jh6gic3i2pzuzlk7q2xmnueyxjpftm4gl56vnnz4vs4f7a
-- valory/governatooorr_abci:0.1.0:bafybeiha4iqs5yupwhksm43a3v343z3kto4agrauwuuyah7sfq3flggk3q
-- valory/proposal_collector_abci:0.1.0:bafybeiearzjwn46tehintd7pywryldwykbyulj6l6ne2hiwb5aersl3qqu
-- valory/proposal_voter_abci:0.1.0:bafybeihi2xfeh4atqateqs7o3oxurtjsow6vrnge3ltotx5ipjmlsqworm
+- valory/governatooorr_abci:0.1.0:bafybeicgk7fauq3hphikso44w2ltrca7rcurqlryw7souhoctw6i26tps4
+- valory/proposal_collector_abci:0.1.0:bafybeicj3zxm2v3foa5lc5hrdyktfnipjbu4fm7gwj53psnnfgv4kzb26q
+- valory/proposal_voter_abci:0.1.0:bafybeighonqzj4az2nqdt32ahrav2jnqul6r2zjvuav6td7myuuio4drf4
 - valory/registration_abci:0.1.0:bafybeidc6iv54mr2antvrw3r4tldm635othi62bhzeyyid7kejzxw4fwiq
 - valory/reset_pause_abci:0.1.0:bafybeige4ncfhwlqbthmfvdu7aogl2qqsozpz3h5el3xokmq4hcqujgsqy
 - valory/transaction_settlement_abci:0.1.0:bafybeihdgnqsiauhuuazmpnt7tawzxm3jnidfytifmb6yjbb6i3cqnafvy
@@ -117,7 +117,7 @@ cert_requests:
   not_before: '2022-01-01'
   public_key: ${str:02d3a830c9d6ea1ae91936951430dee11f4662f33118b02190693be835359a9d77}
   save_path: .certs/acn_cosmos_11000.txt
-is_abstract: true
+is_abstract: false
 ---
 public_id: valory/governatooorr_abci:0.1.0
 type: skill

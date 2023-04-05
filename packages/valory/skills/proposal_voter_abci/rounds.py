@@ -169,6 +169,7 @@ class ProposalVoterAbciApp(AbciApp[Event]):
             Event.CONTRACT_ERROR: PrepareVoteTransactionRound,
         },
         FinishedTransactionPreparationNoVoteRound: {},
+        FinishedTransactionPreparationVoteRound: {},
     }
     final_states: Set[AppState] = {
         FinishedTransactionPreparationVoteRound,

@@ -7,13 +7,13 @@ license: Apache-2.0
 aea_version: '>=1.0.0, <2.0.0'
 fingerprint:
   __init__.py: bafybeickrxtcqbivmneh54iq7ymaoq6xzwdouvnoon3h234vzp574qouvu
-  behaviours.py: bafybeif46rhqzpejb3dyoieoj6wdc75ye6flash4xpur7hip33wfbt2cq4
+  behaviours.py: bafybeie3wqlmjuegd54obz72635titakksy5l4vj7runess55xv53u5ttq
   dialogues.py: bafybeighergy2hupd32ozp2ud5j4jujpccfkzk2l46a33xn7yi2ofk32m4
   fsm_specification.yaml: bafybeig24qxwd5q47pohoe4yrgbjo37b3dmodtysewmzf2ktw4xo5iyyze
   handlers.py: bafybeif7guoqcit2muhr7urcwpu6f2ofmka75louxgecikdpvsnx4hz7o4
   models.py: bafybeicolnipyzownntfxff64ns6svzffgquh4wgxxplrcv5oq7j6bvjrm
-  payloads.py: bafybeibtlekt7kvkuouslec3b5gobpe6kpoe6qjhp6ctxnhoq3dtijo7du
-  rounds.py: bafybeicpoku3fbrnr2adk25lbylnoahtjs77vngsnvl7kzeahvz4zs4og4
+  payloads.py: bafybeidep6mcmwwq2ayry7rpnxsgdcba6utzgzo6xf2qxeekl5pdzzyl5e
+  rounds.py: bafybeih2qc7k5vi4ewup2ld5fxvz2ancmfdzja54u4wl4mvdkroqxb7dd4
   tally.py: bafybeidzslyd24mdobaioiis4rnlqon5benezj4ok6btp4snz5gotg7rz4
 fingerprint_ignore_patterns: []
 connections:
@@ -21,6 +21,7 @@ connections:
 contracts: []
 protocols:
 - valory/http:1.0.0:bafybeifyoio7nlh5zzyn5yz7krkou56l22to3cwg7gw5v5o3vxwklibhty
+- valory/ledger:1.0.0:bafybeifyoio7nlh5zzyn5yz7krkou56l22to3cwg7gw5v5o3vxwklibhty
 skills:
 - valory/abstract_round_abci:0.1.0:bafybeib7q4t5jh6gic3i2pzuzlk7q2xmnueyxjpftm4gl56vnnz4vs4f7a
 behaviours:

@@ -2,7 +2,8 @@ name: proposal_collector_abci
 author: valory
 version: 0.1.0
 type: skill
-description: The scaffold skill is a scaffold for your own skill implementation.
+description: The proposal collector abci is responsible for collecting and aggregating
+  proposals.
 license: Apache-2.0
 aea_version: '>=1.0.0, <2.0.0'
 fingerprint:

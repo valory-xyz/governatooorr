@@ -61,7 +61,7 @@ async function main() {
     const multisig = new ethers.Contract(proxyAddress, safeABI, provider);
     //await ethers.getContractAt(safeABI, proxyAddress);
     if (multisig.address == proxyAddress) {
-        console.log("Created Safe contract");
+        console.log("Deployed Safe contract at:", proxyAddress);
     }
 }
 

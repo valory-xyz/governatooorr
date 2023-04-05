@@ -58,6 +58,7 @@ type: skill
         keeper_timeout: 30.0
         max_attempts: 10
         max_healthcheck: 120
+        multisend_address: ${MULTISEND_ADDRESS:str:0xA238CBeb142c10Ef7Ad8442C6D1f9E89e07e7761}
         on_chain_service_id: ${ON_CHAIN_SERVICE_ID:int:null}
         reset_tendermint_after: 2
         retry_attempts: 400
@@ -79,6 +80,7 @@ type: skill
         tendermint_max_retries: 5
         tendermint_url: ${TENDERMINT_URL:str:http://localhost:26657}
         tendermint_p2p_url: ${TM_P2P_ENDPOINT_NODE_0:str:node0:26656}
+        termination_sleep: ${TERMINATION_SLEEP:int:900}
         tx_timeout: 10.0
         use_termination: ${USE_TERMINATION:bool:false}
         tally_api_endpoint: ${TALLY_API_ENDPOINT:str:https://api.tally.xyz/query}
@@ -101,6 +103,7 @@ type: skill
         keeper_timeout: 30.0
         max_attempts: 10
         max_healthcheck: 120
+        multisend_address: ${MULTISEND_ADDRESS:str:0xA238CBeb142c10Ef7Ad8442C6D1f9E89e07e7761}
         on_chain_service_id: ${ON_CHAIN_SERVICE_ID:int:null}
         reset_tendermint_after: 2
         retry_attempts: 400
@@ -119,6 +122,7 @@ type: skill
         tendermint_max_retries: 5
         tendermint_url: ${TENDERMINT_URL:str:http://localhost:26657}
         tendermint_p2p_url: ${TM_P2P_ENDPOINT_NODE_1:str:node0:26656}
+        termination_sleep: ${TERMINATION_SLEEP:int:900}
         tx_timeout: 10.0
         use_termination: ${USE_TERMINATION:bool:false}
         tally_api_endpoint: ${TALLY_API_ENDPOINT:str:https://api.tally.xyz/query}
@@ -141,6 +145,7 @@ type: skill
         keeper_timeout: 30.0
         max_attempts: 10
         max_healthcheck: 120
+        multisend_address: ${MULTISEND_ADDRESS:str:0xA238CBeb142c10Ef7Ad8442C6D1f9E89e07e7761}
         on_chain_service_id: ${ON_CHAIN_SERVICE_ID:int:null}
         reset_tendermint_after: 2
         retry_attempts: 400
@@ -159,6 +164,7 @@ type: skill
         tendermint_max_retries: 5
         tendermint_url: ${TENDERMINT_URL:str:http://localhost:26657}
         tendermint_p2p_url: ${TM_P2P_ENDPOINT_NODE_2:str:node0:26656}
+        termination_sleep: ${TERMINATION_SLEEP:int:900}
         tx_timeout: 10.0
         use_termination: ${USE_TERMINATION:bool:false}
         tally_api_endpoint: ${TALLY_API_ENDPOINT:str:https://api.tally.xyz/query}
@@ -181,6 +187,7 @@ type: skill
         keeper_timeout: 30.0
         max_attempts: 10
         max_healthcheck: 120
+        multisend_address: ${MULTISEND_ADDRESS:str:0xA238CBeb142c10Ef7Ad8442C6D1f9E89e07e7761}
         on_chain_service_id: ${ON_CHAIN_SERVICE_ID:int:null}
         reset_tendermint_after: 2
         retry_attempts: 400
@@ -199,6 +206,7 @@ type: skill
         tendermint_max_retries: 5
         tendermint_url: ${TENDERMINT_URL:str:http://localhost:26657}
         tendermint_p2p_url: ${TM_P2P_ENDPOINT_NODE_3:str:node0:26656}
+        termination_sleep: ${TERMINATION_SLEEP:int:900}
         tx_timeout: 10.0
         use_termination: ${USE_TERMINATION:bool:false}
         tally_api_endpoint: ${TALLY_API_ENDPOINT:str:https://api.tally.xyz/query}

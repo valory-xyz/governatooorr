@@ -32,6 +32,8 @@
         "connection/fetchai/http_server/0.22.0": "bafybeihaax5od5zo5jk2l62hv4jwuwtxloh5mijozudpsjombqc4ncmi6i",
         "contract/valory/gnosis_safe_proxy_factory/0.1.0": "bafybeiefq2lcrixbbqz5cji5vpnriydt4kfx5vvawg2vnmeadel2ar7yga",
         "contract/valory/gnosis_safe/0.1.0": "bafybeidxabihujlxvmnbf3tztjbwybyr5rlwjeniihnr5edfi6bpyjnevi",
-        "skill/valory/transaction_settlement_abci/0.1.0": "bafybeihdgnqsiauhuuazmpnt7tawzxm3jnidfytifmb6yjbb6i3cqnafvy"
+        "skill/valory/transaction_settlement_abci/0.1.0": "bafybeihdgnqsiauhuuazmpnt7tawzxm3jnidfytifmb6yjbb6i3cqnafvy",
+        "contract/valory/multisend/0.1.0": "bafybeigjywkl7hydjsrkogob3xebj2ifhqwmfhhxoeyrndzhhxi5u6amey",
+        "skill/valory/termination_abci/0.1.0": "bafybeiabjmwoomoj73jknm3aicnthb6g5qmcwoljowstq3xuymx6zjl4su"
     }
 }

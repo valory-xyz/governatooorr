@@ -41,6 +41,7 @@ from packages.valory.skills.proposal_voter_abci.rounds import (
     Event as ProposalVoterEvent,
 )
 from packages.valory.skills.reset_pause_abci.rounds import Event as ResetPauseEvent
+from packages.valory.skills.termination_abci.models import TerminationParams
 from packages.valory.skills.transaction_settlement_abci.models import (
     TransactionParams as TransactionSettlementParams,
 )
@@ -82,5 +83,5 @@ class SharedState(BaseSharedState):
         ] = (self.context.params.reset_pause_duration + MARGIN)
 
 
-class Params(ProposalCollectorParams, TransactionSettlementParams):
+class Params(ProposalCollectorParams, TransactionSettlementParams, TerminationParams):
     """A model to represent params for multiple abci apps."""

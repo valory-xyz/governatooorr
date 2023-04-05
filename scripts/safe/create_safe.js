@@ -17,7 +17,7 @@ async function main() {
     const safeContracts = require("@gnosis.pm/safe-contracts");
     // The default Safe address for the majority of networks
     const safeAddress = "0xd9Db270c1B5E3Bd161E8c8503c55cEABeE709552";
-    const safeJSON = "safe/node_modules/@gnosis.pm/safe-contracts/build/artifacts/contracts/GnosisSafe.sol/GnosisSafe.json";
+    const safeJSON = "scripts/safe/node_modules/@gnosis.pm/safe-contracts/build/artifacts/contracts/GnosisSafe.sol/GnosisSafe.json";
     let contractFromJSON = fs.readFileSync(safeJSON, "utf8");
     let parsedFile = JSON.parse(contractFromJSON);
     const safeABI = parsedFile["abi"];
@@ -39,7 +39,7 @@ async function main() {
     );
 
     // Get the safe proxy factory
-    const factoryJSON = "safe/node_modules/@gnosis.pm/safe-contracts/build/artifacts/contracts/proxies/GnosisSafeProxyFactory.sol/GnosisSafeProxyFactory.json";
+    const factoryJSON = "scripts/safe/node_modules/@gnosis.pm/safe-contracts/build/artifacts/contracts/proxies/GnosisSafeProxyFactory.sol/GnosisSafeProxyFactory.json";
     contractFromJSON = fs.readFileSync(factoryJSON, "utf8");
     parsedFile = JSON.parse(contractFromJSON);
     const factoryABI = parsedFile["abi"];

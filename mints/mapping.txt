@@ -1,0 +1,14 @@
+token_id-"component_id"
+X-protocol/valory/llm/1.0.0" -> no deps
+X-"contract/valory/delegate/0.1.0"  -> no deps
+X-"connection/valory/openai/0.1.0"  -> valory/llm:1.0.0
+X-"connection/valory/http_server:0.1.0" -> 4
+X-"skill/valory/proposal_collector_abci/0.1.0" -> valory/http_server, 4, 14
+X-"skill/valory/proposal_voter_abci/0.1.0" -> valory/openai, valory/delegate, valory/llm:1.0.0, 3, 14, 18, 22
+X-"skill/valory/governatooorr_abci/0.1.0" -> 14, proposal_collector_abci, proposal_voter_abci, 16, 17, 22
+---
+token_id-"agent_id"
+X-"agent/valory/governatooorr/0.1.0" ->valor/http_server, valory/openai, valory/delegate, valory/llm, valory/governatooorr_abci, valory/proposal_collector_abci, valory/proposal_voter_abci, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 13, 14, 16, 17, 18, 19, 22, 39
+---
+token_id-"service_id"
+X-"service/valory/governatooorr/0.1.0" 

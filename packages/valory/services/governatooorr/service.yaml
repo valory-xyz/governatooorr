@@ -65,8 +65,8 @@ type: skill
         request_retry_delay: 1.0
         request_timeout: 10.0
         round_timeout_seconds: 30.0
-        service_id: governatooorr
-        service_registry_address: null
+        service_id: ${SERVICE_ID:int:null}
+        service_registry_address: ${SERVICE_REGISTRY_ADDRESS:str:0x0000000000000000000000000000000000000000}
         setup: &id003
           all_participants: ${ALL_PARTICIPANTS:list:[]}
           safe_contract_address: ${SAFE_CONTRACT_ADDRESS:str:0x0000000000000000000000000000000000000000}
@@ -108,8 +108,8 @@ type: skill
         request_retry_delay: 1.0
         request_timeout: 10.0
         round_timeout_seconds: 30.0
-        service_id: governatooorr
-        service_registry_address: null
+        service_id: ${SERVICE_ID:int:null}
+        service_registry_address: ${SERVICE_REGISTRY_ADDRESS:str:0x0000000000000000000000000000000000000000}
         setup: *id003
         share_tm_config_on_startup: ${USE_ACN:bool:false}
         sleep_time: 1
@@ -148,8 +148,8 @@ type: skill
         request_retry_delay: 1.0
         request_timeout: 10.0
         round_timeout_seconds: 30.0
-        service_id: governatooorr
-        service_registry_address: null
+        service_id: ${SERVICE_ID:int:null}
+        service_registry_address: ${SERVICE_REGISTRY_ADDRESS:str:0x0000000000000000000000000000000000000000}
         setup: *id003
         share_tm_config_on_startup: ${USE_ACN:bool:false}
         sleep_time: 1
@@ -188,8 +188,8 @@ type: skill
         request_retry_delay: 1.0
         request_timeout: 10.0
         round_timeout_seconds: 30.0
-        service_id: governatooorr
-        service_registry_address: null
+        service_id: ${SERVICE_ID:int:null}
+        service_registry_address: ${SERVICE_REGISTRY_ADDRESS:str:0x0000000000000000000000000000000000000000}
         setup: *id003
         share_tm_config_on_startup: ${USE_ACN:bool:false}
         sleep_time: 1

@@ -154,7 +154,7 @@ models:
       keeper_timeout: 30.0
       max_attempts: 10
       max_healthcheck: 120
-      on_chain_service_id: null
+      on_chain_service_id: ${int:null}
       reset_tendermint_after: 2
       retry_attempts: 400
       retry_timeout: 3
@@ -163,7 +163,7 @@ models:
       request_timeout: 10.0
       round_timeout_seconds: 30.0
       service_id: governatooorr
-      service_registry_address: null
+      service_registry_address: ${str:0x1cEe30D08943EB58EFF84DD1AB44a6ee6FEff63a}
       setup:
         all_participants: ${list:["0xBfE475AF374AB552ff22F995b8732DFee25694ea"]}
         safe_contract_address: ${str:0x0000000000000000000000000000000000000000}
@@ -174,7 +174,7 @@ models:
       tendermint_com_url: ${str:http://localhost:8080}
       tendermint_max_retries: 5
       tendermint_url: ${str:http://localhost:26657}
-      tendermint_p2p_url: localhost:26656
+      tendermint_p2p_url: ${str:localhost:26656}
       tx_timeout: 10.0
       use_termination: ${bool:false}
       tally_api_endpoint: ${str:https://api.tally.xyz/query}

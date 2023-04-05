@@ -35,11 +35,4 @@ class SynchronizeDelegationsPayload(BaseTxPayload):
 class CollectActiveProposalsPayload(BaseTxPayload):
     """Represent a transaction payload for the CollectActiveProposals."""
 
-    active_proposals: str
-
-
-@dataclass(frozen=True)
-class SelectProposalPayload(BaseTxPayload):
-    """Represent a transaction payload for the SelectProposal."""
-
-    proposal_id: str
+    proposals: str

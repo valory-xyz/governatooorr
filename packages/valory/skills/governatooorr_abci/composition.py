@@ -33,13 +33,13 @@ from packages.valory.skills.abstract_round_abci.abci_app_chain import (
 # more information here: https://docs.autonolas.network/fsm_app_introduction/#composition-of-fsm-apps
 abci_app_transition_mapping: AbciAppTransitionMapping = {
     RegistrationAbci.FinishedRegistrationRound: ProposalCollectorAbciApp.SynchronizeDelegationsRound,
-    ProposalCollectorAbciApp.FinishedProposalSelectionDoneRound: ResetAndPauseAbci.ResetAndPauseRound,
+    ProposalCollectorAbciApp.FinishedProposalRound: ProposalVoterAbciApp.EstablishVoteRound,
+    ProposalVoterAbciApp.FinishedTransactionPreparationNoVoteRound: ResetAndPauseAbci.ResetAndPauseRound,
+    ProposalVoterAbciApp.FinishedTransactionPreparationVoteRound: TransactionSubmissionAbciApp.RandomnessTransactionSubmissionRound,
+    TransactionSubmissionAbciApp.FinishedTransactionSubmissionRound: ProposalVoterAbciApp.PrepareVoteTransactionRound,
+    TransactionSubmissionAbciApp.FailedRound: ProposalVoterAbciApp.PrepareVoteTransactionRound,
     ResetAndPauseAbci.FinishedResetAndPauseRound: ProposalCollectorAbciApp.SynchronizeDelegationsRound,
     ResetAndPauseAbci.FinishedResetAndPauseErrorRound: RegistrationAbci.RegistrationRound,
-    ProposalCollectorAbciApp.FinishedProposalSelectionVoteRound: ProposalVoterAbciApp.EstablishVoteRound,
-    ProposalVoterAbciApp.FinishedTransactionPreparationRound: TransactionSubmissionAbciApp.RandomnessTransactionSubmissionRound,
-    TransactionSubmissionAbciApp.FinishedTransactionSubmissionRound: ProposalCollectorAbciApp.SelectProposalRound,
-    TransactionSubmissionAbciApp.FailedRound: ProposalVoterAbciApp.EstablishVoteRound,
 }
 
 GovernatooorrAbciApp = chain(

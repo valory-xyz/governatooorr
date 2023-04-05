@@ -19,6 +19,8 @@
 
 """This module contains the shared state for the abci skill of ProposalVoterAbciApp."""
 
+from typing import Any
+
 from packages.valory.skills.abstract_round_abci.models import BaseParams
 from packages.valory.skills.abstract_round_abci.models import (
     BenchmarkTool as BaseBenchmarkTool,
@@ -36,6 +38,16 @@ class SharedState(BaseSharedState):
     abci_app_cls = ProposalVoterAbciApp
 
 
-Params = BaseParams
+class Params(BaseParams):
+    """Parameters."""
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        """Initialize the parameters object."""
+        self.voting_block_threshold = self._ensure(
+            "voting_block_threshold", kwargs, int
+        )
+        super().__init__(*args, **kwargs)
+
+
 Requests = BaseRequests
 BenchmarkTool = BaseBenchmarkTool

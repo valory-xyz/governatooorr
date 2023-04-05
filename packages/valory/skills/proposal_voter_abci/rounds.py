@@ -19,6 +19,7 @@
 
 """This package contains the rounds of ProposalVoterAbciApp."""
 
+import json
 from enum import Enum
 from typing import Dict, Optional, Set, Tuple, cast
 
@@ -38,9 +39,6 @@ from packages.valory.skills.proposal_voter_abci.payloads import (
 )
 
 
-VOTES_TO_CODE = {"FOR": 0, "AGAINST": 1, "ABSTAIN": 2}
-
-
 class Event(Enum):
     """ProposalVoterAbciApp Events"""
 
@@ -48,6 +46,8 @@ class Event(Enum):
     ROUND_TIMEOUT = "round_timeout"
     DONE = "done"
     CONTRACT_ERROR = "contract_error"
+    VOTE = "vote"
+    NO_VOTE = "no_vote"
 
 
 class SynchronizedData(BaseSynchronizedData):
@@ -68,14 +68,9 @@ class SynchronizedData(BaseSynchronizedData):
         return cast(dict, self.db.get("proposals", {}))
 
     @property
-    def selected_proposal_id(self) -> str:
-        """Get the selected_proposal_id."""
-        return cast(str, self.db.get_strict("selected_proposal_id"))
-
-    @property
-    def vote_code(self) -> int:
-        """Get the vote vote_code."""
-        return cast(int, self.db.get_strict("vote_code"))
+    def votable_proposal_ids(self) -> list:
+        """Get the proposals."""
+        return cast(list, self.db.get("votable_proposal_ids", {}))
 
     @property
     def most_voted_tx_hash(self) -> str:
@@ -89,32 +84,15 @@ class EstablishVoteRound(CollectSameUntilThresholdRound):
     payload_class = EstablishVotePayload
     synchronized_data_class = SynchronizedData
 
-    ERROR_PAYLOAD = "ERROR"
-
     def end_block(self) -> Optional[Tuple[BaseSynchronizedData, Event]]:
         """Process the end of the block."""
         if self.threshold_reached:
-
-            if self.most_voted_payload == EstablishVoteRound.ERROR_PAYLOAD:
-                return self.synchronized_data, Event.CONTRACT_ERROR
-
-            # Set the decided vote in the selected proposal # TODO: this should be done after the vote is verified
-
-            vote = self.most_voted_payload
-            vote_code = VOTES_TO_CODE[vote]
-
-            proposals = cast(SynchronizedData, self.synchronized_data).proposals
-            selected_proposal_id = cast(
-                SynchronizedData, self.synchronized_data
-            ).selected_proposal_id
-
-            proposals[selected_proposal_id]["vote"] = vote
-
             synchronized_data = self.synchronized_data.update(
                 synchronized_data_class=SynchronizedData,
                 **{
-                    get_name(SynchronizedData.vote_code): vote_code,
-                    get_name(SynchronizedData.proposals): proposals,
+                    get_name(SynchronizedData.proposals): json.loads(
+                        self.most_voted_payload
+                    ),
                 }
             )
             return synchronized_data, Event.DONE
@@ -131,24 +109,32 @@ class PrepareVoteTransactionRound(CollectSameUntilThresholdRound):
     payload_class = PrepareVoteTransactionPayload
     synchronized_data_class = SynchronizedData
 
+    NO_VOTE_PAYLOAD = "NO_VOTE"
     ERROR_PAYLOAD = "ERROR"
 
     def end_block(self) -> Optional[Tuple[BaseSynchronizedData, Event]]:
         """Process the end of the block."""
         if self.threshold_reached:
 
-            if self.most_voted_payload == PrepareVoteTransactionRound.ERROR_PAYLOAD:
+            payload = json.loads(self.most_voted_payload)
+
+            if payload["tx_hash"] == PrepareVoteTransactionRound.ERROR_PAYLOAD:
                 return self.synchronized_data, Event.CONTRACT_ERROR
+
+            if payload["tx_hash"] == PrepareVoteTransactionRound.NO_VOTE_PAYLOAD:
+                return self.synchronized_data, Event.NO_VOTE
 
             synchronized_data = self.synchronized_data.update(
                 synchronized_data_class=SynchronizedData,
                 **{
-                    get_name(
-                        SynchronizedData.most_voted_tx_hash
-                    ): self.most_voted_payload,
+                    get_name(SynchronizedData.most_voted_tx_hash): payload["tx_hash"],
+                    get_name(SynchronizedData.proposals): payload["proposals"],
+                    get_name(SynchronizedData.votable_proposal_ids): payload[
+                        "votable_proposal_ids"
+                    ],
                 }
             )
-            return synchronized_data, Event.DONE
+            return synchronized_data, Event.VOTE
         if not self.is_majority_possible(
             self.collection, self.synchronized_data.nb_participants
         ):
@@ -156,7 +142,11 @@ class PrepareVoteTransactionRound(CollectSameUntilThresholdRound):
         return None
 
 
-class FinishedTransactionPreparationRound(DegenerateRound):
+class FinishedTransactionPreparationVoteRound(DegenerateRound):
+    """FinishedTransactionPreparationRound"""
+
+
+class FinishedTransactionPreparationNoVoteRound(DegenerateRound):
     """FinishedTransactionPreparationRound"""
 
 
@@ -170,17 +160,20 @@ class ProposalVoterAbciApp(AbciApp[Event]):
             Event.DONE: PrepareVoteTransactionRound,
             Event.NO_MAJORITY: EstablishVoteRound,
             Event.ROUND_TIMEOUT: EstablishVoteRound,
-            Event.CONTRACT_ERROR: EstablishVoteRound,
         },
         PrepareVoteTransactionRound: {
-            Event.DONE: FinishedTransactionPreparationRound,
+            Event.NO_VOTE: FinishedTransactionPreparationNoVoteRound,
+            Event.VOTE: FinishedTransactionPreparationVoteRound,
             Event.NO_MAJORITY: PrepareVoteTransactionRound,
             Event.ROUND_TIMEOUT: PrepareVoteTransactionRound,
             Event.CONTRACT_ERROR: PrepareVoteTransactionRound,
         },
-        FinishedTransactionPreparationRound: {},
+        FinishedTransactionPreparationNoVoteRound: {},
     }
-    final_states: Set[AppState] = {FinishedTransactionPreparationRound}
+    final_states: Set[AppState] = {
+        FinishedTransactionPreparationVoteRound,
+        FinishedTransactionPreparationNoVoteRound,
+    }
     event_to_timeout: EventToTimeout = {
         Event.ROUND_TIMEOUT: 30.0,
     }
@@ -189,5 +182,6 @@ class ProposalVoterAbciApp(AbciApp[Event]):
         EstablishVoteRound: set(),
     }
     db_post_conditions: Dict[AppState, Set[str]] = {
-        FinishedTransactionPreparationRound: {"most_voted_tx_hash"},
+        FinishedTransactionPreparationVoteRound: {"most_voted_tx_hash"},
+        FinishedTransactionPreparationNoVoteRound: set(),
     }

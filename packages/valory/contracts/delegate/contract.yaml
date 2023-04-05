@@ -2,7 +2,7 @@ name: delegate
 author: valory
 version: 0.1.0
 type: contract
-description: delegate contract
+description: Contract package wrapping GovernorDelegate contract instances.
 license: Apache-2.0
 aea_version: '>=1.0.0, <2.0.0'
 fingerprint:

@@ -1,13 +1,14 @@
 name: governatooorr_local
 author: valory
 version: 0.1.0
-description: Local governatooorr service
+description: The Governatooorr is a service that autonomously votes on on-chain governance
+  proposals. It takes into account user preferences and uses LLMs to evaluate proposals.
 aea_version: '>=1.0.0, <2.0.0'
 license: Apache-2.0
 fingerprint:
   README.md: bafybeifvddbrix4wlzp5mfaxjg7bargwbcqxjdfvaz5tctxfvzowggkusu
 fingerprint_ignore_patterns: []
-agent: valory/governatooorr:0.1.0:bafybeidln2awjikstmedvwc3wjioabag25jrdh2nczdkly4dgsrl6pttke
+agent: valory/governatooorr:0.1.0:bafybeifihnhgmhhszflh4h67ccnsul6hpced5x424yx44s62eg2qufzbr4
 number_of_agents: 1
 deployment:
   agent:

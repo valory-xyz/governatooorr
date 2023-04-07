@@ -37,7 +37,12 @@ from packages.valory.skills.proposal_voter_abci.payloads import (
     EstablishVotePayload,
     PrepareVoteTransactionPayload,
 )
-from packages.valory.skills.transaction_settlement_abci.payload_tools import VerificationStatus
+from packages.valory.skills.transaction_settlement_abci.payload_tools import (
+    VerificationStatus,
+)
+from packages.valory.skills.transaction_settlement_abci.rounds import (
+    SynchronizedData as TxSettlementSynchronizedData,
+)
 
 
 class Event(Enum):
@@ -61,7 +66,9 @@ class SynchronizedData(BaseSynchronizedData):
     @property
     def just_voted(self) -> bool:
         """Get the final verification status."""
-        status_value = self.db.get("final_verification_status", VerificationStatus.NOT_VERIFIED)
+        status_value = self.db.get(
+            "final_verification_status", VerificationStatus.NOT_VERIFIED
+        )
         return status_value == VerificationStatus.VERIFIED
 
     @property
@@ -161,7 +168,7 @@ class ProposalVoterAbciApp(AbciApp[Event]):
     """ProposalVoterAbciApp"""
 
     initial_round_cls: AppState = EstablishVoteRound
-    initial_states: Set[AppState] = {EstablishVoteRound}
+    initial_states: Set[AppState] = {EstablishVoteRound, PrepareVoteTransactionRound}
     transition_function: AbciAppTransitionFunction = {
         EstablishVoteRound: {
             Event.DONE: PrepareVoteTransactionRound,
@@ -188,8 +195,11 @@ class ProposalVoterAbciApp(AbciApp[Event]):
     cross_period_persisted_keys: Set[str] = set()
     db_pre_conditions: Dict[AppState, Set[str]] = {
         EstablishVoteRound: set(),
+        PrepareVoteTransactionRound: get_name(TxSettlementSynchronizedData.final_verification_status),
     }
     db_post_conditions: Dict[AppState, Set[str]] = {
-        FinishedTransactionPreparationVoteRound: {"most_voted_tx_hash"},
+        FinishedTransactionPreparationVoteRound: {
+            get_name(SynchronizedData.most_voted_tx_hash)
+        },
         FinishedTransactionPreparationNoVoteRound: set(),
     }

@@ -268,15 +268,17 @@ class PrepareVoteTransactionBehaviour(ProposalVoterBaseBehaviour):
                 vote_intention = selected_proposal["vote_intention"]
                 # Pending votes are stored in the shared state and only updated in the proposals list
                 # when the transaction has been verified, and therefore we know that it is a submitted vote.
-                self.context.shared_state.pending_vote = PendingVote(selected_proposal_id, vote_intention)
+                self.context.shared_state.pending_vote = PendingVote(
+                    selected_proposal_id, vote_intention
+                )
 
-                governor_address = selected_proposal["governor"][
-                    "id"
-                ].split(":")[-1]
+                governor_address = selected_proposal["governor"]["id"].split(":")[-1]
                 vote_code = VOTES_TO_CODE[proposals["vote_intention"]]
 
                 # Vote for the first proposal in the list
-                tx_hash = yield from self._get_safe_tx_hash(governor_address, selected_proposal_id, vote_code)
+                tx_hash = yield from self._get_safe_tx_hash(
+                    governor_address, selected_proposal_id, vote_code
+                )
 
             if not tx_hash:
                 tx_hash = PrepareVoteTransactionRound.ERROR_PAYLOAD
@@ -304,7 +306,10 @@ class PrepareVoteTransactionBehaviour(ProposalVoterBaseBehaviour):
         self.set_done()
 
     def _get_safe_tx_hash(
-        self, governor_address: str, proposal_id: str, vote_code: int,
+        self,
+        governor_address: str,
+        proposal_id: str,
+        vote_code: int,
     ) -> Generator[None, None, Optional[str]]:
         """Get the transaction hash of the Safe tx."""
         # Get the raw transaction from the Bravo Delegate contract

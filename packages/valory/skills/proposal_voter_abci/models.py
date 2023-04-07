@@ -38,6 +38,7 @@ from packages.valory.skills.proposal_voter_abci.rounds import ProposalVoterAbciA
 @dataclass
 class PendingVote:
     """Represents a proposal vote that is pending to be submitted and verified."""
+
     proposal_id: str
     vote_choice: str
     # a pending vote is not votable anymore
@@ -50,10 +51,10 @@ class SharedState(BaseSharedState):
     abci_app_cls = ProposalVoterAbciApp
 
     def __init__(
-            self,
-            *args: Any,
-            skill_context: SkillContext,
-            **kwargs: Any,
+        self,
+        *args: Any,
+        skill_context: SkillContext,
+        **kwargs: Any,
     ) -> None:
         """Initialize the state."""
         super().__init__(*args, skill_context=skill_context, **kwargs)

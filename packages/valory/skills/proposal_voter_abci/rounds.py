@@ -195,7 +195,9 @@ class ProposalVoterAbciApp(AbciApp[Event]):
     cross_period_persisted_keys: Set[str] = set()
     db_pre_conditions: Dict[AppState, Set[str]] = {
         EstablishVoteRound: set(),
-        PrepareVoteTransactionRound: get_name(TxSettlementSynchronizedData.final_verification_status),
+        PrepareVoteTransactionRound: get_name(
+            TxSettlementSynchronizedData.final_verification_status
+        ),
     }
     db_post_conditions: Dict[AppState, Set[str]] = {
         FinishedTransactionPreparationVoteRound: {

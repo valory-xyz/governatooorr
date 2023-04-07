@@ -270,7 +270,8 @@ class CollectActiveProposalsBehaviour(ProposalCollectorBaseBehaviour):
                     "votable": True,
                     "vote_intention": None,
                     "vote": None,  # We have not voted for this one yet
-                    "remaining_blocks": active_proposal["end"]["number"] - current_block,
+                    "remaining_blocks": active_proposal["end"]["number"]
+                    - current_block,
                 }
             else:
                 # The proposal is still votable

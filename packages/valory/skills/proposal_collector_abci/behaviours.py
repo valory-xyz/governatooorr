@@ -320,5 +320,5 @@ class ProposalCollectorRoundBehaviour(AbstractRoundBehaviour):
     abci_app_cls = ProposalCollectorAbciApp  # type: ignore
     behaviours: Set[Type[BaseBehaviour]] = [
         CollectActiveProposalsBehaviour,
-        CollectActiveProposalsBehaviour,
+        SynchronizeDelegationsBehaviour,
     ]

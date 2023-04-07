@@ -181,6 +181,7 @@ models:
       tally_api_key: ${str:<tally_api_key>}
       service_endpoint_base: ${str:https://governatooorr.staging.autonolas.tech/}
       validate_timeout: 1205
+      voting_block_threshold: ${int:300}
 ---
 public_id: fetchai/http_server:0.22.0:bafybeicblltx7ha3ulthg7bzfccuqqyjmihhrvfeztlgrlcoxhr7kf6nbq
 type: connection

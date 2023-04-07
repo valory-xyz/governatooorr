@@ -78,6 +78,7 @@ models:
       tally_api_key: ${TALLY_API_KEY:str:<tally_api_key>}
       service_endpoint_base: ${SERVICE_ENDPOINT_BASE:str:https://governatooorr.staging.autonolas.tech/}
       validate_timeout: 1205
+      voting_block_threshold: ${VOTING_BLOCK_THRESHOLD:int:300}
 ---
 public_id: valory/ledger:0.19.0
 type: connection

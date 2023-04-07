@@ -131,6 +131,7 @@ models:
       tx_timeout: 10.0
       use_termination: false
       validate_timeout: 1205
+      voting_block_threshold: 300
     class_name: Params
   requests:
     args: {}

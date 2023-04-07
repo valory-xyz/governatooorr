@@ -84,6 +84,7 @@ type: skill
         tally_api_key: ${TALLY_API_KEY_0:str:<tally_api_key>}
         service_endpoint_base: ${SERVICE_ENDPOINT_BASE:str:https://governatooorr.staging.autonolas.tech/}
         validate_timeout: 1205
+        voting_block_threshold: ${VOTING_BLOCK_THRESHOLD:int:300}
 1:
   models:
     benchmark_tool: *id001
@@ -124,6 +125,7 @@ type: skill
         tally_api_key: ${TALLY_API_KEY_1:str:<tally_api_key>}
         service_endpoint_base: ${SERVICE_ENDPOINT_BASE:str:https://governatooorr.staging.autonolas.tech/}
         validate_timeout: 1205
+        voting_block_threshold: ${VOTING_BLOCK_THRESHOLD:int:300}
 2:
   models:
     benchmark_tool: *id001
@@ -164,6 +166,7 @@ type: skill
         tally_api_key: ${TALLY_API_KEY_2:str:<tally_api_key>}
         service_endpoint_base: ${SERVICE_ENDPOINT_BASE:str:https://governatooorr.staging.autonolas.tech/}
         validate_timeout: 1205
+        voting_block_threshold: ${VOTING_BLOCK_THRESHOLD:int:300}
 3:
   models:
     benchmark_tool: *id001
@@ -204,6 +207,7 @@ type: skill
         tally_api_key: ${TALLY_API_KEY_3:str:<tally_api_key>}
         service_endpoint_base: ${SERVICE_ENDPOINT_BASE:str:https://governatooorr.staging.autonolas.tech/}
         validate_timeout: 1205
+        voting_block_threshold: ${VOTING_BLOCK_THRESHOLD:int:300}
 ---
 public_id: valory/ledger:0.19.0
 type: connection

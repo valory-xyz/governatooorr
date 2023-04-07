@@ -272,14 +272,13 @@ class CollectActiveProposalsBehaviour(ProposalCollectorBaseBehaviour):
                     "votable": True,
                     "vote_intention": None,
                     "vote": None,  # We have not voted for this one yet
-                    "remaining_blocks": current_block
-                    - active_proposal["end"]["number"],
+                    "remaining_blocks": active_proposal["end"]["number"] - current_block,
                 }
             else:
                 # The proposal is still votable
                 proposals[active_proposal["id"]]["votable"] = True
                 proposals[active_proposal["id"]]["remaining_blocks"] = (
-                    current_block - proposals[active_proposal["id"]]["end"]["number"]
+                    proposals[active_proposal["id"]]["end"]["number"] - current_block
                 )
 
         # Get all the governors from the current delegations
@@ -299,7 +298,7 @@ class CollectActiveProposalsBehaviour(ProposalCollectorBaseBehaviour):
             and proposal["governor"]["id"].split(":")[-1] in delegation_governors
         ]
 
-        # Sort votable_proposals by vote end block number
+        # Sort votable_proposals by vote end block number, in ascending order
         votable_proposal_ids = [
             p["id"]
             for p in sorted(votable_proposals, key=lambda p: p["remaining_blocks"])

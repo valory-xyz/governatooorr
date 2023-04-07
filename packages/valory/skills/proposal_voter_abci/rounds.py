@@ -37,6 +37,7 @@ from packages.valory.skills.proposal_voter_abci.payloads import (
     EstablishVotePayload,
     PrepareVoteTransactionPayload,
 )
+from packages.valory.skills.transaction_settlement_abci.payload_tools import VerificationStatus
 
 
 class Event(Enum):
@@ -58,6 +59,12 @@ class SynchronizedData(BaseSynchronizedData):
     """
 
     @property
+    def just_voted(self) -> bool:
+        """Get the final verification status."""
+        status_value = self.db.get("final_verification_status", VerificationStatus.NOT_VERIFIED)
+        return status_value == VerificationStatus.VERIFIED
+
+    @property
     def delegations(self) -> list:
         """Get the delegations."""
         return cast(list, self.db.get("delegations", []))
@@ -69,7 +76,7 @@ class SynchronizedData(BaseSynchronizedData):
 
     @property
     def votable_proposal_ids(self) -> list:
-        """Get the proposals."""
+        """Get the votable proposal ids, sorted by their remaining blocks until expiration, in ascending order."""
         return cast(list, self.db.get("votable_proposal_ids", {}))
 
     @property

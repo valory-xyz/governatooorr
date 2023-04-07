@@ -40,7 +40,7 @@ from packages.valory.skills.proposal_voter_abci.dialogues import (
     LlmDialogue,
     LlmDialogues,
 )
-from packages.valory.skills.proposal_voter_abci.models import Params
+from packages.valory.skills.proposal_voter_abci.models import Params, PendingVote
 from packages.valory.skills.proposal_voter_abci.rounds import (
     EstablishVotePayload,
     EstablishVoteRound,
@@ -223,33 +223,53 @@ class PrepareVoteTransactionBehaviour(ProposalVoterBaseBehaviour):
 
     matching_round: Type[AbstractRound] = PrepareVoteTransactionRound
 
+    def _get_proposal_info(self):
+        """Get the votable proposals' ids and the proposals."""
+        votable_proposal_ids = self.synchronized_data.votable_proposal_ids
+        proposals = self.synchronized_data.proposals
+
+        if self.synchronized_data.just_voted:
+            # Pending votes are stored in the shared state and only updated in the proposals list
+            # when the transaction has been verified, and therefore we know that it is a submitted vote.
+            submitted_vote = self.context.shared_state.pending_vote
+            submitted_vote_id = submitted_vote.proposal_id
+            submitted_proposal = proposals[submitted_vote_id]
+            submitted_proposal["vote"] = submitted_vote.vote_choice
+            submitted_proposal["votable"] = submitted_vote.votable
+
+            # remove the submitted vote from the votable list, if it is present there
+            if submitted_vote_id in votable_proposal_ids:
+                votable_proposal_ids.remove(submitted_vote_id)
+
+        # Filter the votable proposals, keeping only those towards the end of their voting period
+        votable_proposal_ids = list(
+            filter(
+                lambda p_id: proposals[p_id]["remaining_blocks"]
+                <= self.params.voting_block_threshold,
+                votable_proposal_ids,
+            )
+        )
+
+        return votable_proposal_ids, proposals
+
     def async_act(self) -> Generator:
         """Do the act, supporting asynchronous execution."""
 
         with self.context.benchmark_tool.measure(self.behaviour_id).local():
-
-            votable_proposal_ids = self.synchronized_data.votable_proposal_ids
-            proposals = self.synchronized_data.proposals
-
-            # Filter transactions that still have time to vote
-            votable_proposal_ids = list(
-                filter(
-                    lambda p_id: proposals[p_id]["remaining_blocks"]
-                    <= self.params.voting_block_threshold,
-                    votable_proposal_ids,
-                )
-            )
+            votable_proposal_ids, proposals = self._get_proposal_info()
 
             if not votable_proposal_ids:
                 tx_hash = PrepareVoteTransactionRound.NO_VOTE_PAYLOAD
 
             else:
-                # TODO: We should only update this once we verify that the transaction succeeded
+                # we pop the first one, because the votable proposal ids are sorted by their remaining blocks, ascending
                 selected_proposal_id = votable_proposal_ids.pop(0)
                 selected_proposal = proposals[selected_proposal_id]
                 vote_intention = selected_proposal["vote_intention"]
-                selected_proposal["vote"] = vote_intention
-                selected_proposal["votable"] = False
+                # Pending votes are stored in the shared state and only updated in the proposals list
+                # when the transaction has been verified, and therefore we know that it is a submitted vote.
+                self.context.shared_state.pending_vote = PendingVote(selected_proposal_id, vote_intention)
+
                 governor_address = selected_proposal["governor"][
                     "id"
                 ].split(":")[-1]

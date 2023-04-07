@@ -19,7 +19,10 @@
 
 """This module contains the shared state for the abci skill of ProposalVoterAbciApp."""
 
-from typing import Any
+from dataclasses import dataclass
+from typing import Any, Optional
+
+from aea.skills.base import SkillContext
 
 from packages.valory.skills.abstract_round_abci.models import BaseParams
 from packages.valory.skills.abstract_round_abci.models import (
@@ -32,10 +35,29 @@ from packages.valory.skills.abstract_round_abci.models import (
 from packages.valory.skills.proposal_voter_abci.rounds import ProposalVoterAbciApp
 
 
+@dataclass
+class PendingVote:
+    """Represents a proposal vote that is pending to be submitted and verified."""
+    proposal_id: str
+    vote_choice: str
+    # a pending vote is not votable anymore
+    votable = False
+
+
 class SharedState(BaseSharedState):
     """Keep the current shared state of the skill."""
 
     abci_app_cls = ProposalVoterAbciApp
+
+    def __init__(
+            self,
+            *args: Any,
+            skill_context: SkillContext,
+            **kwargs: Any,
+    ) -> None:
+        """Initialize the state."""
+        super().__init__(*args, skill_context=skill_context, **kwargs)
+        self.pending_vote: Optional[PendingVote] = None
 
 
 class Params(BaseParams):

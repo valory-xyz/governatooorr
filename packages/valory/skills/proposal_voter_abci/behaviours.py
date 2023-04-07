@@ -246,12 +246,17 @@ class PrepareVoteTransactionBehaviour(ProposalVoterBaseBehaviour):
             else:
                 # TODO: We should only update this once we verify that the transaction succeeded
                 selected_proposal_id = votable_proposal_ids.pop(0)
-                vote_intention = proposals[selected_proposal_id]["vote_intention"]
-                proposals[selected_proposal_id]["vote"] = vote_intention
-                proposals[selected_proposal_id]["votable"] = False
+                selected_proposal = proposals[selected_proposal_id]
+                vote_intention = selected_proposal["vote_intention"]
+                selected_proposal["vote"] = vote_intention
+                selected_proposal["votable"] = False
+                governor_address = selected_proposal["governor"][
+                    "id"
+                ].split(":")[-1]
+                vote_code = VOTES_TO_CODE[proposals["vote_intention"]]
 
                 # Vote for the first proposal in the list
-                tx_hash = yield from self._get_safe_tx_hash(selected_proposal_id)
+                tx_hash = yield from self._get_safe_tx_hash(governor_address, selected_proposal_id, vote_code)
 
             if not tx_hash:
                 tx_hash = PrepareVoteTransactionRound.ERROR_PAYLOAD
@@ -279,22 +284,17 @@ class PrepareVoteTransactionBehaviour(ProposalVoterBaseBehaviour):
         self.set_done()
 
     def _get_safe_tx_hash(
-        self, proposal_id: str
+        self, governor_address: str, proposal_id: str, vote_code: int,
     ) -> Generator[None, None, Optional[str]]:
         """Get the transaction hash of the Safe tx."""
-
-        governor_address = self.synchronized_data.proposals[proposal_id]["governor"][
-            "id"
-        ].split(":")[-1]
-
         # Get the raw transaction from the Bravo Delegate contract
         contract_api_msg = yield from self.get_contract_api_response(
             performative=ContractApiMessage.Performative.GET_STATE,  # type: ignore
             contract_address=governor_address,
             contract_id=str(DelegateContract.contract_id),
             contract_callable="get_cast_vote_data",
-            proposal_id=int(self.synchronized_data.selected_proposal_id),
-            support=self.synchronized_data.vote_code,
+            proposal_id=int(proposal_id),
+            support=vote_code,
         )
         if (
             contract_api_msg.performative != ContractApiMessage.Performative.STATE

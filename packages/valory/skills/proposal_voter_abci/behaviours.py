@@ -243,14 +243,15 @@ class PrepareVoteTransactionBehaviour(ProposalVoterBaseBehaviour):
             if not votable_proposal_ids:
                 tx_hash = PrepareVoteTransactionRound.NO_VOTE_PAYLOAD
 
-            # TODO: We should only update this once we verify that the transaction succeded
-            selected_proposal_id = votable_proposal_ids.pop(0)
-            vote_intention = proposals[selected_proposal_id]["vote_intention"]
-            proposals[selected_proposal_id]["vote"] = vote_intention
-            proposals[selected_proposal_id]["votable"] = False
+            else:
+                # TODO: We should only update this once we verify that the transaction succeeded
+                selected_proposal_id = votable_proposal_ids.pop(0)
+                vote_intention = proposals[selected_proposal_id]["vote_intention"]
+                proposals[selected_proposal_id]["vote"] = vote_intention
+                proposals[selected_proposal_id]["votable"] = False
 
-            # Vote for the first proposal in the list
-            tx_hash = yield from self._get_safe_tx_hash(selected_proposal_id)
+                # Vote for the first proposal in the list
+                tx_hash = yield from self._get_safe_tx_hash(selected_proposal_id)
 
             if not tx_hash:
                 tx_hash = PrepareVoteTransactionRound.ERROR_PAYLOAD

@@ -32,13 +32,11 @@ from packages.valory.skills.abstract_round_abci.behaviours import (
 from packages.valory.skills.proposal_collector_abci.models import Params
 from packages.valory.skills.proposal_collector_abci.payloads import (
     CollectActiveProposalsPayload,
-    SelectProposalPayload,
     SynchronizeDelegationsPayload,
 )
 from packages.valory.skills.proposal_collector_abci.rounds import (
     CollectActiveProposalsRound,
     ProposalCollectorAbciApp,
-    SelectProposalRound,
     SynchronizeDelegationsRound,
     SynchronizedData,
 )

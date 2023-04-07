@@ -214,7 +214,7 @@ class ProposalCollectorAbciApp(AbciApp[Event]):
     cross_period_persisted_keys: Set[str] = {
         "delegations",
         "proposals",
-        "votable_proposals",
+        "votable_proposal_ids",
     }
     db_pre_conditions: Dict[AppState, Set[str]] = {
         SynchronizeDelegationsRound: set(),

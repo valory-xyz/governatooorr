@@ -235,7 +235,7 @@ class PrepareVoteTransactionBehaviour(ProposalVoterBaseBehaviour):
             votable_proposal_ids = list(
                 filter(
                     lambda p_id: proposals[p_id]["remaining_blocks"]
-                    < self.params.voting_block_threshold,
+                    <= self.params.voting_block_threshold,
                     votable_proposal_ids,
                 )
             )

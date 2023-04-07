@@ -212,9 +212,9 @@ class ProposalCollectorAbciApp(AbciApp[Event]):
         Event.ROUND_TIMEOUT: 30.0,
     }
     cross_period_persisted_keys: Set[str] = {
-        "delegations",
-        "proposals",
-        "votable_proposal_ids",
+        get_name(SynchronizedData.delegations),
+        get_name(SynchronizedData.proposals),
+        get_name(SynchronizedData.votable_proposal_ids),
     }
     db_pre_conditions: Dict[AppState, Set[str]] = {
         SynchronizeDelegationsRound: set(),

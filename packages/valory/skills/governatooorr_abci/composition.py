@@ -18,6 +18,7 @@
 # ------------------------------------------------------------------------------
 
 """This package contains round behaviours of GovernatooorrAbciApp."""
+
 import packages.valory.skills.proposal_collector_abci.rounds as ProposalCollectorAbciApp
 import packages.valory.skills.proposal_voter_abci.rounds as ProposalVoterAbciApp
 import packages.valory.skills.registration_abci.rounds as RegistrationAbci
@@ -27,6 +28,9 @@ from packages.valory.skills.abstract_round_abci.abci_app_chain import (
     AbciAppTransitionMapping,
     chain,
 )
+from packages.valory.skills.termination_abci.rounds import BackgroundRound
+from packages.valory.skills.termination_abci.rounds import Event as TerminationEvent
+from packages.valory.skills.termination_abci.rounds import TerminationAbciApp
 
 
 # Here we define how the transition between the FSMs should happen
@@ -51,4 +55,8 @@ GovernatooorrAbciApp = chain(
         TransactionSubmissionAbciApp.TransactionSubmissionAbciApp,
     ),
     abci_app_transition_mapping,
+).add_termination(
+    background_round_cls=BackgroundRound,
+    termination_event=TerminationEvent.TERMINATE,
+    termination_abci_app=TerminationAbciApp,
 )

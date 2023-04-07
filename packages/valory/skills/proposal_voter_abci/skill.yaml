@@ -2,7 +2,8 @@ name: proposal_voter_abci
 author: valory
 version: 0.1.0
 type: skill
-description: The scaffold skill is a scaffold for your own skill implementation.
+description: The proposal voter abci is responsible for evaluating proposals and preparing
+  a vote for them.
 license: Apache-2.0
 aea_version: '>=1.0.0, <2.0.0'
 fingerprint:
@@ -18,7 +19,7 @@ fingerprint_ignore_patterns: []
 connections:
 - valory/openai:0.1.0:bafybeicqubow644xihuov2vypmmdd4zf6jvvbjb4f2w6hhekxrhb4chjaa
 contracts:
-- valory/delegate:0.1.0:bafybeigbp3oowq4agg4gd3s5raopebtbctizl4piqeaqm5ekt665fl6xxy
+- valory/delegate:0.1.0:bafybeidwm5glawrhd44rtq2sjzlih4afcfow3xcyh6whxeypi33qhvf3by
 - valory/gnosis_safe:0.1.0:bafybeidxabihujlxvmnbf3tztjbwybyr5rlwjeniihnr5edfi6bpyjnevi
 protocols:
 - valory/contract_api:1.0.0:bafybeidv6wxpjyb2sdyibnmmum45et4zcla6tl63bnol6ztyoqvpl4spmy
@@ -107,6 +108,7 @@ models:
       keeper_timeout: 30.0
       max_attempts: 10
       max_healthcheck: 120
+      multisend_address: '0x0000000000000000000000000000000000000000'
       on_chain_service_id: null
       request_retry_delay: 1.0
       request_timeout: 10.0
@@ -128,6 +130,7 @@ models:
       tendermint_max_retries: 5
       tendermint_p2p_url: localhost:26656
       tendermint_url: http://localhost:26657
+      termination_sleep: 900
       tx_timeout: 10.0
       use_termination: false
       validate_timeout: 1205

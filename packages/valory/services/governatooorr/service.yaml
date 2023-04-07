@@ -1,13 +1,14 @@
 name: governatooorr
 author: valory
 version: 0.1.0
-description: A service that performs governance voting based on users' intentions.
+description: The Governatooorr is a service that autonomously votes on on-chain governance
+  proposals. It takes into account user preferences and uses LLMs to evaluate proposals.
 aea_version: '>=1.0.0, <2.0.0'
 license: Apache-2.0
 fingerprint:
   README.md: bafybeid6vqhnovhpsrjwws2wcb67i7fwr4dq54rpowqgrf3njt2anp5nc4
 fingerprint_ignore_patterns: []
-agent: valory/governatooorr:0.1.0:bafybeidln2awjikstmedvwc3wjioabag25jrdh2nczdkly4dgsrl6pttke
+agent: valory/governatooorr:0.1.0:bafybeieynr23kjnxrcegyaoynn6xcady5xgujjnzpi3t4d6itd74aofkqa
 number_of_agents: 4
 deployment:
   agent:
@@ -57,6 +58,7 @@ type: skill
         keeper_timeout: 30.0
         max_attempts: 10
         max_healthcheck: 120
+        multisend_address: ${MULTISEND_ADDRESS:str:0xA238CBeb142c10Ef7Ad8442C6D1f9E89e07e7761}
         on_chain_service_id: ${ON_CHAIN_SERVICE_ID:int:null}
         reset_tendermint_after: 2
         retry_attempts: 400
@@ -78,6 +80,7 @@ type: skill
         tendermint_max_retries: 5
         tendermint_url: ${TENDERMINT_URL:str:http://localhost:26657}
         tendermint_p2p_url: ${TM_P2P_ENDPOINT_NODE_0:str:node0:26656}
+        termination_sleep: ${TERMINATION_SLEEP:int:900}
         tx_timeout: 10.0
         use_termination: ${USE_TERMINATION:bool:false}
         tally_api_endpoint: ${TALLY_API_ENDPOINT:str:https://api.tally.xyz/query}
@@ -101,6 +104,7 @@ type: skill
         keeper_timeout: 30.0
         max_attempts: 10
         max_healthcheck: 120
+        multisend_address: ${MULTISEND_ADDRESS:str:0xA238CBeb142c10Ef7Ad8442C6D1f9E89e07e7761}
         on_chain_service_id: ${ON_CHAIN_SERVICE_ID:int:null}
         reset_tendermint_after: 2
         retry_attempts: 400
@@ -119,6 +123,7 @@ type: skill
         tendermint_max_retries: 5
         tendermint_url: ${TENDERMINT_URL:str:http://localhost:26657}
         tendermint_p2p_url: ${TM_P2P_ENDPOINT_NODE_1:str:node0:26656}
+        termination_sleep: ${TERMINATION_SLEEP:int:900}
         tx_timeout: 10.0
         use_termination: ${USE_TERMINATION:bool:false}
         tally_api_endpoint: ${TALLY_API_ENDPOINT:str:https://api.tally.xyz/query}
@@ -142,6 +147,7 @@ type: skill
         keeper_timeout: 30.0
         max_attempts: 10
         max_healthcheck: 120
+        multisend_address: ${MULTISEND_ADDRESS:str:0xA238CBeb142c10Ef7Ad8442C6D1f9E89e07e7761}
         on_chain_service_id: ${ON_CHAIN_SERVICE_ID:int:null}
         reset_tendermint_after: 2
         retry_attempts: 400
@@ -160,6 +166,7 @@ type: skill
         tendermint_max_retries: 5
         tendermint_url: ${TENDERMINT_URL:str:http://localhost:26657}
         tendermint_p2p_url: ${TM_P2P_ENDPOINT_NODE_2:str:node0:26656}
+        termination_sleep: ${TERMINATION_SLEEP:int:900}
         tx_timeout: 10.0
         use_termination: ${USE_TERMINATION:bool:false}
         tally_api_endpoint: ${TALLY_API_ENDPOINT:str:https://api.tally.xyz/query}
@@ -183,6 +190,7 @@ type: skill
         keeper_timeout: 30.0
         max_attempts: 10
         max_healthcheck: 120
+        multisend_address: ${MULTISEND_ADDRESS:str:0xA238CBeb142c10Ef7Ad8442C6D1f9E89e07e7761}
         on_chain_service_id: ${ON_CHAIN_SERVICE_ID:int:null}
         reset_tendermint_after: 2
         retry_attempts: 400
@@ -201,6 +209,7 @@ type: skill
         tendermint_max_retries: 5
         tendermint_url: ${TENDERMINT_URL:str:http://localhost:26657}
         tendermint_p2p_url: ${TM_P2P_ENDPOINT_NODE_3:str:node0:26656}
+        termination_sleep: ${TERMINATION_SLEEP:int:900}
         tx_timeout: 10.0
         use_termination: ${USE_TERMINATION:bool:false}
         tally_api_endpoint: ${TALLY_API_ENDPOINT:str:https://api.tally.xyz/query}

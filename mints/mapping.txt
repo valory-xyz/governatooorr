@@ -1,0 +1,14 @@
+token_id-"component_id"
+57-protocol/valory/llm/1.0.0"
+58-"contract/valory/delegate/0.1.0"
+59-"connection/valory/openai/0.1.0"
+60-"connection/valory/http_server:0.1.0"
+61-"skill/valory/proposal_collector_abci/0.1.0"
+62-"skill/valory/proposal_voter_abci/0.1.0"
+63-"skill/valory/governatooorr_abci/0.1.0"
+---
+token_id-"agent_id"
+5-"agent/valory/governatooorr/0.1.0"
+---
+token_id-"service_id"
+5-"service/valory/governatooorr/0.1.0" -> 5

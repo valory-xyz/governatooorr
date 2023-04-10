@@ -123,7 +123,7 @@ class EstablishVoteBehaviour(ProposalVoterBaseBehaviour):
 
                 self.context.logger.info(f"Vote: {vote}")
 
-                proposals[proposal_id]["vote_intention"] = vote
+                proposals[proposal_id]["vote_choice"] = vote
 
             sender = self.context.agent_address
             payload = EstablishVotePayload(
@@ -261,15 +261,15 @@ class PrepareVoteTransactionBehaviour(ProposalVoterBaseBehaviour):
                 # we pop the first one, because the votable proposal ids are sorted by their remaining blocks, ascending
                 selected_proposal_id = votable_proposal_ids.pop(0)
                 selected_proposal = proposals[selected_proposal_id]
-                vote_intention = selected_proposal["vote_intention"]
+                vote_choice = selected_proposal["vote_choice"]
                 # Pending votes are stored in the shared state and only updated in the proposals list
                 # when the transaction has been verified, and therefore we know that it is a submitted vote.
                 self.context.state.pending_vote = PendingVote(
-                    selected_proposal_id, vote_intention
+                    selected_proposal_id, vote_choice
                 )
 
                 governor_address = selected_proposal["governor"]["id"].split(":")[-1]
-                vote_code = VOTES_TO_CODE[selected_proposal["vote_intention"]]
+                vote_code = VOTES_TO_CODE[selected_proposal["vote_choice"]]
 
                 # Vote for the first proposal in the list
                 tx_hash = yield from self._get_safe_tx_hash(
@@ -277,7 +277,7 @@ class PrepareVoteTransactionBehaviour(ProposalVoterBaseBehaviour):
                 )
 
                 self.context.logger.info(
-                    f"Voting for proposal {selected_proposal_id}: {vote_intention}"
+                    f"Voting for proposal {selected_proposal_id}: {vote_choice}"
                 )
                 self.context.logger.info(f"tx_hash is {tx_hash}")
 

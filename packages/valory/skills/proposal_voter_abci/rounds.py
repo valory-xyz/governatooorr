@@ -40,9 +40,6 @@ from packages.valory.skills.proposal_voter_abci.payloads import (
 from packages.valory.skills.transaction_settlement_abci.payload_tools import (
     VerificationStatus,
 )
-from packages.valory.skills.transaction_settlement_abci.rounds import (
-    SynchronizedData as TxSettlementSynchronizedData,
-)
 
 
 class Event(Enum):
@@ -195,9 +192,11 @@ class ProposalVoterAbciApp(AbciApp[Event]):
     cross_period_persisted_keys: Set[str] = set()
     db_pre_conditions: Dict[AppState, Set[str]] = {
         EstablishVoteRound: set(),
-        PrepareVoteTransactionRound: get_name(
-            TxSettlementSynchronizedData.final_verification_status
-        ),
+        PrepareVoteTransactionRound: {
+            get_name(SynchronizedData.proposals),
+            get_name(SynchronizedData.delegations),
+            get_name(SynchronizedData.votable_proposal_ids),
+        },
     }
     db_post_conditions: Dict[AppState, Set[str]] = {
         FinishedTransactionPreparationVoteRound: {

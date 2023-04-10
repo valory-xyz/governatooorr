@@ -229,5 +229,9 @@ class ProposalCollectorAbciApp(AbciApp[Event]):
         SynchronizeDelegationsRound: set(),
     }
     db_post_conditions: Dict[AppState, Set[str]] = {
-        FinishedProposalRound: set(),
+        FinishedProposalRound: {
+            get_name(SynchronizedData.delegations),
+            get_name(SynchronizedData.proposals),
+            get_name(SynchronizedData.votable_proposal_ids),
+        },
     }

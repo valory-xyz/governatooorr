@@ -280,13 +280,13 @@ class PrepareVoteTransactionBehaviour(ProposalVoterBaseBehaviour):
                     governor_address, selected_proposal_id, vote_code
                 )
 
+                self.context.logger.info(
+                    f"Voting for proposal {selected_proposal_id}: {vote_intention}"
+                )
+                self.context.logger.info(f"tx_hash is {tx_hash}")
+
             if not tx_hash:
                 tx_hash = PrepareVoteTransactionRound.ERROR_PAYLOAD
-
-            self.context.logger.info(
-                f"Voting for proposal {selected_proposal_id}: {vote_intention}"
-            )
-            self.context.logger.info(f"tx_hash is {tx_hash}")
 
             payload_content = {
                 "tx_hash": tx_hash,

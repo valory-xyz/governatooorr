@@ -273,7 +273,7 @@ class PrepareVoteTransactionBehaviour(ProposalVoterBaseBehaviour):
                 )
 
                 governor_address = selected_proposal["governor"]["id"].split(":")[-1]
-                vote_code = VOTES_TO_CODE[proposals["vote_intention"]]
+                vote_code = VOTES_TO_CODE[selected_proposal["vote_intention"]]
 
                 # Vote for the first proposal in the list
                 tx_hash = yield from self._get_safe_tx_hash(

@@ -237,10 +237,6 @@ class PrepareVoteTransactionBehaviour(ProposalVoterBaseBehaviour):
             submitted_proposal["vote"] = submitted_vote.vote_choice
             submitted_proposal["votable"] = submitted_vote.votable
 
-            # remove the submitted vote from the votable list, if it is present there
-            if submitted_vote_id in votable_proposal_ids:
-                votable_proposal_ids.remove(submitted_vote_id)
-
         # Filter the votable proposals, keeping only those towards the end of their voting period
         votable_proposal_ids = list(
             filter(

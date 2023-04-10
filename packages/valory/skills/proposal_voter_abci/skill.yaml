@@ -8,13 +8,13 @@ license: Apache-2.0
 aea_version: '>=1.0.0, <2.0.0'
 fingerprint:
   __init__.py: bafybeifps6e4vfc55iyb5jaab7dxem7y3a2wyflai32pyzf4z75m5ngym4
-  behaviours.py: bafybeiaamqhefrshgurt7277l4bc7f4ar7ducojok53x2uo7s7nswubkmy
+  behaviours.py: bafybeibnai3mlvrom5ac4krftr3pfjo67nce2d744rum3arnypwnfgpmh4
   dialogues.py: bafybeihdakfnmps5o7n5rgepn3fl3lzttqsddhiny7mh7ddwhniutri6bq
   fsm_specification.yaml: bafybeiextpdhd2sa7unm5ry4xzed5sosoys7cwygpyyhwst6f75ti3mm6i
   handlers.py: bafybeihex227foehp7a7wfc6vh25ahk5g65b5itu325hph2xj33mgp6kue
   models.py: bafybeihmuzmjoyl76wfzbhjw4csewixxrmlmvqvekje65t55uibm6qjnce
   payloads.py: bafybeif3fbgkl3abtydwbl6bhwbnrju3ivejxeto57qvrzduiiegcyl6ya
-  rounds.py: bafybeif2434wgxixxvaljotpmcpi6t6oqrycjbhfxd7tsyu7gbolhhnhqu
+  rounds.py: bafybeigj2qdqy7hcarvhndoq3xeyjymfsz2ugig77na4djolvogrrbz25a
 fingerprint_ignore_patterns: []
 connections:
 - valory/openai:0.1.0:bafybeicqubow644xihuov2vypmmdd4zf6jvvbjb4f2w6hhekxrhb4chjaa

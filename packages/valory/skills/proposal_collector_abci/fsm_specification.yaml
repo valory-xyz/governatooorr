@@ -1,5 +1,6 @@
 alphabet_in:
 - API_ERROR
+- BLOCK_RETRIEVAL_ERROR
 - DONE
 - NO_MAJORITY
 - ROUND_TIMEOUT
@@ -15,6 +16,7 @@ states:
 - SynchronizeDelegationsRound
 transition_func:
     (CollectActiveProposalsRound, API_ERROR): CollectActiveProposalsRound
+    (CollectActiveProposalsRound, BLOCK_RETRIEVAL_ERROR): CollectActiveProposalsRound
     (CollectActiveProposalsRound, DONE): FinishedProposalRound
     (CollectActiveProposalsRound, NO_MAJORITY): CollectActiveProposalsRound
     (CollectActiveProposalsRound, ROUND_TIMEOUT): CollectActiveProposalsRound

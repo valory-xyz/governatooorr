@@ -1,5 +1,6 @@
 alphabet_in:
 - API_ERROR
+- BLOCK_RETRIEVAL_ERROR
 - CHECK_HISTORY
 - CHECK_LATE_ARRIVING_MESSAGE
 - CHECK_TIMEOUT
@@ -58,6 +59,7 @@ transition_func:
     (CheckTransactionHistoryRound, NONE): PrepareVoteTransactionRound
     (CheckTransactionHistoryRound, NO_MAJORITY): CheckTransactionHistoryRound
     (CollectActiveProposalsRound, API_ERROR): CollectActiveProposalsRound
+    (CollectActiveProposalsRound, BLOCK_RETRIEVAL_ERROR): CollectActiveProposalsRound
     (CollectActiveProposalsRound, DONE): EstablishVoteRound
     (CollectActiveProposalsRound, NO_MAJORITY): CollectActiveProposalsRound
     (CollectActiveProposalsRound, ROUND_TIMEOUT): CollectActiveProposalsRound

@@ -252,6 +252,9 @@ class CollectActiveProposalsBehaviour(ProposalCollectorBaseBehaviour):
 
         # Remove proposals for which the vote end block is in the past
         current_block = yield from self.get_current_block()
+        if current_block is None:
+            return CollectActiveProposalsRound.BLOCK_RETRIEVAL_ERROR
+
         active_proposals = filter(
             lambda ap: ap["end"]["number"] > current_block, active_proposals
         )

@@ -51,6 +51,7 @@ class Event(Enum):
     API_ERROR = "api_error"
     NO_PROPOSAL = "no_proposal"
     CONTRACT_ERROR = "contract_error"
+    BLOCK_RETRIEVAL_ERROR = "block_retrieval_error"
 
 
 class SynchronizedData(BaseSynchronizedData):
@@ -152,6 +153,7 @@ class CollectActiveProposalsRound(CollectSameUntilThresholdRound):
     """CollectActiveProposals"""
 
     ERROR_PAYLOAD = "ERROR_PAYLOAD"
+    BLOCK_RETRIEVAL_ERROR = "BLOCK_RETRIEVAL_ERROR"
 
     payload_class = CollectActiveProposalsPayload
     synchronized_data_class = SynchronizedData
@@ -162,6 +164,12 @@ class CollectActiveProposalsRound(CollectSameUntilThresholdRound):
 
             if self.most_voted_payload == CollectActiveProposalsRound.ERROR_PAYLOAD:
                 return self.synchronized_data, Event.API_ERROR
+
+            if (
+                self.most_voted_payload
+                == CollectActiveProposalsRound.BLOCK_RETRIEVAL_ERROR
+            ):
+                return self.synchronized_data, Event.BLOCK_RETRIEVAL_ERROR
 
             payload = json.loads(self.most_voted_payload)
 
@@ -200,6 +208,7 @@ class ProposalCollectorAbciApp(AbciApp[Event]):
         CollectActiveProposalsRound: {
             Event.DONE: FinishedProposalRound,
             Event.API_ERROR: CollectActiveProposalsRound,
+            Event.BLOCK_RETRIEVAL_ERROR: CollectActiveProposalsRound,
             Event.NO_MAJORITY: CollectActiveProposalsRound,
             Event.ROUND_TIMEOUT: CollectActiveProposalsRound,
         },

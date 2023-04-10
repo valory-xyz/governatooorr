@@ -231,7 +231,7 @@ class PrepareVoteTransactionBehaviour(ProposalVoterBaseBehaviour):
         if self.synchronized_data.just_voted:
             # Pending votes are stored in the shared state and only updated in the proposals list
             # when the transaction has been verified, and therefore we know that it is a submitted vote.
-            submitted_vote = self.context.shared_state.pending_vote
+            submitted_vote = self.context.state.pending_vote
             submitted_vote_id = submitted_vote.proposal_id
             submitted_proposal = proposals[submitted_vote_id]
             submitted_proposal["vote"] = submitted_vote.vote_choice
@@ -268,7 +268,7 @@ class PrepareVoteTransactionBehaviour(ProposalVoterBaseBehaviour):
                 vote_intention = selected_proposal["vote_intention"]
                 # Pending votes are stored in the shared state and only updated in the proposals list
                 # when the transaction has been verified, and therefore we know that it is a submitted vote.
-                self.context.shared_state.pending_vote = PendingVote(
+                self.context.state.pending_vote = PendingVote(
                     selected_proposal_id, vote_intention
                 )
 

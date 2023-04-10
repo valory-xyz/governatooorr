@@ -292,13 +292,13 @@ class CollectActiveProposalsBehaviour(ProposalCollectorBaseBehaviour):
         # - Votable
         # - Not voted before
         # - Governor in the delegation list
-        votable_proposals = [
+        votable_proposals = (
             proposal
             for proposal in proposals.values()
             if proposal["votable"]
             and not proposal["vote"]
             and proposal["governor"]["id"].split(":")[-1] in delegation_governors
-        ]
+        )
 
         # Sort votable_proposals by vote end block number, in ascending order
         votable_proposal_ids = [

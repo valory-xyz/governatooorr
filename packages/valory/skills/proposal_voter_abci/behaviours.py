@@ -104,6 +104,7 @@ class EstablishVoteBehaviour(ProposalVoterBaseBehaviour):
                         proposal_token
                     )
                 )
+                proposal["vote_intention"] = vote_intention
 
                 self.context.logger.info(f"Vote intention: {vote_intention}")
 

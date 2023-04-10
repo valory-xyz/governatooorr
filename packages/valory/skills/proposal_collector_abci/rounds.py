@@ -72,9 +72,9 @@ class SynchronizedData(BaseSynchronizedData):
         return cast(dict, self.db.get("proposals", {}))
 
     @property
-    def votable_proposal_ids(self) -> list:
-        """Get the proposals."""
-        return cast(list, self.db.get("votable_proposal_ids", {}))
+    def votable_proposal_ids(self) -> set:
+        """Get the votable proposal ids, sorted by their remaining blocks until expiration, in ascending order."""
+        return set(self.db.get("votable_proposal_ids", {}))
 
 
 class SynchronizeDelegationsRound(CollectDifferentUntilAllRound):

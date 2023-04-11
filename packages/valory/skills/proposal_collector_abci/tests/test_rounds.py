@@ -21,25 +21,18 @@
 
 import json
 from dataclasses import dataclass, field
-from typing import (
-    Any,
-    Callable,
-    Dict,
-    FrozenSet,
-    Hashable,
-    List,
-    Mapping,
-    Union,
-    cast,
-)
+from typing import Any, Callable, Dict, FrozenSet, Hashable, List, Mapping, Union, cast
 
 import pytest
 
-from packages.valory.skills.abstract_round_abci.base import BaseTxPayload, CollectDifferentUntilAllRound
+from packages.valory.skills.abstract_round_abci.base import (
+    BaseTxPayload,
+    CollectDifferentUntilAllRound,
+)
 from packages.valory.skills.abstract_round_abci.test_tools.rounds import (
+    BaseCollectDifferentUntilAllRoundTest,
     BaseCollectSameUntilThresholdRoundTest,
     CollectSameUntilThresholdRound,
-    BaseCollectDifferentUntilAllRoundTest,
 )
 from packages.valory.skills.proposal_collector_abci.payloads import (
     CollectActiveProposalsPayload,
@@ -77,32 +70,37 @@ def get_participants() -> FrozenSet[str]:
 def get_payloads(
     payload_cls: BaseTxPayload,
     data: Union[str, List[str]],
-) -> Mapping[str, BaseTxPayload]:
+) -> Union[Mapping[str, BaseTxPayload], List[BaseTxPayload]]:
     """Get payloads."""
     if type(data) is list:
-        # return {
-        #     participant: payload_cls(participant, data[i])
-        #     for i, participant in enumerate(get_participants())
-        # }
-        return data
+        return [
+            payload_cls(participant, data[i])
+            for i, participant in enumerate(get_participants())
+        ]
     else:
         return {
             participant: payload_cls(participant, data)
             for participant in get_participants()
         }
 
+
 def get_dummy_synchronize_delegations_payload_serialized():
     """Dummy payload"""
-    return [json.dumps(
-        {
-            "user_address": f"user_address_{i}",
-            "token_address": "token_address_1",
-            "voting_preference": f"voting_preference_{i}",
-            "governor_address": f"governor_address_{i}",
-            "delegated_amount": f"delegated_amount_{i}",
-        },
-        sort_keys=True
-    ) for i in range(4)]
+    return [
+        json.dumps(
+            [
+                {
+                    "user_address": f"user_address_{i}",
+                    "token_address": "token_address_1",
+                    "voting_preference": f"voting_preference_{i}",
+                    "governor_address": f"governor_address_{i}",
+                    "delegated_amount": f"delegated_amount_{i}",
+                }
+            ],
+            sort_keys=True,
+        )
+        for i in range(4)
+    ]
 
 
 def get_dummy_collect_active_proposals_payload_serialized():
@@ -150,7 +148,36 @@ class TestSynchronizeDelegationsRoundTest(BaseCollectDifferentUntilAllRoundTest)
                     data=get_dummy_synchronize_delegations_payload_serialized(),
                 ),
                 final_data={
-                    "delegations": ""
+                    "delegations": [
+                        {
+                            "delegated_amount": "delegated_amount_0",
+                            "governor_address": "governor_address_0",
+                            "token_address": "token_address_1",
+                            "user_address": "user_address_0",
+                            "voting_preference": "voting_preference_0",
+                        },
+                        {
+                            "delegated_amount": "delegated_amount_1",
+                            "governor_address": "governor_address_1",
+                            "token_address": "token_address_1",
+                            "user_address": "user_address_1",
+                            "voting_preference": "voting_preference_1",
+                        },
+                        {
+                            "delegated_amount": "delegated_amount_2",
+                            "governor_address": "governor_address_2",
+                            "token_address": "token_address_1",
+                            "user_address": "user_address_2",
+                            "voting_preference": "voting_preference_2",
+                        },
+                        {
+                            "delegated_amount": "delegated_amount_3",
+                            "governor_address": "governor_address_3",
+                            "token_address": "token_address_1",
+                            "user_address": "user_address_3",
+                            "voting_preference": "voting_preference_3",
+                        },
+                    ]
                 },
                 event=Event.DONE,
                 most_voted_payload=None,

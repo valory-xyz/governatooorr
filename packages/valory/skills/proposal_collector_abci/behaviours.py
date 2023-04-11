@@ -70,7 +70,9 @@ class ProposalCollectorBaseBehaviour(BaseBehaviour, ABC):
             block_identifier="latest",
         )
         if ledger_api_response.performative != LedgerApiMessage.Performative.STATE:
-            self.context.logger.error(f"Error retrieving the latest block: {ledger_api_response.performative}")
+            self.context.logger.error(
+                f"Error retrieving the latest block: {ledger_api_response.performative}"
+            )
             return None
         return int(ledger_api_response.state.body.get("number"))
 

@@ -238,6 +238,10 @@ class PrepareVoteTransactionBehaviour(ProposalVoterBaseBehaviour):
             submitted_proposal["vote"] = submitted_vote.vote_choice
             submitted_proposal["votable"] = submitted_vote.votable
 
+            # remove the submitted vote from the votable list, if it is present there
+            if submitted_vote_id in votable_proposal_ids:
+                votable_proposal_ids.remove(submitted_vote_id)
+
         # Filter the votable proposals, keeping only those towards the end of their voting period
         votable_proposal_ids = list(
             filter(
@@ -259,8 +263,8 @@ class PrepareVoteTransactionBehaviour(ProposalVoterBaseBehaviour):
                 tx_hash = PrepareVoteTransactionRound.NO_VOTE_PAYLOAD
 
             else:
-                # we pop the first one, because the votable proposal ids are sorted by their remaining blocks, ascending
-                selected_proposal_id = votable_proposal_ids.pop(0)
+                # we get the first one, because the votable proposal ids are sorted by their remaining blocks, ascending
+                selected_proposal_id = votable_proposal_ids[0]
                 selected_proposal = proposals[selected_proposal_id]
                 vote_choice = selected_proposal["vote_choice"]
                 # Pending votes are stored in the shared state and only updated in the proposals list

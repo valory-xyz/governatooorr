@@ -80,5 +80,5 @@ class SharedState(BaseSharedState):
         ] = (self.context.params.reset_pause_duration + MARGIN)
 
 
-class Params(ProposalCollectorParams, TerminationParams):
+class Params(ProposalCollectorParams, ProposalVoterParams, TerminationParams):
     """A model to represent params for multiple abci apps."""

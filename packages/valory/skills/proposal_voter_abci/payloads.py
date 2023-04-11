@@ -28,11 +28,11 @@ from packages.valory.skills.abstract_round_abci.base import BaseTxPayload
 class EstablishVotePayload(BaseTxPayload):
     """Represent a transaction payload for the EstablishVoteRound."""
 
-    vote: str
+    proposals: str
 
 
 @dataclass(frozen=True)
 class PrepareVoteTransactionPayload(BaseTxPayload):
     """Represent a transaction payload for the PrepareVoteTransactionRound."""
 
-    tx_hash: str
+    content: str

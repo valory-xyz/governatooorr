@@ -19,6 +19,7 @@
 
 """This package contains round behaviours of ProposalVoterAbciApp."""
 
+import json
 from abc import ABC
 from typing import Dict, Generator, Optional, Set, Type, cast
 
@@ -39,7 +40,7 @@ from packages.valory.skills.proposal_voter_abci.dialogues import (
     LlmDialogue,
     LlmDialogues,
 )
-from packages.valory.skills.proposal_voter_abci.models import Params
+from packages.valory.skills.proposal_voter_abci.models import Params, PendingVote
 from packages.valory.skills.proposal_voter_abci.rounds import (
     EstablishVotePayload,
     EstablishVoteRound,
@@ -84,44 +85,51 @@ class EstablishVoteBehaviour(ProposalVoterBaseBehaviour):
 
         with self.context.benchmark_tool.measure(self.behaviour_id).local():
 
-            # Get the selected proposal
-            selected_proposal = self.synchronized_data.proposals[
-                self.synchronized_data.selected_proposal_id
-            ]
+            proposals = self.synchronized_data.proposals
 
-            proposal_token = selected_proposal["governor"]["tokens"][0]["id"]
+            # Update the proposals' vote intention
+            for proposal_id, proposal in proposals.items():
+                if not proposal["votable"]:
+                    continue
 
-            self.context.logger.info(
-                f"Getting vote intention for proposal {selected_proposal}"
-            )
+                self.context.logger.info(
+                    f"Getting vote intention for proposal {proposal_id}"
+                )
 
-            # Get the service aggregated vote intention
-            vote_intention = self._get_service_vote_intention(
-                proposal_token
-            )  # either GOOD or EVIL
+                proposal_token = proposal["governor"]["tokens"][0]["id"]
 
-            self.context.logger.info(f"Vote intention: {vote_intention}")
+                # Get the service aggregated vote intention
+                vote_intention = (
+                    self._get_service_vote_intention(  # either GOOD or EVIL
+                        proposal_token
+                    )
+                )
+                proposal["vote_intention"] = vote_intention
 
-            prompt_template = "Here is a voting proposal for a protocol: `{proposal}`. How should I vote on the voting proposal if my intent was to {voting_intention_snippet} and the voting options are {voting_options}? Please answer with only the voting option."
-            voting_intention_snippet = (
-                "cause chaos to the protocol"
-                if vote_intention == "evil"
-                else "contribute positively to the protocol"
-            )
-            prompt_values = {
-                "proposal": selected_proposal["title"]
-                + "\n"
-                + selected_proposal["description"],
-                "voting_intention_snippet": voting_intention_snippet,
-                "voting_options": VOTING_OPTIONS,
-            }
+                self.context.logger.info(f"Vote intention: {vote_intention}")
 
-            vote = yield from self._get_vote(prompt_template, prompt_values)
+                prompt_template = "Here is a voting proposal for a protocol: `{proposal}`. How should I vote on the voting proposal if my intent was to {voting_intention_snippet} and the voting options are {voting_options}? Please answer with only the voting option."
+                voting_intention_snippet = (
+                    "cause chaos to the protocol"
+                    if vote_intention == "evil"
+                    else "contribute positively to the protocol"
+                )
+                prompt_values = {
+                    "proposal": proposal["title"] + "\n" + proposal["description"],
+                    "voting_intention_snippet": voting_intention_snippet,
+                    "voting_options": VOTING_OPTIONS,
+                }
 
-            self.context.logger.info(f"Vote: {vote}")
+                vote = yield from self._get_vote(prompt_template, prompt_values)
+
+                self.context.logger.info(f"Vote: {vote}")
+
+                proposals[proposal_id]["vote_choice"] = vote
 
             sender = self.context.agent_address
-            payload = EstablishVotePayload(sender=sender, vote=vote)
+            payload = EstablishVotePayload(
+                sender=sender, proposals=json.dumps(proposals, sort_keys=True)
+            )
 
         with self.context.benchmark_tool.measure(self.behaviour_id).consensus():
             yield from self.send_a2a_transaction(payload)
@@ -216,19 +224,81 @@ class PrepareVoteTransactionBehaviour(ProposalVoterBaseBehaviour):
 
     matching_round: Type[AbstractRound] = PrepareVoteTransactionRound
 
+    def _get_proposal_info(self):
+        """Get the votable proposals' ids and the proposals."""
+        votable_proposal_ids = self.synchronized_data.votable_proposal_ids
+        proposals = self.synchronized_data.proposals
+
+        if self.synchronized_data.just_voted:
+            # Pending votes are stored in the shared state and only updated in the proposals list
+            # when the transaction has been verified, and therefore we know that it is a submitted vote.
+            submitted_vote = self.context.state.pending_vote
+            submitted_vote_id = submitted_vote.proposal_id
+            submitted_proposal = proposals[submitted_vote_id]
+            submitted_proposal["vote"] = submitted_vote.vote_choice
+            submitted_proposal["votable"] = submitted_vote.votable
+
+            # remove the submitted vote from the votable list, if it is present there
+            if submitted_vote_id in votable_proposal_ids:
+                votable_proposal_ids.remove(submitted_vote_id)
+
+        # Filter the votable proposals, keeping only those towards the end of their voting period
+        votable_proposal_ids = list(
+            filter(
+                lambda p_id: proposals[p_id]["remaining_blocks"]
+                <= self.params.voting_block_threshold,
+                votable_proposal_ids,
+            )
+        )
+
+        return votable_proposal_ids, proposals
+
     def async_act(self) -> Generator:
         """Do the act, supporting asynchronous execution."""
 
         with self.context.benchmark_tool.measure(self.behaviour_id).local():
-            tx_hash = yield from self._get_safe_tx_hash()
+            votable_proposal_ids, proposals = self._get_proposal_info()
+
+            if not votable_proposal_ids:
+                tx_hash = PrepareVoteTransactionRound.NO_VOTE_PAYLOAD
+
+            else:
+                # we get the first one, because the votable proposal ids are sorted by their remaining blocks, ascending
+                selected_proposal_id = votable_proposal_ids[0]
+                selected_proposal = proposals[selected_proposal_id]
+                vote_choice = selected_proposal["vote_choice"]
+                # Pending votes are stored in the shared state and only updated in the proposals list
+                # when the transaction has been verified, and therefore we know that it is a submitted vote.
+                self.context.state.pending_vote = PendingVote(
+                    selected_proposal_id, vote_choice
+                )
+
+                governor_address = selected_proposal["governor"]["id"].split(":")[-1]
+                vote_code = VOTES_TO_CODE[selected_proposal["vote_choice"]]
+
+                # Vote for the first proposal in the list
+                tx_hash = yield from self._get_safe_tx_hash(
+                    governor_address, selected_proposal_id, vote_code
+                )
+
+                self.context.logger.info(
+                    f"Voting for proposal {selected_proposal_id}: {vote_choice}"
+                )
+                self.context.logger.info(f"tx_hash is {tx_hash}")
 
             if not tx_hash:
                 tx_hash = PrepareVoteTransactionRound.ERROR_PAYLOAD
 
-            self.context.logger.info(f"tx_hash is {tx_hash}")
+            payload_content = {
+                "tx_hash": tx_hash,
+                "proposals": proposals,
+                "votable_proposal_ids": votable_proposal_ids,
+            }
 
-            sender = self.context.agent_address
-            payload = PrepareVoteTransactionPayload(sender=sender, tx_hash=tx_hash)
+            payload = PrepareVoteTransactionPayload(
+                sender=self.context.agent_address,
+                content=json.dumps(payload_content, sort_keys=True),
+            )
 
         with self.context.benchmark_tool.measure(self.behaviour_id).consensus():
             yield from self.send_a2a_transaction(payload)
@@ -236,21 +306,21 @@ class PrepareVoteTransactionBehaviour(ProposalVoterBaseBehaviour):
 
         self.set_done()
 
-    def _get_safe_tx_hash(self) -> Generator[None, None, Optional[str]]:
+    def _get_safe_tx_hash(
+        self,
+        governor_address: str,
+        proposal_id: str,
+        vote_code: int,
+    ) -> Generator[None, None, Optional[str]]:
         """Get the transaction hash of the Safe tx."""
-
-        governor_address = self.synchronized_data.proposals[
-            self.synchronized_data.selected_proposal_id
-        ]["governor"]["id"].split(":")[-1]
-
         # Get the raw transaction from the Bravo Delegate contract
         contract_api_msg = yield from self.get_contract_api_response(
             performative=ContractApiMessage.Performative.GET_STATE,  # type: ignore
             contract_address=governor_address,
             contract_id=str(DelegateContract.contract_id),
             contract_callable="get_cast_vote_data",
-            proposal_id=int(self.synchronized_data.selected_proposal_id),
-            support=self.synchronized_data.vote_code,
+            proposal_id=int(proposal_id),
+            support=vote_code,
         )
         if (
             contract_api_msg.performative != ContractApiMessage.Performative.STATE

@@ -8,13 +8,13 @@ license: Apache-2.0
 aea_version: '>=1.0.0, <2.0.0'
 fingerprint:
   __init__.py: bafybeifps6e4vfc55iyb5jaab7dxem7y3a2wyflai32pyzf4z75m5ngym4
-  behaviours.py: bafybeihyn2gyrdbihwhpxdoyg5hpjlbks7zbz6okntb4rc3xcv2n2wdpju
+  behaviours.py: bafybeifd4hx7gobgmhmm3zloqtehsx7jkvf5uehecijlk73g62z4f7i52e
   dialogues.py: bafybeihdakfnmps5o7n5rgepn3fl3lzttqsddhiny7mh7ddwhniutri6bq
-  fsm_specification.yaml: bafybeicbnch73xaxowsjxg3ptlgoupof4axytjticlziowirjaevfqamzy
+  fsm_specification.yaml: bafybeiextpdhd2sa7unm5ry4xzed5sosoys7cwygpyyhwst6f75ti3mm6i
   handlers.py: bafybeihex227foehp7a7wfc6vh25ahk5g65b5itu325hph2xj33mgp6kue
-  models.py: bafybeidw2p7yi4vxv2rj6lplvncdpcybewzo62nuj7yjjwgqetupuzlhem
-  payloads.py: bafybeidonvuylmxad4mhk6hix2s7w3fjkabbtv5vkow6xwsrskvlt4ewuu
-  rounds.py: bafybeifvktf7qwxvkwgavusl4hmxvu4pmooq2f4w2nq5ef7yvsenlbecpm
+  models.py: bafybeihmuzmjoyl76wfzbhjw4csewixxrmlmvqvekje65t55uibm6qjnce
+  payloads.py: bafybeif3fbgkl3abtydwbl6bhwbnrju3ivejxeto57qvrzduiiegcyl6ya
+  rounds.py: bafybeibqpous3hs6jupaijyn2miwxsgt7bm54w2mwsrfbeoziybxqr4b5e
 fingerprint_ignore_patterns: []
 connections:
 - valory/openai:0.1.0:bafybeicqubow644xihuov2vypmmdd4zf6jvvbjb4f2w6hhekxrhb4chjaa
@@ -134,6 +134,7 @@ models:
       tx_timeout: 10.0
       use_termination: false
       validate_timeout: 1205
+      voting_block_threshold: 300
     class_name: Params
   requests:
     args: {}

@@ -36,6 +36,9 @@ query Proposals(
     id
     title
     description
+    end {
+      number
+    }
     proposer {
       address
     }

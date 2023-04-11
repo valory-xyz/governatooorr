@@ -21,8 +21,9 @@
 
 import json
 from abc import ABC
-from typing import Generator, Set, Type, cast
+from typing import Generator, Optional, Set, Type, cast
 
+from packages.valory.protocols.ledger_api.message import LedgerApiMessage
 from packages.valory.skills.abstract_round_abci.base import AbstractRound
 from packages.valory.skills.abstract_round_abci.behaviours import (
     AbstractRoundBehaviour,
@@ -31,13 +32,11 @@ from packages.valory.skills.abstract_round_abci.behaviours import (
 from packages.valory.skills.proposal_collector_abci.models import Params
 from packages.valory.skills.proposal_collector_abci.payloads import (
     CollectActiveProposalsPayload,
-    SelectProposalPayload,
     SynchronizeDelegationsPayload,
 )
 from packages.valory.skills.proposal_collector_abci.rounds import (
     CollectActiveProposalsRound,
     ProposalCollectorAbciApp,
-    SelectProposalRound,
     SynchronizeDelegationsRound,
     SynchronizedData,
 )
@@ -62,6 +61,17 @@ class ProposalCollectorBaseBehaviour(BaseBehaviour, ABC):
     def params(self) -> Params:
         """Return the params."""
         return cast(Params, super().params)
+
+    def get_current_block(self) -> Generator[None, None, Optional[int]]:
+        """Get the current block"""
+        ledger_api_response = yield from self.get_ledger_api_response(
+            performative=LedgerApiMessage.Performative.GET_STATE,
+            ledger_callable="get_block",
+            block_identifier="latest",
+        )
+        if ledger_api_response.performative != LedgerApiMessage.Performative.STATE:
+            return None
+        return int(ledger_api_response.state.body.get("number"))
 
 
 class SynchronizeDelegationsBehaviour(ProposalCollectorBaseBehaviour):
@@ -114,12 +124,12 @@ class CollectActiveProposalsBehaviour(ProposalCollectorBaseBehaviour):
             # Clear the new delegations # TODO: move this elsewhere
             self.context.state.new_delegations = []
 
-            active_proposals = yield from self._get_active_proposals()
+            updated_proposals = yield from self._get_updated_proposals()
             sender = self.context.agent_address
             payload = CollectActiveProposalsPayload(
-                sender=sender, active_proposals=active_proposals
+                sender=sender, proposals=updated_proposals
             )
-            self.context.logger.info(f"active_proposals = {active_proposals}")
+            self.context.logger.info(f"updated_proposals = {updated_proposals}")
 
         with self.context.benchmark_tool.measure(self.behaviour_id).consensus():
             yield from self.send_a2a_transaction(payload)
@@ -127,7 +137,7 @@ class CollectActiveProposalsBehaviour(ProposalCollectorBaseBehaviour):
 
         self.set_done()
 
-    def _get_active_proposals(self) -> Generator[None, None, str]:
+    def _get_updated_proposals(self) -> Generator[None, None, str]:
         """Get proposals mentions"""
 
         headers = {
@@ -240,93 +250,70 @@ class CollectActiveProposalsBehaviour(ProposalCollectorBaseBehaviour):
 
             active_proposals.extend(filtered_proposals)
 
+        # Remove proposals for which the vote end block is in the past
+        current_block = yield from self.get_current_block()
+        if current_block is None:
+            return CollectActiveProposalsRound.BLOCK_RETRIEVAL_ERROR
+
+        active_proposals = filter(
+            lambda ap: ap["end"]["number"] > current_block, active_proposals
+        )
+
+        # Update the current proposals
+        proposals = self.synchronized_data.proposals
+
+        # Set all the current proposals "votable" field to False
+        for proposal in proposals.values():
+            proposal["votable"] = False
+
+        for active_proposal in active_proposals:
+            if active_proposal["id"] not in proposals:  # This is a new proposal
+                proposals[active_proposal["id"]] = {
+                    **active_proposal,
+                    "votable": True,
+                    "vote_intention": None,
+                    "vote_choice": None,
+                    "vote": None,  # We have not voted for this one yet
+                    "remaining_blocks": active_proposal["end"]["number"]
+                    - current_block,
+                }
+            else:
+                # The proposal is still votable
+                proposals[active_proposal["id"]]["votable"] = True
+                proposals[active_proposal["id"]]["remaining_blocks"] = (
+                    proposals[active_proposal["id"]]["end"]["number"] - current_block
+                )
+
+        # Get all the governors from the current delegations
+        delegation_governors = [
+            d["governor_address"] for d in self.synchronized_data.delegations
+        ]
+
+        # Get the proposals where we can vote:
+        # - Votable
+        # - Not voted before
+        # - Governor in the delegation list
+        votable_proposals = (
+            proposal
+            for proposal in proposals.values()
+            if proposal["votable"]
+            and not proposal["vote"]
+            and proposal["governor"]["id"].split(":")[-1] in delegation_governors
+        )
+
+        # Sort votable_proposals by vote end block number, in ascending order
+        votable_proposal_ids = [
+            p["id"]
+            for p in sorted(votable_proposals, key=lambda p: p["remaining_blocks"])
+        ]
+
         return json.dumps(
             {
-                "active_proposals": active_proposals,
+                "proposals": proposals,
+                "votable_proposal_ids": votable_proposal_ids,
             },
             sort_keys=True,
         )
-
-
-class SelectProposalBehaviour(ProposalCollectorBaseBehaviour):
-    """
-    SelectProposal
-
-    Select the proposal on which to vote.
-    """
-
-    matching_round: Type[AbstractRound] = SelectProposalRound
-
-    def async_act(self) -> Generator:
-        """Do the act, supporting asynchronous execution."""
-
-        with self.context.benchmark_tool.measure(self.behaviour_id).local():
-
-            # TODO: we enter this round after a successful tx_submission
-            # We need to check if that is the case and remove the first proposal
-            # from the list.
-            # TODO: we want to make sure we only vote towards the end of the voting period.
-            # But it would be great if we could get the voting intention right away, so we can
-            # display this on the frontend.
-
-            # Get all the governors from the current delegations
-            delegation_governors = [
-                d["governor_address"] for d in self.synchronized_data.delegations
-            ]
-
-            # Get the proposals where we can vote:
-            # - Active
-            # - Not voted before
-            # - Governor in the delegation list
-            votable_active_proposals = {
-                p_id: p
-                for p_id, p in self.synchronized_data.proposals.items()
-                if p["active"]
-                and not p["vote"]
-                and p["governor"]["id"].split(":")[-1] in delegation_governors
-            }
-
-            # Some proposals have an ETA, some dont
-            # We will prioritise those with it
-            active_proposals_with_eta = list(
-                filter(lambda p: p["eta"] != "", votable_active_proposals.values())
-            )
-            active_proposals_no_eta = list(
-                filter(lambda p: p["eta"] == "", votable_active_proposals.values())
-            )
-
-            # Sort by ETA
-            active_proposals_with_eta_sorted = sorted(
-                active_proposals_with_eta, key=lambda p: int(p["eta"]), reverse=False
-            )
-
-            # Sort by ID
-            active_proposals_no_eta_sorted = sorted(
-                active_proposals_no_eta, key=lambda p: int(p["id"]), reverse=False
-            )
-
-            # Add all sorted proposals
-            sorted_proposals = (
-                active_proposals_with_eta_sorted + active_proposals_no_eta_sorted
-            )
-
-            # Select the first proposal
-            proposal_id = sorted_proposals[0]["id"] if sorted_proposals else None
-
-            # Check whether we have delegations
-            if not proposal_id:
-                proposal_id = SelectProposalRound.NO_PROPOSAL
-
-            sender = self.context.agent_address
-            payload = SelectProposalPayload(sender=sender, proposal_id=proposal_id)
-
-            self.context.logger.info(f"proposal_id = {proposal_id}")
-
-        with self.context.benchmark_tool.measure(self.behaviour_id).consensus():
-            yield from self.send_a2a_transaction(payload)
-            yield from self.wait_until_round_end()
-
-        self.set_done()
 
 
 class ProposalCollectorRoundBehaviour(AbstractRoundBehaviour):
@@ -336,6 +323,5 @@ class ProposalCollectorRoundBehaviour(AbstractRoundBehaviour):
     abci_app_cls = ProposalCollectorAbciApp  # type: ignore
     behaviours: Set[Type[BaseBehaviour]] = [
         CollectActiveProposalsBehaviour,
-        SelectProposalBehaviour,
         SynchronizeDelegationsBehaviour,
     ]

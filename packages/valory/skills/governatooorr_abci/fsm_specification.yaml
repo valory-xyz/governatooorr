@@ -1,5 +1,6 @@
 alphabet_in:
 - API_ERROR
+- BLOCK_RETRIEVAL_ERROR
 - CHECK_HISTORY
 - CHECK_LATE_ARRIVING_MESSAGE
 - CHECK_TIMEOUT
@@ -12,7 +13,7 @@ alphabet_in:
 - NEGATIVE
 - NONE
 - NO_MAJORITY
-- NO_PROPOSAL
+- NO_VOTE
 - RESET_AND_PAUSE_TIMEOUT
 - RESET_TIMEOUT
 - ROUND_TIMEOUT
@@ -41,31 +42,30 @@ states:
 - SelectKeeperTransactionSubmissionARound
 - SelectKeeperTransactionSubmissionBAfterTimeoutRound
 - SelectKeeperTransactionSubmissionBRound
-- SelectProposalRound
 - SynchronizeDelegationsRound
 - SynchronizeLateMessagesRound
 - ValidateTransactionRound
 transition_func:
     (CheckLateTxHashesRound, CHECK_LATE_ARRIVING_MESSAGE): SynchronizeLateMessagesRound
     (CheckLateTxHashesRound, CHECK_TIMEOUT): CheckLateTxHashesRound
-    (CheckLateTxHashesRound, DONE): SelectProposalRound
-    (CheckLateTxHashesRound, NEGATIVE): EstablishVoteRound
-    (CheckLateTxHashesRound, NONE): EstablishVoteRound
-    (CheckLateTxHashesRound, NO_MAJORITY): EstablishVoteRound
+    (CheckLateTxHashesRound, DONE): PrepareVoteTransactionRound
+    (CheckLateTxHashesRound, NEGATIVE): PrepareVoteTransactionRound
+    (CheckLateTxHashesRound, NONE): PrepareVoteTransactionRound
+    (CheckLateTxHashesRound, NO_MAJORITY): PrepareVoteTransactionRound
     (CheckTransactionHistoryRound, CHECK_LATE_ARRIVING_MESSAGE): SynchronizeLateMessagesRound
     (CheckTransactionHistoryRound, CHECK_TIMEOUT): CheckTransactionHistoryRound
-    (CheckTransactionHistoryRound, DONE): SelectProposalRound
+    (CheckTransactionHistoryRound, DONE): PrepareVoteTransactionRound
     (CheckTransactionHistoryRound, NEGATIVE): SelectKeeperTransactionSubmissionBRound
-    (CheckTransactionHistoryRound, NONE): EstablishVoteRound
+    (CheckTransactionHistoryRound, NONE): PrepareVoteTransactionRound
     (CheckTransactionHistoryRound, NO_MAJORITY): CheckTransactionHistoryRound
     (CollectActiveProposalsRound, API_ERROR): CollectActiveProposalsRound
-    (CollectActiveProposalsRound, DONE): SelectProposalRound
+    (CollectActiveProposalsRound, BLOCK_RETRIEVAL_ERROR): CollectActiveProposalsRound
+    (CollectActiveProposalsRound, DONE): EstablishVoteRound
     (CollectActiveProposalsRound, NO_MAJORITY): CollectActiveProposalsRound
     (CollectActiveProposalsRound, ROUND_TIMEOUT): CollectActiveProposalsRound
     (CollectSignatureRound, DONE): FinalizationRound
     (CollectSignatureRound, NO_MAJORITY): ResetRound
     (CollectSignatureRound, ROUND_TIMEOUT): CollectSignatureRound
-    (EstablishVoteRound, CONTRACT_ERROR): EstablishVoteRound
     (EstablishVoteRound, DONE): PrepareVoteTransactionRound
     (EstablishVoteRound, NO_MAJORITY): EstablishVoteRound
     (EstablishVoteRound, ROUND_TIMEOUT): EstablishVoteRound
@@ -76,9 +76,10 @@ transition_func:
     (FinalizationRound, FINALIZE_TIMEOUT): SelectKeeperTransactionSubmissionBAfterTimeoutRound
     (FinalizationRound, INSUFFICIENT_FUNDS): SelectKeeperTransactionSubmissionBRound
     (PrepareVoteTransactionRound, CONTRACT_ERROR): PrepareVoteTransactionRound
-    (PrepareVoteTransactionRound, DONE): RandomnessTransactionSubmissionRound
     (PrepareVoteTransactionRound, NO_MAJORITY): PrepareVoteTransactionRound
+    (PrepareVoteTransactionRound, NO_VOTE): ResetAndPauseRound
     (PrepareVoteTransactionRound, ROUND_TIMEOUT): PrepareVoteTransactionRound
+    (PrepareVoteTransactionRound, VOTE): RandomnessTransactionSubmissionRound
     (RandomnessTransactionSubmissionRound, DONE): SelectKeeperTransactionSubmissionARound
     (RandomnessTransactionSubmissionRound, NO_MAJORITY): RandomnessTransactionSubmissionRound
     (RandomnessTransactionSubmissionRound, ROUND_TIMEOUT): RandomnessTransactionSubmissionRound
@@ -89,34 +90,30 @@ transition_func:
     (ResetAndPauseRound, NO_MAJORITY): RegistrationRound
     (ResetAndPauseRound, RESET_AND_PAUSE_TIMEOUT): RegistrationRound
     (ResetRound, DONE): RandomnessTransactionSubmissionRound
-    (ResetRound, NO_MAJORITY): EstablishVoteRound
-    (ResetRound, RESET_TIMEOUT): EstablishVoteRound
+    (ResetRound, NO_MAJORITY): PrepareVoteTransactionRound
+    (ResetRound, RESET_TIMEOUT): PrepareVoteTransactionRound
     (SelectKeeperTransactionSubmissionARound, DONE): CollectSignatureRound
-    (SelectKeeperTransactionSubmissionARound, INCORRECT_SERIALIZATION): EstablishVoteRound
+    (SelectKeeperTransactionSubmissionARound, INCORRECT_SERIALIZATION): PrepareVoteTransactionRound
     (SelectKeeperTransactionSubmissionARound, NO_MAJORITY): ResetRound
     (SelectKeeperTransactionSubmissionARound, ROUND_TIMEOUT): SelectKeeperTransactionSubmissionARound
     (SelectKeeperTransactionSubmissionBAfterTimeoutRound, CHECK_HISTORY): CheckTransactionHistoryRound
     (SelectKeeperTransactionSubmissionBAfterTimeoutRound, CHECK_LATE_ARRIVING_MESSAGE): SynchronizeLateMessagesRound
     (SelectKeeperTransactionSubmissionBAfterTimeoutRound, DONE): FinalizationRound
-    (SelectKeeperTransactionSubmissionBAfterTimeoutRound, INCORRECT_SERIALIZATION): EstablishVoteRound
+    (SelectKeeperTransactionSubmissionBAfterTimeoutRound, INCORRECT_SERIALIZATION): PrepareVoteTransactionRound
     (SelectKeeperTransactionSubmissionBAfterTimeoutRound, NO_MAJORITY): ResetRound
     (SelectKeeperTransactionSubmissionBAfterTimeoutRound, ROUND_TIMEOUT): SelectKeeperTransactionSubmissionBAfterTimeoutRound
     (SelectKeeperTransactionSubmissionBRound, DONE): FinalizationRound
-    (SelectKeeperTransactionSubmissionBRound, INCORRECT_SERIALIZATION): EstablishVoteRound
+    (SelectKeeperTransactionSubmissionBRound, INCORRECT_SERIALIZATION): PrepareVoteTransactionRound
     (SelectKeeperTransactionSubmissionBRound, NO_MAJORITY): ResetRound
     (SelectKeeperTransactionSubmissionBRound, ROUND_TIMEOUT): SelectKeeperTransactionSubmissionBRound
-    (SelectProposalRound, NO_MAJORITY): SelectProposalRound
-    (SelectProposalRound, NO_PROPOSAL): ResetAndPauseRound
-    (SelectProposalRound, ROUND_TIMEOUT): SelectProposalRound
-    (SelectProposalRound, VOTE): EstablishVoteRound
     (SynchronizeDelegationsRound, DONE): CollectActiveProposalsRound
     (SynchronizeDelegationsRound, NO_MAJORITY): SynchronizeDelegationsRound
     (SynchronizeDelegationsRound, ROUND_TIMEOUT): SynchronizeDelegationsRound
     (SynchronizeLateMessagesRound, DONE): CheckLateTxHashesRound
     (SynchronizeLateMessagesRound, NONE): SelectKeeperTransactionSubmissionBRound
     (SynchronizeLateMessagesRound, ROUND_TIMEOUT): SynchronizeLateMessagesRound
-    (SynchronizeLateMessagesRound, SUSPICIOUS_ACTIVITY): EstablishVoteRound
-    (ValidateTransactionRound, DONE): SelectProposalRound
+    (SynchronizeLateMessagesRound, SUSPICIOUS_ACTIVITY): PrepareVoteTransactionRound
+    (ValidateTransactionRound, DONE): PrepareVoteTransactionRound
     (ValidateTransactionRound, NEGATIVE): CheckTransactionHistoryRound
     (ValidateTransactionRound, NONE): SelectKeeperTransactionSubmissionBRound
     (ValidateTransactionRound, NO_MAJORITY): ValidateTransactionRound

@@ -2,23 +2,28 @@ alphabet_in:
 - CONTRACT_ERROR
 - DONE
 - NO_MAJORITY
+- NO_VOTE
 - ROUND_TIMEOUT
+- VOTE
 default_start_state: EstablishVoteRound
 final_states:
-- FinishedTransactionPreparationRound
+- FinishedTransactionPreparationNoVoteRound
+- FinishedTransactionPreparationVoteRound
 label: ProposalVoterAbciApp
 start_states:
 - EstablishVoteRound
+- PrepareVoteTransactionRound
 states:
 - EstablishVoteRound
-- FinishedTransactionPreparationRound
+- FinishedTransactionPreparationNoVoteRound
+- FinishedTransactionPreparationVoteRound
 - PrepareVoteTransactionRound
 transition_func:
-    (EstablishVoteRound, CONTRACT_ERROR): EstablishVoteRound
     (EstablishVoteRound, DONE): PrepareVoteTransactionRound
     (EstablishVoteRound, NO_MAJORITY): EstablishVoteRound
     (EstablishVoteRound, ROUND_TIMEOUT): EstablishVoteRound
     (PrepareVoteTransactionRound, CONTRACT_ERROR): PrepareVoteTransactionRound
-    (PrepareVoteTransactionRound, DONE): FinishedTransactionPreparationRound
     (PrepareVoteTransactionRound, NO_MAJORITY): PrepareVoteTransactionRound
+    (PrepareVoteTransactionRound, NO_VOTE): FinishedTransactionPreparationNoVoteRound
     (PrepareVoteTransactionRound, ROUND_TIMEOUT): PrepareVoteTransactionRound
+    (PrepareVoteTransactionRound, VOTE): FinishedTransactionPreparationVoteRound

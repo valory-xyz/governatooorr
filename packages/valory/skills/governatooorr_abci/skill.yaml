@@ -8,19 +8,19 @@ aea_version: '>=1.0.0, <2.0.0'
 fingerprint:
   __init__.py: bafybeigk2kb335wy5vmgapbrqmfotvwqm4dqsuqr7gt7qic4v4npx2pqxy
   behaviours.py: bafybeib5jc5p56epym4zduwbmmywzqrjzudmyncmv2rafq363ibykewlte
-  composition.py: bafybeigb6bflkuucqbhma4li7udmn4yhmjhxgqzp6zmc3tdxnlsr3esnea
+  composition.py: bafybeif3plpfgtiqrkhglmxk4cf4nnpmutsiranqdwk5zl2nzibl4px5wu
   dialogues.py: bafybeiayva5koyr6upomicnhbfefypjk2sebogk7ew24wxwwnccuqktcki
-  fsm_specification.yaml: bafybeibgue32bd6d3qxya7k7fqwtvl4huxutuotpbr7ci5ye5qjhudbswu
+  fsm_specification.yaml: bafybeiczkbxbwp7bukawv6xj7id44f3jma2psmgba7xsoju7yx3eeseami
   handlers.py: bafybeiefhvk666md6clddjpkv6ccnletnxmekptz2p5qjjnubfokwlofia
-  models.py: bafybeieioq5nizuph4yynxquhyymjomijff2fjqhugblzawlnvmi2f3z4q
+  models.py: bafybeidvdzh4x4mq7ae3mh6q42cxkjclwoottxfethtou3anqdjpad65ge
 fingerprint_ignore_patterns: []
 connections: []
 contracts: []
 protocols: []
 skills:
 - valory/abstract_round_abci:0.1.0:bafybeib7q4t5jh6gic3i2pzuzlk7q2xmnueyxjpftm4gl56vnnz4vs4f7a
-- valory/proposal_collector_abci:0.1.0:bafybeib4s2pvokfc3rxefymhhfpa2ttny23dbffpoqk3qxfdv4ie7lzy5y
-- valory/proposal_voter_abci:0.1.0:bafybeiefluoxpm2adn27krncl3taztpiwlzbjnxj62r3uf6fpc25ijoajq
+- valory/proposal_collector_abci:0.1.0:bafybeiecwcw7zxyo7g7awevgrv3yjqjiwdos4ar3lsjo42a4dfwziiy43a
+- valory/proposal_voter_abci:0.1.0:bafybeig4dxwj7ay6wmi26zn6nszgcjoya5l2zeexxycr5fivzlz2vhsqku
 - valory/registration_abci:0.1.0:bafybeidc6iv54mr2antvrw3r4tldm635othi62bhzeyyid7kejzxw4fwiq
 - valory/reset_pause_abci:0.1.0:bafybeige4ncfhwlqbthmfvdu7aogl2qqsozpz3h5el3xokmq4hcqujgsqy
 - valory/termination_abci:0.1.0:bafybeiabjmwoomoj73jknm3aicnthb6g5qmcwoljowstq3xuymx6zjl4su
@@ -135,6 +135,7 @@ models:
       tx_timeout: 10.0
       use_termination: false
       validate_timeout: 1205
+      voting_block_threshold: 300
     class_name: Params
   randomness_api:
     args:

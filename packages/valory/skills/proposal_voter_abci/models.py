@@ -19,6 +19,11 @@
 
 """This module contains the shared state for the abci skill of ProposalVoterAbciApp."""
 
+from dataclasses import dataclass
+from typing import Any, Optional
+
+from aea.skills.base import SkillContext
+
 from packages.valory.skills.abstract_round_abci.models import BaseParams
 from packages.valory.skills.abstract_round_abci.models import (
     BenchmarkTool as BaseBenchmarkTool,
@@ -30,12 +35,42 @@ from packages.valory.skills.abstract_round_abci.models import (
 from packages.valory.skills.proposal_voter_abci.rounds import ProposalVoterAbciApp
 
 
+@dataclass
+class PendingVote:
+    """Represents a proposal vote that is pending to be submitted and verified."""
+
+    proposal_id: str
+    vote_choice: str
+    # a pending vote is not votable anymore
+    votable = False
+
+
 class SharedState(BaseSharedState):
     """Keep the current shared state of the skill."""
 
     abci_app_cls = ProposalVoterAbciApp
 
+    def __init__(
+        self,
+        *args: Any,
+        skill_context: SkillContext,
+        **kwargs: Any,
+    ) -> None:
+        """Initialize the state."""
+        super().__init__(*args, skill_context=skill_context, **kwargs)
+        self.pending_vote: Optional[PendingVote] = None
 
-Params = BaseParams
+
+class Params(BaseParams):
+    """Parameters."""
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        """Initialize the parameters object."""
+        self.voting_block_threshold = self._ensure(
+            "voting_block_threshold", kwargs, int
+        )
+        super().__init__(*args, **kwargs)
+
+
 Requests = BaseRequests
 BenchmarkTool = BaseBenchmarkTool

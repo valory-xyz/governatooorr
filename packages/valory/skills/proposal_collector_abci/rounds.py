@@ -37,7 +37,6 @@ from packages.valory.skills.abstract_round_abci.base import (
 )
 from packages.valory.skills.proposal_collector_abci.payloads import (
     CollectActiveProposalsPayload,
-    SelectProposalPayload,
     SynchronizeDelegationsPayload,
 )
 
@@ -52,6 +51,7 @@ class Event(Enum):
     API_ERROR = "api_error"
     NO_PROPOSAL = "no_proposal"
     CONTRACT_ERROR = "contract_error"
+    BLOCK_RETRIEVAL_ERROR = "block_retrieval_error"
 
 
 class SynchronizedData(BaseSynchronizedData):
@@ -72,9 +72,9 @@ class SynchronizedData(BaseSynchronizedData):
         return cast(dict, self.db.get("proposals", {}))
 
     @property
-    def selected_proposal_id(self) -> str:
-        """Get the selected_proposal_id."""
-        return cast(str, self.db.get_strict("selected_proposal_id"))
+    def votable_proposal_ids(self) -> set:
+        """Get the votable proposal ids, sorted by their remaining blocks until expiration, in ascending order."""
+        return set(self.db.get("votable_proposal_ids", {}))
 
 
 class SynchronizeDelegationsRound(CollectDifferentUntilAllRound):
@@ -153,6 +153,7 @@ class CollectActiveProposalsRound(CollectSameUntilThresholdRound):
     """CollectActiveProposals"""
 
     ERROR_PAYLOAD = "ERROR_PAYLOAD"
+    BLOCK_RETRIEVAL_ERROR = "BLOCK_RETRIEVAL_ERROR"
 
     payload_class = CollectActiveProposalsPayload
     synchronized_data_class = SynchronizedData
@@ -164,28 +165,21 @@ class CollectActiveProposalsRound(CollectSameUntilThresholdRound):
             if self.most_voted_payload == CollectActiveProposalsRound.ERROR_PAYLOAD:
                 return self.synchronized_data, Event.API_ERROR
 
-            active_proposals = json.loads(self.most_voted_payload)["active_proposals"]
-            proposals = cast(SynchronizedData, self.synchronized_data).proposals
+            if (
+                self.most_voted_payload
+                == CollectActiveProposalsRound.BLOCK_RETRIEVAL_ERROR
+            ):
+                return self.synchronized_data, Event.BLOCK_RETRIEVAL_ERROR
 
-            # Set all the proposals "active" field to False
-            for p in proposals.values():
-                p["active"] = False
-
-            for p in active_proposals:
-                if p["id"] not in proposals:
-                    proposals[p["id"]] = p  # add the proposal
-                    proposals[p["id"]]["active"] = True  # set it to active
-                    proposals[p["id"]][
-                        "vote"
-                    ] = None  # we have not voted for this one yet
-                else:
-                    # The proposal is still active
-                    proposals[p["id"]]["active"] = True
+            payload = json.loads(self.most_voted_payload)
 
             synchronized_data = self.synchronized_data.update(
                 synchronized_data_class=SynchronizedData,
                 **{
-                    get_name(SynchronizedData.proposals): proposals,
+                    get_name(SynchronizedData.proposals): payload["proposals"],
+                    get_name(SynchronizedData.votable_proposal_ids): payload[
+                        "votable_proposal_ids"
+                    ],
                 },
             )
             return synchronized_data, Event.DONE
@@ -196,50 +190,15 @@ class CollectActiveProposalsRound(CollectSameUntilThresholdRound):
         return None
 
 
-class SelectProposalRound(CollectSameUntilThresholdRound):
-    """SelectProposal"""
-
-    NO_PROPOSAL = "NO_PROPOSAL"
-
-    payload_class = SelectProposalPayload
-    synchronized_data_class = SynchronizedData
-
-    def end_block(self) -> Optional[Tuple[BaseSynchronizedData, Event]]:
-        """Process the end of the block."""
-        if self.threshold_reached:
-
-            proposal_id = self.most_voted_payload
-
-            if proposal_id == SelectProposalRound.NO_PROPOSAL:
-                return self.synchronized_data, Event.NO_PROPOSAL
-
-            synchronized_data = self.synchronized_data.update(
-                synchronized_data_class=SynchronizedData,
-                **{
-                    get_name(SynchronizedData.selected_proposal_id): proposal_id,
-                },
-            )
-            return synchronized_data, Event.VOTE
-        if not self.is_majority_possible(
-            self.collection, self.synchronized_data.nb_participants
-        ):
-            return self.synchronized_data, Event.NO_MAJORITY
-        return None
-
-
-class FinishedProposalSelectionDoneRound(DegenerateRound):
-    """FinishedProposalSelectionDone"""
-
-
-class FinishedProposalSelectionVoteRound(DegenerateRound):
-    """FinishedProposalSelectionVote"""
+class FinishedProposalRound(DegenerateRound):
+    """FinishedProposalRound"""
 
 
 class ProposalCollectorAbciApp(AbciApp[Event]):
     """ProposalCollectorAbciApp"""
 
     initial_round_cls: AppState = SynchronizeDelegationsRound
-    initial_states: Set[AppState] = {SynchronizeDelegationsRound, SelectProposalRound}
+    initial_states: Set[AppState] = {SynchronizeDelegationsRound}
     transition_function: AbciAppTransitionFunction = {
         SynchronizeDelegationsRound: {
             Event.DONE: CollectActiveProposalsRound,
@@ -247,36 +206,32 @@ class ProposalCollectorAbciApp(AbciApp[Event]):
             Event.ROUND_TIMEOUT: SynchronizeDelegationsRound,
         },
         CollectActiveProposalsRound: {
-            Event.DONE: SelectProposalRound,
+            Event.DONE: FinishedProposalRound,
             Event.API_ERROR: CollectActiveProposalsRound,
+            Event.BLOCK_RETRIEVAL_ERROR: CollectActiveProposalsRound,
             Event.NO_MAJORITY: CollectActiveProposalsRound,
             Event.ROUND_TIMEOUT: CollectActiveProposalsRound,
         },
-        SelectProposalRound: {
-            Event.NO_PROPOSAL: FinishedProposalSelectionDoneRound,
-            Event.VOTE: FinishedProposalSelectionVoteRound,
-            Event.NO_MAJORITY: SelectProposalRound,
-            Event.ROUND_TIMEOUT: SelectProposalRound,
-        },
-        FinishedProposalSelectionDoneRound: {},
-        FinishedProposalSelectionVoteRound: {},
+        FinishedProposalRound: {},
     }
     final_states: Set[AppState] = {
-        FinishedProposalSelectionDoneRound,
-        FinishedProposalSelectionVoteRound,
+        FinishedProposalRound,
     }
     event_to_timeout: EventToTimeout = {
         Event.ROUND_TIMEOUT: 30.0,
     }
     cross_period_persisted_keys: Set[str] = {
-        "delegations",
-        "proposals",
+        get_name(SynchronizedData.delegations),
+        get_name(SynchronizedData.proposals),
+        get_name(SynchronizedData.votable_proposal_ids),
     }
     db_pre_conditions: Dict[AppState, Set[str]] = {
         SynchronizeDelegationsRound: set(),
-        SelectProposalRound: set(),
     }
     db_post_conditions: Dict[AppState, Set[str]] = {
-        FinishedProposalSelectionDoneRound: set(),
-        FinishedProposalSelectionVoteRound: set(),
+        FinishedProposalRound: {
+            get_name(SynchronizedData.delegations),
+            get_name(SynchronizedData.proposals),
+            get_name(SynchronizedData.votable_proposal_ids),
+        },
     }

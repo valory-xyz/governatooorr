@@ -17,7 +17,7 @@
 #
 # ------------------------------------------------------------------------------
 
-"""This package contains the tests for rounds of GenericScoring."""
+"""This package contains the tests for rounds of ProposalCollector."""
 
 import json
 from dataclasses import dataclass, field

@@ -17,7 +17,7 @@
 #
 # ------------------------------------------------------------------------------
 
-"""This package contains payload tests for the GenericScoringAbciApp."""
+"""This package contains payload tests for the ProposalCollector."""
 
 from packages.valory.skills.proposal_collector_abci.payloads import (
     CollectActiveProposalsPayload,

@@ -17,7 +17,7 @@
 #
 # ------------------------------------------------------------------------------
 
-"""Test the dialogues.py module of the GenericScoring."""
+"""Test the dialogues.py module of the ProposalCollector."""
 
 import packages.valory.skills.proposal_collector_abci.dialogues  # noqa
 

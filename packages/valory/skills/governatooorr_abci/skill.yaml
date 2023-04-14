@@ -18,13 +18,13 @@ connections: []
 contracts: []
 protocols: []
 skills:
-- valory/abstract_round_abci:0.1.0:bafybeib7q4t5jh6gic3i2pzuzlk7q2xmnueyxjpftm4gl56vnnz4vs4f7a
-- valory/proposal_collector_abci:0.1.0:bafybeiecwcw7zxyo7g7awevgrv3yjqjiwdos4ar3lsjo42a4dfwziiy43a
-- valory/proposal_voter_abci:0.1.0:bafybeig4dxwj7ay6wmi26zn6nszgcjoya5l2zeexxycr5fivzlz2vhsqku
-- valory/registration_abci:0.1.0:bafybeidc6iv54mr2antvrw3r4tldm635othi62bhzeyyid7kejzxw4fwiq
-- valory/reset_pause_abci:0.1.0:bafybeige4ncfhwlqbthmfvdu7aogl2qqsozpz3h5el3xokmq4hcqujgsqy
-- valory/termination_abci:0.1.0:bafybeiabjmwoomoj73jknm3aicnthb6g5qmcwoljowstq3xuymx6zjl4su
-- valory/transaction_settlement_abci:0.1.0:bafybeihdgnqsiauhuuazmpnt7tawzxm3jnidfytifmb6yjbb6i3cqnafvy
+- valory/abstract_round_abci:0.1.0:bafybeib2jw7hjccou42wis35orckwycb2dgjk7yw46anuqysf2h7su3fi4
+- valory/proposal_collector_abci:0.1.0:bafybeifrtpjknoewpzvjejndl2q76dwh7pg4xq4p5wyhygbu4r3s6xfo5a
+- valory/proposal_voter_abci:0.1.0:bafybeidkemkbuluinzuuyoupclyw4mbsswdtklw37pjllzorbutj4gm4ny
+- valory/registration_abci:0.1.0:bafybeidgoqi7fa2gb56hdfsf74bbunfii63zgeo4qhggb66ofver2n2gya
+- valory/reset_pause_abci:0.1.0:bafybeievxhu6u5r5wlpjfzcwuowlbanhfbi25saf25qit53jauv4kq6gne
+- valory/termination_abci:0.1.0:bafybeihpp4li6jw3co4c4jferrtzobq2ydoc3dcn67esqrg5ebvyoac66e
+- valory/transaction_settlement_abci:0.1.0:bafybeiftbgfzp36bknbwus3fx2equmhgmboy4qd5myex76xfc4ze6o7b54
 behaviours:
   main:
     args: {}

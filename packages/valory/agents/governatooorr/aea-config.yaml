@@ -15,35 +15,35 @@ fingerprint:
 fingerprint_ignore_patterns: []
 connections:
 - fetchai/http_server:0.22.0:bafybeihaax5od5zo5jk2l62hv4jwuwtxloh5mijozudpsjombqc4ncmi6i
-- valory/abci:0.1.0:bafybeiedhipcrpx7sg7qwitwox6iqrbbb4vfnvqqyok2vc6wq6inrcszey
+- valory/abci:0.1.0:bafybeihkjtzuv3oaq5olerjwnhf5qg5gsmgdsvg27aaeqeg46ch7mjvggi
 - valory/http_client:0.23.0:bafybeidykl4elwbcjkqn32wt5h4h7tlpeqovrcq3c5bcplt6nhpznhgczi
-- valory/ledger:0.19.0:bafybeicxcypcg2lxmtktbmuhqcyluzmasfsdeljyk2pvaabzc3h2jmcsui
+- valory/ledger:0.19.0:bafybeicgfupeudtmvehbwziqfxiz6ztsxr5rxzvalzvsdsspzz73o5fzfi
 - valory/openai:0.1.0:bafybeicqubow644xihuov2vypmmdd4zf6jvvbjb4f2w6hhekxrhb4chjaa
 - valory/p2p_libp2p_client:0.1.0:bafybeidwcobzb7ut3efegoedad7jfckvt2n6prcmd4g7xnkm6hp6aafrva
 contracts:
 - valory/delegate:0.1.0:bafybeicxl6o5ctonwdpbd5e2vhcmh7fqh7qjaaq7sxw4s5p3a7wjaffmz4
-- valory/gnosis_safe:0.1.0:bafybeibzfhpib5fw3wady6dhq5bfgo37o437bi4s3hthbvvit7byvbalg4
-- valory/gnosis_safe_proxy_factory:0.1.0:bafybeidzdv6zjst5likperhuqdzsb4yix6ey5ir45nwdcquw3asuqmqdlu
+- valory/gnosis_safe:0.1.0:bafybeif4y33hatp4sa7sk4442it6zct2xihbnruqouiia6gk3pj3wnszeu
+- valory/gnosis_safe_proxy_factory:0.1.0:bafybeia5juhr43gwsezhm4bznbh4x62o2puu4rgalf7ddoq7y5xyekyjm4
 protocols:
 - open_aea/signing:1.0.0:bafybeibqlfmikg5hk4phzak6gqzhpkt6akckx7xppbp53mvwt6r73h7tk4
 - valory/abci:0.1.0:bafybeig3dj5jhsowlvg3t73kgobf6xn4nka7rkttakdb2gwsg5bp7rt7q4
 - valory/acn:1.1.0:bafybeignmc5uh3vgpuckljcj2tgg7hdqyytkm6m5b6v6mxtazdcvubibva
 - valory/contract_api:1.0.0:bafybeidv6wxpjyb2sdyibnmmum45et4zcla6tl63bnol6ztyoqvpl4spmy
 - valory/http:1.0.0:bafybeifyoio7nlh5zzyn5yz7krkou56l22to3cwg7gw5v5o3vxwklibhty
-- valory/ipfs:0.1.0:bafybeihlgai5pbmkb6mjhvgy4gkql5uvpwvxbpdowczgz4ovxat6vajrq4
-- valory/ledger_api:1.0.0:bafybeih6hfzj2obw5oajnt6ng6355edgvi5ngoaub44vpuszqoplfvyaom
+- valory/ipfs:0.1.0:bafybeic72ncgqbzoz2guj4p4yjqulid7mv6yroeh65hxznloamoveeg7hq
+- valory/ledger_api:1.0.0:bafybeibo4bdtcrxi2suyzldwoetjar6pqfzm6vt5xal22ravkkcvdmtksi
 - valory/llm:1.0.0:bafybeigafqnus3kvaashfdzrpybpqiumhvbs2dmdnukqzn7yqedga4x7ui
 - valory/tendermint:0.1.0:bafybeicusvezoqlmyt6iqomcbwaz3xkhk2qf3d56q5zprmj3xdxfy64k54
 skills:
-- valory/abstract_abci:0.1.0:bafybeihkrunmigvlcze7uxhafj2h3kvpf2kifggq7zqj42n2we4mcwuvou
-- valory/abstract_round_abci:0.1.0:bafybeib2jw7hjccou42wis35orckwycb2dgjk7yw46anuqysf2h7su3fi4
-- valory/governatooorr_abci:0.1.0:bafybeibv5f3skwcibbojgx6c4qvejwpslogp2fqfw2ezbxjtcyretsokkq
-- valory/proposal_collector_abci:0.1.0:bafybeifrtpjknoewpzvjejndl2q76dwh7pg4xq4p5wyhygbu4r3s6xfo5a
-- valory/proposal_voter_abci:0.1.0:bafybeidkemkbuluinzuuyoupclyw4mbsswdtklw37pjllzorbutj4gm4ny
-- valory/registration_abci:0.1.0:bafybeidgoqi7fa2gb56hdfsf74bbunfii63zgeo4qhggb66ofver2n2gya
-- valory/reset_pause_abci:0.1.0:bafybeievxhu6u5r5wlpjfzcwuowlbanhfbi25saf25qit53jauv4kq6gne
-- valory/termination_abci:0.1.0:bafybeihpp4li6jw3co4c4jferrtzobq2ydoc3dcn67esqrg5ebvyoac66e
-- valory/transaction_settlement_abci:0.1.0:bafybeiftbgfzp36bknbwus3fx2equmhgmboy4qd5myex76xfc4ze6o7b54
+- valory/abstract_abci:0.1.0:bafybeicujajnqzbndtndrndj53znohemihludifuyc5dazfbz6fltyj5ci
+- valory/abstract_round_abci:0.1.0:bafybeiar4gy4brpuxekiwjq7osh3fm254jgdoxlgkvqcp5lytu4uzrmbsm
+- valory/governatooorr_abci:0.1.0:bafybeibcm7krrk7n5ql3gnf32zly3f32s3uyrozjxkldsfwnhbrfhs3swe
+- valory/proposal_collector_abci:0.1.0:bafybeigpcx32st4jvzvzrfbdfg3qpei266xrm7yzmqe4sztp5jz7qsvpze
+- valory/proposal_voter_abci:0.1.0:bafybeigtfjew67yol5wekujxdjj5o73ausz73l7ftpp2r5qk3itk43yfbi
+- valory/registration_abci:0.1.0:bafybeicoi3eczbytx2hporiblyogj73r6oqbwdx3wenuyn7mjdztfsldbi
+- valory/reset_pause_abci:0.1.0:bafybeibayjshwvymeieird2cm6m5jeduqxq7dpdplef2qx4lse64n5j4xq
+- valory/termination_abci:0.1.0:bafybeib6fjcpgsavjerfowaoffi5rszzcy5fzbkr4hwrefwpo5unijxlb4
+- valory/transaction_settlement_abci:0.1.0:bafybeiftar2vzyv7wfjrvvimxeajsqc5ccfmnz4qvw6fr3fcog3qgiywxq
 default_ledger: ethereum
 required_ledgers:
 - ethereum
@@ -76,7 +76,7 @@ logging_config:
 skill_exception_policy: stop_and_exit
 dependencies:
   open-aea-ledger-ethereum:
-    version: ==1.31.0
+    version: ==1.32.0
 default_connection: null
 ---
 public_id: valory/abci:0.1.0

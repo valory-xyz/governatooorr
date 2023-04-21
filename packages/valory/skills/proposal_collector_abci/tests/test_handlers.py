@@ -42,6 +42,7 @@ from packages.valory.skills.proposal_collector_abci.handlers import (
     HttpHandler,
     NOT_FOUND_CODE,
     OK_CODE,
+    delegation_to_camel_case,
 )
 
 
@@ -49,24 +50,25 @@ PACKAGE_DIR = Path(__file__).parent.parent
 
 HTTP_SERVER_SENDER = str(HTTP_SERVER_PUBLIC_ID.without_hash())
 
-TOKEN_URI_BASE = "https://pfp.staging.autonolas.tech/"  # nosec
+SERVICE_URL_BASE = "https://governatooorr.staging.autonolas.tech/"  # nosec
 
 
-def get_dummy_metadata(token_id, image_hash, points=10):
-    """Get the dummy token metadata"""
-    return {
-        "title": "Autonolas Contribute Badges",
-        "name": f"Badge {token_id}",
-        "description": "This NFT recognizes the contributions made by the holder to the Autonolas Community.",
-        "image": f"ipfs://{image_hash}",
-        "attributes": [
-            {"trait_type": "Score", "value": points},
-            {
-                "trait_type": "Level",
-                "value": "Idle",
-            },
-        ],
-    }
+def get_dummy_proposals():
+    """Get the dummy data"""
+    return {"1": {"description": "dummy_description"}}
+
+
+def get_dummy_delegations():
+    """Get the dummy data"""
+    return [
+        {
+            "user_address": "0x0000000000000000000000000000000000000000",
+            "token_address": "0x0000000000000000000000000000000000000000",
+            "voting_preference": "EVIL",
+            "governor_address": "0x0000000000000000000000000000000000000000",
+            "delegated_amount": 100,
+        }
+    ]
 
 
 def get_dummy_health(time_updated: bool = True):
@@ -86,7 +88,8 @@ class HandlerTestCase:
     name: str
     request_url: str
     request_body: bytes
-    token_id_to_points: Dict[str, int]
+    proposals: dict
+    delegations: list
     response_status_code: int
     response_status_text: str
     response_headers: str
@@ -114,7 +117,7 @@ class TestHttpHandler(BaseSkillTestCase):
 
         cls.get_method = "get"
         cls.post_method = "post"
-        cls.url = f"{TOKEN_URI_BASE}0"
+        cls.url = f"{SERVICE_URL_BASE}0"
         cls.version = "some_version"
         cls.headers = "some_headers"
         cls.body = b"some_body/"
@@ -178,45 +181,38 @@ class TestHttpHandler(BaseSkillTestCase):
         "test_case",
         [
             HandlerTestCase(
-                name="id in token table",
-                request_url=f"{TOKEN_URI_BASE}0",
-                token_id_to_points={
-                    "0": 10,
-                },
+                name="proposals",
+                request_url=f"{SERVICE_URL_BASE}proposals",
+                proposals=get_dummy_proposals(),
+                delegations=get_dummy_delegations(),
                 request_body=b"some_body/",
                 response_status_code=OK_CODE,
                 response_status_text="Success",
                 response_headers="Content-Type: application/json\nsome_headers",
-                response_body=json.dumps(
-                    get_dummy_metadata(
-                        0, "bafybeiabtdl53v2a3irrgrg7eujzffjallpymli763wvhv6gceurfmcemm"
-                    )
-                ).encode("utf-8"),
+                response_body=json.dumps(list(get_dummy_proposals().values())).encode(
+                    "utf-8"
+                ),
                 method="get",
                 n_outbox_msgs=1,
             ),
             HandlerTestCase(
-                name="id in token table, no threshold match",
-                request_url=f"{TOKEN_URI_BASE}0",
-                token_id_to_points={"0": -10},
+                name="proposal",
+                request_url=f"{SERVICE_URL_BASE}proposal/1",
+                proposals=get_dummy_proposals(),
+                delegations=get_dummy_delegations(),
                 request_body=b"some_body/",
                 response_status_code=OK_CODE,
                 response_status_text="Success",
                 response_headers="Content-Type: application/json\nsome_headers",
-                response_body=json.dumps(
-                    get_dummy_metadata(
-                        0,
-                        "bafybeiabtdl53v2a3irrgrg7eujzffjallpymli763wvhv6gceurfmcemm",
-                        -10,
-                    )
-                ).encode("utf-8"),
+                response_body=json.dumps(get_dummy_proposals()["1"]).encode("utf-8"),
                 method="get",
                 n_outbox_msgs=1,
             ),
             HandlerTestCase(
-                name="id not in token table",
-                request_url=f"{TOKEN_URI_BASE}1",
-                token_id_to_points={},
+                name="non existent proposal",
+                request_url=f"{SERVICE_URL_BASE}proposal/99",
+                proposals=get_dummy_proposals(),
+                delegations=get_dummy_delegations(),
                 request_body=b"some_body/",
                 response_status_code=NOT_FOUND_CODE,
                 response_status_text="Not found",
@@ -226,36 +222,25 @@ class TestHttpHandler(BaseSkillTestCase):
                 n_outbox_msgs=1,
             ),
             HandlerTestCase(
-                name="healthcheck",
-                request_url=f"{TOKEN_URI_BASE}healthcheck",
-                token_id_to_points={},
+                name="delegations",
+                request_url=f"{SERVICE_URL_BASE}delegations/0x0000000000000000000000000000000000000000",
+                proposals=get_dummy_proposals(),
+                delegations=get_dummy_delegations(),
                 request_body=b"some_body/",
                 response_status_code=OK_CODE,
                 response_status_text="Success",
                 response_headers="Content-Type: application/json\nsome_headers",
-                response_body=json.dumps(get_dummy_health()).encode("utf-8"),
+                response_body=json.dumps(
+                    [delegation_to_camel_case(d) for d in get_dummy_delegations()]
+                ).encode("utf-8"),
                 method="get",
                 n_outbox_msgs=1,
-            ),
-            HandlerTestCase(
-                name="healthcheck_time_not_updated_yet",
-                request_url=f"{TOKEN_URI_BASE}healthcheck",
-                token_id_to_points={},
-                request_body=b"some_body/",
-                response_status_code=OK_CODE,
-                response_status_text="Success",
-                response_headers="Content-Type: application/json\nsome_headers",
-                response_body=json.dumps(get_dummy_health(time_updated=False)).encode(
-                    "utf-8"
-                ),
-                method="get",
-                n_outbox_msgs=1,
-                set_last_update_time=False,
             ),
             HandlerTestCase(
                 name="no-handler",
                 request_url="wrong_uri",
-                token_id_to_points={},
+                proposals={},
+                delegations=[],
                 request_body=b"some_body/",
                 response_status_code=BAD_REQUEST_CODE,
                 response_status_text="Bad request",
@@ -263,6 +248,19 @@ class TestHttpHandler(BaseSkillTestCase):
                 response_body=b"",
                 method="get",
                 n_outbox_msgs=0,
+            ),
+            HandlerTestCase(
+                name="bad request",
+                request_url=f"{SERVICE_URL_BASE}proposal/1",
+                proposals={},
+                delegations=[],
+                request_body=b"some_body/",
+                response_status_code=BAD_REQUEST_CODE,
+                response_status_text="Bad request",
+                response_headers="some_headers",
+                response_body=b"",
+                method="post",
+                n_outbox_msgs=1,
             ),
         ],
     )
@@ -292,7 +290,8 @@ class TestHttpHandler(BaseSkillTestCase):
             mock_now_time_timestamp = mock_now_time.timestamp()
             abci_app_db = AbciAppDB(
                 {
-                    "token_id_to_points": [test_case.token_id_to_points],
+                    "proposals": [test_case.proposals],
+                    "delegations": [test_case.delegations],
                     "last_update_time": [
                         mock_now_time_timestamp - 5.0
                     ]  # 5 seconds before
@@ -344,6 +343,15 @@ class TestHttpHandler(BaseSkillTestCase):
 
     def test_handle_request_post(self):
         """Test the _handle_request method of the handler where method is post."""
+
+        delegation = {
+            "address": "0x0000000000000000000000000000000000000000",
+            "delegatedToken": "0x0000000000000000000000000000000000000000",
+            "votingPreference": "EVIL",
+            "governorAddress": "0x0000000000000000000000000000000000000000",
+            "tokenBalance": 100,
+        }
+
         # setup
         incoming_message = cast(
             HttpMessage,
@@ -353,10 +361,10 @@ class TestHttpHandler(BaseSkillTestCase):
                 to=self.skill_id,
                 sender=self.sender,
                 method=self.post_method,
-                url=self.url,
+                url=f"{SERVICE_URL_BASE}delegate",
                 version=self.version,
                 headers=self.headers,
-                body=self.body,
+                body=json.dumps(delegation).encode("utf-8"),
             ),
         )
 
@@ -383,10 +391,10 @@ class TestHttpHandler(BaseSkillTestCase):
             to=incoming_message.sender,
             sender=incoming_message.to,
             version=incoming_message.version,
-            status_code=BAD_REQUEST_CODE,
-            status_text="Bad request",
-            headers=incoming_message.headers,
-            body=b"",
+            status_code=OK_CODE,
+            status_text="Success",
+            headers="Content-Type: application/json\nsome_headers",
+            body=b"{}",
         )
         assert has_attributes, error_str
 
@@ -405,18 +413,25 @@ class TestHttpHandler(BaseSkillTestCase):
         [
             ("wrong_url", "get", None),
             (
-                "http://pfp.staging.autonolas.tech/healthcheck",
-                "get",
-                "_handle_get_health",
+                "http://governatooorr.staging.autonolas.tech/delegate",
+                "post",
+                "_handle_post_delegate",
             ),
             (
-                "http://pfp.staging.autonolas.tech/healt-hcheck",
+                "http://governatooorr.staging.autonolas.tech/delegations/0x0000000000000000000000000000000000000000",
                 "get",
-                "_handle_bad_request",
+                "_handle_get_delegations",
             ),
-            ("http://pfp.staging.autonolas.tech/1", "get", "_handle_get_metadata"),
-            ("http://pfp.staging.autonolas.tech/999", "get", "_handle_get_metadata"),
-            ("http://pfp.staging.autonolas.tech/-999", "get", "_handle_bad_request"),
+            (
+                "http://governatooorr.staging.autonolas.tech/proposals",
+                "get",
+                "_handle_get_proposals",
+            ),
+            (
+                "http://governatooorr.staging.autonolas.tech/proposal/1",
+                "get",
+                "_handle_get_proposal",
+            ),
         ],
     )
     def test_get_handler(self, url, method, expected_handler_name):

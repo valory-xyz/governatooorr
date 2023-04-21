@@ -142,7 +142,17 @@ class TestSynchronizeDelegationsRoundTest(BaseCollectDifferentUntilAllRoundTest)
         (
             RoundTestCase(
                 name="Happy path",
-                initial_data={},
+                initial_data={
+                    "delegations": [
+                        {
+                            "user_address": "user_address_0",
+                            "token_address": "token_address_1",
+                            "voting_preference": "voting_preference_0",
+                            "governor_address": "governor_address_0",
+                            "delegated_amount": "delegated_amount_0",
+                        },
+                    ]
+                },
                 payloads=get_payloads(
                     payload_cls=SynchronizeDelegationsPayload,
                     data=get_dummy_synchronize_delegations_payload_serialized(),

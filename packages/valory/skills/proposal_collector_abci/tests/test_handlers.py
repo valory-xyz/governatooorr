@@ -71,16 +71,6 @@ def get_dummy_delegations():
     ]
 
 
-def get_dummy_health(time_updated: bool = True):
-    """Get the dummy health data"""
-    return {
-        "seconds_since_last_reset": 5.0 if time_updated else None,
-        "healthy": True if time_updated else None,
-        "seconds_until_next_update": 15.0 if time_updated else None,
-        "period": 0,
-    }
-
-
 @dataclass
 class HandlerTestCase:
     """HandlerTestCase"""

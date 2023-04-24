@@ -64,9 +64,9 @@ class SynchronizedData(BaseSynchronizedData):
     def just_voted(self) -> bool:
         """Get the final verification status."""
         status_value = self.db.get(
-            "final_verification_status", VerificationStatus.NOT_VERIFIED
+            "final_verification_status", VerificationStatus.NOT_VERIFIED.value
         )
-        return status_value == VerificationStatus.VERIFIED
+        return status_value == VerificationStatus.VERIFIED.value
 
     @property
     def delegations(self) -> list:

@@ -26,10 +26,14 @@ from typing import Any, Callable, Dict, Generator, Optional, Type
 from unittest import mock
 
 import pytest
+from aea.helpers.transaction.base import State
 
 from packages.valory.connections.openai.connection import (
     PUBLIC_ID as LLM_CONNECTION_PUBLIC_ID,
 )
+from packages.valory.contracts.delegate.contract import DelegateContract
+from packages.valory.contracts.gnosis_safe.contract import GnosisSafeContract
+from packages.valory.protocols.contract_api import ContractApiMessage
 from packages.valory.skills.abstract_round_abci.base import AbciAppDB
 from packages.valory.skills.abstract_round_abci.behaviours import (
     make_degenerate_behaviour,
@@ -42,14 +46,45 @@ from packages.valory.skills.proposal_voter_abci.behaviours import (
     PrepareVoteTransactionBehaviour,
     ProposalVoterBaseBehaviour,
 )
+from packages.valory.skills.proposal_voter_abci.models import PendingVote
 from packages.valory.skills.proposal_voter_abci.rounds import (
     Event,
     FinishedTransactionPreparationNoVoteRound,
+    FinishedTransactionPreparationVoteRound,
     SynchronizedData,
+)
+from packages.valory.skills.transaction_settlement_abci.payload_tools import (
+    VerificationStatus,
 )
 
 
 DUMMY_GOVERNOR_ADDRESS = "0xEC568fffba86c094cf06b22134B23074DFE2252c"
+
+
+def get_dummy_proposals(remaining_blocks: int = 1000):
+    return {
+        "0": {"votable": False},
+        "1": {
+            "votable": True,
+            "title": "dummy title",
+            "description": "dummy description",
+            "governor": {
+                "id": f"eip155:1:{DUMMY_GOVERNOR_ADDRESS}",
+                "type": "AAVE",
+                "name": "Aave",
+                "tokens": [
+                    {
+                        "id": "eip155:1/erc20aave:0x7Fc66500c84A76Ad7e9c93437bFc5Ac33E2DDaE9"
+                    }
+                ],
+            },
+            "end": {"number": 50},
+            "vote": None,
+            "remaining_blocks": remaining_blocks,
+            "vote_choice": "FOR",
+        },
+    }
+
 
 # def dummy_do_request():
 #     class Response:
@@ -166,28 +201,7 @@ class TestEstablishVoteBehaviour(BaseProposalVoterTest):
             (
                 BehaviourTestCase(
                     "Happy path",
-                    initial_data=dict(
-                        proposals={
-                            "0": {"votable": False},
-                            "1": {
-                                "votable": True,
-                                "title": "dummy title",
-                                "description": "dummy description",
-                                "governor": {
-                                    "id": f"eip155:1:{DUMMY_GOVERNOR_ADDRESS}",
-                                    "type": "AAVE",
-                                    "name": "Aave",
-                                    "tokens": [
-                                        {
-                                            "id": "eip155:1/erc20aave:0x7Fc66500c84A76Ad7e9c93437bFc5Ac33E2DDaE9"
-                                        }
-                                    ],
-                                },
-                                "end": {"number": 50},
-                                "vote": None,
-                            },
-                        }
-                    ),
+                    initial_data=dict(proposals=get_dummy_proposals()),
                     event=Event.DONE,
                 ),
                 {},
@@ -204,3 +218,185 @@ class TestEstablishVoteBehaviour(BaseProposalVoterTest):
             self.fast_forward(test_case.initial_data)
             self.behaviour.act_wrapper()
             self.complete(test_case.event)
+
+
+class TestPrepareVoteTransactionNoVoteBehaviour(BaseProposalVoterTest):
+    """Tests PrepareVoteTransactionBehaviour"""
+
+    behaviour_class = PrepareVoteTransactionBehaviour
+    next_behaviour_class = make_degenerate_behaviour(  # type: ignore
+        FinishedTransactionPreparationNoVoteRound
+    )
+
+    @pytest.mark.parametrize(
+        "test_case, kwargs",
+        [
+            (
+                BehaviourTestCase(
+                    "Happy path",
+                    initial_data=dict(
+                        votable_proposal_ids=["1"],
+                        proposals=get_dummy_proposals(),
+                    ),
+                    event=Event.NO_VOTE,
+                ),
+                {},
+            ),
+            (
+                BehaviourTestCase(
+                    "Just voted",
+                    initial_data=dict(
+                        final_verification_status=1,
+                        votable_proposal_ids=["1"],
+                        proposals=get_dummy_proposals(1),
+                        safe_contract_address="dummy_safe_contract_address",
+                    ),
+                    event=Event.NO_VOTE,
+                ),
+                {},
+            ),
+        ],
+    )
+    def test_run(self, test_case: BehaviourTestCase, kwargs: Any) -> None:
+        """Run tests."""
+        self.behaviour.context.state.pending_vote = PendingVote("1", "FOR")
+        self.fast_forward(test_case.initial_data)
+        self.behaviour.act_wrapper()
+        self.complete(test_case.event)
+
+
+class TestPrepareVoteTransactionVoteBehaviour(BaseProposalVoterTest):
+    """Tests PrepareVoteTransactionBehaviour"""
+
+    behaviour_class = PrepareVoteTransactionBehaviour
+    next_behaviour_class = make_degenerate_behaviour(  # type: ignore
+        FinishedTransactionPreparationVoteRound
+    )
+
+    @pytest.mark.parametrize(
+        "test_case, kwargs",
+        [
+            (
+                BehaviourTestCase(
+                    "Happy path",
+                    initial_data=dict(
+                        votable_proposal_ids=["1"],
+                        proposals=get_dummy_proposals(1),
+                        safe_contract_address="dummy_safe_contract_address",
+                    ),
+                    event=Event.VOTE,
+                ),
+                {},
+            ),
+        ],
+    )
+    def test_run(self, test_case: BehaviourTestCase, kwargs: Any) -> None:
+        """Run tests."""
+
+        self.fast_forward(test_case.initial_data)
+        self.behaviour.act_wrapper()
+
+        self.mock_contract_api_request(
+            request_kwargs=dict(
+                performative=ContractApiMessage.Performative.GET_STATE,
+            ),
+            contract_id=str(DelegateContract.contract_id),
+            response_kwargs=dict(
+                performative=ContractApiMessage.Performative.STATE,
+                callable="get_cast_vote_data",
+                state=State(ledger_id="ethereum", body={"data": b"data"}),
+            ),
+        )
+        self.mock_contract_api_request(
+            request_kwargs=dict(
+                performative=ContractApiMessage.Performative.GET_STATE,
+            ),
+            contract_id=str(GnosisSafeContract.contract_id),
+            response_kwargs=dict(
+                performative=ContractApiMessage.Performative.STATE,
+                callable="get_raw_safe_transaction_hash",
+                state=State(
+                    ledger_id="ethereum", body={"tx_hash": "0xb0e6add595e00477cf347d09797b156719dc5233283ac76e4efce2a674fe72d9"}  # type: ignore
+                ),
+            ),
+        )
+
+        self.complete(test_case.event)
+
+
+class TestPrepareVoteTransactionContractErrorBehaviour(BaseProposalVoterTest):
+    """Tests PrepareVoteTransactionBehaviour"""
+
+    behaviour_class = PrepareVoteTransactionBehaviour
+    next_behaviour_class = PrepareVoteTransactionBehaviour
+
+    @pytest.mark.parametrize(
+        "test_case, kwargs",
+        [
+            (
+                BehaviourTestCase(
+                    "Happy path",
+                    initial_data=dict(
+                        votable_proposal_ids=["1"],
+                        proposals=get_dummy_proposals(1),
+                        safe_contract_address="dummy_safe_contract_address",
+                    ),
+                    event=Event.CONTRACT_ERROR,
+                ),
+                {
+                    "delegate_response_performative": ContractApiMessage.Performative.ERROR,
+                    "safe_response_performative": ContractApiMessage.Performative.STATE,
+                },
+            ),
+            (
+                BehaviourTestCase(
+                    "Happy path",
+                    initial_data=dict(
+                        votable_proposal_ids=["1"],
+                        proposals=get_dummy_proposals(1),
+                        safe_contract_address="dummy_safe_contract_address",
+                    ),
+                    event=Event.CONTRACT_ERROR,
+                ),
+                {
+                    "delegate_response_performative": ContractApiMessage.Performative.STATE,
+                    "safe_response_performative": ContractApiMessage.Performative.ERROR,
+                },
+            ),
+        ],
+    )
+    def test_run(self, test_case: BehaviourTestCase, kwargs: Any) -> None:
+        """Run tests."""
+        self.fast_forward(test_case.initial_data)
+        self.behaviour.act_wrapper()
+
+        self.mock_contract_api_request(
+            request_kwargs=dict(
+                performative=ContractApiMessage.Performative.GET_STATE,
+            ),
+            contract_id=str(DelegateContract.contract_id),
+            response_kwargs=dict(
+                performative=kwargs.get("delegate_response_performative"),
+                callable="get_cast_vote_data",
+                state=State(ledger_id="ethereum", body={"data": b"data"}),
+            ),
+        )
+        if (
+            kwargs.get("delegate_response_performative")
+            == ContractApiMessage.Performative.STATE
+        ):
+            self.mock_contract_api_request(
+                request_kwargs=dict(
+                    performative=ContractApiMessage.Performative.GET_STATE,
+                ),
+                contract_id=str(GnosisSafeContract.contract_id),
+                response_kwargs=dict(
+                    performative=kwargs.get("safe_response_performative"),
+                    callable="get_raw_safe_transaction_hash",
+                    state=State(
+                        ledger_id="ethereum", body={"tx_hash": "0xb0e6add595e00477cf347d09797b156719dc5233283ac76e4efce2a674fe72d9"}  # type: ignore
+                    ),
+                ),
+            )
+
+        self.complete(test_case.event)

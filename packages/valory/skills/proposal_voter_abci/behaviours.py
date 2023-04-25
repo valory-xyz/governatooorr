@@ -329,7 +329,6 @@ class PrepareVoteTransactionBehaviour(ProposalVoterBaseBehaviour):
                 f"get_cast_vote_data unsuccessful!: {contract_api_msg}"
             )
             return None
-
         data = cast(bytes, contract_api_msg.state.body["data"])
 
         # Get the safe transaction hash

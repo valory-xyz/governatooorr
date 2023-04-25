@@ -1,5 +1,9 @@
 # Release History - `governatooorr`
 
+## 0.1.0alpha3 (2023-04-25)
+
+- Bumps `open-autonomy` framework
+
 ## 0.1.0alpha2 (2023-04-14)
 
 - Bumps `open-autonomy` and `open-aea` frameworks

@@ -22,7 +22,6 @@
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Dict, Optional, Type
-from unittest import mock
 
 import pytest
 from aea.exceptions import AEAActException
@@ -59,7 +58,8 @@ from packages.valory.skills.proposal_voter_abci.rounds import (
 DUMMY_GOVERNOR_ADDRESS = "0xEC568fffba86c094cf06b22134B23074DFE2252c"
 
 
-def get_dummy_proposals(remaining_blocks: int = 1000):
+def get_dummy_proposals(remaining_blocks: int = 1000) -> dict:
+    """get_dummy_proposals"""
     return {
         "0": {"votable": False},
         "1": {
@@ -107,8 +107,9 @@ class BaseProposalVoterTest(FSMBehaviourBaseCase):
 
     @classmethod
     def setup_class(cls, **kwargs: Any) -> None:
+        """setup_class"""
         super().setup_class(**kwargs)
-        setattr(cls, "llm_handler", cls._skill.skill_context.handlers.llm)
+        cls.llm_handler = cls._skill.skill_context.handlers.llm
 
     def fast_forward(self, data: Optional[Dict[str, Any]] = None) -> None:
         """Fast-forward on initialization"""

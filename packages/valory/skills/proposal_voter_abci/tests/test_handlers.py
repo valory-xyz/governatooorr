@@ -25,5 +25,6 @@ from packages.valory.skills.proposal_voter_abci.handlers import LlmHandler
 
 
 def test_llm_handler():
+    """test_llm_handler"""
     handler = LlmHandler(name="", skill_context=DummyContext())
     assert handler.SUPPORTED_PROTOCOL == LlmMessage.protocol_id

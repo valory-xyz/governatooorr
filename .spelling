@@ -349,6 +349,7 @@ serializer
 0.5.0.post1
 0.5.0.post2
 0.1.0alpha1
+0.1.0alpha2
 liccheck
 shebangs
  - docs/control_flow.md

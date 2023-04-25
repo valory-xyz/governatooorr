@@ -25,6 +25,7 @@ from typing import Any, Dict, Optional, Type
 from unittest import mock
 
 import pytest
+from aea.exceptions import AEAActException
 from aea.helpers.transaction.base import State
 
 from packages.valory.connections.openai.connection import (
@@ -104,6 +105,11 @@ class BaseProposalVoterTest(FSMBehaviourBaseCase):
     synchronized_data: SynchronizedData
     done_event = Event.DONE
 
+    @classmethod
+    def setup_class(cls, **kwargs: Any) -> None:
+        super().setup_class(**kwargs)
+        setattr(cls, "llm_handler", cls._skill.skill_context.handlers.llm)
+
     def fast_forward(self, data: Optional[Dict[str, Any]] = None) -> None:
         """Fast-forward on initialization"""
 
@@ -178,7 +184,18 @@ class TestEstablishVoteBehaviour(BaseProposalVoterTest):
             (
                 BehaviourTestCase(
                     "Happy path",
-                    initial_data=dict(proposals=get_dummy_proposals()),
+                    initial_data=dict(
+                        proposals=get_dummy_proposals(),
+                        delegations=[
+                            {
+                                "user_address": "dummy_address",
+                                "token_address": "eip155:1/erc20aave:0x7Fc66500c84A76Ad7e9c93437bFc5Ac33E2DDaE9",
+                                "voting_preference": "GOOD",
+                                "governor_address": "dummy_address",
+                                "delegated_amount": 100,
+                            }
+                        ],
+                    ),
                     event=Event.DONE,
                 ),
                 {},
@@ -196,6 +213,31 @@ class TestEstablishVoteBehaviour(BaseProposalVoterTest):
             ),
         )
         self.complete(test_case.event)
+
+    @pytest.mark.parametrize(
+        "test_case, kwargs",
+        [
+            (
+                BehaviourTestCase(
+                    "Invalid vote",
+                    initial_data=dict(proposals=get_dummy_proposals()),
+                    event=Event.DONE,
+                ),
+                {},
+            ),
+        ],
+    )
+    def test_raises(self, test_case: BehaviourTestCase, kwargs: Any) -> None:
+        """Run tests."""
+        with pytest.raises(AEAActException):
+            self.fast_forward(test_case.initial_data)
+            self.behaviour.act_wrapper()
+            self.mock_llm_request(
+                request_kwargs=dict(performative=LlmMessage.Performative.REQUEST),
+                response_kwargs=dict(
+                    performative=LlmMessage.Performative.RESPONSE, value="INVALID"
+                ),
+            )
 
 
 class TestPrepareVoteTransactionNoVoteBehaviour(BaseProposalVoterTest):

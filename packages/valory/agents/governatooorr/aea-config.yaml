@@ -12,7 +12,6 @@ fingerprint:
   tests/helpers/data/json_server/data.json: bafybeics26yd33ng22lhzb3had4eevbfkfdj2jbp3qhvjpygwhkwlzhrq4
   tests/helpers/docker.py: bafybeibbi6m47mzsl43bmix4k7o7oyekzhzsljuf3dkwk23bfns6k7odkm
   tests/helpers/fixtures.py: bafybeiarm4ezp54po7nv5m4e2w3eghetma5xymnzgoovvdwh7hp2lcitqu
-  tests/test_governatooorr.py: bafybeiefrmkbgqgkm4vjftxvrkr6uojjmzxpebnwetyzvhlmygao7bka5i
 fingerprint_ignore_patterns: []
 connections:
 - fetchai/http_server:0.22.0:bafybeihaax5od5zo5jk2l62hv4jwuwtxloh5mijozudpsjombqc4ncmi6i

@@ -49,8 +49,6 @@ packages/valory/protocols/__init__.py
 
 run_governatooorr.sh
 
-governatooorr/
-
 run_agent.sh
 
 .4env

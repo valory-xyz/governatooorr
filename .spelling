@@ -351,6 +351,7 @@ serializer
 0.1.0alpha1
 0.1.0alpha2
 0.1.0alpha3
+0.1.0alpha4
 liccheck
 shebangs
  - docs/control_flow.md

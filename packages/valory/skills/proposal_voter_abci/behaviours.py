@@ -259,6 +259,8 @@ class PrepareVoteTransactionBehaviour(ProposalVoterBaseBehaviour):
         with self.context.benchmark_tool.measure(self.behaviour_id).local():
             votable_proposal_ids, proposals = self._get_proposal_info()
 
+            self.context.logger.info(f"Votable proposal ids: {votable_proposal_ids}")
+
             if not votable_proposal_ids:
                 tx_hash = PrepareVoteTransactionRound.NO_VOTE_PAYLOAD
 

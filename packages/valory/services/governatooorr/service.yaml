@@ -122,7 +122,7 @@ type: skill
         tendermint_com_url: ${TENDERMINT_COM_URL:str:http://localhost:8080}
         tendermint_max_retries: 5
         tendermint_url: ${TENDERMINT_URL:str:http://localhost:26657}
-        tendermint_p2p_url: ${TM_P2P_ENDPOINT_NODE_1:str:node0:26656}
+        tendermint_p2p_url: ${TM_P2P_ENDPOINT_NODE_1:str:node1:26656}
         termination_sleep: ${TERMINATION_SLEEP:int:900}
         tx_timeout: 10.0
         use_termination: ${USE_TERMINATION:bool:false}
@@ -165,7 +165,7 @@ type: skill
         tendermint_com_url: ${TENDERMINT_COM_URL:str:http://localhost:8080}
         tendermint_max_retries: 5
         tendermint_url: ${TENDERMINT_URL:str:http://localhost:26657}
-        tendermint_p2p_url: ${TM_P2P_ENDPOINT_NODE_2:str:node0:26656}
+        tendermint_p2p_url: ${TM_P2P_ENDPOINT_NODE_2:str:node2:26656}
         termination_sleep: ${TERMINATION_SLEEP:int:900}
         tx_timeout: 10.0
         use_termination: ${USE_TERMINATION:bool:false}
@@ -208,7 +208,7 @@ type: skill
         tendermint_com_url: ${TENDERMINT_COM_URL:str:http://localhost:8080}
         tendermint_max_retries: 5
         tendermint_url: ${TENDERMINT_URL:str:http://localhost:26657}
-        tendermint_p2p_url: ${TM_P2P_ENDPOINT_NODE_3:str:node0:26656}
+        tendermint_p2p_url: ${TM_P2P_ENDPOINT_NODE_3:str:node3:26656}
         termination_sleep: ${TERMINATION_SLEEP:int:900}
         tx_timeout: 10.0
         use_termination: ${USE_TERMINATION:bool:false}

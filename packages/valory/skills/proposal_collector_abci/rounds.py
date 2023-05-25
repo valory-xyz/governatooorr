@@ -74,12 +74,12 @@ class SynchronizedData(BaseSynchronizedData):
     @property
     def votable_proposal_ids(self) -> set:
         """Get the votable proposal ids, sorted by their remaining blocks until expiration, in ascending order."""
-        return set(self.db.get("votable_proposal_ids", {}))
+        return cast(set, self.db.get("votable_proposal_ids", {}))
 
     @property
-    def proposals_to_refresh(self) -> set:
+    def proposals_to_refresh(self) -> list:
         """Get the proposals that need to be refreshed: vote intention."""
-        return set(self.db.get("proposals_to_refresh", {}))
+        return cast(list, self.db.get("proposals_to_refresh", []))
 
 
 class SynchronizeDelegationsRound(CollectDifferentUntilAllRound):
@@ -151,9 +151,9 @@ class SynchronizeDelegationsRound(CollectDifferentUntilAllRound):
                 synchronized_data_class=SynchronizedData,
                 **{
                     get_name(SynchronizedData.delegations): delegations,
-                    get_name(
-                        SynchronizedData.proposals_to_refresh
-                    ): proposals_to_refresh,
+                    get_name(SynchronizedData.proposals_to_refresh): list(
+                        proposals_to_refresh
+                    ),
                 },
             )
             return synchronized_data, Event.DONE
@@ -190,7 +190,7 @@ class CollectActiveProposalsRound(CollectSameUntilThresholdRound):
             proposals_to_refresh = cast(
                 SynchronizedData, self.synchronized_data
             ).proposals_to_refresh
-            proposals_to_refresh = proposals_to_refresh.union(
+            proposals_to_refresh = set(proposals_to_refresh).union(
                 payload["proposals_to_refresh"]
             )
 
@@ -201,9 +201,9 @@ class CollectActiveProposalsRound(CollectSameUntilThresholdRound):
                     get_name(SynchronizedData.votable_proposal_ids): payload[
                         "votable_proposal_ids"
                     ],
-                    get_name(
-                        SynchronizedData.proposals_to_refresh
-                    ): proposals_to_refresh,
+                    get_name(SynchronizedData.proposals_to_refresh): list(
+                        proposals_to_refresh
+                    ),
                 },
             )
             return synchronized_data, Event.DONE

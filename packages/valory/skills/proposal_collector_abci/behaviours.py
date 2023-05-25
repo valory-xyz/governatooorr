@@ -319,7 +319,7 @@ class CollectActiveProposalsBehaviour(ProposalCollectorBaseBehaviour):
             {
                 "proposals": proposals,
                 "votable_proposal_ids": votable_proposal_ids,
-                "proposals_to_refresh": proposals_to_refresh,
+                "proposals_to_refresh": list(proposals_to_refresh),
             },
             sort_keys=True,
         )

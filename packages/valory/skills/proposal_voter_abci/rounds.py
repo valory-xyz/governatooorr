@@ -81,12 +81,12 @@ class SynchronizedData(BaseSynchronizedData):
     @property
     def votable_proposal_ids(self) -> set:
         """Get the votable proposal ids, sorted by their remaining blocks until expiration, in ascending order."""
-        return set(self.db.get("votable_proposal_ids", {}))
+        return cast(set, self.db.get("votable_proposal_ids", {}))
 
     @property
-    def proposals_to_refresh(self) -> set:
+    def proposals_to_refresh(self) -> list:
         """Get the proposals that need to be refreshed: vote intention."""
-        return set(self.db.get("proposals_to_refresh", {}))
+        return cast(list, self.db.get("proposals_to_refresh", []))
 
     @property
     def most_voted_tx_hash(self) -> str:

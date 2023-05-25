@@ -105,7 +105,7 @@ def get_dummy_synchronize_delegations_payload_serialized():
 
 def get_dummy_collect_active_proposals_payload_serialized():
     """Dummy payload"""
-    return json.dumps({"proposals": [], "votable_proposal_ids": []}, sort_keys=True)
+    return json.dumps({"proposals": [], "votable_proposal_ids": [], "proposals_to_refresh": []}, sort_keys=True)
 
 
 class TestSynchronizeDelegationsRoundTest(BaseCollectDifferentUntilAllRoundTest):

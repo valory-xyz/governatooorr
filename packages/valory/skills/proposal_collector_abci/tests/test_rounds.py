@@ -155,12 +155,12 @@ class TestSynchronizeDelegationsRoundTest(BaseCollectDifferentUntilAllRoundTest)
                             "delegated_amount": "delegated_amount_0",
                         },
                     ],
-                    "proposals": [
-                        {
+                    "proposals": {
+                        "dummy_proposal_id": {
                             "id": "dummy_proposal_id",
                             "governor": {"tokens": [{"id": "token_address_1"}]},
                         },
-                    ],
+                    },
                 },
                 payloads=get_payloads(
                     payload_cls=SynchronizeDelegationsPayload,

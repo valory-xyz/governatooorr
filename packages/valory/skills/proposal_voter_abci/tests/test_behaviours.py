@@ -81,7 +81,33 @@ def get_dummy_proposals(remaining_blocks: int = 1000) -> dict:
             "remaining_blocks": remaining_blocks,
             "vote_choice": "FOR",
         },
+        "2": {
+            "votable": True,
+            "governor": {
+                "id": f"eip155:1:{DUMMY_GOVERNOR_ADDRESS}",
+                "type": "AAVE",
+                "name": "Aave",
+                "tokens": [
+                    {
+                        "id": "eip155:1/erc20aave:0x7Fc66500c84A76Ad7e9c93437bFc5Ac33E2DDaAA"
+                    }
+                ],
+            },
+        },
     }
+
+
+def get_dummy_delegations() -> list:
+    """get_dummy_delegations"""
+    return [
+        {
+            "user_address": "dummy_address",
+            "token_address": "eip155:1/erc20aave:0x7Fc66500c84A76Ad7e9c93437bFc5Ac33E2DDaE9",
+            "voting_preference": "GOOD",
+            "governor_address": "dummy_address",
+            "delegated_amount": 100,
+        }
+    ]
 
 
 @dataclass
@@ -187,15 +213,8 @@ class TestEstablishVoteBehaviour(BaseProposalVoterTest):
                     "Happy path",
                     initial_data=dict(
                         proposals=get_dummy_proposals(),
-                        delegations=[
-                            {
-                                "user_address": "dummy_address",
-                                "token_address": "eip155:1/erc20aave:0x7Fc66500c84A76Ad7e9c93437bFc5Ac33E2DDaE9",
-                                "voting_preference": "GOOD",
-                                "governor_address": "dummy_address",
-                                "delegated_amount": 100,
-                            }
-                        ],
+                        delegations=get_dummy_delegations(),
+                        proposals_to_refresh=["0", "1", "2"],
                     ),
                     event=Event.DONE,
                 ),
@@ -221,7 +240,11 @@ class TestEstablishVoteBehaviour(BaseProposalVoterTest):
             (
                 BehaviourTestCase(
                     "Invalid vote",
-                    initial_data=dict(proposals=get_dummy_proposals()),
+                    initial_data=dict(
+                        proposals=get_dummy_proposals(),
+                        delegations=get_dummy_delegations(),
+                        proposals_to_refresh=["1"],
+                    ),
                     event=Event.DONE,
                 ),
                 {},

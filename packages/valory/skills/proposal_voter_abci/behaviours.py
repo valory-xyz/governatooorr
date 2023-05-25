@@ -97,7 +97,9 @@ class EstablishVoteBehaviour(ProposalVoterBaseBehaviour):
                     f"Getting vote intention for proposal {proposal_id}"
                 )
 
-                proposal_token = proposals[proposal_id]["governor"]["tokens"][0]["id"]
+                proposal_token = proposals[proposal_id]["governor"]["tokens"][0][
+                    "id"
+                ].split(":")[-1]
 
                 # Get the service aggregated vote intention
                 vote_intention = (
@@ -204,7 +206,7 @@ class EstablishVoteBehaviour(ProposalVoterBaseBehaviour):
 
         current_delegations = self.synchronized_data.delegations
         current_delegations = list(
-            filter(lambda d: d["token_address"] == token_address, current_delegations)
+            filter(lambda d: token_address in d["token_address"], current_delegations)
         )
 
         # Do not express intention if we have no delegations

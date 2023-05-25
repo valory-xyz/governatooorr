@@ -143,7 +143,7 @@ class SynchronizeDelegationsRound(CollectDifferentUntilAllRound):
                     delegations.append(nd)
 
                 # Do we need to refresh any proposal?
-                for p in proposals:
+                for p in proposals.values():
                     if nd["token_address"] in p["governor"]["tokens"][0]["id"]:
                         proposals_to_refresh.add(p["id"])
 

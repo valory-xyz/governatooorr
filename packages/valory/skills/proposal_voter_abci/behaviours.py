@@ -91,6 +91,7 @@ class EstablishVoteBehaviour(ProposalVoterBaseBehaviour):
             # Update the proposals' vote intention
             for proposal_id in proposal_ids_to_refresh:
                 if not proposals[proposal_id]["votable"]:
+                    self.context.logger.info(f"Proposal {proposal_id} is not votable")
                     continue
 
                 self.context.logger.info(
@@ -130,8 +131,10 @@ class EstablishVoteBehaviour(ProposalVoterBaseBehaviour):
                     "voting_options": VOTING_OPTIONS,
                 }
 
+                self.context.logger.info(
+                    f"Sending LLM request...\n{prompt_template.format(**prompt_values)}"
+                )
                 vote = yield from self._get_vote(prompt_template, prompt_values)
-
                 self.context.logger.info(f"Vote: {vote}")
 
                 proposals[proposal_id]["vote_choice"] = vote
@@ -246,6 +249,8 @@ class PrepareVoteTransactionBehaviour(ProposalVoterBaseBehaviour):
         votable_proposal_ids = self.synchronized_data.votable_proposal_ids
         proposals = self.synchronized_data.proposals
 
+        self.context.logger.info(f"Just voted? {self.synchronized_data.just_voted}")
+
         if self.synchronized_data.just_voted:
             # Pending votes are stored in the shared state and only updated in the proposals list
             # when the transaction has been verified, and therefore we know that it is a submitted vote.
@@ -254,9 +259,13 @@ class PrepareVoteTransactionBehaviour(ProposalVoterBaseBehaviour):
             submitted_proposal = proposals[submitted_vote_id]
             submitted_proposal["vote"] = submitted_vote.vote_choice
             submitted_proposal["votable"] = submitted_vote.votable
+            self.context.logger.info(f"Vote for proposal {submitted_vote_id} verified")
 
             # remove the submitted vote from the votable list, if it is present there
             if submitted_vote_id in votable_proposal_ids:
+                self.context.logger.info(
+                    f"Removing proposal {submitted_vote_id} from votable proposals"
+                )
                 votable_proposal_ids.remove(submitted_vote_id)
 
         # Filter the votable proposals, keeping only those towards the end of their voting period

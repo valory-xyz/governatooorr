@@ -138,7 +138,13 @@ class PrepareVoteTransactionRound(CollectSameUntilThresholdRound):
                 return self.synchronized_data, Event.CONTRACT_ERROR
 
             if payload["tx_hash"] == PrepareVoteTransactionRound.NO_VOTE_PAYLOAD:
-                return self.synchronized_data, Event.NO_VOTE
+                synchronized_data = self.synchronized_data.update(
+                    synchronized_data_class=SynchronizedData,
+                    **{
+                        get_name(SynchronizedData.proposals): payload["proposals"],
+                    }
+                )
+                return synchronized_data, Event.NO_VOTE
 
             synchronized_data = self.synchronized_data.update(
                 synchronized_data_class=SynchronizedData,
@@ -194,7 +200,11 @@ class ProposalVoterAbciApp(AbciApp[Event]):
     event_to_timeout: EventToTimeout = {
         Event.ROUND_TIMEOUT: 30.0,
     }
-    cross_period_persisted_keys: Set[str] = set()
+    cross_period_persisted_keys: Set[str] = {
+        get_name(SynchronizedData.delegations),
+        get_name(SynchronizedData.proposals),
+        get_name(SynchronizedData.votable_proposal_ids),
+    }
     db_pre_conditions: Dict[AppState, Set[str]] = {
         EstablishVoteRound: set(),
         PrepareVoteTransactionRound: {

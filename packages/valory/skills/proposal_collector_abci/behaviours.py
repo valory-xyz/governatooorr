@@ -269,6 +269,8 @@ class CollectActiveProposalsBehaviour(ProposalCollectorBaseBehaviour):
         for proposal in proposals.values():
             proposal["votable"] = False
 
+        proposals_to_refresh = set()
+
         for active_proposal in active_proposals:
             if active_proposal["id"] not in proposals:  # This is a new proposal
                 proposals[active_proposal["id"]] = {
@@ -280,6 +282,7 @@ class CollectActiveProposalsBehaviour(ProposalCollectorBaseBehaviour):
                     "remaining_blocks": active_proposal["end"]["number"]
                     - current_block,
                 }
+                proposals_to_refresh.add(active_proposal["id"])
             else:
                 # The proposal is still votable
                 proposals[active_proposal["id"]]["votable"] = True
@@ -314,6 +317,7 @@ class CollectActiveProposalsBehaviour(ProposalCollectorBaseBehaviour):
             {
                 "proposals": proposals,
                 "votable_proposal_ids": votable_proposal_ids,
+                "proposals_to_refresh": proposals_to_refresh,
             },
             sort_keys=True,
         )

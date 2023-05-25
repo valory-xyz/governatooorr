@@ -85,29 +85,35 @@ class EstablishVoteBehaviour(ProposalVoterBaseBehaviour):
 
         with self.context.benchmark_tool.measure(self.behaviour_id).local():
 
+            proposal_ids_to_refresh = self.synchronized_data.proposals_to_refresh
             proposals = self.synchronized_data.proposals
 
             # Update the proposals' vote intention
-            for proposal_id, proposal in proposals.items():
-                if not proposal["votable"]:
+            for proposal_id in proposal_ids_to_refresh:
+                if not proposals[proposal_id]["votable"]:
                     continue
 
                 self.context.logger.info(
                     f"Getting vote intention for proposal {proposal_id}"
                 )
 
-                proposal_token = proposal["governor"]["tokens"][0]["id"]
+                proposal_token = proposals[proposal_id]["governor"]["tokens"][0]["id"]
 
                 # Get the service aggregated vote intention
                 vote_intention = (
-                    self._get_service_vote_intention(  # either GOOD or EVIL
+                    self._get_service_vote_intention(  # either GOOD, EVIL or None
                         proposal_token
                     )
                 )
-                proposal["vote_intention"] = vote_intention
+                proposals[proposal_id]["vote_intention"] = vote_intention
 
                 self.context.logger.info(f"Vote intention: {vote_intention}")
 
+                # Do not call the LLM until we have delegations for this proposal
+                if not vote_intention:
+                    continue
+
+                # LLM call
                 prompt_template = "Here is a voting proposal for a protocol: `{proposal}`. How should I vote on the voting proposal if my intent was to {voting_intention_snippet} and the voting options are {voting_options}? Please answer with only the voting option."
                 voting_intention_snippet = (
                     "cause chaos to the protocol"
@@ -115,7 +121,7 @@ class EstablishVoteBehaviour(ProposalVoterBaseBehaviour):
                     else "contribute positively to the protocol"
                 )
                 prompt_values = {
-                    "proposal": proposal["title"] + "\n" + proposal["description"],
+                    "proposal": proposals[proposal_id]["title"] + "\n" + proposals[proposal_id]["description"],
                     "voting_intention_snippet": voting_intention_snippet,
                     "voting_options": VOTING_OPTIONS,
                 }
@@ -189,7 +195,7 @@ class EstablishVoteBehaviour(ProposalVoterBaseBehaviour):
         response = yield from self.wait_for_message(timeout=timeout)
         return response
 
-    def _get_service_vote_intention(self, token_address) -> str:
+    def _get_service_vote_intention(self, token_address) -> Optional[str]:
         """Aggregate all the users' vote intentions to find the service's vote intention"""
 
         vote_preference_counts = {"GOOD": 0, "EVIL": 0}
@@ -198,6 +204,13 @@ class EstablishVoteBehaviour(ProposalVoterBaseBehaviour):
         current_delegations = list(
             filter(lambda d: d["token_address"] == token_address, current_delegations)
         )
+
+        # Do not express intention if we have no delegations
+        if not current_delegations:
+            self.context.logger.info(
+                f"There are no delegations for token {token_address}"
+            )
+            return None
 
         # Count votes
         for delegation in current_delegations:

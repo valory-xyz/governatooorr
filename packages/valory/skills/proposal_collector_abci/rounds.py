@@ -76,6 +76,11 @@ class SynchronizedData(BaseSynchronizedData):
         """Get the votable proposal ids, sorted by their remaining blocks until expiration, in ascending order."""
         return set(self.db.get("votable_proposal_ids", {}))
 
+    @property
+    def proposals_to_refresh(self) -> set:
+        """Get the proposals that need to be refreshed: vote intention."""
+        return set(self.db.get("proposals_to_refresh", {}))
+
 
 class SynchronizeDelegationsRound(CollectDifferentUntilAllRound):
     """SynchronizeDelegations"""
@@ -115,6 +120,8 @@ class SynchronizeDelegationsRound(CollectDifferentUntilAllRound):
         if self.collection_threshold_reached:
 
             delegations = cast(SynchronizedData, self.synchronized_data).delegations
+            proposals = cast(SynchronizedData, self.synchronized_data).proposals
+            proposals_to_refresh = set()
 
             new_delegations = []
             for payload in self.collection.values():
@@ -135,10 +142,16 @@ class SynchronizeDelegationsRound(CollectDifferentUntilAllRound):
                 if not existing:
                     delegations.append(nd)
 
+                # Do we need to refresh any proposal?
+                for p in proposals:
+                    if nd["token_address"] in p["governor"]["tokens"][0]["id"]:
+                        proposals_to_refresh.add(p["id"])
+
             synchronized_data = self.synchronized_data.update(
                 synchronized_data_class=SynchronizedData,
                 **{
                     get_name(SynchronizedData.delegations): delegations,
+                    get_name(SynchronizedData.proposals_to_refresh): proposals_to_refresh,
                 },
             )
             return synchronized_data, Event.DONE
@@ -172,6 +185,8 @@ class CollectActiveProposalsRound(CollectSameUntilThresholdRound):
                 return self.synchronized_data, Event.BLOCK_RETRIEVAL_ERROR
 
             payload = json.loads(self.most_voted_payload)
+            proposals_to_refresh = cast(SynchronizedData, self.synchronized_data).proposals_to_refresh
+            proposals_to_refresh = proposals_to_refresh.union(payload["proposals_to_refresh"])
 
             synchronized_data = self.synchronized_data.update(
                 synchronized_data_class=SynchronizedData,
@@ -180,6 +195,7 @@ class CollectActiveProposalsRound(CollectSameUntilThresholdRound):
                     get_name(SynchronizedData.votable_proposal_ids): payload[
                         "votable_proposal_ids"
                     ],
+                    get_name(SynchronizedData.proposals_to_refresh): proposals_to_refresh,
                 },
             )
             return synchronized_data, Event.DONE

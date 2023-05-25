@@ -151,7 +151,9 @@ class SynchronizeDelegationsRound(CollectDifferentUntilAllRound):
                 synchronized_data_class=SynchronizedData,
                 **{
                     get_name(SynchronizedData.delegations): delegations,
-                    get_name(SynchronizedData.proposals_to_refresh): proposals_to_refresh,
+                    get_name(
+                        SynchronizedData.proposals_to_refresh
+                    ): proposals_to_refresh,
                 },
             )
             return synchronized_data, Event.DONE
@@ -185,8 +187,12 @@ class CollectActiveProposalsRound(CollectSameUntilThresholdRound):
                 return self.synchronized_data, Event.BLOCK_RETRIEVAL_ERROR
 
             payload = json.loads(self.most_voted_payload)
-            proposals_to_refresh = cast(SynchronizedData, self.synchronized_data).proposals_to_refresh
-            proposals_to_refresh = proposals_to_refresh.union(payload["proposals_to_refresh"])
+            proposals_to_refresh = cast(
+                SynchronizedData, self.synchronized_data
+            ).proposals_to_refresh
+            proposals_to_refresh = proposals_to_refresh.union(
+                payload["proposals_to_refresh"]
+            )
 
             synchronized_data = self.synchronized_data.update(
                 synchronized_data_class=SynchronizedData,
@@ -195,7 +201,9 @@ class CollectActiveProposalsRound(CollectSameUntilThresholdRound):
                     get_name(SynchronizedData.votable_proposal_ids): payload[
                         "votable_proposal_ids"
                     ],
-                    get_name(SynchronizedData.proposals_to_refresh): proposals_to_refresh,
+                    get_name(
+                        SynchronizedData.proposals_to_refresh
+                    ): proposals_to_refresh,
                 },
             )
             return synchronized_data, Event.DONE

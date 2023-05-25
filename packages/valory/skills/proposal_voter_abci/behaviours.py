@@ -121,7 +121,9 @@ class EstablishVoteBehaviour(ProposalVoterBaseBehaviour):
                     else "contribute positively to the protocol"
                 )
                 prompt_values = {
-                    "proposal": proposals[proposal_id]["title"] + "\n" + proposals[proposal_id]["description"],
+                    "proposal": proposals[proposal_id]["title"]
+                    + "\n"
+                    + proposals[proposal_id]["description"],
                     "voting_intention_snippet": voting_intention_snippet,
                     "voting_options": VOTING_OPTIONS,
                 }

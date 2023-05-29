@@ -80,6 +80,14 @@ models:
       service_endpoint_base: ${SERVICE_ENDPOINT_BASE:str:https://governatooorr.staging.autonolas.tech/}
       validate_timeout: 1205
       voting_block_threshold: ${VOTING_BLOCK_THRESHOLD:int:300}
+      ceramic_api_base: ${CERAMIC_API_BASE:str:https://ceramic-valory.hirenodes.io/}
+      ceramic_api_create_endpoint: ${CERAMIC_API_CREATE_ENDPOINT:str:api/v0/streams}
+      ceramic_api_commit_endpoint: ${CERAMIC_API_COMMIT_ENDPOINT:str:api/v0/commits}
+      ceramic_api_read_endpoint: ${CERAMIC_API_READ_ENDPOINT:str:api/v0/commits/{stream_id}}
+      ceramic_did_seed: ${CERAMIC_DID_SEED:str:dummy_did_seed}
+      ceramic_did_str: ${CERAMIC_DID_STR:str:dummy_did_str}
+      default_read_stream_id: ${DEFAULT_READ_STREAM_ID:str:default_read_stream_id}
+      default_write_stream_id: ${DEFAULT_WRITE_STREAM_ID:str:default_write_stream_id}
 ---
 public_id: valory/ledger:0.19.0
 type: connection

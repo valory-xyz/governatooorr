@@ -52,6 +52,7 @@ class Event(Enum):
     NO_PROPOSAL = "no_proposal"
     CONTRACT_ERROR = "contract_error"
     BLOCK_RETRIEVAL_ERROR = "block_retrieval_error"
+    WRITE_DELEGATIONS = "write_delegations"
 
 
 class SynchronizedData(BaseSynchronizedData):
@@ -128,6 +129,17 @@ class SynchronizeDelegationsRound(CollectDifferentUntilAllRound):
                 # Add this agent's new delegations
                 new_delegations.extend(json.loads(payload.json["new_delegations"]))
 
+            if not new_delegations:
+                synchronized_data = self.synchronized_data.update(
+                    synchronized_data_class=SynchronizedData,
+                    **{
+                        get_name(SynchronizedData.proposals_to_refresh): list(
+                            proposals_to_refresh
+                        ),
+                    },
+                )
+                return synchronized_data, Event.DONE
+
             for nd in new_delegations:
                 # Check if new delegation needs to replace a previous one
                 existing = False
@@ -156,7 +168,7 @@ class SynchronizeDelegationsRound(CollectDifferentUntilAllRound):
                     ),
                 },
             )
-            return synchronized_data, Event.DONE
+            return synchronized_data, Event.WRITE_DELEGATIONS
         if not self.is_majority_possible(
             self.collection, self.synchronized_data.nb_participants
         ):
@@ -214,6 +226,10 @@ class CollectActiveProposalsRound(CollectSameUntilThresholdRound):
         return None
 
 
+class FinishedWriteDelegationsRound(DegenerateRound):
+    """FinishedWriteDelegationsRound"""
+
+
 class FinishedProposalRound(DegenerateRound):
     """FinishedProposalRound"""
 
@@ -222,10 +238,14 @@ class ProposalCollectorAbciApp(AbciApp[Event]):
     """ProposalCollectorAbciApp"""
 
     initial_round_cls: AppState = SynchronizeDelegationsRound
-    initial_states: Set[AppState] = {SynchronizeDelegationsRound}
+    initial_states: Set[AppState] = {
+        SynchronizeDelegationsRound,
+        CollectActiveProposalsRound,
+    }
     transition_function: AbciAppTransitionFunction = {
         SynchronizeDelegationsRound: {
             Event.DONE: CollectActiveProposalsRound,
+            Event.WRITE_DELEGATIONS: FinishedWriteDelegationsRound,
             Event.NO_MAJORITY: SynchronizeDelegationsRound,
             Event.ROUND_TIMEOUT: SynchronizeDelegationsRound,
         },
@@ -236,10 +256,12 @@ class ProposalCollectorAbciApp(AbciApp[Event]):
             Event.NO_MAJORITY: CollectActiveProposalsRound,
             Event.ROUND_TIMEOUT: CollectActiveProposalsRound,
         },
+        FinishedWriteDelegationsRound: {},
         FinishedProposalRound: {},
     }
     final_states: Set[AppState] = {
         FinishedProposalRound,
+        FinishedWriteDelegationsRound,
     }
     event_to_timeout: EventToTimeout = {
         Event.ROUND_TIMEOUT: 30.0,
@@ -251,8 +273,10 @@ class ProposalCollectorAbciApp(AbciApp[Event]):
     }
     db_pre_conditions: Dict[AppState, Set[str]] = {
         SynchronizeDelegationsRound: set(),
+        CollectActiveProposalsRound: set(),
     }
     db_post_conditions: Dict[AppState, Set[str]] = {
+        FinishedWriteDelegationsRound: set(),
         FinishedProposalRound: {
             get_name(SynchronizedData.delegations),
             get_name(SynchronizedData.proposals),

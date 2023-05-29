@@ -25,6 +25,8 @@ skills:
 - valory/reset_pause_abci:0.1.0:bafybeigwsp2crzvqan7xnap6dh4f4lxdut5il6naj7r4jwaslopstufgl4
 - valory/termination_abci:0.1.0:bafybeiglkntthppslj5p64n35aoqer4fcalezhqvpndo6eb2vaoynm6qxe
 - valory/transaction_settlement_abci:0.1.0:bafybeibor5qxitvgvgm47vzor4u7p53tcpw3fzez7hbd6qv4rglxladxye
+- valory/ceramic_read_abci:0.1.0:bafybeifyaez364gwlsfl5vf2fdudeccifbgsvu2wznywqr2vrk2o4dvizu
+- valory/ceramic_write_abci:0.1.0:bafybeih53i7hdcnzxnfm57hctzlf5aoaoxt2twbkfxetwd5hokz2w5zxrm
 behaviours:
   main:
     args: {}
@@ -136,6 +138,15 @@ models:
       use_termination: false
       validate_timeout: 1205
       voting_block_threshold: 300
+      ceramic_api_base: https://ceramic-valory.hirenodes.io/
+      ceramic_api_commit_endpoint: api/v0/commits
+      ceramic_api_read_endpoint: api/v0/commits/{stream_id}
+      ceramic_did_seed: '0101010101010101010101010101010101010101010101010101010101010101'
+      ceramic_did_str: z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX
+      default_read_stream_id: default_read_stream_id
+      default_write_stream_id: default_write_stream_id
+      default_read_target_property: default_read_target_property
+      default_write_target_property: default_write_target_property
     class_name: Params
   randomness_api:
     args:

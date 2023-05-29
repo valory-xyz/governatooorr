@@ -101,9 +101,12 @@ class HttpHandler(BaseHttpHandler):
         service_endpoint_base = urlparse(
             self.context.params.service_endpoint_base
         ).hostname
+        propel_uri_base_hostname = (
+            r"https?:\/\/[a-zA-Z0-9]{16}.agent\.propel\.(staging\.)?autonolas\.tech"
+        )
 
         # Route regexes
-        hostname_regex = rf".*({service_endpoint_base}|localhost|127.0.0.1)(:\d+)?"
+        hostname_regex = rf".*({service_endpoint_base}|{propel_uri_base_hostname}|localhost|127.0.0.1|0.0.0.0)(:\d+)?"
         self.handler_url_regex = rf"{hostname_regex}\/.*"
         eth_address_regex = r"0x[a-fA-F0-9]{40}"
 

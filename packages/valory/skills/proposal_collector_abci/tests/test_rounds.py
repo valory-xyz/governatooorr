@@ -105,7 +105,10 @@ def get_dummy_synchronize_delegations_payload_serialized():
 
 def get_dummy_collect_active_proposals_payload_serialized():
     """Dummy payload"""
-    return json.dumps({"proposals": [], "votable_proposal_ids": []}, sort_keys=True)
+    return json.dumps(
+        {"proposals": [], "votable_proposal_ids": [], "proposals_to_refresh": []},
+        sort_keys=True,
+    )
 
 
 class TestSynchronizeDelegationsRoundTest(BaseCollectDifferentUntilAllRoundTest):
@@ -151,7 +154,13 @@ class TestSynchronizeDelegationsRoundTest(BaseCollectDifferentUntilAllRoundTest)
                             "governor_address": "governor_address_0",
                             "delegated_amount": "delegated_amount_0",
                         },
-                    ]
+                    ],
+                    "proposals": {
+                        "dummy_proposal_id": {
+                            "id": "dummy_proposal_id",
+                            "governor": {"tokens": [{"id": "token_address_1"}]},
+                        },
+                    },
                 },
                 payloads=get_payloads(
                     payload_cls=SynchronizeDelegationsPayload,

@@ -81,7 +81,12 @@ class SynchronizedData(BaseSynchronizedData):
     @property
     def votable_proposal_ids(self) -> set:
         """Get the votable proposal ids, sorted by their remaining blocks until expiration, in ascending order."""
-        return set(self.db.get("votable_proposal_ids", {}))
+        return cast(set, self.db.get("votable_proposal_ids", {}))
+
+    @property
+    def proposals_to_refresh(self) -> list:
+        """Get the proposals that need to be refreshed: vote intention."""
+        return cast(list, self.db.get("proposals_to_refresh", []))
 
     @property
     def most_voted_tx_hash(self) -> str:
@@ -133,7 +138,13 @@ class PrepareVoteTransactionRound(CollectSameUntilThresholdRound):
                 return self.synchronized_data, Event.CONTRACT_ERROR
 
             if payload["tx_hash"] == PrepareVoteTransactionRound.NO_VOTE_PAYLOAD:
-                return self.synchronized_data, Event.NO_VOTE
+                synchronized_data = self.synchronized_data.update(
+                    synchronized_data_class=SynchronizedData,
+                    **{
+                        get_name(SynchronizedData.proposals): payload["proposals"],
+                    }
+                )
+                return synchronized_data, Event.NO_VOTE
 
             synchronized_data = self.synchronized_data.update(
                 synchronized_data_class=SynchronizedData,
@@ -189,7 +200,11 @@ class ProposalVoterAbciApp(AbciApp[Event]):
     event_to_timeout: EventToTimeout = {
         Event.ROUND_TIMEOUT: 30.0,
     }
-    cross_period_persisted_keys: Set[str] = set()
+    cross_period_persisted_keys: Set[str] = {
+        get_name(SynchronizedData.delegations),
+        get_name(SynchronizedData.proposals),
+        get_name(SynchronizedData.votable_proposal_ids),
+    }
     db_pre_conditions: Dict[AppState, Set[str]] = {
         EstablishVoteRound: set(),
         PrepareVoteTransactionRound: {

@@ -40,7 +40,7 @@ from packages.valory.skills.termination_abci.rounds import TerminationAbciApp
 abci_app_transition_mapping: AbciAppTransitionMapping = {
     RegistrationAbci.FinishedRegistrationRound: CeramicReadAbci.StreamReadRound,
     CeramicReadAbci.FinishedReadingRound: ProposalCollectorAbciApp.SynchronizeDelegationsRound,
-    ProposalCollectorAbciApp.FinishedWriteDelegationsRound: CeramicWriteAbci.StreamWriteRound,
+    ProposalCollectorAbciApp.FinishedWriteDelegationsRound: CeramicWriteAbci.RandomnessRound,
     CeramicWriteAbci.FinishedVerificationRound: ProposalCollectorAbciApp.CollectActiveProposalsRound,
     ProposalCollectorAbciApp.FinishedProposalRound: ProposalVoterAbciApp.EstablishVoteRound,
     ProposalVoterAbciApp.FinishedTransactionPreparationNoVoteRound: ResetAndPauseAbci.ResetAndPauseRound,

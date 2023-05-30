@@ -4,15 +4,19 @@ alphabet_in:
 - DONE
 - NO_MAJORITY
 - ROUND_TIMEOUT
+- WRITE_DELEGATIONS
 default_start_state: SynchronizeDelegationsRound
 final_states:
 - FinishedProposalRound
+- FinishedWriteDelegationsRound
 label: ProposalCollectorAbciApp
 start_states:
+- CollectActiveProposalsRound
 - SynchronizeDelegationsRound
 states:
 - CollectActiveProposalsRound
 - FinishedProposalRound
+- FinishedWriteDelegationsRound
 - SynchronizeDelegationsRound
 transition_func:
     (CollectActiveProposalsRound, API_ERROR): CollectActiveProposalsRound
@@ -23,3 +27,4 @@ transition_func:
     (SynchronizeDelegationsRound, DONE): CollectActiveProposalsRound
     (SynchronizeDelegationsRound, NO_MAJORITY): SynchronizeDelegationsRound
     (SynchronizeDelegationsRound, ROUND_TIMEOUT): SynchronizeDelegationsRound
+    (SynchronizeDelegationsRound, WRITE_DELEGATIONS): FinishedWriteDelegationsRound

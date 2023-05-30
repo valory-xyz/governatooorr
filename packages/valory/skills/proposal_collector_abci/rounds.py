@@ -82,6 +82,11 @@ class SynchronizedData(BaseSynchronizedData):
         """Get the proposals that need to be refreshed: vote intention."""
         return cast(list, self.db.get("proposals_to_refresh", []))
 
+    @property
+    def pending_write(self) -> bool:
+        """Checks whether there are changes pending to be written to Ceramic."""
+        return cast(bool, self.db.get("pending_write", False))
+
 
 class SynchronizeDelegationsRound(CollectDifferentUntilAllRound):
     """SynchronizeDelegations"""
@@ -136,6 +141,7 @@ class SynchronizeDelegationsRound(CollectDifferentUntilAllRound):
                         get_name(SynchronizedData.proposals_to_refresh): list(
                             proposals_to_refresh
                         ),
+                        get_name(SynchronizedData.pending_write): False,
                     },
                 )
                 return synchronized_data, Event.DONE
@@ -166,6 +172,7 @@ class SynchronizeDelegationsRound(CollectDifferentUntilAllRound):
                     get_name(SynchronizedData.proposals_to_refresh): list(
                         proposals_to_refresh
                     ),
+                    get_name(SynchronizedData.pending_write): True,
                 },
             )
             return synchronized_data, Event.WRITE_DELEGATIONS

@@ -250,7 +250,7 @@ class CollectActiveProposalsBehaviour(ProposalCollectorBaseBehaviour):
             p_ids = [p["id"] for p in filtered_proposals]
 
             self.context.logger.info(
-                f"Retrieved active proposals (erc20 only): {p_ids}"
+                f"Retrieved active proposals (erc20 only) for governor {gid}: {p_ids}"
             )
 
             active_proposals.extend(filtered_proposals)

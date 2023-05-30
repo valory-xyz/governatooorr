@@ -42,8 +42,7 @@ clean-test:
 # black: format files according to the pep standards
 .PHONY: formatters
 formatters:
-	tox -e isort
-	tox -e black
+	tomte format-code
 
 # black-check: check code style
 # isort-check: check for import order
@@ -53,13 +52,14 @@ formatters:
 # darglint: docstring linter
 .PHONY: code-checks
 code-checks:
-	tox -p -e black-check -e isort-check -e flake8 -e mypy -e pylint -e darglint
+	tomte check-code
 
 # safety: checks dependencies for known security vulnerabilities
 # bandit: security linter
 .PHONY: security
 security:
-	tox -p -e safety -e bandit
+	tomte check-security
+	gitleaks detect --report-format json --report-path leak_report
 
 # generate latest abci docstrings
 # generate latest hashes for updated packages
@@ -68,14 +68,16 @@ security:
 generators:
 	find . -empty -type d -delete  # remove empty directories to avoid wrong hashes
 	tox -e abci-docstrings
-	tox -e fix-copyright
+	tomte format-copyright --author valory --exclude-part abci  --exclude-part http_client  --exclude-part ipfs  --exclude-part ledger  --exclude-part p2p_libp2p_client  --exclude-part gnosis_safe  --exclude-part gnosis_safe_proxy_factory  --exclude-part multisend  --exclude-part service_registry  --exclude-part acn  --exclude-part contract_api  --exclude-part http  --exclude-part ipfs  --exclude-part ledger_api --exclude-part tendermint --exclude-part abstract_abci --exclude-part abstract_round_abci --exclude-part registration_abci --exclude-part reset_pause_abci --exclude-part termination_abci --exclude-part transaction_settlement_abci
 	# tox -e fix-doc-hashes
 	autonomy hash all
 	autonomy packages lock
 
 .PHONY: common-checks-1
 common-checks-1:
-	tox -p -e check-copyright -e check-hash -e check-packages
+	tomte check-copyright --author valory --exclude-part abci  --exclude-part http_client  --exclude-part ipfs  --exclude-part ledger  --exclude-part p2p_libp2p_client  --exclude-part gnosis_safe  --exclude-part gnosis_safe_proxy_factory  --exclude-part multisend  --exclude-part service_registry  --exclude-part acn  --exclude-part contract_api  --exclude-part http  --exclude-part ipfs  --exclude-part ledger_api --exclude-part tendermint --exclude-part abstract_abci --exclude-part abstract_round_abci --exclude-part registration_abci --exclude-part reset_pause_abci --exclude-part termination_abci --exclude-part transaction_settlement_abci
+	tomte check-doc-links
+	tox -p -e check-hash -e check-packages -e check-doc-hashes
 
 .PHONY: test
 test:
@@ -111,7 +113,6 @@ fix-abci-app-specs:
 
 .PHONY: all-linters
 all-linters:
-	gitleaks detect --report-format json --report-path leak_report
 	tox -e check-copyright
 	tox -e bandit
 	tox -e safety

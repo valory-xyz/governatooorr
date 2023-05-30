@@ -6,8 +6,8 @@ description: The governatooorr agent.
 aea_version: '>=1.19.0, <2.0.0'
 fingerprint:
   __init__.py: bafybeiguw4i7zplzdw65vdyrtj25rys2hifrzsnt57p32xtrzyzh2l77di
-  tests/__init__.py: bafybeifxw34tftxuc2iufhfggbrc4hwkhshanxle24q2jofcanbbozqtiy
-  tests/helpers/__init__.py: bafybeiauwuw4a4wxqacqqkkk52ktps2qedadhypvh3ex7uqs7qaqrpygmy
+  tests/__init__.py: bafybeihiyimopudltfy4riab6ariq2ktn6w2fqv77vd5t7k4xr7tlkthya
+  tests/helpers/__init__.py: bafybeif7verbag26h6i35gr5rlatxl7veq4drup5ykwdvhgtussf2jreei
   tests/helpers/constants.py: bafybeibbokz7gzdlubnjwxrmh4tqckc7j75hfy3ae6l5a63mrbd4hp6l7u
   tests/helpers/data/json_server/data.json: bafybeics26yd33ng22lhzb3had4eevbfkfdj2jbp3qhvjpygwhkwlzhrq4
   tests/helpers/docker.py: bafybeibbi6m47mzsl43bmix4k7o7oyekzhzsljuf3dkwk23bfns6k7odkm
@@ -18,7 +18,7 @@ connections:
 - valory/abci:0.1.0:bafybeieogrpktpxfq74leeeeylfx33sob2hovhpl5coxlswae6xblzbezy
 - valory/http_client:0.23.0:bafybeidykl4elwbcjkqn32wt5h4h7tlpeqovrcq3c5bcplt6nhpznhgczi
 - valory/ledger:0.19.0:bafybeicgfupeudtmvehbwziqfxiz6ztsxr5rxzvalzvsdsspzz73o5fzfi
-- valory/openai:0.1.0:bafybeicqubow644xihuov2vypmmdd4zf6jvvbjb4f2w6hhekxrhb4chjaa
+- valory/openai:0.1.0:bafybeietimatztynqebwicxabplia6fctov4vswzbdrin5y32brbjewo2y
 - valory/p2p_libp2p_client:0.1.0:bafybeidwcobzb7ut3efegoedad7jfckvt2n6prcmd4g7xnkm6hp6aafrva
 contracts:
 - valory/delegate:0.1.0:bafybeibxcraifqme6ysfinkhn3djekrx3kersrootjxiela2pkhzeh4zxe
@@ -32,14 +32,14 @@ protocols:
 - valory/http:1.0.0:bafybeifyoio7nlh5zzyn5yz7krkou56l22to3cwg7gw5v5o3vxwklibhty
 - valory/ipfs:0.1.0:bafybeic72ncgqbzoz2guj4p4yjqulid7mv6yroeh65hxznloamoveeg7hq
 - valory/ledger_api:1.0.0:bafybeibo4bdtcrxi2suyzldwoetjar6pqfzm6vt5xal22ravkkcvdmtksi
-- valory/llm:1.0.0:bafybeigafqnus3kvaashfdzrpybpqiumhvbs2dmdnukqzn7yqedga4x7ui
+- valory/llm:1.0.0:bafybeicpd5hxe5rlgp75kaqotzpy3jkdyl5pbdcutwqdzlqfknnmkgadsy
 - valory/tendermint:0.1.0:bafybeicusvezoqlmyt6iqomcbwaz3xkhk2qf3d56q5zprmj3xdxfy64k54
 skills:
 - valory/abstract_abci:0.1.0:bafybeihgerjeq4u4apuue7zzhpb3wmntuju34dbdijbbvl4wclww2gy7di
 - valory/abstract_round_abci:0.1.0:bafybeicensk7a2vpqj52iyhf6yhc6z2iwulb2txbym546qvwgsxm3skvcm
-- valory/governatooorr_abci:0.1.0:bafybeihk6lag4zqtmwilhjufk23o6nutscj7bobmo7z2zsxjjl7eyqmjum
+- valory/governatooorr_abci:0.1.0:bafybeifx5g3e4ofc43h5z2n4t2ah62r6o5xulzc2vm6olcj3vsmy2n5ioi
 - valory/proposal_collector_abci:0.1.0:bafybeicdrof7nt5pgi5hc5no35aqnpmnrveoqm2keoaw7urvebdhhtwk7u
-- valory/proposal_voter_abci:0.1.0:bafybeidz6hieco4ac6bs7dwj4i64zwwa7g2zsjvirpkmzulwh5la5n3tsu
+- valory/proposal_voter_abci:0.1.0:bafybeiezzk2i4xcspjiiyaizwdzwojmx3sz4gl2u77ydzeqf5hlc4ebpoy
 - valory/registration_abci:0.1.0:bafybeicsqhakfliwauyqow62yopcjhejknmfcjzh7ilbjt32ozydbhxleq
 - valory/reset_pause_abci:0.1.0:bafybeigwsp2crzvqan7xnap6dh4f4lxdut5il6naj7r4jwaslopstufgl4
 - valory/termination_abci:0.1.0:bafybeiglkntthppslj5p64n35aoqer4fcalezhqvpndo6eb2vaoynm6qxe

@@ -35,7 +35,7 @@
         "skill/valory/transaction_settlement_abci/0.1.0": "bafybeiahvk5lgkpwnaruzr34yp7to4fed7tgoufceerwqhvl57t4blqmiu",
         "contract/valory/multisend/0.1.0": "bafybeigjywkl7hydjsrkogob3xebj2ifhqwmfhhxoeyrndzhhxi5u6amey",
         "skill/valory/termination_abci/0.1.0": "bafybeif7y4wcmjc4g5iyjkfedephvqwzgkxnkj3tucu24rqz6fsw267l2e",
-        "skill/valory/ceramic_read_abci/0.1.0": "bafybeifyaez364gwlsfl5vf2fdudeccifbgsvu2wznywqr2vrk2o4dvizu",
-        "skill/valory/ceramic_write_abci/0.1.0": "bafybeih53i7hdcnzxnfm57hctzlf5aoaoxt2twbkfxetwd5hokz2w5zxrm"
+        "skill/valory/ceramic_read_abci/0.1.0": "bafybeid4w3rl4kf3joxzhv5rezhrs6v2a6xsqaj2dek4ffibd2gps446am",
+        "skill/valory/ceramic_write_abci/0.1.0": "bafybeidbrinw6k2j4hi4ezieatx3ifionyi7s26oyjdscsyklqxy7uopqe"
     }
 }

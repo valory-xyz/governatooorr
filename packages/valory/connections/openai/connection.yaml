@@ -6,13 +6,13 @@ description: The openai connection provides a wrapper around OpenAI SDK.
 license: Apache-2.0
 aea_version: '>=1.0.0, <2.0.0'
 fingerprint:
-  __init__.py: bafybeie4qjnhmvzlfsemkp557uiptwbhvhzt5rsd4rxwlbohsiwsdlpzyi
-  connection.py: bafybeieloxom4tjiv64fy64eovlpk4irc6vjpqoynanakrvwqqfnu4rr6u
+  __init__.py: bafybeihgxrh2dnd2btbrm5ndmlipuqqt6gs7bkgxbzh2uqmwrqdvl7dszu
+  connection.py: bafybeidwxthld7p7o2wiv5e2b5iadvonfjrb2kesri6toms6fe6skda3fm
   readme.md: bafybeibqbvpfn6i2w7vxk2m65gizd2hcofu7mdzp2yusx7uupelztme724
 fingerprint_ignore_patterns: []
 connections: []
 protocols:
-- valory/llm:1.0.0:bafybeigafqnus3kvaashfdzrpybpqiumhvbs2dmdnukqzn7yqedga4x7ui
+- valory/llm:1.0.0:bafybeicpd5hxe5rlgp75kaqotzpy3jkdyl5pbdcutwqdzlqfknnmkgadsy
 class_name: OpenaiConnection
 config:
   engine: text-davinci-003

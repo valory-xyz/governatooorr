@@ -1,14 +1,14 @@
 {
     "dev": {
-        "skill/valory/proposal_collector_abci/0.1.0": "bafybeicdrof7nt5pgi5hc5no35aqnpmnrveoqm2keoaw7urvebdhhtwk7u",
+        "skill/valory/proposal_collector_abci/0.1.0": "bafybeidhxdh6wicr3aob6lebzsumhfsxzeofkuqwdfz2wqhfnn5guhushq",
         "connection/valory/openai/0.1.0": "bafybeietimatztynqebwicxabplia6fctov4vswzbdrin5y32brbjewo2y",
         "contract/valory/delegate/0.1.0": "bafybeibxcraifqme6ysfinkhn3djekrx3kersrootjxiela2pkhzeh4zxe",
         "protocol/valory/llm/1.0.0": "bafybeicpd5hxe5rlgp75kaqotzpy3jkdyl5pbdcutwqdzlqfknnmkgadsy",
         "skill/valory/proposal_voter_abci/0.1.0": "bafybeiezzk2i4xcspjiiyaizwdzwojmx3sz4gl2u77ydzeqf5hlc4ebpoy",
-        "skill/valory/governatooorr_abci/0.1.0": "bafybeifx5g3e4ofc43h5z2n4t2ah62r6o5xulzc2vm6olcj3vsmy2n5ioi",
-        "agent/valory/governatooorr/0.1.0": "bafybeiga4xqaxliwhzajbmn65uw4bmdfzkdcurjmrjdxwh35riwdkne7ou",
-        "service/valory/governatooorr/0.1.0": "bafybeifkgzhtywpt6wq5no3yhqdxg3y7v5xu5hch45jibxq4mkjbpusyzu",
-        "service/valory/governatooorr_local/0.1.0": "bafybeialafmvimnq7culhhw6sord3jsd2qdymccb5e4gxwtq5mpwzdqdca"
+        "skill/valory/governatooorr_abci/0.1.0": "bafybeia7qo46fmyigkybfjyjf4ll4wobtaomrcakugh2pdzqn6qtpmaasu",
+        "agent/valory/governatooorr/0.1.0": "bafybeihbyfbhqk6nxj5jurbqss6n7h23v6xkhdm4jdwn6auy4sjhsoab5y",
+        "service/valory/governatooorr/0.1.0": "bafybeigk4pbhfqejywuyif62wk32d5bkj6ffbmmbnyrib47g4st6c3new4",
+        "service/valory/governatooorr_local/0.1.0": "bafybeiedqre7234xtb7x3z3r7yhje63u6wea7l6kain5cm2jlg5pebvf2i"
     },
     "third_party": {
         "protocol/open_aea/signing/1.0.0": "bafybeibqlfmikg5hk4phzak6gqzhpkt6akckx7xppbp53mvwt6r73h7tk4",
@@ -34,6 +34,8 @@
         "contract/valory/gnosis_safe/0.1.0": "bafybeigfnb6hdixmdwoxingxrevx7beawm2voudgtexo6vazzfa4vhyx5m",
         "skill/valory/transaction_settlement_abci/0.1.0": "bafybeibor5qxitvgvgm47vzor4u7p53tcpw3fzez7hbd6qv4rglxladxye",
         "contract/valory/multisend/0.1.0": "bafybeigjywkl7hydjsrkogob3xebj2ifhqwmfhhxoeyrndzhhxi5u6amey",
-        "skill/valory/termination_abci/0.1.0": "bafybeiglkntthppslj5p64n35aoqer4fcalezhqvpndo6eb2vaoynm6qxe"
+        "skill/valory/termination_abci/0.1.0": "bafybeiglkntthppslj5p64n35aoqer4fcalezhqvpndo6eb2vaoynm6qxe",
+        "skill/valory/ceramic_read_abci/0.1.0": "bafybeifyaez364gwlsfl5vf2fdudeccifbgsvu2wznywqr2vrk2o4dvizu",
+        "skill/valory/ceramic_write_abci/0.1.0": "bafybeih53i7hdcnzxnfm57hctzlf5aoaoxt2twbkfxetwd5hokz2w5zxrm"
     }
 }

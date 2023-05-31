@@ -24,6 +24,14 @@ from packages.valory.skills.abstract_round_abci.models import (
     BenchmarkTool as BaseBenchmarkTool,
 )
 from packages.valory.skills.abstract_round_abci.models import Requests as BaseRequests
+from packages.valory.skills.ceramic_read_abci.models import (
+    Params as CeramicReadAbciParams,
+)
+from packages.valory.skills.ceramic_read_abci.rounds import Event as CeramicReadEvent
+from packages.valory.skills.ceramic_write_abci.models import (
+    Params as CeramicWriteAbciParams,
+)
+from packages.valory.skills.ceramic_write_abci.rounds import Event as CeramicWriteEvent
 from packages.valory.skills.governatooorr_abci.composition import GovernatooorrAbciApp
 from packages.valory.skills.proposal_collector_abci.models import (
     Params as ProposalCollectorAbciParams,
@@ -46,6 +54,8 @@ from packages.valory.skills.termination_abci.models import TerminationParams
 
 ProposalCollectorParams = ProposalCollectorAbciParams
 ProposalVoterParams = ProposalVoterAbciParams
+CeramicReadParams = CeramicReadAbciParams
+CeramicWriteParams = CeramicWriteAbciParams
 
 Requests = BaseRequests
 BenchmarkTool = BaseBenchmarkTool
@@ -67,7 +77,13 @@ class SharedState(BaseSharedState):
         """Set up."""
         super().setup()
         GovernatooorrAbciApp.event_to_timeout[
+            CeramicReadEvent.ROUND_TIMEOUT
+        ] = self.context.params.round_timeout_seconds
+        GovernatooorrAbciApp.event_to_timeout[
             ProposalCollectorEvent.ROUND_TIMEOUT
+        ] = self.context.params.round_timeout_seconds
+        GovernatooorrAbciApp.event_to_timeout[
+            CeramicWriteEvent.ROUND_TIMEOUT
         ] = self.context.params.round_timeout_seconds
         GovernatooorrAbciApp.event_to_timeout[
             ProposalVoterEvent.ROUND_TIMEOUT
@@ -80,5 +96,11 @@ class SharedState(BaseSharedState):
         ] = (self.context.params.reset_pause_duration + MARGIN)
 
 
-class Params(ProposalCollectorParams, ProposalVoterParams, TerminationParams):
+class Params(
+    CeramicReadParams,
+    ProposalCollectorParams,
+    CeramicWriteParams,
+    ProposalVoterParams,
+    TerminationParams,
+):
     """A model to represent params for multiple abci apps."""

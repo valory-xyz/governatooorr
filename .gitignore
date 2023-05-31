@@ -37,6 +37,8 @@ packages/valory/skills/reset_pause_abci
 packages/valory/skills/safe_deployment_abci
 packages/valory/skills/transaction_settlement_abci
 packages/valory/skills/termination_abci
+packages/valory/skills/ceramic_read_abci
+packages/valory/skills/ceramic_write_abci
 packages/open_aea
 packages/fetchai
 *.pyc

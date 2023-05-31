@@ -5,6 +5,7 @@ alphabet_in:
 - CHECK_LATE_ARRIVING_MESSAGE
 - CHECK_TIMEOUT
 - CONTRACT_ERROR
+- DID_NOT_SEND
 - DONE
 - FINALIZATION_FAILED
 - FINALIZE_TIMEOUT
@@ -20,6 +21,7 @@ alphabet_in:
 - SUSPICIOUS_ACTIVITY
 - VALIDATE_TIMEOUT
 - VOTE
+- WRITE_DELEGATIONS
 default_start_state: RegistrationStartupRound
 final_states: []
 label: GovernatooorrAbciApp
@@ -34,17 +36,22 @@ states:
 - EstablishVoteRound
 - FinalizationRound
 - PrepareVoteTransactionRound
+- RandomnessRound
 - RandomnessTransactionSubmissionRound
 - RegistrationRound
 - RegistrationStartupRound
 - ResetAndPauseRound
 - ResetRound
+- SelectKeeperRound
 - SelectKeeperTransactionSubmissionARound
 - SelectKeeperTransactionSubmissionBAfterTimeoutRound
 - SelectKeeperTransactionSubmissionBRound
+- StreamReadRound
+- StreamWriteRound
 - SynchronizeDelegationsRound
 - SynchronizeLateMessagesRound
 - ValidateTransactionRound
+- VerificationRound
 transition_func:
     (CheckLateTxHashesRound, CHECK_LATE_ARRIVING_MESSAGE): SynchronizeLateMessagesRound
     (CheckLateTxHashesRound, CHECK_TIMEOUT): CheckLateTxHashesRound
@@ -80,18 +87,24 @@ transition_func:
     (PrepareVoteTransactionRound, NO_VOTE): ResetAndPauseRound
     (PrepareVoteTransactionRound, ROUND_TIMEOUT): PrepareVoteTransactionRound
     (PrepareVoteTransactionRound, VOTE): RandomnessTransactionSubmissionRound
+    (RandomnessRound, DONE): SelectKeeperRound
+    (RandomnessRound, NO_MAJORITY): RandomnessRound
+    (RandomnessRound, ROUND_TIMEOUT): RandomnessRound
     (RandomnessTransactionSubmissionRound, DONE): SelectKeeperTransactionSubmissionARound
     (RandomnessTransactionSubmissionRound, NO_MAJORITY): RandomnessTransactionSubmissionRound
     (RandomnessTransactionSubmissionRound, ROUND_TIMEOUT): RandomnessTransactionSubmissionRound
-    (RegistrationRound, DONE): SynchronizeDelegationsRound
+    (RegistrationRound, DONE): StreamReadRound
     (RegistrationRound, NO_MAJORITY): RegistrationRound
-    (RegistrationStartupRound, DONE): SynchronizeDelegationsRound
+    (RegistrationStartupRound, DONE): StreamReadRound
     (ResetAndPauseRound, DONE): SynchronizeDelegationsRound
     (ResetAndPauseRound, NO_MAJORITY): RegistrationRound
     (ResetAndPauseRound, RESET_AND_PAUSE_TIMEOUT): RegistrationRound
     (ResetRound, DONE): RandomnessTransactionSubmissionRound
     (ResetRound, NO_MAJORITY): PrepareVoteTransactionRound
     (ResetRound, RESET_TIMEOUT): PrepareVoteTransactionRound
+    (SelectKeeperRound, DONE): StreamWriteRound
+    (SelectKeeperRound, NO_MAJORITY): RandomnessRound
+    (SelectKeeperRound, ROUND_TIMEOUT): RandomnessRound
     (SelectKeeperTransactionSubmissionARound, DONE): CollectSignatureRound
     (SelectKeeperTransactionSubmissionARound, INCORRECT_SERIALIZATION): PrepareVoteTransactionRound
     (SelectKeeperTransactionSubmissionARound, NO_MAJORITY): ResetRound
@@ -106,9 +119,18 @@ transition_func:
     (SelectKeeperTransactionSubmissionBRound, INCORRECT_SERIALIZATION): PrepareVoteTransactionRound
     (SelectKeeperTransactionSubmissionBRound, NO_MAJORITY): ResetRound
     (SelectKeeperTransactionSubmissionBRound, ROUND_TIMEOUT): SelectKeeperTransactionSubmissionBRound
+    (StreamReadRound, API_ERROR): StreamReadRound
+    (StreamReadRound, DONE): SynchronizeDelegationsRound
+    (StreamReadRound, NO_MAJORITY): StreamReadRound
+    (StreamReadRound, ROUND_TIMEOUT): StreamReadRound
+    (StreamWriteRound, API_ERROR): RandomnessRound
+    (StreamWriteRound, DID_NOT_SEND): RandomnessRound
+    (StreamWriteRound, DONE): VerificationRound
+    (StreamWriteRound, ROUND_TIMEOUT): RandomnessRound
     (SynchronizeDelegationsRound, DONE): CollectActiveProposalsRound
     (SynchronizeDelegationsRound, NO_MAJORITY): SynchronizeDelegationsRound
     (SynchronizeDelegationsRound, ROUND_TIMEOUT): SynchronizeDelegationsRound
+    (SynchronizeDelegationsRound, WRITE_DELEGATIONS): RandomnessRound
     (SynchronizeLateMessagesRound, DONE): CheckLateTxHashesRound
     (SynchronizeLateMessagesRound, NONE): SelectKeeperTransactionSubmissionBRound
     (SynchronizeLateMessagesRound, ROUND_TIMEOUT): SynchronizeLateMessagesRound
@@ -118,3 +140,7 @@ transition_func:
     (ValidateTransactionRound, NONE): SelectKeeperTransactionSubmissionBRound
     (ValidateTransactionRound, NO_MAJORITY): ValidateTransactionRound
     (ValidateTransactionRound, VALIDATE_TIMEOUT): SelectKeeperTransactionSubmissionBRound
+    (VerificationRound, API_ERROR): RandomnessRound
+    (VerificationRound, DONE): CollectActiveProposalsRound
+    (VerificationRound, NO_MAJORITY): RandomnessRound
+    (VerificationRound, ROUND_TIMEOUT): RandomnessRound

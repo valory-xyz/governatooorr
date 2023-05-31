@@ -84,23 +84,27 @@ def get_payloads(
         }
 
 
-def get_dummy_synchronize_delegations_payload_serialized():
+def get_dummy_synchronize_delegations_payload_serialized(empty: bool = False):
     """Dummy payload"""
-    return [
-        json.dumps(
-            [
-                {
-                    "user_address": f"user_address_{i}",
-                    "token_address": "token_address_1",
-                    "voting_preference": f"voting_preference_{i}",
-                    "governor_address": f"governor_address_{i}",
-                    "delegated_amount": f"delegated_amount_{i}",
-                }
-            ],
-            sort_keys=True,
-        )
-        for i in range(4)
-    ]
+    return (
+        [
+            json.dumps(
+                [
+                    {
+                        "user_address": f"user_address_{i}",
+                        "token_address": "token_address_1",
+                        "voting_preference": f"voting_preference_{i}",
+                        "governor_address": f"governor_address_{i}",
+                        "delegated_amount": f"delegated_amount_{i}",
+                    }
+                ],
+                sort_keys=True,
+            )
+            for i in range(4)
+        ]
+        if not empty
+        else ["[]", "[]", "[]", "[]"]
+    )
 
 
 def get_dummy_collect_active_proposals_payload_serialized():
@@ -144,7 +148,7 @@ class TestSynchronizeDelegationsRoundTest(BaseCollectDifferentUntilAllRoundTest)
         "test_case",
         (
             RoundTestCase(
-                name="Happy path",
+                name="Happy path - new delegations",
                 initial_data={
                     "delegations": [
                         {
@@ -198,6 +202,30 @@ class TestSynchronizeDelegationsRoundTest(BaseCollectDifferentUntilAllRoundTest)
                         },
                     ]
                 },
+                event=Event.WRITE_DELEGATIONS,
+                most_voted_payload=None,
+                synchronized_data_attr_checks=[
+                    lambda _synchronized_data: _synchronized_data.delegations,
+                ],
+            ),
+            RoundTestCase(
+                name="Happy path - no new delegations",
+                initial_data={
+                    "delegations": [],
+                    "proposals": {
+                        "dummy_proposal_id": {
+                            "id": "dummy_proposal_id",
+                            "governor": {"tokens": [{"id": "token_address_1"}]},
+                        },
+                    },
+                },
+                payloads=get_payloads(
+                    payload_cls=SynchronizeDelegationsPayload,
+                    data=get_dummy_synchronize_delegations_payload_serialized(
+                        empty=True
+                    ),
+                ),
+                final_data={"delegations": []},
                 event=Event.DONE,
                 most_voted_payload=None,
                 synchronized_data_attr_checks=[

@@ -1,8 +1,11 @@
 # Release History - `governatooorr`
 
-## (TBD)
+## 0.1.0alpha5 (2023-05-31)
 
+- Bumps frameworks to `open-autonony-0.10.5.post1` and `open-aea-1.34`
 - Bumps to `tomte@v0.2.12` and cleans up the repo #31
+- Implements LLM call reduction
+- Reads and writes delegations to and from Ceramic streams
 
 ## 0.1.0alpha4 (2023-05-05)
 

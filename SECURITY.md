@@ -8,8 +8,8 @@ The following table shows which versions of `governatooorr` are currently being 
 
 | Version          | Supported          |
 | ---------------- | ------------------ |
-| `0.1.0alpha4`    | :white_check_mark: |
-| `< 0.1.0alpha4`  | :x:                |
+| `0.1.0alpha5`    | :white_check_mark: |
+| `< 0.1.0alpha5`  | :x:                |
 
 ## Reporting a Vulnerability
 

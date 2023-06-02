@@ -66,7 +66,7 @@ Then run the following commands:
     node scripts/safe/create_safe.js
     ```
 8. Prepare a `.env` file containing the following variables:
-    ```
+    ```text
     OPENAI_API_KEY=<your_api_key>
     TALLY_API_KEY=<your_api_key>
     ALL_PARTICIPANTS='["<your_agent_address>"]'

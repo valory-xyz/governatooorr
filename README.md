@@ -56,26 +56,30 @@ Then run the following commands:
     ```bash
     autonomy generate-key -n 1 ethereum
     ```
-5. Prepare a `.env` file containing the following variables:
-    ```
-    OPENAI_API_KEY=<your_api_key>
-    TALLY_API_KEY=<your_api_key>
-    ```
-6. `autonomy deploy build keys.json -ltm`
-7. Run a Ganache fork of mainnet. You need to use the agent's generated private key. Your agent address will have a balance of 1ETH:
+5. Create a key::did and a Ceramic stream using Ceramic's [JS client](https://developers.ceramic.network/build/javascript/installation/#js-http-client). The service will use this stream to store delegations.
+6. Run a Ganache fork of mainnet. You need to use the agent's generated private key. Your agent address will have a balance of 1ETH:
 
     `ganache --fork.network mainnet --wallet.deterministic=true --chain.chainId 1 --fork.blockNumber 16968287 --wallet.accounts <agent_private_key>,1000000000000000000 --server.host 0.0.0.0`
-
-8. In a different terminal window deploy a Safe setting your agent's address as owner:
+7. In a different terminal window deploy a [Safe](https://safe.global/) setting your agent's address as owner:
     ```bash
     yarn install --cwd scripts/safe
     node scripts/safe/create_safe.js
     ```
-
-9. `autonomy deploy run --build-dir abci_build/`
-10. In a separate terminal: `docker logs abci0 -f`
-
-11. Test the service endpoints (in another terminal):
+8. Prepare a `.env` file containing the following variables:
+    ```
+    OPENAI_API_KEY=<your_api_key>
+    TALLY_API_KEY=<your_api_key>
+    ALL_PARTICIPANTS='["<your_agent_address>"]'
+    SAFE_CONTRACT_ADDRESS=<your_safe_address>
+    CERAMIC_DID_STR=<your_did_without_the_did:key_part>
+    CERAMIC_DID_SEED=<your_did_seed>
+    DEFAULT_READ_STREAM_ID=<your_stream_id>
+    DEFAULT_WRITE_STREAM_ID=<your_stream_id>
+    ```
+9. `autonomy deploy build keys.json -ltm`
+10. `autonomy deploy run --build-dir abci_build/`
+11. In a separate terminal: `docker logs abci0 -f`
+12. Test the service endpoints (in another terminal):
       ```bash
       # Get the current active proposals
       curl localhost:8000/proposals | jq

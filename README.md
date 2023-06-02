@@ -59,7 +59,9 @@ Then run the following commands:
 5. Create a `key::did` and a Ceramic stream using Ceramic's [JS client](https://developers.ceramic.network/build/javascript/installation/#js-http-client). The service will use this stream to store delegations.
 6. Run a Ganache fork of mainnet. You need to use the agent's generated private key. Your agent address will have a balance of 1 ETH:
 
-    `ganache --fork.network mainnet --wallet.deterministic=true --chain.chainId 1 --fork.blockNumber 16968287 --wallet.accounts <agent_private_key>,1000000000000000000 --server.host 0.0.0.0`
+    ```bash
+    ganache --fork.network mainnet --wallet.deterministic=true --chain.chainId 1 --fork.blockNumber 16968287 --wallet.accounts <agent_private_key>,1000000000000000000 --server.host 0.0.0.0
+    ```
 7. In a different terminal window deploy a [Safe](https://safe.global/) setting your agent's address as owner:
     ```bash
     yarn install --cwd scripts/safe

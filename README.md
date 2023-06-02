@@ -67,7 +67,7 @@ Then run the following commands:
     yarn install --cwd scripts/safe
     node scripts/safe/create_safe.js
     ```
-8. Prepare a `.env` file containing the following variables:
+8. Prepare an `.env` file containing the following variables:
     ```text
     OPENAI_API_KEY=<your_api_key>
     TALLY_API_KEY=<your_api_key>

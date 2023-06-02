@@ -80,7 +80,7 @@ Then run the following commands:
     ```
 9. Execute `autonomy deploy build keys.json -ltm`
 10. Execute `autonomy deploy run --build-dir abci_build/`
-11. In a separate terminal: `docker logs abci0 -f`
+11. In a separate terminal, execute `docker logs abci0 -f`
 12. Test the service endpoints (in another terminal):
       ```bash
       # Get the current active proposals

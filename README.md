@@ -78,8 +78,8 @@ Then run the following commands:
     DEFAULT_READ_STREAM_ID=<your_stream_id>
     DEFAULT_WRITE_STREAM_ID=<your_stream_id>
     ```
-9. `autonomy deploy build keys.json -ltm`
-10. `autonomy deploy run --build-dir abci_build/`
+9. Execute `autonomy deploy build keys.json -ltm`
+10. Execute `autonomy deploy run --build-dir abci_build/`
 11. In a separate terminal: `docker logs abci0 -f`
 12. Test the service endpoints (in another terminal):
       ```bash

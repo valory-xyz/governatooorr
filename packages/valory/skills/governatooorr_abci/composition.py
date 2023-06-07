@@ -41,7 +41,7 @@ abci_app_transition_mapping: AbciAppTransitionMapping = {
     RegistrationAbci.FinishedRegistrationRound: CeramicReadAbci.StreamReadRound,
     CeramicReadAbci.FinishedReadingRound: ProposalCollectorAbciApp.SynchronizeDelegationsRound,
     ProposalCollectorAbciApp.FinishedWriteDelegationsRound: CeramicWriteAbci.RandomnessRound,
-    CeramicWriteAbci.FinishedVerificationRound: ProposalCollectorAbciApp.CollectActiveProposalsRound,
+    CeramicWriteAbci.FinishedVerificationRound: ProposalCollectorAbciApp.CollectActiveTallyProposalsRound,
     ProposalCollectorAbciApp.FinishedProposalRound: ProposalVoterAbciApp.EstablishVoteRound,
     ProposalVoterAbciApp.FinishedTransactionPreparationNoVoteRound: ResetAndPauseAbci.ResetAndPauseRound,
     ProposalVoterAbciApp.FinishedTransactionPreparationVoteRound: TransactionSubmissionAbciApp.RandomnessTransactionSubmissionRound,

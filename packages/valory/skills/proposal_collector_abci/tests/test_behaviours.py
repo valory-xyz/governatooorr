@@ -36,7 +36,7 @@ from packages.valory.skills.abstract_round_abci.test_tools.base import (
     FSMBehaviourBaseCase,
 )
 from packages.valory.skills.proposal_collector_abci.behaviours import (
-    CollectActiveProposalsBehaviour,
+    CollectActiveTallyProposalsBehaviour,
     ProposalCollectorBaseBehaviour,
     SynchronizeDelegationsBehaviour,
 )
@@ -198,7 +198,7 @@ class TestSynchronizeDelegationsBehaviour(BaseProposalCollectorTest):
     """Tests SynchronizeDelegationsBehaviour"""
 
     behaviour_class = SynchronizeDelegationsBehaviour
-    next_behaviour_class = CollectActiveProposalsBehaviour
+    next_behaviour_class = CollectActiveTallyProposalsBehaviour
 
     @pytest.mark.parametrize(
         "test_case, kwargs",
@@ -220,10 +220,10 @@ class TestSynchronizeDelegationsBehaviour(BaseProposalCollectorTest):
         self.complete(test_case.event)
 
 
-class TestCollectActiveProposalsBehaviour(BaseProposalCollectorTest):
-    """Tests CollectActiveProposalsBehaviour"""
+class TestCollectActiveTallyProposalsBehaviour(BaseProposalCollectorTest):
+    """Tests CollectActiveTallyProposalsBehaviour"""
 
-    behaviour_class = CollectActiveProposalsBehaviour
+    behaviour_class = CollectActiveTallyProposalsBehaviour
     next_behaviour_class = make_degenerate_behaviour(  # type: ignore
         FinishedProposalRound
     )
@@ -306,10 +306,10 @@ class TestCollectActiveProposalsBehaviour(BaseProposalCollectorTest):
 
 
 class TestCollectActiveProposalsErrorBehaviour(BaseProposalCollectorTest):
-    """Tests CollectActiveProposalsBehaviour"""
+    """Tests CollectActiveTallyProposalsBehaviour"""
 
-    behaviour_class = CollectActiveProposalsBehaviour
-    next_behaviour_class = CollectActiveProposalsBehaviour
+    behaviour_class = CollectActiveTallyProposalsBehaviour
+    next_behaviour_class = CollectActiveTallyProposalsBehaviour
 
     @pytest.mark.parametrize(
         "test_case, kwargs",

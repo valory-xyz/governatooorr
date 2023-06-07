@@ -17,22 +17,47 @@
 #
 # ------------------------------------------------------------------------------
 
-"""This module contains the transaction payloads of the ProposalCollectorAbciApp."""
-
-from dataclasses import dataclass
-
-from packages.valory.skills.abstract_round_abci.base import BaseTxPayload
+"""This package contains the queries for Snapshot."""
 
 
-@dataclass(frozen=True)
-class SynchronizeDelegationsPayload(BaseTxPayload):
-    """Represent a transaction payload for the SynchronizeDelegations."""
-
-    new_delegations: str
-
-
-@dataclass(frozen=True)
-class CollectActiveTallyProposalsPayload(BaseTxPayload):
-    """Represent a transaction payload for the CollectActiveProposals."""
-
-    proposals: str
+snapshot_proposal_query = """
+query Proposals(
+  $first: Int
+  $skip: Int
+) {
+  proposals (
+    first: $first,
+    skip: $skip,
+    where: {
+      state: "active"
+    },
+    orderBy: "created",
+    orderDirection: desc
+  ) {
+    id
+    network
+    title
+    body
+    choices
+    start
+    end
+    snapshot
+    state
+    scores
+    scores_by_strategy
+    scores_total
+    scores_updated
+    author
+    space {
+      id
+      name
+      symbol
+    }
+    strategies {
+      name
+      network
+      params
+    }
+  }
+}
+"""

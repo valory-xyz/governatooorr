@@ -31,7 +31,7 @@ start_states:
 states:
 - CheckLateTxHashesRound
 - CheckTransactionHistoryRound
-- CollectActiveProposalsRound
+- CollectActiveTallyProposalsRound
 - CollectSignatureRound
 - EstablishVoteRound
 - FinalizationRound
@@ -65,11 +65,11 @@ transition_func:
     (CheckTransactionHistoryRound, NEGATIVE): SelectKeeperTransactionSubmissionBRound
     (CheckTransactionHistoryRound, NONE): PrepareVoteTransactionRound
     (CheckTransactionHistoryRound, NO_MAJORITY): CheckTransactionHistoryRound
-    (CollectActiveProposalsRound, API_ERROR): CollectActiveProposalsRound
-    (CollectActiveProposalsRound, BLOCK_RETRIEVAL_ERROR): CollectActiveProposalsRound
-    (CollectActiveProposalsRound, DONE): EstablishVoteRound
-    (CollectActiveProposalsRound, NO_MAJORITY): CollectActiveProposalsRound
-    (CollectActiveProposalsRound, ROUND_TIMEOUT): CollectActiveProposalsRound
+    (CollectActiveTallyProposalsRound, API_ERROR): CollectActiveTallyProposalsRound
+    (CollectActiveTallyProposalsRound, BLOCK_RETRIEVAL_ERROR): CollectActiveTallyProposalsRound
+    (CollectActiveTallyProposalsRound, DONE): EstablishVoteRound
+    (CollectActiveTallyProposalsRound, NO_MAJORITY): CollectActiveTallyProposalsRound
+    (CollectActiveTallyProposalsRound, ROUND_TIMEOUT): CollectActiveTallyProposalsRound
     (CollectSignatureRound, DONE): FinalizationRound
     (CollectSignatureRound, NO_MAJORITY): ResetRound
     (CollectSignatureRound, ROUND_TIMEOUT): CollectSignatureRound
@@ -127,7 +127,7 @@ transition_func:
     (StreamWriteRound, DID_NOT_SEND): RandomnessRound
     (StreamWriteRound, DONE): VerificationRound
     (StreamWriteRound, ROUND_TIMEOUT): RandomnessRound
-    (SynchronizeDelegationsRound, DONE): CollectActiveProposalsRound
+    (SynchronizeDelegationsRound, DONE): CollectActiveTallyProposalsRound
     (SynchronizeDelegationsRound, NO_MAJORITY): SynchronizeDelegationsRound
     (SynchronizeDelegationsRound, ROUND_TIMEOUT): SynchronizeDelegationsRound
     (SynchronizeDelegationsRound, WRITE_DELEGATIONS): RandomnessRound
@@ -141,6 +141,6 @@ transition_func:
     (ValidateTransactionRound, NO_MAJORITY): ValidateTransactionRound
     (ValidateTransactionRound, VALIDATE_TIMEOUT): SelectKeeperTransactionSubmissionBRound
     (VerificationRound, API_ERROR): RandomnessRound
-    (VerificationRound, DONE): CollectActiveProposalsRound
+    (VerificationRound, DONE): CollectActiveTallyProposalsRound
     (VerificationRound, NO_MAJORITY): RandomnessRound
     (VerificationRound, ROUND_TIMEOUT): RandomnessRound

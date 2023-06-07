@@ -11,20 +11,20 @@ final_states:
 - FinishedWriteDelegationsRound
 label: ProposalCollectorAbciApp
 start_states:
-- CollectActiveProposalsRound
+- CollectActiveTallyProposalsRound
 - SynchronizeDelegationsRound
 states:
-- CollectActiveProposalsRound
+- CollectActiveTallyProposalsRound
 - FinishedProposalRound
 - FinishedWriteDelegationsRound
 - SynchronizeDelegationsRound
 transition_func:
-    (CollectActiveProposalsRound, API_ERROR): CollectActiveProposalsRound
-    (CollectActiveProposalsRound, BLOCK_RETRIEVAL_ERROR): CollectActiveProposalsRound
-    (CollectActiveProposalsRound, DONE): FinishedProposalRound
-    (CollectActiveProposalsRound, NO_MAJORITY): CollectActiveProposalsRound
-    (CollectActiveProposalsRound, ROUND_TIMEOUT): CollectActiveProposalsRound
-    (SynchronizeDelegationsRound, DONE): CollectActiveProposalsRound
+    (CollectActiveTallyProposalsRound, API_ERROR): CollectActiveTallyProposalsRound
+    (CollectActiveTallyProposalsRound, BLOCK_RETRIEVAL_ERROR): CollectActiveTallyProposalsRound
+    (CollectActiveTallyProposalsRound, DONE): FinishedProposalRound
+    (CollectActiveTallyProposalsRound, NO_MAJORITY): CollectActiveTallyProposalsRound
+    (CollectActiveTallyProposalsRound, ROUND_TIMEOUT): CollectActiveTallyProposalsRound
+    (SynchronizeDelegationsRound, DONE): CollectActiveTallyProposalsRound
     (SynchronizeDelegationsRound, NO_MAJORITY): SynchronizeDelegationsRound
     (SynchronizeDelegationsRound, ROUND_TIMEOUT): SynchronizeDelegationsRound
     (SynchronizeDelegationsRound, WRITE_DELEGATIONS): FinishedWriteDelegationsRound

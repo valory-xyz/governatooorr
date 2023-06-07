@@ -1,14 +1,14 @@
 {
     "dev": {
-        "skill/valory/proposal_collector_abci/0.1.0": "bafybeiakuw7d6m7beek25vzpcwrj3u7hxi7dkw5egfoudj446rlpflbwaa",
+        "skill/valory/proposal_collector_abci/0.1.0": "bafybeic4cuwjqqdsvauhl7jaatq3v63gdra3x6743ejehoaz2xzzn5bbsi",
         "connection/valory/openai/0.1.0": "bafybeietimatztynqebwicxabplia6fctov4vswzbdrin5y32brbjewo2y",
         "contract/valory/delegate/0.1.0": "bafybeiburzphuq5b3bsmhe4s3mvxuej4uhnexlsuxwgmujqaiisut37kpm",
         "protocol/valory/llm/1.0.0": "bafybeicpd5hxe5rlgp75kaqotzpy3jkdyl5pbdcutwqdzlqfknnmkgadsy",
-        "skill/valory/proposal_voter_abci/0.1.0": "bafybeiggn7jibxuhx77mdvjsienwwpg3ncemuk4d5f5fcw7pcdfvpnq4hi",
-        "skill/valory/governatooorr_abci/0.1.0": "bafybeiclr4ocy6n3jqcjc7bfuldfmj25ou4wail2kwhyads2pi5ulamfkq",
-        "agent/valory/governatooorr/0.1.0": "bafybeifxhjxte6urgkvffzq4vo4xgw6thj42hb2ctl3zuqg4aps2sunmve",
-        "service/valory/governatooorr/0.1.0": "bafybeierqlz6vrpcsf4qome22vxxxv4vqw2quktyupcfrxtq4rq5sxiajm",
-        "service/valory/governatooorr_local/0.1.0": "bafybeieb4ujekive3nypnckqgbsewn56iwisfv7knzdxtxtsu7skyqbnku"
+        "skill/valory/proposal_voter_abci/0.1.0": "bafybeihyxmjvrjhmcb2xqu7stfvo2gr5bo5ojxopj7zjkk2fdrdoectnga",
+        "skill/valory/governatooorr_abci/0.1.0": "bafybeigxpxdoy6tzscvgej7oyp7iorslx423osdxtgkxvw5w4huyrkhcdm",
+        "agent/valory/governatooorr/0.1.0": "bafybeifzcuuget55zjzuhzuhqv57s7jyoctkaxhs4j7fni5bqfsr5vjdra",
+        "service/valory/governatooorr/0.1.0": "bafybeiecfi2ebt4f7itlxhd4rrp725lu72jkczahaicm2mms35yfdbche4",
+        "service/valory/governatooorr_local/0.1.0": "bafybeicaul3udcavbjimialvnnzuiixx4u42ykrvkrubtoijqdjgmabz3e"
     },
     "third_party": {
         "protocol/open_aea/signing/1.0.0": "bafybeibqlfmikg5hk4phzak6gqzhpkt6akckx7xppbp53mvwt6r73h7tk4",

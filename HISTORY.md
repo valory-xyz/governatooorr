@@ -1,11 +1,16 @@
 # Release History - `governatooorr`
 
+## 0.1.0alpha6 (2023-06-07)
+
+- Bumps to `open-autonony-0.10.5.post2` #35
+- Updates docs #34
+
 ## 0.1.0alpha5 (2023-05-31)
 
-- Bumps frameworks to `open-autonony-0.10.5.post1` and `open-aea-1.34`
+- Bumps frameworks to `open-autonony-0.10.5.post1` and `open-aea-1.34` #33
 - Bumps to `tomte@v0.2.12` and cleans up the repo #31
-- Implements LLM call reduction
-- Reads and writes delegations to and from Ceramic streams
+- Reads and writes delegations to and from Ceramic streams #30
+- Implements LLM call reduction #29
 
 ## 0.1.0alpha4 (2023-05-05)
 

@@ -6,10 +6,10 @@ This document outlines security procedures and general policies for the `governa
 
 The following table shows which versions of `governatooorr` are currently being supported with security updates.
 
-| Version          | Supported          |
-| ---------------- | ------------------ |
-| `0.1.0alpha5`    | :white_check_mark: |
-| `< 0.1.0alpha5`  | :x:                |
+| Version         | Supported          |
+|-----------------|--------------------|
+| `0.1.0alpha6`   | :white_check_mark: |
+| `< 0.1.0alpha6` | :x:                |
 
 ## Reporting a Vulnerability
 

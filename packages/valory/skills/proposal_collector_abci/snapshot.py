@@ -61,3 +61,21 @@ query Proposals(
   }
 }
 """
+
+
+snapshot_vp_query = """
+query Vp(
+  $voter: String!
+  $space: String!
+  $proposal: String!
+) {
+  vp (
+    voter: $voter
+    space: $space
+    proposal: $proposal
+  ) {
+    vp
+    vp_state
+  }
+}
+"""

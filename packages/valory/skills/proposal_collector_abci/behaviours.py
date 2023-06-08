@@ -35,10 +35,14 @@ from packages.valory.skills.proposal_collector_abci.payloads import (
     SynchronizeDelegationsPayload,
 )
 from packages.valory.skills.proposal_collector_abci.rounds import (
+    CollectActiveSnapshotProposalsRound,
     CollectActiveTallyProposalsRound,
     ProposalCollectorAbciApp,
     SynchronizeDelegationsRound,
     SynchronizedData,
+)
+from packages.valory.skills.proposal_collector_abci.snapshot import (
+    snapshot_proposal_query,
 )
 from packages.valory.skills.proposal_collector_abci.tally import (
     governor_query,
@@ -47,6 +51,7 @@ from packages.valory.skills.proposal_collector_abci.tally import (
 
 
 HTTP_OK = 200
+SNAPSHOT_REQUEST_STEP = 1000
 
 
 class ProposalCollectorBaseBehaviour(BaseBehaviour, ABC):
@@ -132,7 +137,6 @@ class CollectActiveTallyProposalsBehaviour(ProposalCollectorBaseBehaviour):
             payload = CollectActiveTallyProposalsPayload(
                 sender=sender, proposals=updated_proposals
             )
-            self.context.logger.info(f"updated_proposals = {updated_proposals}")
 
         with self.context.benchmark_tool.measure(self.behaviour_id).consensus():
             yield from self.send_a2a_transaction(payload)
@@ -339,15 +343,11 @@ class CollectActiveSnapshotProposalsBehaviour(ProposalCollectorBaseBehaviour):
 
         with self.context.benchmark_tool.measure(self.behaviour_id).local():
 
-            # Clear the new delegations # TODO: move this elsewhere
-            self.context.state.new_delegations = []
-
             updated_proposals = yield from self._get_updated_proposals()
             sender = self.context.agent_address
             payload = CollectActiveTallyProposalsPayload(
                 sender=sender, proposals=updated_proposals
             )
-            self.context.logger.info(f"updated_proposals = {updated_proposals}")
 
         with self.context.benchmark_tool.measure(self.behaviour_id).consensus():
             yield from self.send_a2a_transaction(payload)
@@ -356,185 +356,53 @@ class CollectActiveSnapshotProposalsBehaviour(ProposalCollectorBaseBehaviour):
         self.set_done()
 
     def _get_updated_proposals(self) -> Generator[None, None, str]:
-        """Get proposals mentions"""
-
-        headers = {
-            "Content-Type": "application/json",
-            "Accept": "application/json",
-            "Api-key": "{api_key}".format(api_key=self.params.tally_api_key),
-        }
-
-        # Get all the governors, sorted by number of active proposals
-        variables = {
-            "chainIds": "eip155:1",
-            "addresses": [],
-            "includeInactive": False,
-            "sort": {"field": "ACTIVE_PROPOSALS", "order": "DESC"},
-            "pagination": {"limit": 200, "offset": 0},
-        }
-
-        self.context.logger.info(
-            f"Retrieving governors from Tally API [{self.params.tally_api_endpoint}]. Request variables: {variables}"
-        )
-
-        # Make the request
-        response = yield from self.get_http_response(
-            method="POST",
-            url=self.params.tally_api_endpoint,
-            headers=headers,
-            content=json.dumps(
-                {"query": governor_query, "variables": variables}
-            ).encode("utf-8"),
-        )
-
-        if response.status_code != HTTP_OK:
-            self.context.logger.error(
-                f"Could not retrieve data from Tally API. "
-                f"Received status code {response.status_code}."
-            )
-            return CollectActiveTallyProposalsRound.ERROR_PAYLOAD
-
-        response_json = json.loads(response.body)
-
-        if "errors" in response_json:
-            self.context.logger.error("Got errors while retrieving the data from Tally")
-            return CollectActiveTallyProposalsRound.ERROR_PAYLOAD
-
-        # Filter out governors with no active proposals
-        governors = response_json["data"]["governors"]
-
-        governors_with_active_proposals = list(
-            filter(lambda g: int(g["proposalStats"]["active"]) > 0, governors)
-        )
-        governor_ids = [g["id"].split(":")[-1] for g in governors_with_active_proposals]
-
-        self.context.logger.info(
-            f"Retrieved governors with active proposals: {governor_ids}"
-        )
+        """Get updated proposals"""
 
         active_proposals = []
-        for gid in governor_ids:
+        i = 0
 
-            # Get all the proposals for this governor
+        while True:
+
             variables = {
-                "chainId": "eip155:1",
-                "proposers": [],
-                "governors": gid,
-                "pagination": {"limit": 200, "offset": 0},
+                "first": SNAPSHOT_REQUEST_STEP,
+                "skip": SNAPSHOT_REQUEST_STEP * i,
             }
-
-            self.context.logger.info(
-                f"Retrieving proposals from Tally API [{self.params.tally_api_endpoint}]. Request variables: {variables}"
-            )
 
             # Make the request
             response = yield from self.get_http_response(
                 method="POST",
-                url=self.params.tally_api_endpoint,
-                headers=headers,
+                url=self.params.snapshot_api_endpoint,
                 content=json.dumps(
-                    {"query": proposal_query, "variables": variables}
+                    {"query": snapshot_proposal_query, "variables": variables}
                 ).encode("utf-8"),
             )
 
             if response.status_code != HTTP_OK:
                 self.context.logger.error(
-                    f"Could not retrieve data from Tally API. "
+                    f"Could not retrieve data from Snapshot API. "
                     f"Received status code {response.status_code}."
                 )
-                return CollectActiveTallyProposalsRound.ERROR_PAYLOAD
+                return CollectActiveSnapshotProposalsRound.ERROR_PAYLOAD
 
             response_json = json.loads(response.body)
 
             if "errors" in response_json:
                 self.context.logger.error(
-                    "Got errors while retrieving the data from Tally"
+                    "Got errors while retrieving the data from Snapshot"
                 )
                 return CollectActiveTallyProposalsRound.ERROR_PAYLOAD
 
-            # Filter out non-active proposals and those which use non-erc20 tokens
-            filtered_proposals = list(
-                filter(
-                    lambda p: p["statusChanges"][-1]["type"] == "ACTIVE"
-                    and len(p["governor"]["tokens"]) == 1
-                    and "erc20" in p["governor"]["tokens"][0]["id"],
-                    response_json["data"]["proposals"],
-                )
-            )
+            new_proposals = response.json()["data"]["proposals"]
 
-            p_ids = [p["id"] for p in filtered_proposals]
+            if not new_proposals:
+                break
 
-            self.context.logger.info(
-                f"Retrieved active proposals (erc20 only) for governor {gid}: {p_ids}"
-            )
-
-            active_proposals.extend(filtered_proposals)
-
-        # Remove proposals for which the vote end block is in the past
-        current_block = yield from self.get_current_block()
-        if current_block is None:
-            return CollectActiveTallyProposalsRound.BLOCK_RETRIEVAL_ERROR
-
-        active_proposals = filter(
-            lambda ap: ap["end"]["number"] > current_block, active_proposals
-        )
-
-        # Update the current proposals
-        proposals = self.synchronized_data.proposals
-
-        # Set all the current proposals "votable" field to False
-        for proposal in proposals.values():
-            proposal["votable"] = False
-
-        proposals_to_refresh = set()
-
-        for active_proposal in active_proposals:
-            if active_proposal["id"] not in proposals:  # This is a new proposal
-                proposals[active_proposal["id"]] = {
-                    **active_proposal,
-                    "votable": True,
-                    "vote_intention": None,
-                    "vote_choice": None,
-                    "vote": None,  # We have not voted for this one yet
-                    "remaining_blocks": active_proposal["end"]["number"]
-                    - current_block,
-                }
-                proposals_to_refresh.add(active_proposal["id"])
-            else:
-                # The proposal is still votable
-                proposals[active_proposal["id"]]["votable"] = True
-                proposals[active_proposal["id"]]["remaining_blocks"] = (
-                    proposals[active_proposal["id"]]["end"]["number"] - current_block
-                )
-
-        # Get all the governors from the current delegations
-        delegation_governors = [
-            d["governor_address"] for d in self.synchronized_data.delegations
-        ]
-
-        # Get the proposals where we can vote:
-        # - Votable
-        # - Not voted before
-        # - Governor in the delegation list
-        votable_proposals = (
-            proposal
-            for proposal in proposals.values()
-            if proposal["votable"]
-            and not proposal["vote"]
-            and proposal["governor"]["id"].split(":")[-1] in delegation_governors
-        )
-
-        # Sort votable_proposals by vote end block number, in ascending order
-        votable_proposal_ids = [
-            p["id"]
-            for p in sorted(votable_proposals, key=lambda p: p["remaining_blocks"])
-        ]
+            active_proposals.extend(new_proposals)
+            i += 1
 
         return json.dumps(
             {
-                "proposals": proposals,
-                "votable_proposal_ids": votable_proposal_ids,
-                "proposals_to_refresh": list(proposals_to_refresh),
+                "snapshot_proposals": active_proposals,
             },
             sort_keys=True,
         )

@@ -20,7 +20,7 @@
 """This module contains the shared state for the abci skill of ProposalVoterAbciApp."""
 
 from dataclasses import dataclass
-from typing import Any, Optional
+from typing import Any, Optional, Union
 
 from aea.skills.base import SkillContext
 
@@ -40,7 +40,8 @@ class PendingVote:
     """Represents a proposal vote that is pending to be submitted and verified."""
 
     proposal_id: str
-    vote_choice: str
+    vote_choice: Union[str, int]
+    snapshot: bool  # onchain or snapshot
     # a pending vote is not votable anymore
     votable = False
 
@@ -69,6 +70,7 @@ class Params(BaseParams):
         self.voting_block_threshold = self._ensure(
             "voting_block_threshold", kwargs, int
         )
+        self.snapshot_api_endpoint = kwargs.get("snapshot_api_endpoint")
         super().__init__(*args, **kwargs)
 
 

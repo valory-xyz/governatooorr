@@ -36,3 +36,32 @@ class PrepareVoteTransactionPayload(BaseTxPayload):
     """Represent a transaction payload for the PrepareVoteTransactionRound."""
 
     content: str
+
+
+@dataclass(frozen=True)
+class RetrieveSignaturePayload(BaseTxPayload):
+    """Represent a transaction payload for the RetrieveSignatureRound."""
+
+    content: str
+
+
+@dataclass(frozen=True)
+class RandomnessPayload(BaseTxPayload):
+    """Represent a transaction payload of type 'randomness'."""
+
+    round_id: int
+    randomness: str
+
+
+@dataclass(frozen=True)
+class SelectKeeperPayload(BaseTxPayload):
+    """Represent a transaction payload of type 'select_keeper'."""
+
+    keeper: str
+
+
+@dataclass(frozen=True)
+class SnapshotAPISendPayload(BaseTxPayload):
+    """Represent a transaction payload for the SnapshotAPISendRound."""
+
+    content: str

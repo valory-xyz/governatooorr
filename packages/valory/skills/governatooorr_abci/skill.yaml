@@ -128,6 +128,7 @@ models:
       sleep_time: 1
       tally_api_endpoint: https://api.tally.xyz/query
       tally_api_key: <tally_api_key>
+      snapshot_api_endpoint: https://hub.snapshot.org/graphql
       tendermint_check_sleep_delay: 3
       tendermint_com_url: http://localhost:8080
       tendermint_max_retries: 5

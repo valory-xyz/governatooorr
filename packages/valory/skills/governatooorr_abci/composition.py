@@ -45,7 +45,7 @@ abci_app_transition_mapping: AbciAppTransitionMapping = {
     ProposalCollectorAbciApp.FinishedProposalRound: ProposalVoterAbciApp.EstablishVoteRound,
     ProposalVoterAbciApp.FinishedTransactionPreparationNoVoteRound: ResetAndPauseAbci.ResetAndPauseRound,
     ProposalVoterAbciApp.FinishedTransactionPreparationVoteRound: TransactionSubmissionAbciApp.RandomnessTransactionSubmissionRound,
-    TransactionSubmissionAbciApp.FinishedTransactionSubmissionRound: ProposalVoterAbciApp.PrepareVoteTransactionRound,
+    TransactionSubmissionAbciApp.FinishedTransactionSubmissionRound: ProposalVoterAbciApp.RetrieveSignatureRound,
     TransactionSubmissionAbciApp.FailedRound: ProposalVoterAbciApp.PrepareVoteTransactionRound,
     ResetAndPauseAbci.FinishedResetAndPauseRound: ProposalCollectorAbciApp.SynchronizeDelegationsRound,
     ResetAndPauseAbci.FinishedResetAndPauseErrorRound: RegistrationAbci.RegistrationRound,

@@ -21,7 +21,9 @@
 
 import json
 from abc import ABC
-from typing import Dict, Generator, Optional, Set, Type, cast
+from typing import Dict, Generator, Optional, Set, Tuple, Type, cast
+
+from eth_account.messages import encode_structured_data
 
 from packages.valory.connections.openai.connection import (
     PUBLIC_ID as LLM_CONNECTION_PUBLIC_ID,
@@ -35,18 +37,37 @@ from packages.valory.skills.abstract_round_abci.behaviours import (
     AbstractRoundBehaviour,
     BaseBehaviour,
 )
+from packages.valory.skills.abstract_round_abci.common import (
+    RandomnessBehaviour,
+    SelectKeeperBehaviour,
+)
 from packages.valory.skills.abstract_round_abci.models import Requests
+from packages.valory.skills.proposal_collector_abci.snapshot import snapshot_vp_query
 from packages.valory.skills.proposal_voter_abci.dialogues import (
     LlmDialogue,
     LlmDialogues,
 )
-from packages.valory.skills.proposal_voter_abci.models import Params, PendingVote
-from packages.valory.skills.proposal_voter_abci.rounds import (
+from packages.valory.skills.proposal_voter_abci.models import (
+    Params,
+    PendingVote,
+    SharedState,
+)
+from packages.valory.skills.proposal_voter_abci.payloads import (
     EstablishVotePayload,
-    EstablishVoteRound,
     PrepareVoteTransactionPayload,
+    RandomnessPayload,
+    RetrieveSignaturePayload,
+    SelectKeeperPayload,
+    SnapshotAPISendPayload,
+)
+from packages.valory.skills.proposal_voter_abci.rounds import (
+    EstablishVoteRound,
     PrepareVoteTransactionRound,
     ProposalVoterAbciApp,
+    RandomnessRound,
+    RetrieveSignatureRound,
+    SelectKeeperRound,
+    SnapshotAPISendRound,
     SynchronizedData,
 )
 from packages.valory.skills.transaction_settlement_abci.payload_tools import (
@@ -59,6 +80,8 @@ ETHER_VALUE = 0
 
 VOTING_OPTIONS = "For, Against, and Abstain"
 VOTES_TO_CODE = {"FOR": 0, "AGAINST": 1, "ABSTAIN": 2}
+
+HTTP_OK = 200
 
 
 class ProposalVoterBaseBehaviour(BaseBehaviour, ABC):
@@ -85,63 +108,20 @@ class EstablishVoteBehaviour(ProposalVoterBaseBehaviour):
 
         with self.context.benchmark_tool.measure(self.behaviour_id).local():
 
-            proposal_ids_to_refresh = self.synchronized_data.proposals_to_refresh
-            proposals = self.synchronized_data.proposals
-
-            # Update the proposals' vote intention
-            for proposal_id in proposal_ids_to_refresh:
-                if not proposals[proposal_id]["votable"]:
-                    self.context.logger.info(f"Proposal {proposal_id} is not votable")
-                    continue
-
-                self.context.logger.info(
-                    f"Getting vote intention for proposal {proposal_id}"
-                )
-
-                proposal_token = proposals[proposal_id]["governor"]["tokens"][0][
-                    "id"
-                ].split(":")[-1]
-
-                # Get the service aggregated vote intention
-                vote_intention = (
-                    self._get_service_vote_intention(  # either GOOD, EVIL or None
-                        proposal_token
-                    )
-                )
-                proposals[proposal_id]["vote_intention"] = vote_intention
-
-                self.context.logger.info(f"Vote intention: {vote_intention}")
-
-                # Do not call the LLM until we have delegations for this proposal
-                if not vote_intention:
-                    continue
-
-                # LLM call
-                prompt_template = "Here is a voting proposal for a protocol: `{proposal}`. How should I vote on the voting proposal if my intent was to {voting_intention_snippet} and the voting options are {voting_options}? Please answer with only the voting option."
-                voting_intention_snippet = (
-                    "cause chaos to the protocol"
-                    if vote_intention == "evil"
-                    else "contribute positively to the protocol"
-                )
-                prompt_values = {
-                    "proposal": proposals[proposal_id]["title"]
-                    + "\n"
-                    + proposals[proposal_id]["description"],
-                    "voting_intention_snippet": voting_intention_snippet,
-                    "voting_options": VOTING_OPTIONS,
-                }
-
-                self.context.logger.info(
-                    f"Sending LLM request...\n{prompt_template.format(**prompt_values)}"
-                )
-                vote = yield from self._get_vote(prompt_template, prompt_values)
-                self.context.logger.info(f"Vote: {vote}")
-
-                proposals[proposal_id]["vote_choice"] = vote
-
+            proposals = yield from self._refresh_proposal_vote()
+            votable_snapshot_proposals = (
+                yield from self._get_votable_snapshot_proposals()
+            )
             sender = self.context.agent_address
             payload = EstablishVotePayload(
-                sender=sender, proposals=json.dumps(proposals, sort_keys=True)
+                sender=sender,
+                proposals=json.dumps(
+                    {
+                        "proposals": proposals,
+                        "votable_snapshot_proposals": votable_snapshot_proposals,
+                    },
+                    sort_keys=True,
+                ),
             )
 
         with self.context.benchmark_tool.measure(self.behaviour_id).consensus():
@@ -149,6 +129,69 @@ class EstablishVoteBehaviour(ProposalVoterBaseBehaviour):
             yield from self.wait_until_round_end()
 
         self.set_done()
+
+    def _refresh_proposal_vote(self) -> Generator[None, None, dict]:
+        """Generate proposal votes"""
+
+        proposal_ids_to_refresh = self.synchronized_data.proposals_to_refresh
+        proposals = self.synchronized_data.proposals
+
+        # Update the proposals' vote intention
+        for proposal_id in proposal_ids_to_refresh:
+            if not proposals[proposal_id]["votable"]:
+                self.context.logger.info(f"Proposal {proposal_id} is not votable")
+                continue
+
+            self.context.logger.info(
+                f"Getting vote intention for proposal {proposal_id}"
+            )
+
+            proposal_token = proposals[proposal_id]["governor"]["tokens"][0][
+                "id"
+            ].split(":")[-1]
+
+            # Get the service aggregated vote intention
+            vote_intention = (
+                self._get_service_vote_intention(  # either GOOD, EVIL or None
+                    proposal_token
+                )
+            )
+            proposals[proposal_id]["vote_intention"] = vote_intention
+
+            self.context.logger.info(f"Vote intention: {vote_intention}")
+
+            # Do not call the LLM until we have delegations for this proposal
+            if not vote_intention:
+                continue
+
+            # LLM call
+            prompt_template = "Here is a voting proposal for a protocol: `{proposal}`. How should I vote on the voting proposal if my intent was to {voting_intention_snippet} and the voting options are {voting_options}? Please answer with only the voting option."
+            voting_intention_snippet = (
+                "cause chaos to the protocol"
+                if vote_intention == "evil"
+                else "contribute positively to the protocol"
+            )
+            prompt_values = {
+                "proposal": proposals[proposal_id]["title"]
+                + "\n"
+                + proposals[proposal_id]["description"],
+                "voting_intention_snippet": voting_intention_snippet,
+                "voting_options": VOTING_OPTIONS,
+            }
+
+            self.context.logger.info(
+                f"Sending LLM request...\n{prompt_template.format(**prompt_values)}"
+            )
+            vote = yield from self._get_vote(prompt_template, prompt_values)
+            vote = vote.upper()
+            if vote not in VOTES_TO_CODE:
+                raise ValueError(f"Invalid vote: {vote}")
+
+            self.context.logger.info(f"Vote: {vote}")
+
+            proposals[proposal_id]["vote_choice"] = vote
+
+        return proposals
 
     def _get_vote(
         self, prompt_template: str, prompt_values: Dict[str, str]
@@ -169,13 +212,7 @@ class EstablishVoteBehaviour(ProposalVoterBaseBehaviour):
             request_llm_message, llm_dialogue
         )
         vote = llm_response_message.value
-
         vote = vote.strip()
-        vote = vote.upper()
-
-        if vote not in VOTES_TO_CODE:
-            raise ValueError(f"Invalid vote: {vote}")
-
         return vote
 
     def _do_request(
@@ -238,6 +275,87 @@ class EstablishVoteBehaviour(ProposalVoterBaseBehaviour):
         # Return the option with most votes
         return sorted_preferences[0][0]
 
+    def _has_snapshot_voting_power(self, proposal) -> Generator[None, None, bool]:
+        """Checks whether the safe has voting power on this proposal"""
+
+        variables = {
+            "voter": self.synchronized_data.safe_contract_address,
+            "space": proposal["space"]["name"],
+            "proposal": proposal["id"],
+        }
+
+        # Make the request
+        response = yield from self.get_http_response(
+            method="POST",
+            url=self.params.snapshot_api_endpoint,
+            content=json.dumps(
+                {"query": snapshot_vp_query, "variables": variables}
+            ).encode("utf-8"),
+        )
+
+        if response.status_code != HTTP_OK:
+            self.context.logger.error(
+                f"Could not retrieve voting power from Snapshot API. "
+                f"Received status code {response.status_code}."
+            )
+            return False  # we skip this proposal for now
+
+        response_json = json.loads(response.body)
+
+        if "errors" in response_json:
+            self.context.logger.error(
+                "Got errors while retrieving the data from Snapshot"
+            )
+            return False  # we skip this proposal for now
+
+        voting_power = response_json["data"]["vp"]["vp"]
+        has_voting_power = voting_power > 0
+        self.context.logger.info(
+            f"Proposal {proposal['id']} has voting power: {voting_power}"
+        )
+        return has_voting_power
+
+    def _get_votable_snapshot_proposals(self) -> Generator[None, None, list]:
+        """Get votable snapshot proposals"""
+        snapshot_proposals = self.synchronized_data.snapshot_proposals
+        expiring_snapshot_proposals = [
+            p
+            for p in snapshot_proposals
+            if p["remaining_blocks"] <= self.params.voting_block_threshold
+        ]
+
+        # Check whether we have voting power for each expiring proposal
+        votable_snapshot_proposals = []
+        for proposal in expiring_snapshot_proposals:
+            can_vote = yield from self._has_snapshot_voting_power(proposal)
+            if can_vote:
+                votable_snapshot_proposals.append(proposal)
+
+        # Sort proposals from the most urgent to the least one
+        votable_snapshot_proposals = list(
+            sorted(votable_snapshot_proposals, key=lambda ap: ap["remaining_blocks"])
+        )
+
+        # LLM calls
+        for proposal in votable_snapshot_proposals:
+            prompt_template = "Here is a voting proposal for a protocol: `{proposal}`. How should I vote on the voting proposal if my intent was to contribute positively to the protocol and the voting options are {voting_options}? Please answer with only the voting option."
+
+            prompt_values = {
+                "proposal": proposal["title"] + "\n" + proposal["body"],
+                "voting_options": ", ".join(proposal["choices"]),
+            }
+
+            vote = yield from self._get_vote(prompt_template, prompt_values)
+            if vote not in proposal["choices"]:
+                raise ValueError(f"Invalid vote: {vote}")
+            self.context.logger.info(f"Vote: {vote}")
+
+            proposal["choice"] = (
+                proposal["choices"].index(vote) + 1
+            )  # choices are 1-based indices
+
+        return votable_snapshot_proposals
+
 
 class PrepareVoteTransactionBehaviour(ProposalVoterBaseBehaviour):
     """PrepareVoteTransactionBehaviour"""
@@ -248,6 +366,7 @@ class PrepareVoteTransactionBehaviour(ProposalVoterBaseBehaviour):
         """Get the votable proposals' ids and the proposals."""
         votable_proposal_ids = self.synchronized_data.votable_proposal_ids
         proposals = self.synchronized_data.proposals
+        votable_snapshot_proposals = self.synchronized_data.votable_snapshot_proposals
 
         self.context.logger.info(f"Just voted? {self.synchronized_data.just_voted}")
 
@@ -268,6 +387,16 @@ class PrepareVoteTransactionBehaviour(ProposalVoterBaseBehaviour):
                 )
                 votable_proposal_ids.remove(submitted_vote_id)
 
+            # remove the submitted vote from the snapshot proposals, if it is present there
+            proposal_id_to_index = {
+                p["id"]: index for index, p in enumerate(votable_snapshot_proposals)
+            }
+            if submitted_vote_id in proposal_id_to_index:
+                self.context.logger.info(
+                    f"Removing proposal {submitted_vote_id} from votable proposals"
+                )
+                votable_snapshot_proposals.pop(proposal_id_to_index[submitted_vote_id])
+
         # Filter the votable proposals, keeping only those towards the end of their voting period
         votable_proposal_ids = list(
             filter(
@@ -277,20 +406,30 @@ class PrepareVoteTransactionBehaviour(ProposalVoterBaseBehaviour):
             )
         )
 
-        return votable_proposal_ids, proposals
+        return votable_proposal_ids, proposals, votable_snapshot_proposals
 
     def async_act(self) -> Generator:
         """Do the act, supporting asynchronous execution."""
 
         with self.context.benchmark_tool.measure(self.behaviour_id).local():
-            votable_proposal_ids, proposals = self._get_proposal_info()
+            (
+                votable_proposal_ids,
+                proposals,
+                votable_snapshot_proposals,
+            ) = self._get_proposal_info()
 
             self.context.logger.info(f"Votable proposal ids: {votable_proposal_ids}")
 
-            if not votable_proposal_ids:
+            if not votable_proposal_ids and not votable_snapshot_proposals:
                 tx_hash = PrepareVoteTransactionRound.NO_VOTE_PAYLOAD
 
-            else:
+            payload_content = {
+                "proposals": proposals,
+                "votable_proposal_ids": votable_proposal_ids,
+                "votable_snapshot_proposals": votable_snapshot_proposals,
+            }
+
+            if votable_proposal_ids:
                 # we get the first one, because the votable proposal ids are sorted by their remaining blocks, ascending
                 selected_proposal_id = votable_proposal_ids[0]
                 selected_proposal = proposals[selected_proposal_id]
@@ -298,7 +437,9 @@ class PrepareVoteTransactionBehaviour(ProposalVoterBaseBehaviour):
                 # Pending votes are stored in the shared state and only updated in the proposals list
                 # when the transaction has been verified, and therefore we know that it is a submitted vote.
                 self.context.state.pending_vote = PendingVote(
-                    selected_proposal_id, vote_choice
+                    proposal_id=selected_proposal_id,
+                    vote_choice=vote_choice,
+                    snapshot=False,
                 )
 
                 governor_address = selected_proposal["governor"]["id"].split(":")[-1]
@@ -310,29 +451,51 @@ class PrepareVoteTransactionBehaviour(ProposalVoterBaseBehaviour):
                 )
 
                 self.context.logger.info(
-                    f"Voting for proposal {selected_proposal_id}: {vote_choice}"
+                    f"Voting for onchain proposal {selected_proposal_id}: {vote_choice}"
                 )
                 self.context.logger.info(f"tx_hash is {tx_hash}")
 
-            if not tx_hash:
-                tx_hash = PrepareVoteTransactionRound.ERROR_PAYLOAD
+                if not tx_hash:
+                    tx_hash = PrepareVoteTransactionRound.ERROR_PAYLOAD
 
-            payload_content = {
-                "tx_hash": tx_hash,
-                "proposals": proposals,
-                "votable_proposal_ids": votable_proposal_ids,
-            }
+                payload_content["tx_hash"] = tx_hash
+                payload_content["snapshot_api_data"] = {}
+
+            # Only vote on Snapshot after we have finished with the onchain votes
+            if not votable_proposal_ids and votable_snapshot_proposals:
+                selected_proposal = votable_snapshot_proposals[0]
+
+                self.context.state.pending_vote = PendingVote(
+                    proposal_id=selected_proposal["id"],
+                    vote_choice=selected_proposal["choice"],
+                    snapshot=True,
+                )
+
+                tx_hash, snapshot_api_data = yield from self._get_snapshot_tx_hash(
+                    selected_proposal
+                )
+
+                self.context.logger.info(
+                    f"Voting for snapshot proposal {selected_proposal['id']}: {selected_proposal['choice']}"
+                )
+                self.context.logger.info(f"tx_hash is {tx_hash}")
+
+                if not tx_hash:
+                    tx_hash = PrepareVoteTransactionRound.ERROR_PAYLOAD
+
+                payload_content["tx_hash"] = tx_hash
+                payload_content["snapshot_api_data"] = snapshot_api_data
 
             payload = PrepareVoteTransactionPayload(
                 sender=self.context.agent_address,
                 content=json.dumps(payload_content, sort_keys=True),
             )
 
-        with self.context.benchmark_tool.measure(self.behaviour_id).consensus():
-            yield from self.send_a2a_transaction(payload)
-            yield from self.wait_until_round_end()
+            with self.context.benchmark_tool.measure(self.behaviour_id).consensus():
+                yield from self.send_a2a_transaction(payload)
+                yield from self.wait_until_round_end()
 
-        self.set_done()
+            self.set_done()
 
     def _get_safe_tx_hash(
         self,
@@ -392,6 +555,238 @@ class PrepareVoteTransactionBehaviour(ProposalVoterBaseBehaviour):
 
         return payload_string
 
+    def _get_snapshot_vote_data(self, proposal) -> dict:
+        """Get the data for the EIP-712 signature"""
+
+        now_timestamp = cast(
+            SharedState, self.context.state
+        ).round_sequence.last_round_transition_timestamp.timestamp()
+
+        message = {
+            "space": proposal["space"]["id"],
+            "proposal": proposal["id"],
+            "choice": proposal["choice"],
+            "reason": "",
+            "app": "Governatooorr",
+            "metadata": "{}",
+            "from": self.synchronized_data.safe_contract_address,
+            "timestamp": now_timestamp,
+        }
+
+        # Vote types
+        vote_types = [
+            {"name": "from", "type": "address"},
+            {"name": "space", "type": "string"},
+            {"name": "timestamp", "type": "uint64"},
+            {"name": "proposal", "type": "string"},  # TODO: this is bytes32 on js
+            {"name": "choice", "type": "uint32"},
+            {"name": "reason", "type": "string"},
+            {"name": "app", "type": "string"},
+            {"name": "metadata", "type": "string"},
+        ]
+
+        # Build the data structure for the EIP712 signature
+        data = {
+            "domain": {"name": "snapshot", "version": "0.1.4"},
+            "types": {
+                "EIP712Domain": [  # This object is required by "encode_structured_data"
+                    {"name": "name", "type": "string"},
+                    {"name": "version", "type": "string"},
+                    # { 'name': 'chainId', 'type': 'uint256' },
+                    # { 'name': 'verifyingContract', 'type': 'address' },
+                ],
+                "Vote": vote_types,
+            },
+            "primaryType": "Vote",  # Since we now have 2 type objects, we need to specify the primary one
+            "message": message,
+        }
+
+        return data
+
+    def _get_snapshot_tx_hash(
+        self, proposal
+    ) -> Generator[None, None, Tuple[Optional[str], dict]]:
+        """Get the safe hash for the EIP-712 signature"""
+
+        snapshot_api_data = self._get_snapshot_vote_data(proposal)
+        encoded_proposal_data = encode_structured_data(snapshot_api_data)
+
+        # Get the raw transaction from the SignMessageLib contract
+        contract_api_msg = yield from self.get_contract_api_response(
+            performative=ContractApiMessage.Performative.GET_STATE,  # type: ignore
+            contract_address=signmessagelib_address,
+            contract_id=str(SignMessageLibContract.contract_id),
+            contract_callable="sign_message",
+            data=encoded_proposal_data,
+        )
+        if (
+            contract_api_msg.performative != ContractApiMessage.Performative.STATE
+        ):  # pragma: nocover
+            self.context.logger.warning(
+                f"sign_message unsuccessful!: {contract_api_msg}"
+            )
+            return None
+        data = cast(bytes, contract_api_msg.state.body["data"])
+
+        # Get the safe transaction hash
+        ether_value = ETHER_VALUE
+        safe_tx_gas = SAFE_TX_GAS
+
+        contract_api_msg = yield from self.get_contract_api_response(
+            performative=ContractApiMessage.Performative.GET_STATE,  # type: ignore
+            contract_address=self.synchronized_data.safe_contract_address,
+            contract_id=str(GnosisSafeContract.contract_id),
+            contract_callable="get_raw_safe_transaction_hash",
+            to_address=signmessagelib_address,
+            value=ether_value,
+            data=data,
+            safe_tx_gas=safe_tx_gas,
+        )
+        if (
+            contract_api_msg.performative != ContractApiMessage.Performative.STATE
+        ):  # pragma: nocover
+            self.context.logger.warning(
+                f"get_raw_safe_transaction_hash unsuccessful!: {contract_api_msg}"
+            )
+            return None
+
+        safe_tx_hash = cast(str, contract_api_msg.state.body["tx_hash"])
+        safe_tx_hash = safe_tx_hash[2:]
+        self.context.logger.info(f"Hash of the Safe transaction: {safe_tx_hash}")
+
+        # temp hack:
+        payload_string = hash_payload_to_hex(
+            safe_tx_hash, ether_value, safe_tx_gas, signmessagelib_address, data
+        )
+
+        return payload_string, snapshot_api_data
+
+
+class RetrieveSignatureBehaviour(ProposalVoterBaseBehaviour):
+    """RetrieveSignatureBehaviour"""
+
+    matching_round: Type[AbstractRound] = RetrieveSignatureRound
+
+    def async_act(self) -> Generator:
+        """Do the act, supporting asynchronous execution."""
+
+        with self.context.benchmark_tool.measure(self.behaviour_id).local():
+
+            snapshot_api_data_signature = yield from self._get_signature()
+
+            sender = self.context.agent_address
+            payload = EstablishVotePayload(
+                sender=sender,
+                proposals=json.dumps(
+                    {"snapshot_api_data_signature": snapshot_api_data_signature},
+                    sort_keys=True,
+                ),
+            )
+
+        with self.context.benchmark_tool.measure(self.behaviour_id).consensus():
+            yield from self.send_a2a_transaction(payload)
+            yield from self.wait_until_round_end()
+
+        self.set_done()
+
+    def _get_signature(self):
+        """Get signature from the chain"""
+
+        # TODO: get signature
+
+
+class RandomnessBehaviour(RandomnessBehaviour):
+    """Retrieve randomness."""
+
+    matching_round = RandomnessRound
+    payload_class = RandomnessPayload
+
+
+class SelectKeeperBehaviour(SelectKeeperBehaviour, ProposalVoterBaseBehaviour):
+    """Select the keeper agent."""
+
+    matching_round = SelectKeeperRound
+    payload_class = SelectKeeperPayload
+
+
+class SnapshotAPISendBehaviour(ProposalVoterBaseBehaviour):
+    """SnapshotAPISendBehaviour"""
+
+    matching_round: Type[AbstractRound] = SnapshotAPISendRound
+
+    def _i_am_not_sending(self) -> bool:
+        """Indicates if the current agent is the sender or not."""
+        return (
+            self.context.agent_address
+            != self.synchronized_data.most_voted_keeper_address
+        )
+
+    def async_act(self) -> Generator[None, None, None]:
+        """Do the action"""
+        if self._i_am_not_sending():
+            yield from self._not_sender_act()
+        else:
+            yield from self._sender_act()
+
+    def _not_sender_act(self) -> Generator:
+        """Do the non-sender action."""
+        with self.context.benchmark_tool.measure(self.behaviour_id).consensus():
+            self.context.logger.info(
+                f"Waiting for the keeper to do its keeping: {self.synchronized_data.most_voted_keeper_address}"
+            )
+            yield from self.wait_until_round_end()
+        self.set_done()
+
+    def _sender_act(self) -> Generator:
+        """Do the sender action"""
+
+        with self.context.benchmark_tool.measure(self.behaviour_id).local():
+            success = yield from self._call_snapshot_api()
+            if success:
+                payload_content = SnapshotAPISendRound.SUCCCESS_PAYLOAD
+            else:
+                payload_content = SnapshotAPISendRound.ERROR_PAYLOAD
+
+            sender = self.context.agent_address
+            payload = SnapshotAPISendPayload(sender=sender, content=payload_content)
+
+        with self.context.benchmark_tool.measure(self.behaviour_id).consensus():
+            yield from self.send_a2a_transaction(payload)
+            yield from self.wait_until_round_end()
+
+        self.set_done()
+
+    def _call_snapshot_api(self):
+        """Send the vote to Snapshot's API"""
+
+        envelope = {
+            "address": self.synchronized_data.safe_contract_address,
+            "data": self.synchronized_data.snapshot_api_data,
+            "sig": self.synchronized_data.snapshot_api_data_signature,
+        }
+
+        headers = {
+            "Accept": "application/json",
+            "Content-Type": "application/json",
+        }
+
+        # Make the request
+        response = yield from self.get_http_response(
+            method="POST",
+            url=self.params.snapshot_api_endpoint,
+            content=json.dumps(envelope).encode("utf-8"),
+            headers=headers,
+        )
+
+        if response.status_code != HTTP_OK:
+            self.context.logger.error(
+                f"Could not send data to Snapshot API. "
+                f"Received status code {response.status_code}."
+            )
+            return SnapshotAPISendRound.ERROR_PAYLOAD
+
+        return SnapshotAPISendRound.SUCCCESS_PAYLOAD
+
 
 class ProposalVoterRoundBehaviour(AbstractRoundBehaviour):
     """ProposalVoterRoundBehaviour"""
@@ -401,4 +796,8 @@ class ProposalVoterRoundBehaviour(AbstractRoundBehaviour):
     behaviours: Set[Type[BaseBehaviour]] = [
         EstablishVoteBehaviour,
         PrepareVoteTransactionBehaviour,
+        RetrieveSignatureBehaviour,
+        RandomnessBehaviour,
+        SelectKeeperBehaviour,
+        SnapshotAPISendBehaviour,
     ]

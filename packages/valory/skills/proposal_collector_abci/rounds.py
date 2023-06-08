@@ -36,6 +36,7 @@ from packages.valory.skills.abstract_round_abci.base import (
     get_name,
 )
 from packages.valory.skills.proposal_collector_abci.payloads import (
+    CollectActiveSnapshotProposalsPayload,
     CollectActiveTallyProposalsPayload,
     SynchronizeDelegationsPayload,
 )
@@ -69,8 +70,13 @@ class SynchronizedData(BaseSynchronizedData):
 
     @property
     def proposals(self) -> dict:
-        """Get the proposals."""
+        """Get the proposals from Tally."""
         return cast(dict, self.db.get("proposals", {}))
+
+    @property
+    def snapshot_proposals(self) -> list:
+        """Get the proposals from Snapshot."""
+        return cast(list, self.db.get("snapshot_proposals", []))
 
     @property
     def votable_proposal_ids(self) -> set:
@@ -196,7 +202,10 @@ class CollectActiveTallyProposalsRound(CollectSameUntilThresholdRound):
         """Process the end of the block."""
         if self.threshold_reached:
 
-            if self.most_voted_payload == CollectActiveTallyProposalsRound.ERROR_PAYLOAD:
+            if (
+                self.most_voted_payload
+                == CollectActiveTallyProposalsRound.ERROR_PAYLOAD
+            ):
                 return self.synchronized_data, Event.API_ERROR
 
             if (
@@ -233,6 +242,43 @@ class CollectActiveTallyProposalsRound(CollectSameUntilThresholdRound):
         return None
 
 
+class CollectActiveSnapshotProposalsRound(CollectSameUntilThresholdRound):
+    """CollectActiveSnapshotProposals"""
+
+    ERROR_PAYLOAD = "ERROR_PAYLOAD"
+    BLOCK_RETRIEVAL_ERROR = "BLOCK_RETRIEVAL_ERROR"
+
+    payload_class = CollectActiveSnapshotProposalsPayload
+    synchronized_data_class = SynchronizedData
+
+    def end_block(self) -> Optional[Tuple[BaseSynchronizedData, Event]]:
+        """Process the end of the block."""
+        if self.threshold_reached:
+
+            if (
+                self.most_voted_payload
+                == CollectActiveSnapshotProposalsRound.ERROR_PAYLOAD
+            ):
+                return self.synchronized_data, Event.API_ERROR
+
+            payload = json.loads(self.most_voted_payload)
+
+            synchronized_data = self.synchronized_data.update(
+                synchronized_data_class=SynchronizedData,
+                **{
+                    get_name(SynchronizedData.snapshot_proposals): payload[
+                        "snapshot_proposals"
+                    ],
+                },
+            )
+            return synchronized_data, Event.DONE
+        if not self.is_majority_possible(
+            self.collection, self.synchronized_data.nb_participants
+        ):
+            return self.synchronized_data, Event.NO_MAJORITY
+        return None
+
+
 class FinishedWriteDelegationsRound(DegenerateRound):
     """FinishedWriteDelegationsRound"""
 
@@ -257,11 +303,18 @@ class ProposalCollectorAbciApp(AbciApp[Event]):
             Event.ROUND_TIMEOUT: SynchronizeDelegationsRound,
         },
         CollectActiveTallyProposalsRound: {
-            Event.DONE: FinishedProposalRound,
+            Event.DONE: CollectActiveSnapshotProposalsRound,
             Event.API_ERROR: CollectActiveTallyProposalsRound,
             Event.BLOCK_RETRIEVAL_ERROR: CollectActiveTallyProposalsRound,
             Event.NO_MAJORITY: CollectActiveTallyProposalsRound,
             Event.ROUND_TIMEOUT: CollectActiveTallyProposalsRound,
+        },
+        CollectActiveSnapshotProposalsRound: {
+            Event.DONE: FinishedProposalRound,
+            Event.API_ERROR: CollectActiveSnapshotProposalsRound,
+            Event.BLOCK_RETRIEVAL_ERROR: CollectActiveSnapshotProposalsRound,
+            Event.NO_MAJORITY: CollectActiveSnapshotProposalsRound,
+            Event.ROUND_TIMEOUT: CollectActiveSnapshotProposalsRound,
         },
         FinishedWriteDelegationsRound: {},
         FinishedProposalRound: {},

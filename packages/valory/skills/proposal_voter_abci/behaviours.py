@@ -287,6 +287,11 @@ class EstablishVoteBehaviour(ProposalVoterBaseBehaviour):
             "proposal": proposal["id"],
         }
 
+        headers = {
+            "Content-Type": "application/json",
+            "Accept": "application/json",
+        }
+
         # Make the request
         response = yield from self.get_http_response(
             method="POST",
@@ -294,6 +299,7 @@ class EstablishVoteBehaviour(ProposalVoterBaseBehaviour):
             content=json.dumps(
                 {"query": snapshot_vp_query, "variables": variables}
             ).encode("utf-8"),
+            headers=headers
         )
 
         if response.status_code != HTTP_OK:
@@ -307,14 +313,14 @@ class EstablishVoteBehaviour(ProposalVoterBaseBehaviour):
 
         if "errors" in response_json:
             self.context.logger.error(
-                "Got errors while retrieving the data from Snapshot"
+                "Got errors while retrieving voting power from Snapshot"
             )
             return False  # we skip this proposal for now
 
         voting_power = response_json["data"]["vp"]["vp"]
         has_voting_power = voting_power > 0
         self.context.logger.info(
-            f"Proposal {proposal['id']} has voting power: {voting_power}"
+            f"Voting power for proposal {proposal['id']}: {voting_power}"
         )
         return has_voting_power
 
@@ -322,14 +328,15 @@ class EstablishVoteBehaviour(ProposalVoterBaseBehaviour):
         """Get votable snapshot proposals"""
         snapshot_proposals = self.synchronized_data.snapshot_proposals
 
+        now = cast(SharedState, self.context.state).round_sequence.last_round_transition_timestamp.timestamp()
+
         for p in snapshot_proposals:
-            p["remaining_blocks"] = p["end"] - current_block
-            print(p["remaining_blocks"])
+            p["remaining_seconds"] = p["end"] - now
 
         expiring_snapshot_proposals = [
             p
             for p in snapshot_proposals
-            if p["remaining_blocks"] <= self.params.voting_seconds_threshold
+            if p["remaining_seconds"] <= self.params.voting_seconds_threshold
         ]
 
         self.context.logger.info(
@@ -345,11 +352,12 @@ class EstablishVoteBehaviour(ProposalVoterBaseBehaviour):
 
         # Sort proposals from the most urgent to the least one
         votable_snapshot_proposals = list(
-            sorted(votable_snapshot_proposals, key=lambda ap: ap["remaining_blocks"])
+            sorted(votable_snapshot_proposals, key=lambda ap: ap["remaining_seconds"])
         )
 
         # LLM calls
-        for proposal in votable_snapshot_proposals:
+        failed_llm_votes = []
+        for index, proposal in enumerate(votable_snapshot_proposals):
             prompt_template = "Here is a voting proposal for a protocol: `{proposal}`. How should I vote on the voting proposal if my intent was to contribute positively to the protocol and the voting options are {voting_options}? Please answer with only the voting option."
 
             prompt_values = {
@@ -357,14 +365,23 @@ class EstablishVoteBehaviour(ProposalVoterBaseBehaviour):
                 "voting_options": ", ".join(proposal["choices"]),
             }
 
+            self.context.logger.info(f"Sending LLM request: prompt_template={prompt_template}, prompt_values={prompt_values}")
+
             vote = yield from self._get_vote(prompt_template, prompt_values)
             if vote not in proposal["choices"]:
-                raise ValueError(f"Invalid vote: {vote}")
+                self.context.logger.error(f"Invalid vote: '{vote}'. Votes are: {proposal['choices']}")
+                failed_llm_votes.append(index)
+                continue
+
             self.context.logger.info(f"Vote: {vote}")
 
             proposal["choice"] = (
                 proposal["choices"].index(vote) + 1
             )  # choices are 1-based indices
+
+        # Remove failed votes
+        for i in sorted(failed_llm_votes, reverse=True):
+            votable_snapshot_proposals.pop(i)
 
         return votable_snapshot_proposals
 

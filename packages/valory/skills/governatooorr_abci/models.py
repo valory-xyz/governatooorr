@@ -66,7 +66,7 @@ class RandomnessApi(ApiSpecs):
 
 
 MARGIN = 5
-
+MULTIPLIER = 10
 
 class SharedState(BaseSharedState):
     """Keep the current shared state of the skill."""
@@ -87,7 +87,7 @@ class SharedState(BaseSharedState):
         ] = self.context.params.round_timeout_seconds
         GovernatooorrAbciApp.event_to_timeout[
             ProposalVoterEvent.ROUND_TIMEOUT
-        ] = self.context.params.round_timeout_seconds
+        ] = self.context.params.round_timeout_seconds * MULTIPLIER
         GovernatooorrAbciApp.event_to_timeout[
             ResetPauseEvent.ROUND_TIMEOUT
         ] = self.context.params.round_timeout_seconds

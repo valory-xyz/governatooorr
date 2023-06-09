@@ -8,13 +8,13 @@ license: Apache-2.0
 aea_version: '>=1.0.0, <2.0.0'
 fingerprint:
   __init__.py: bafybeifps6e4vfc55iyb5jaab7dxem7y3a2wyflai32pyzf4z75m5ngym4
-  behaviours.py: bafybeieoyq3fyqo26ommca52acb4ziyvm5lq4farejq5jtjqsdbkrngwsm
+  behaviours.py: bafybeic4ksee5vjm7f6gqboziz5idultm6p4nxl6yzwezu44ylrrk2fa4q
   dialogues.py: bafybeihdakfnmps5o7n5rgepn3fl3lzttqsddhiny7mh7ddwhniutri6bq
   fsm_specification.yaml: bafybeiextpdhd2sa7unm5ry4xzed5sosoys7cwygpyyhwst6f75ti3mm6i
   handlers.py: bafybeihex227foehp7a7wfc6vh25ahk5g65b5itu325hph2xj33mgp6kue
-  models.py: bafybeig57yqidup4sbwkisuakjlfvckm2hzxqcb4obbeoggcj7umcyexmy
+  models.py: bafybeifu23ix432sylz5pwmlkapqhnjitvnlbjrbbdjjnl2bg52haz3uhu
   payloads.py: bafybeid5phynue7fcvsqwkg2wafm65vasc3m6aeyakqocnxrteiqghb3ia
-  rounds.py: bafybeihjq26px6fdkey3nlpsul5glck6cv2n6t6mb6ucnupwz6kyolzwhi
+  rounds.py: bafybeibs4agukdr4mcil6bccy3t3yd3netihypwjrcbrssogvnp5xkbzfi
   snapshot.py: bafybeiael35k6td5gdw5z552gjkt6r2itsoarmoxisdlj2psu2inpzubne
   tests/__init__.py: bafybeiggsebc3qlofutznro2j42mbsympgfnpj2ad6buqfwiqdzqov3d5u
   tests/test_behaviours.py: bafybeicxdivmtad2wnnt6twdtih2cuydzci34f6sjvpxypa24qpxq2u44e
@@ -33,7 +33,6 @@ contracts:
 protocols:
 - valory/contract_api:1.0.0:bafybeidv6wxpjyb2sdyibnmmum45et4zcla6tl63bnol6ztyoqvpl4spmy
 - valory/llm:1.0.0:bafybeicpd5hxe5rlgp75kaqotzpy3jkdyl5pbdcutwqdzlqfknnmkgadsy
-- valory/ledger_api:1.0.0:bafybeibo4bdtcrxi2suyzldwoetjar6pqfzm6vt5xal22ravkkcvdmtksi
 skills:
 - valory/abstract_round_abci:0.1.0:bafybeibdljcw2wchyderkonobpdpyb36yioagqcaoqldydw5bi6vvempma
 - valory/transaction_settlement_abci:0.1.0:bafybeiaeu47qmeeqipn6jnz4ymbxwqb66axvx3ddzocnni4zehbhiupc54
@@ -146,6 +145,7 @@ models:
       use_termination: false
       validate_timeout: 1205
       voting_block_threshold: 300
+      voting_seconds_threshold: 10000
     class_name: Params
   requests:
     args: {}

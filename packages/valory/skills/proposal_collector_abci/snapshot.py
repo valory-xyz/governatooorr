@@ -43,20 +43,10 @@ query Proposals(
     end
     snapshot
     state
-    scores
-    scores_by_strategy
-    scores_total
-    scores_updated
-    author
     space {
       id
       name
       symbol
-    }
-    strategies {
-      name
-      network
-      params
     }
   }
 }

@@ -8,7 +8,7 @@ license: Apache-2.0
 fingerprint:
   README.md: bafybeid6vqhnovhpsrjwws2wcb67i7fwr4dq54rpowqgrf3njt2anp5nc4
 fingerprint_ignore_patterns: []
-agent: valory/governatooorr:0.1.0:bafybeiayvqhsxgkt7epqzpiycsa3n26vzri5huhb42lck4oxac35rqwtpu
+agent: valory/governatooorr:0.1.0:bafybeiaxfgspsqpcofzf7aovlk426crelpkwfy64itb6q2d5t3n2l2wsd4
 number_of_agents: 4
 deployment:
   agent:
@@ -89,6 +89,7 @@ type: skill
         service_endpoint_base: ${SERVICE_ENDPOINT_BASE:str:https://governatooorr.staging.autonolas.tech/}
         validate_timeout: 1205
         voting_block_threshold: ${VOTING_BLOCK_THRESHOLD:int:300}
+        voting_seconds_threshold: ${VOTING_SECONDS_THRESHOLD:int:10000}
         ceramic_api_base: ${CERAMIC_API_BASE:str:https://ceramic-valory.hirenodes.io/}
         ceramic_api_create_endpoint: ${CERAMIC_API_CREATE_ENDPOINT:str:api/v0/streams}
         ceramic_api_commit_endpoint: ${CERAMIC_API_COMMIT_ENDPOINT:str:api/v0/commits}
@@ -142,6 +143,7 @@ type: skill
         service_endpoint_base: ${SERVICE_ENDPOINT_BASE:str:https://governatooorr.staging.autonolas.tech/}
         validate_timeout: 1205
         voting_block_threshold: ${VOTING_BLOCK_THRESHOLD:int:300}
+        voting_seconds_threshold: ${VOTING_SECONDS_THRESHOLD:int:10000}
         ceramic_api_base: ${CERAMIC_API_BASE:str:https://ceramic-valory.hirenodes.io/}
         ceramic_api_create_endpoint: ${CERAMIC_API_CREATE_ENDPOINT:str:api/v0/streams}
         ceramic_api_commit_endpoint: ${CERAMIC_API_COMMIT_ENDPOINT:str:api/v0/commits}
@@ -195,6 +197,7 @@ type: skill
         service_endpoint_base: ${SERVICE_ENDPOINT_BASE:str:https://governatooorr.staging.autonolas.tech/}
         validate_timeout: 1205
         voting_block_threshold: ${VOTING_BLOCK_THRESHOLD:int:300}
+        voting_seconds_threshold: ${VOTING_SECONDS_THRESHOLD:int:10000}
         ceramic_api_base: ${CERAMIC_API_BASE:str:https://ceramic-valory.hirenodes.io/}
         ceramic_api_create_endpoint: ${CERAMIC_API_CREATE_ENDPOINT:str:api/v0/streams}
         ceramic_api_commit_endpoint: ${CERAMIC_API_COMMIT_ENDPOINT:str:api/v0/commits}
@@ -248,6 +251,7 @@ type: skill
         service_endpoint_base: ${SERVICE_ENDPOINT_BASE:str:https://governatooorr.staging.autonolas.tech/}
         validate_timeout: 1205
         voting_block_threshold: ${VOTING_BLOCK_THRESHOLD:int:300}
+        voting_seconds_threshold: ${VOTING_SECONDS_THRESHOLD:int:10000}
         ceramic_api_base: ${CERAMIC_API_BASE:str:https://ceramic-valory.hirenodes.io/}
         ceramic_api_create_endpoint: ${CERAMIC_API_CREATE_ENDPOINT:str:api/v0/streams}
         ceramic_api_commit_endpoint: ${CERAMIC_API_COMMIT_ENDPOINT:str:api/v0/commits}

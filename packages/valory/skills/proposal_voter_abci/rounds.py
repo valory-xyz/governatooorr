@@ -141,8 +141,8 @@ class EstablishVoteRound(CollectSameUntilThresholdRound):
                 synchronized_data_class=SynchronizedData,
                 **{
                     get_name(SynchronizedData.proposals): payload["proposals"],
-                    get_name(SynchronizedData.expiring_snapshot_proposals): payload[
-                        "expiring_snapshot_proposals"
+                    get_name(SynchronizedData.votable_snapshot_proposals): payload[
+                        "votable_snapshot_proposals"
                     ],
                 }
             )
@@ -168,7 +168,7 @@ class PrepareVoteTransactionRound(CollectSameUntilThresholdRound):
         if self.threshold_reached:
 
             payload = json.loads(self.most_voted_payload)
-
+            print(payload)
             if payload["tx_hash"] == PrepareVoteTransactionRound.ERROR_PAYLOAD:
                 return self.synchronized_data, Event.CONTRACT_ERROR
 

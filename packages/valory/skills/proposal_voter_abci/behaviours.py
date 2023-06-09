@@ -34,7 +34,6 @@ from packages.valory.contracts.delegate.contract import DelegateContract
 from packages.valory.contracts.gnosis_safe.contract import GnosisSafeContract
 from packages.valory.contracts.sign_message_lib.contract import SignMessageLibContract
 from packages.valory.protocols.contract_api import ContractApiMessage
-from packages.valory.protocols.ledger_api.message import LedgerApiMessage
 from packages.valory.protocols.llm.message import LlmMessage
 from packages.valory.skills.abstract_round_abci.base import AbstractRound
 from packages.valory.skills.abstract_round_abci.behaviours import (
@@ -100,20 +99,6 @@ class ProposalVoterBaseBehaviour(BaseBehaviour, ABC):
     def params(self) -> Params:
         """Return the params."""
         return cast(Params, super().params)
-
-    def get_current_block(self) -> Generator[None, None, Optional[int]]:
-        """Get the current block"""
-        ledger_api_response = yield from self.get_ledger_api_response(
-            performative=LedgerApiMessage.Performative.GET_STATE,
-            ledger_callable="get_block",
-            block_identifier="latest",
-        )
-        if ledger_api_response.performative != LedgerApiMessage.Performative.STATE:
-            self.context.logger.error(
-                f"Error retrieving the latest block: {ledger_api_response.performative}"
-            )
-            return None
-        return int(ledger_api_response.state.body.get("number"))
 
 
 class EstablishVoteBehaviour(ProposalVoterBaseBehaviour):
@@ -337,15 +322,19 @@ class EstablishVoteBehaviour(ProposalVoterBaseBehaviour):
         """Get votable snapshot proposals"""
         snapshot_proposals = self.synchronized_data.snapshot_proposals
 
-        current_block = yield from self.get_current_block()
         for p in snapshot_proposals:
             p["remaining_blocks"] = p["end"] - current_block
+            print(p["remaining_blocks"])
 
         expiring_snapshot_proposals = [
             p
             for p in snapshot_proposals
-            if p["remaining_blocks"] <= self.params.voting_block_threshold
+            if p["remaining_blocks"] <= self.params.voting_seconds_threshold
         ]
+
+        self.context.logger.info(
+            f"There are {len(expiring_snapshot_proposals)} finishing snapshot proposals"
+        )
 
         # Check whether we have voting power for each expiring proposal
         votable_snapshot_proposals = []
@@ -441,16 +430,21 @@ class PrepareVoteTransactionBehaviour(ProposalVoterBaseBehaviour):
                 votable_snapshot_proposals,
             ) = self._get_proposal_info()
 
-            self.context.logger.info(f"Votable proposal ids: {votable_proposal_ids}")
-
-            if not votable_proposal_ids and not votable_snapshot_proposals:
-                tx_hash = PrepareVoteTransactionRound.NO_VOTE_PAYLOAD
+            self.context.logger.info(
+                f"Votable Tally proposal ids: {votable_proposal_ids}\n"
+                f"Votable Snapshot proposal ids: {[p['id'] for p in votable_snapshot_proposals]}"
+            )
 
             payload_content = {
                 "proposals": proposals,
                 "votable_proposal_ids": votable_proposal_ids,
                 "votable_snapshot_proposals": votable_snapshot_proposals,
             }
+
+            if not votable_proposal_ids and not votable_snapshot_proposals:
+                self.context.logger.info("No proposals to vote on")
+                tx_hash = PrepareVoteTransactionRound.NO_VOTE_PAYLOAD
+                payload_content["tx_hash"] = tx_hash
 
             if votable_proposal_ids:
                 # we get the first one, because the votable proposal ids are sorted by their remaining blocks, ascending

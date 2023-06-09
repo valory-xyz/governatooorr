@@ -19,8 +19,8 @@ contracts: []
 protocols: []
 skills:
 - valory/abstract_round_abci:0.1.0:bafybeibdljcw2wchyderkonobpdpyb36yioagqcaoqldydw5bi6vvempma
-- valory/proposal_collector_abci:0.1.0:bafybeibaesgjex6uqi2nbpoe35zxvpa4vuuhn6obipvzuo7jvhdajsndfy
-- valory/proposal_voter_abci:0.1.0:bafybeiehbmejfjwf3cfzzizthhhoz47tqwxdvv3hbg273b52c2axp7xdna
+- valory/proposal_collector_abci:0.1.0:bafybeidxu7bjfzxjauzcyl3jx25fwwlnhegdmz7epd3gtirkoy3wtus3qq
+- valory/proposal_voter_abci:0.1.0:bafybeih2sj6omcnvuxev5wb5jqu6ngpxqplecx67sok5ee76voo2wjbhfq
 - valory/registration_abci:0.1.0:bafybeidqcszsitlmsofegmbprny22hqlent2o6luxng5a46gplytexrtbq
 - valory/reset_pause_abci:0.1.0:bafybeidprdrxzbloz5imufkbpvetvkhywdvq3fopbhdzztfnud4onsdsce
 - valory/termination_abci:0.1.0:bafybeif33wyu6w7yrrhyacpt627i5g6nec2kiepsm5xx2b44zq657dch3a
@@ -139,6 +139,7 @@ models:
       use_termination: false
       validate_timeout: 1205
       voting_block_threshold: 300
+      voting_seconds_threshold: 10000
       ceramic_api_base: https://ceramic-valory.hirenodes.io/
       ceramic_api_commit_endpoint: api/v0/commits
       ceramic_api_read_endpoint: api/v0/commits/{stream_id}

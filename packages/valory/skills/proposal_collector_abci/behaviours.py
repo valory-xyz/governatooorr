@@ -52,8 +52,8 @@ from packages.valory.skills.proposal_collector_abci.tally import (
 
 
 HTTP_OK = 200
-SNAPSHOT_REQUEST_STEP = 100
-SNAPSHOT_PROPOSAL_LIMIT = 100
+SNAPSHOT_REQUEST_STEP = 200
+SNAPSHOT_PROPOSAL_LIMIT = 200
 
 
 class ProposalCollectorBaseBehaviour(BaseBehaviour, ABC):

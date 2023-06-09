@@ -20,44 +20,20 @@
 """This package contains the queries for Snapshot."""
 
 
-snapshot_proposal_query = """
-query Proposals(
-  $first: Int
-  $skip: Int
+snapshot_vp_query = """
+query Vp(
+  $voter: String!
+  $space: String!
+  $proposal: String!
 ) {
-  proposals (
-    first: $first,
-    skip: $skip,
-    where: {
-      state: "active"
-    },
-    orderBy: "created",
-    orderDirection: desc
+  vp (
+    voter: $voter
+    space: $space
+    proposal: $proposal
   ) {
-    id
-    network
-    title
-    body
-    choices
-    start
-    end
-    snapshot
-    state
-    scores
-    scores_by_strategy
-    scores_total
-    scores_updated
-    author
-    space {
-      id
-      name
-      symbol
-    }
-    strategies {
-      name
-      network
-      params
-    }
+    vp
+    vp_state
   }
 }
 """
+

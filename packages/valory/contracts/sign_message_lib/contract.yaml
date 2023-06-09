@@ -7,7 +7,7 @@ license: Apache-2.0
 aea_version: '>=1.0.0, <2.0.0'
 fingerprint:
   __init__.py: bafybeigla745nzxpjkc2jeveuoxzphedlweprply2qnvuirmiry7yvaoke
-  build/SignMessageLib.json: bafybeiem2ymunr75szgwtjkt2srvhw3onvvhuuw6ai5d4vl4az3udxrvc4
+  build/SignMessageLib.json: bafybeibnj7ayea66dgzqwrboocmxnbwvkxdkwtrhxyrahugg5jll3vg674
   contract.py: bafybeigdq4n6lujqsiwgpy6efdslz3v4zhhi7wjoj3navhydbkcet56lv4
 fingerprint_ignore_patterns: []
 class_name: SignMessageLibContract

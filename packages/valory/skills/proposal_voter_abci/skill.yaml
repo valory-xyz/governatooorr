@@ -8,13 +8,14 @@ license: Apache-2.0
 aea_version: '>=1.0.0, <2.0.0'
 fingerprint:
   __init__.py: bafybeifps6e4vfc55iyb5jaab7dxem7y3a2wyflai32pyzf4z75m5ngym4
-  behaviours.py: bafybeie3u6kfkxw4swnapa77bxeh2srrnibde32yomxab7silifyupe5fu
+  behaviours.py: bafybeidypp7eiexwck7kmk2hjfoedeytlrqag3ytrbmpqimyeuln2ztndq
   dialogues.py: bafybeihdakfnmps5o7n5rgepn3fl3lzttqsddhiny7mh7ddwhniutri6bq
   fsm_specification.yaml: bafybeiextpdhd2sa7unm5ry4xzed5sosoys7cwygpyyhwst6f75ti3mm6i
   handlers.py: bafybeihex227foehp7a7wfc6vh25ahk5g65b5itu325hph2xj33mgp6kue
   models.py: bafybeig57yqidup4sbwkisuakjlfvckm2hzxqcb4obbeoggcj7umcyexmy
   payloads.py: bafybeieud7ghq25bhvxg2sqbixifdkwjpqd3cgiwkuonteo5yuga7kuh3i
   rounds.py: bafybeih4zzpyhfr7pqgohd6fnjgup6ieh574fec267gerwzv6cy2k4xbym
+  snapshot.py: bafybeidmrhyhsytjkbj6sbngrmblo5wucwgowagtl26rv3r6edfjcekbpi
   tests/__init__.py: bafybeiggsebc3qlofutznro2j42mbsympgfnpj2ad6buqfwiqdzqov3d5u
   tests/test_behaviours.py: bafybeicxdivmtad2wnnt6twdtih2cuydzci34f6sjvpxypa24qpxq2u44e
   tests/test_dialogues.py: bafybeigunltuvpia5cmtil4eyjslghitejdllhm5bzdqi3uvz5mprwetku
@@ -28,6 +29,7 @@ connections:
 contracts:
 - valory/delegate:0.1.0:bafybeiburzphuq5b3bsmhe4s3mvxuej4uhnexlsuxwgmujqaiisut37kpm
 - valory/gnosis_safe:0.1.0:bafybeic3cfap5mbdfb67iejg6zaobtpgvxoltckdgbeovwc7gpzvjz2md4
+- valory/sign_message_lib:0.1.0:bafybeibblmummqukegwkgwv5gsgrh4keaikmvnsk4dodhcuezxw7hi67yi
 protocols:
 - valory/contract_api:1.0.0:bafybeidv6wxpjyb2sdyibnmmum45et4zcla6tl63bnol6ztyoqvpl4spmy
 - valory/llm:1.0.0:bafybeicpd5hxe5rlgp75kaqotzpy3jkdyl5pbdcutwqdzlqfknnmkgadsy

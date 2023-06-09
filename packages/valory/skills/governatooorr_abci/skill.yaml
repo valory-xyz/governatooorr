@@ -19,8 +19,8 @@ contracts: []
 protocols: []
 skills:
 - valory/abstract_round_abci:0.1.0:bafybeibdljcw2wchyderkonobpdpyb36yioagqcaoqldydw5bi6vvempma
-- valory/proposal_collector_abci:0.1.0:bafybeiaisb724vozayjyquzmrmgnsmcfassxfnoa7g3hxu6chcblaxpoqy
-- valory/proposal_voter_abci:0.1.0:bafybeihlantthkkzcwpdf7bfhwdy6yk2gqieldsj555tk3pbua3hm7ecu4
+- valory/proposal_collector_abci:0.1.0:bafybeigzunepbfo7srdsb572gb5scnq5klxrzmkgwekq35sisoo4xhxcou
+- valory/proposal_voter_abci:0.1.0:bafybeia6usdfg5asih23v7iac7mxflr3uybr3sif46gwa2gcseffqowasm
 - valory/registration_abci:0.1.0:bafybeidqcszsitlmsofegmbprny22hqlent2o6luxng5a46gplytexrtbq
 - valory/reset_pause_abci:0.1.0:bafybeidprdrxzbloz5imufkbpvetvkhywdvq3fopbhdzztfnud4onsdsce
 - valory/termination_abci:0.1.0:bafybeif33wyu6w7yrrhyacpt627i5g6nec2kiepsm5xx2b44zq657dch3a

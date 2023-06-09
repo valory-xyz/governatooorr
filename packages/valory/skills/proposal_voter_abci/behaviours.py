@@ -45,7 +45,7 @@ from packages.valory.skills.abstract_round_abci.common import (
     SelectKeeperBehaviour,
 )
 from packages.valory.skills.abstract_round_abci.models import Requests
-from packages.valory.skills.proposal_collector_abci.snapshot import snapshot_vp_query
+from packages.valory.skills.proposal_voter_abci.snapshot import snapshot_vp_query
 from packages.valory.skills.proposal_voter_abci.dialogues import (
     LlmDialogue,
     LlmDialogues,

@@ -42,4 +42,4 @@ class CollectActiveTallyProposalsPayload(BaseTxPayload):
 class CollectActiveSnapshotProposalsPayload(BaseTxPayload):
     """Represent a transaction payload for the CollectActiveSnapshotProposals."""
 
-    content: str
+    proposals: str

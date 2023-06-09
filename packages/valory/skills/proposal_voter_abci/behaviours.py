@@ -34,6 +34,7 @@ from packages.valory.contracts.delegate.contract import DelegateContract
 from packages.valory.contracts.gnosis_safe.contract import GnosisSafeContract
 from packages.valory.contracts.sign_message_lib.contract import SignMessageLibContract
 from packages.valory.protocols.contract_api import ContractApiMessage
+from packages.valory.protocols.ledger_api.message import LedgerApiMessage
 from packages.valory.protocols.llm.message import LlmMessage
 from packages.valory.skills.abstract_round_abci.base import AbstractRound
 from packages.valory.skills.abstract_round_abci.behaviours import (
@@ -45,7 +46,6 @@ from packages.valory.skills.abstract_round_abci.common import (
     SelectKeeperBehaviour,
 )
 from packages.valory.skills.abstract_round_abci.models import Requests
-from packages.valory.skills.proposal_voter_abci.snapshot import snapshot_vp_query
 from packages.valory.skills.proposal_voter_abci.dialogues import (
     LlmDialogue,
     LlmDialogues,
@@ -58,21 +58,22 @@ from packages.valory.skills.proposal_voter_abci.models import (
 from packages.valory.skills.proposal_voter_abci.payloads import (
     EstablishVotePayload,
     PrepareVoteTransactionPayload,
-    SnapshotAPISendRandomnessPayload,
     RetrieveSignaturePayload,
-    SnapshotAPISendSelectKeeperPayload,
     SnapshotAPISendPayload,
+    SnapshotAPISendRandomnessPayload,
+    SnapshotAPISendSelectKeeperPayload,
 )
 from packages.valory.skills.proposal_voter_abci.rounds import (
     EstablishVoteRound,
     PrepareVoteTransactionRound,
     ProposalVoterAbciApp,
-    SnapshotAPISendRandomnessRound,
     RetrieveSignatureRound,
-    SnapshotAPISendSelectKeeperRound,
+    SnapshotAPISendRandomnessRound,
     SnapshotAPISendRound,
+    SnapshotAPISendSelectKeeperRound,
     SynchronizedData,
 )
+from packages.valory.skills.proposal_voter_abci.snapshot import snapshot_vp_query
 from packages.valory.skills.transaction_settlement_abci.payload_tools import (
     hash_payload_to_hex,
 )
@@ -99,6 +100,20 @@ class ProposalVoterBaseBehaviour(BaseBehaviour, ABC):
     def params(self) -> Params:
         """Return the params."""
         return cast(Params, super().params)
+
+    def get_current_block(self) -> Generator[None, None, Optional[int]]:
+        """Get the current block"""
+        ledger_api_response = yield from self.get_ledger_api_response(
+            performative=LedgerApiMessage.Performative.GET_STATE,
+            ledger_callable="get_block",
+            block_identifier="latest",
+        )
+        if ledger_api_response.performative != LedgerApiMessage.Performative.STATE:
+            self.context.logger.error(
+                f"Error retrieving the latest block: {ledger_api_response.performative}"
+            )
+            return None
+        return int(ledger_api_response.state.body.get("number"))
 
 
 class EstablishVoteBehaviour(ProposalVoterBaseBehaviour):
@@ -321,6 +336,11 @@ class EstablishVoteBehaviour(ProposalVoterBaseBehaviour):
     def _get_votable_snapshot_proposals(self) -> Generator[None, None, list]:
         """Get votable snapshot proposals"""
         snapshot_proposals = self.synchronized_data.snapshot_proposals
+
+        current_block = yield from self.get_current_block()
+        for p in snapshot_proposals:
+            p["remaining_blocks"] = p["end"] - current_block
+
         expiring_snapshot_proposals = [
             p
             for p in snapshot_proposals
@@ -727,7 +747,9 @@ class SnapshotAPISendRandomnessBehaviour(RandomnessBehaviour):
     payload_class = SnapshotAPISendRandomnessPayload
 
 
-class SnapshotAPISendSelectKeeperBehaviour(SelectKeeperBehaviour, ProposalVoterBaseBehaviour):
+class SnapshotAPISendSelectKeeperBehaviour(
+    SelectKeeperBehaviour, ProposalVoterBaseBehaviour
+):
     """Select the keeper agent."""
 
     matching_round = SnapshotAPISendSelectKeeperRound

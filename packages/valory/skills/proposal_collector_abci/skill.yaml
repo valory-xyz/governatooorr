@@ -8,13 +8,13 @@ license: Apache-2.0
 aea_version: '>=1.0.0, <2.0.0'
 fingerprint:
   __init__.py: bafybeickrxtcqbivmneh54iq7ymaoq6xzwdouvnoon3h234vzp574qouvu
-  behaviours.py: bafybeifwrgtodmmsuh5r43dmrbus77qwfcfsmtcbdascir7l6ht5a2e6pm
+  behaviours.py: bafybeifpbloz6oxwy2p6jwcmquka4izrinkcgmlfks2kax6crvphaxlwae
   dialogues.py: bafybeighergy2hupd32ozp2ud5j4jujpccfkzk2l46a33xn7yi2ofk32m4
   fsm_specification.yaml: bafybeidb75h2eeicez53zvo6kziyzsyxnhm25lavtqwqo73atwkcauemmu
   handlers.py: bafybeibkaxy6fkkxluminkzpt3aw3rrsa6zg66uldjmwymhevi7dr2qhbe
   models.py: bafybeigrf4yztnaref5jgp2wpqlg2osrib42p4axymcstfrli6wga3n2kq
-  payloads.py: bafybeigpm6xtiddrc5fqyivjttpqkwn5fqnag4xo3c3fz5awne3txr3hg4
-  rounds.py: bafybeib6zul7we7wvhpa43smk2wsle7dj7dvvxlcd73hkb3zxwvu6uhedi
+  payloads.py: bafybeigcbd5mvxypyxohxkr4qxpwobavtluarpwlwweklqtgyertvuqxgy
+  rounds.py: bafybeiaf4e2h7c23fcreugehgzboxs3nrmxxkvve7cjtolepevh3pb4any
   snapshot.py: bafybeiccroyc43n3nd3v5qjlxaenef5sqfakq6nacwgdn3n6khi4cdjs54
   tally.py: bafybeih4w2gk6vzthjbw3q2hhckquxgcs7y4kvj3uezclugb6qvo3s35fq
   tests/__init__.py: bafybeic43gkt67rz4d2latl5qvjxymqjvim4mcj6aklxa6bl73yobtopra
@@ -126,9 +126,9 @@ models:
         consensus_threshold: null
       share_tm_config_on_startup: false
       sleep_time: 1
+      snapshot_api_endpoint: https://hub.snapshot.org/graphql
       tally_api_endpoint: https://api.tally.xyz/query
       tally_api_key: <tally_api_key>
-      snapshot_api_endpoint: https://hub.snapshot.org/graphql
       tendermint_check_sleep_delay: 3
       tendermint_com_url: http://localhost:8080
       tendermint_max_retries: 5

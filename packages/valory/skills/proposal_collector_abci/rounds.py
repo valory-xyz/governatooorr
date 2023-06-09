@@ -54,6 +54,7 @@ class Event(Enum):
     CONTRACT_ERROR = "contract_error"
     BLOCK_RETRIEVAL_ERROR = "block_retrieval_error"
     WRITE_DELEGATIONS = "write_delegations"
+    REPEAT = "repeat"
 
 
 class SynchronizedData(BaseSynchronizedData):
@@ -232,6 +233,9 @@ class CollectActiveTallyProposalsRound(CollectSameUntilThresholdRound):
                     get_name(SynchronizedData.proposals_to_refresh): list(
                         proposals_to_refresh
                     ),
+                    get_name(
+                        SynchronizedData.snapshot_proposals
+                    ): [],  # clean snapshot proposals
                 },
             )
             return synchronized_data, Event.DONE
@@ -246,7 +250,6 @@ class CollectActiveSnapshotProposalsRound(CollectSameUntilThresholdRound):
     """CollectActiveSnapshotProposals"""
 
     ERROR_PAYLOAD = "ERROR_PAYLOAD"
-    BLOCK_RETRIEVAL_ERROR = "BLOCK_RETRIEVAL_ERROR"
 
     payload_class = CollectActiveSnapshotProposalsPayload
     synchronized_data_class = SynchronizedData
@@ -255,23 +258,26 @@ class CollectActiveSnapshotProposalsRound(CollectSameUntilThresholdRound):
         """Process the end of the block."""
         if self.threshold_reached:
 
-            if (
-                self.most_voted_payload
-                == CollectActiveSnapshotProposalsRound.ERROR_PAYLOAD
-            ):
+            if self.most_voted_payload == self.ERROR_PAYLOAD:
                 return self.synchronized_data, Event.API_ERROR
 
             payload = json.loads(self.most_voted_payload)
 
+            snapshot_proposals = cast(
+                SynchronizedData, self.synchronized_data
+            ).snapshot_proposals
+            snapshot_proposals.extend(payload["snapshot_proposals"])
+            print(f"Adding {len(payload['snapshot_proposals'])}")
             synchronized_data = self.synchronized_data.update(
                 synchronized_data_class=SynchronizedData,
                 **{
-                    get_name(SynchronizedData.snapshot_proposals): payload[
-                        "snapshot_proposals"
-                    ],
+                    get_name(SynchronizedData.snapshot_proposals): snapshot_proposals,
                 },
             )
-            return synchronized_data, Event.DONE
+            return (
+                synchronized_data,
+                Event.DONE if payload["finished"] else Event.REPEAT,
+            )
         if not self.is_majority_possible(
             self.collection, self.synchronized_data.nb_participants
         ):
@@ -311,6 +317,7 @@ class ProposalCollectorAbciApp(AbciApp[Event]):
         },
         CollectActiveSnapshotProposalsRound: {
             Event.DONE: FinishedProposalRound,
+            Event.REPEAT: CollectActiveSnapshotProposalsRound,
             Event.API_ERROR: CollectActiveSnapshotProposalsRound,
             Event.BLOCK_RETRIEVAL_ERROR: CollectActiveSnapshotProposalsRound,
             Event.NO_MAJORITY: CollectActiveSnapshotProposalsRound,

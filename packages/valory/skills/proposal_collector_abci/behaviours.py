@@ -31,6 +31,7 @@ from packages.valory.skills.abstract_round_abci.behaviours import (
 )
 from packages.valory.skills.proposal_collector_abci.models import Params
 from packages.valory.skills.proposal_collector_abci.payloads import (
+    CollectActiveSnapshotProposalsPayload,
     CollectActiveTallyProposalsPayload,
     SynchronizeDelegationsPayload,
 )
@@ -51,7 +52,8 @@ from packages.valory.skills.proposal_collector_abci.tally import (
 
 
 HTTP_OK = 200
-SNAPSHOT_REQUEST_STEP = 1000
+SNAPSHOT_REQUEST_STEP = 100
+SNAPSHOT_PROPOSAL_LIMIT = 100
 
 
 class ProposalCollectorBaseBehaviour(BaseBehaviour, ABC):
@@ -345,7 +347,7 @@ class CollectActiveSnapshotProposalsBehaviour(ProposalCollectorBaseBehaviour):
 
             updated_proposals = yield from self._get_updated_proposals()
             sender = self.context.agent_address
-            payload = CollectActiveTallyProposalsPayload(
+            payload = CollectActiveSnapshotProposalsPayload(
                 sender=sender, proposals=updated_proposals
             )
 
@@ -360,18 +362,37 @@ class CollectActiveSnapshotProposalsBehaviour(ProposalCollectorBaseBehaviour):
 
         active_proposals = []
         i = 0
+        n_retrieved_proposals = len(self.synchronized_data.snapshot_proposals)
+
+        self.context.logger.info(
+            f"Getting proposals from Snapshot API: {self.params.snapshot_api_endpoint}"
+        )
+
+        headers = {
+            "Content-Type": "application/json",
+            "Accept": "application/json",
+        }
+
+        finished = False
 
         while True:
 
+            skip = n_retrieved_proposals + SNAPSHOT_REQUEST_STEP * i
+
+            self.context.logger.info(
+                f"Getting {SNAPSHOT_REQUEST_STEP} proposals skipping the first {skip}"
+            )
+
             variables = {
                 "first": SNAPSHOT_REQUEST_STEP,
-                "skip": SNAPSHOT_REQUEST_STEP * i,
+                "skip": skip,
             }
 
             # Make the request
             response = yield from self.get_http_response(
                 method="POST",
                 url=self.params.snapshot_api_endpoint,
+                headers=headers,
                 content=json.dumps(
                     {"query": snapshot_proposal_query, "variables": variables}
                 ).encode("utf-8"),
@@ -379,8 +400,8 @@ class CollectActiveSnapshotProposalsBehaviour(ProposalCollectorBaseBehaviour):
 
             if response.status_code != HTTP_OK:
                 self.context.logger.error(
-                    f"Could not retrieve data from Snapshot API. "
-                    f"Received status code {response.status_code}."
+                    f"Could not retrieve proposals from Snapshot API. "
+                    f"Received status code {response.status_code}.\n{response}"
                 )
                 return CollectActiveSnapshotProposalsRound.ERROR_PAYLOAD
 
@@ -388,21 +409,28 @@ class CollectActiveSnapshotProposalsBehaviour(ProposalCollectorBaseBehaviour):
 
             if "errors" in response_json:
                 self.context.logger.error(
-                    "Got errors while retrieving the data from Snapshot"
+                    f"Got errors while retrieving the data from Snapshot: {response_json}"
                 )
                 return CollectActiveTallyProposalsRound.ERROR_PAYLOAD
 
-            new_proposals = response.json()["data"]["proposals"]
+            new_proposals = response_json["data"]["proposals"]
 
             if not new_proposals:
+                finished = True
                 break
 
             active_proposals.extend(new_proposals)
             i += 1
+            self.context.logger.info(f"Accumulated proposals: {len(active_proposals)}")
+
+            if len(active_proposals) >= SNAPSHOT_PROPOSAL_LIMIT:
+                self.context.logger.info(f"Reached proposal payload limit")
+                break
 
         return json.dumps(
             {
                 "snapshot_proposals": active_proposals,
+                "finished": finished,
             },
             sort_keys=True,
         )

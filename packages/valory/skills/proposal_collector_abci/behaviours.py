@@ -336,7 +336,7 @@ class CollectActiveSnapshotProposalsBehaviour(ProposalCollectorBaseBehaviour):
     Behaviour used to collect active proposals from Snapshot
     """
 
-    matching_round: Type[AbstractRound] = CollectActiveTallyProposalsRound
+    matching_round: Type[AbstractRound] = CollectActiveSnapshotProposalsRound
 
     def async_act(self) -> Generator:
         """Do the act, supporting asynchronous execution."""
@@ -416,4 +416,5 @@ class ProposalCollectorRoundBehaviour(AbstractRoundBehaviour):
     behaviours: Set[Type[BaseBehaviour]] = [
         CollectActiveTallyProposalsBehaviour,
         SynchronizeDelegationsBehaviour,
+        CollectActiveSnapshotProposalsBehaviour,
     ]

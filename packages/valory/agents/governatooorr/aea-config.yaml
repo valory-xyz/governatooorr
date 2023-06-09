@@ -38,9 +38,9 @@ protocols:
 skills:
 - valory/abstract_abci:0.1.0:bafybeiet34ju7typtkqyfn572sacef5krrsb6d4vpfnviqi6kzunje3xny
 - valory/abstract_round_abci:0.1.0:bafybeibdljcw2wchyderkonobpdpyb36yioagqcaoqldydw5bi6vvempma
-- valory/governatooorr_abci:0.1.0:bafybeiftclp6g32ihgoavrw7rx4vrd4mjhx5er5vpu4bcoagblicrszomm
-- valory/proposal_collector_abci:0.1.0:bafybeigzunepbfo7srdsb572gb5scnq5klxrzmkgwekq35sisoo4xhxcou
-- valory/proposal_voter_abci:0.1.0:bafybeia6usdfg5asih23v7iac7mxflr3uybr3sif46gwa2gcseffqowasm
+- valory/governatooorr_abci:0.1.0:bafybeicqy6luafb3jgmlkjb2dxg7idurouybmk2vm45dtqlm35nbsvy74u
+- valory/proposal_collector_abci:0.1.0:bafybeichh4opvkyijwy3stkno54s2ut76krvhlce32atqfuoaeftxfoimm
+- valory/proposal_voter_abci:0.1.0:bafybeifhjoo7hje7zkr5deddn3reo5dhudmp3tcmqkr5w7eh3pkccfhbzu
 - valory/registration_abci:0.1.0:bafybeidqcszsitlmsofegmbprny22hqlent2o6luxng5a46gplytexrtbq
 - valory/reset_pause_abci:0.1.0:bafybeidprdrxzbloz5imufkbpvetvkhywdvq3fopbhdzztfnud4onsdsce
 - valory/termination_abci:0.1.0:bafybeif33wyu6w7yrrhyacpt627i5g6nec2kiepsm5xx2b44zq657dch3a

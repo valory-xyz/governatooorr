@@ -58,18 +58,18 @@ from packages.valory.skills.proposal_voter_abci.models import (
 from packages.valory.skills.proposal_voter_abci.payloads import (
     EstablishVotePayload,
     PrepareVoteTransactionPayload,
-    RandomnessPayload,
+    SnapshotAPISendRandomnessPayload,
     RetrieveSignaturePayload,
-    SelectKeeperPayload,
+    SnapshotAPISendSelectKeeperPayload,
     SnapshotAPISendPayload,
 )
 from packages.valory.skills.proposal_voter_abci.rounds import (
     EstablishVoteRound,
     PrepareVoteTransactionRound,
     ProposalVoterAbciApp,
-    RandomnessRound,
+    SnapshotAPISendRandomnessRound,
     RetrieveSignatureRound,
-    SelectKeeperRound,
+    SnapshotAPISendSelectKeeperRound,
     SnapshotAPISendRound,
     SynchronizedData,
 )
@@ -720,18 +720,18 @@ class RetrieveSignatureBehaviour(ProposalVoterBaseBehaviour):
         return signature
 
 
-class RandomnessBehaviour(RandomnessBehaviour):
+class SnapshotAPISendRandomnessBehaviour(RandomnessBehaviour):
     """Retrieve randomness."""
 
-    matching_round = RandomnessRound
-    payload_class = RandomnessPayload
+    matching_round = SnapshotAPISendRandomnessRound
+    payload_class = SnapshotAPISendRandomnessPayload
 
 
-class SelectKeeperBehaviour(SelectKeeperBehaviour, ProposalVoterBaseBehaviour):
+class SnapshotAPISendSelectKeeperBehaviour(SelectKeeperBehaviour, ProposalVoterBaseBehaviour):
     """Select the keeper agent."""
 
-    matching_round = SelectKeeperRound
-    payload_class = SelectKeeperPayload
+    matching_round = SnapshotAPISendSelectKeeperRound
+    payload_class = SnapshotAPISendSelectKeeperPayload
 
 
 class SnapshotAPISendBehaviour(ProposalVoterBaseBehaviour):
@@ -822,7 +822,7 @@ class ProposalVoterRoundBehaviour(AbstractRoundBehaviour):
         EstablishVoteBehaviour,
         PrepareVoteTransactionBehaviour,
         RetrieveSignatureBehaviour,
-        RandomnessBehaviour,
-        SelectKeeperBehaviour,
+        SnapshotAPISendRandomnessBehaviour,
+        SnapshotAPISendSelectKeeperBehaviour,
         SnapshotAPISendBehaviour,
     ]

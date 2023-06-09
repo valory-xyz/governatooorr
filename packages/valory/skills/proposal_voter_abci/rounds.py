@@ -37,8 +37,8 @@ from packages.valory.skills.abstract_round_abci.base import (
 from packages.valory.skills.proposal_voter_abci.payloads import (
     EstablishVotePayload,
     PrepareVoteTransactionPayload,
-    RandomnessPayload,
-    SelectKeeperPayload,
+    SnapshotAPISendRandomnessPayload,
+    SnapshotAPISendSelectKeeperPayload,
     SnapshotAPISendPayload,
 )
 from packages.valory.skills.transaction_settlement_abci.payload_tools import (
@@ -233,10 +233,10 @@ class RetrieveSignatureRound(CollectSameUntilThresholdRound):
         return None
 
 
-class RandomnessRound(CollectSameUntilThresholdRound):
+class SnapshotAPISendRandomnessRound(CollectSameUntilThresholdRound):
     """A round for generating randomness"""
 
-    payload_class = RandomnessPayload
+    payload_class = SnapshotAPISendRandomnessPayload
     synchronized_data_class = SynchronizedData
     done_event = Event.DONE
     no_majority_event = Event.NO_MAJORITY
@@ -247,10 +247,10 @@ class RandomnessRound(CollectSameUntilThresholdRound):
     )
 
 
-class SelectKeeperRound(CollectSameUntilThresholdRound):
+class SnapshotAPISendSelectKeeperRound(CollectSameUntilThresholdRound):
     """A round in which a keeper is selected for transaction submission"""
 
-    payload_class = SelectKeeperPayload
+    payload_class = SnapshotAPISendSelectKeeperPayload
     synchronized_data_class = SynchronizedData
     done_event = Event.DONE
     no_majority_event = Event.NO_MAJORITY
@@ -321,25 +321,25 @@ class ProposalVoterAbciApp(AbciApp[Event]):
         FinishedTransactionPreparationNoVoteRound: {},
         RetrieveSignatureRound: {
             Event.DONE: PrepareVoteTransactionRound,
-            Event.CALL_API: RandomnessRound,
+            Event.CALL_API: SnapshotAPISendRandomnessRound,
             Event.NO_MAJORITY: EstablishVoteRound,
             Event.ROUND_TIMEOUT: EstablishVoteRound,
         },
-        RandomnessRound: {
-            Event.DONE: SelectKeeperRound,
-            Event.NO_MAJORITY: RandomnessRound,
-            Event.ROUND_TIMEOUT: RandomnessRound,
+        SnapshotAPISendRandomnessRound: {
+            Event.DONE: SnapshotAPISendSelectKeeperRound,
+            Event.NO_MAJORITY: SnapshotAPISendRandomnessRound,
+            Event.ROUND_TIMEOUT: SnapshotAPISendRandomnessRound,
         },
-        SelectKeeperRound: {
+        SnapshotAPISendSelectKeeperRound: {
             Event.DONE: SnapshotAPISendRound,
-            Event.NO_MAJORITY: RandomnessRound,
-            Event.ROUND_TIMEOUT: RandomnessRound,
+            Event.NO_MAJORITY: SnapshotAPISendRandomnessRound,
+            Event.ROUND_TIMEOUT: SnapshotAPISendRandomnessRound,
         },
         SnapshotAPISendRound: {
-            Event.API_ERROR: RandomnessRound,
-            Event.DID_NOT_SEND: RandomnessRound,
+            Event.API_ERROR: SnapshotAPISendRandomnessRound,
+            Event.DID_NOT_SEND: SnapshotAPISendRandomnessRound,
             Event.DONE: PrepareVoteTransactionRound,
-            Event.ROUND_TIMEOUT: RandomnessRound,
+            Event.ROUND_TIMEOUT: SnapshotAPISendRandomnessRound,
         },
         FinishedTransactionPreparationVoteRound: {},
     }

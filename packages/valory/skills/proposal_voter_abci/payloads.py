@@ -46,7 +46,7 @@ class RetrieveSignaturePayload(BaseTxPayload):
 
 
 @dataclass(frozen=True)
-class RandomnessPayload(BaseTxPayload):
+class SnapshotAPISendRandomnessPayload(BaseTxPayload):
     """Represent a transaction payload of type 'randomness'."""
 
     round_id: int
@@ -54,7 +54,7 @@ class RandomnessPayload(BaseTxPayload):
 
 
 @dataclass(frozen=True)
-class SelectKeeperPayload(BaseTxPayload):
+class SnapshotAPISendSelectKeeperPayload(BaseTxPayload):
     """Represent a transaction payload of type 'select_keeper'."""
 
     keeper: str

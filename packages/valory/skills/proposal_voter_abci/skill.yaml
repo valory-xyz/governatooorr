@@ -142,6 +142,7 @@ models:
       use_termination: false
       validate_timeout: 1205
       voting_block_threshold: 300
+      signmessagelib_address: '0xA65387F16B013cf2Af4605Ad8aA5ec25a2cbA3a2'
     class_name: Params
   requests:
     args: {}

@@ -24,12 +24,15 @@ from abc import ABC
 from typing import Dict, Generator, Optional, Set, Tuple, Type, cast
 
 from eth_account.messages import encode_structured_data
+from hexbytes import HexBytes
+from py_eth_sig_utils.eip712 import encode_typed_data
 
 from packages.valory.connections.openai.connection import (
     PUBLIC_ID as LLM_CONNECTION_PUBLIC_ID,
 )
 from packages.valory.contracts.delegate.contract import DelegateContract
 from packages.valory.contracts.gnosis_safe.contract import GnosisSafeContract
+from packages.valory.contracts.sign_message_lib.contract import SignMessageLibContract
 from packages.valory.protocols.contract_api import ContractApiMessage
 from packages.valory.protocols.llm.message import LlmMessage
 from packages.valory.skills.abstract_round_abci.base import AbstractRound
@@ -590,10 +593,10 @@ class PrepareVoteTransactionBehaviour(ProposalVoterBaseBehaviour):
             "domain": {"name": "snapshot", "version": "0.1.4"},
             "types": {
                 "EIP712Domain": [  # This object is required by "encode_structured_data"
-                    {"name": "name", "type": "string"},
-                    {"name": "version", "type": "string"},
+                    # {"name": "name", "type": "string"},
+                    # {"name": "version", "type": "string"},
                     # { 'name': 'chainId', 'type': 'uint256' },
-                    # { 'name': 'verifyingContract', 'type': 'address' },
+                    {"name": "verifyingContract", "type": "address"},
                 ],
                 "Vote": vote_types,
             },
@@ -609,7 +612,9 @@ class PrepareVoteTransactionBehaviour(ProposalVoterBaseBehaviour):
         """Get the safe hash for the EIP-712 signature"""
 
         snapshot_api_data = self._get_snapshot_vote_data(proposal)
-        encoded_proposal_data = encode_structured_data(snapshot_api_data)
+        encoded_proposal_data = HexBytes(encode_typed_data(snapshot_api_data)).hex()
+        # encoded_proposal_data = encode_structured_data(snapshot_api_data)
+        signmessagelib_address = self.params.signmessagelib_address
 
         # Get the raw transaction from the SignMessageLib contract
         contract_api_msg = yield from self.get_contract_api_response(
@@ -625,7 +630,7 @@ class PrepareVoteTransactionBehaviour(ProposalVoterBaseBehaviour):
             self.context.logger.warning(
                 f"sign_message unsuccessful!: {contract_api_msg}"
             )
-            return None
+            return None, snapshot_api_data
         data = cast(bytes, contract_api_msg.state.body["data"])
 
         # Get the safe transaction hash
@@ -648,7 +653,7 @@ class PrepareVoteTransactionBehaviour(ProposalVoterBaseBehaviour):
             self.context.logger.warning(
                 f"get_raw_safe_transaction_hash unsuccessful!: {contract_api_msg}"
             )
-            return None
+            return None, snapshot_api_data
 
         safe_tx_hash = cast(str, contract_api_msg.state.body["tx_hash"])
         safe_tx_hash = safe_tx_hash[2:]
@@ -672,15 +677,19 @@ class RetrieveSignatureBehaviour(ProposalVoterBaseBehaviour):
 
         with self.context.benchmark_tool.measure(self.behaviour_id).local():
 
-            snapshot_api_data_signature = yield from self._get_signature()
-
-            sender = self.context.agent_address
-            payload = EstablishVotePayload(
-                sender=sender,
-                proposals=json.dumps(
+            if not self.context.state.pending_vote.snapshot:
+                payload_content = RetrieveSignatureRound.SKIP_PAYLOAD
+            else:
+                snapshot_api_data_signature = yield from self._get_safe_signature()
+                payload_content = json.dumps(
                     {"snapshot_api_data_signature": snapshot_api_data_signature},
                     sort_keys=True,
-                ),
+                )
+
+            sender = self.context.agent_address
+            payload = RetrieveSignaturePayload(
+                sender=sender,
+                content=payload_content,
             )
 
         with self.context.benchmark_tool.measure(self.behaviour_id).consensus():
@@ -689,10 +698,26 @@ class RetrieveSignatureBehaviour(ProposalVoterBaseBehaviour):
 
         self.set_done()
 
-    def _get_signature(self):
+    def _get_safe_signature(self):
         """Get signature from the chain"""
 
-        # TODO: get signature
+        contract_api_msg = yield from self.get_contract_api_response(
+            performative=ContractApiMessage.Performative.GET_STATE,  # type: ignore
+            contract_address=self.synchronized_data.safe_contract_address,
+            contract_id=str(SignMessageLibContract.contract_id),
+            contract_callable="sign_message",
+            tx_hash=self.synchronized_data.most_voted_tx_hash,
+        )
+        if (
+            contract_api_msg.performative != ContractApiMessage.Performative.STATE
+        ):  # pragma: nocover
+            self.context.logger.warning(
+                f"Could not get the transaction signature: {contract_api_msg}"
+            )
+            return None
+
+        signature = cast(str, contract_api_msg.state.body["signature"])
+        return signature
 
 
 class RandomnessBehaviour(RandomnessBehaviour):

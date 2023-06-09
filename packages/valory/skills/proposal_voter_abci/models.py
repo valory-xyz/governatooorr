@@ -70,6 +70,9 @@ class Params(BaseParams):
         self.voting_block_threshold = self._ensure(
             "voting_block_threshold", kwargs, int
         )
+        self.signmessagelib_address = self._ensure(
+            "signmessagelib_address", kwargs, str
+        )
         self.snapshot_api_endpoint = kwargs.get("snapshot_api_endpoint")
         super().__init__(*args, **kwargs)
 

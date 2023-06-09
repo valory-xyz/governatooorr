@@ -6,9 +6,9 @@ description: Contract package wrapping SignMessageLib contract instances.
 license: Apache-2.0
 aea_version: '>=1.0.0, <2.0.0'
 fingerprint:
-  __init__.py: bafybeied73rq2fac7zwgdhfevcwjjxrqphrdkrbqzarvejsd3ayjza76w4
-  build/SignMessageLib.json: bafybeifgp4n5fyg4j3ebtaf5zbkiairiiccd4tabvutcrggbu2yrr6h4k4
-  contract.py: bafybeigs4d672q4alyw7q5zfbkwv2e27jg2f65qb5umaxpunyichy6nnh4
+  __init__.py: bafybeigla745nzxpjkc2jeveuoxzphedlweprply2qnvuirmiry7yvaoke
+  build/SignMessageLib.json: bafybeiem2ymunr75szgwtjkt2srvhw3onvvhuuw6ai5d4vl4az3udxrvc4
+  contract.py: bafybeigdq4n6lujqsiwgpy6efdslz3v4zhhi7wjoj3navhydbkcet56lv4
 fingerprint_ignore_patterns: []
 class_name: SignMessageLibContract
 contract_interface_paths:

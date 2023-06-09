@@ -362,6 +362,9 @@ class ProposalVoterAbciApp(AbciApp[Event]):
             get_name(SynchronizedData.delegations),
             get_name(SynchronizedData.votable_proposal_ids),
         },
+        RetrieveSignatureRound: set(
+            get_name(SynchronizedData.most_voted_tx_hash),
+        ),
     }
     db_post_conditions: Dict[AppState, Set[str]] = {
         FinishedTransactionPreparationVoteRound: {

@@ -123,7 +123,7 @@ class SignMessageLibContract(Contract):
         Gets the signature from a previous tx
 
         :param ledger_api: LedgerApi object
-        :param contract_address: the address of the safe
+        :param safe_address: the address of the safe
         :param tx_hash: the sign transaction hash
         :return: the EITP-712 signature
         """
@@ -132,7 +132,7 @@ class SignMessageLibContract(Contract):
         contract_instance = cls.get_instance(ledger_api, contract_address)
 
         events = contract_instance.events.SignMsg.createFilter(
-            fromBlock="earliest",
+            fromBlock=ledger_api.api.eth.block_number - 100,
             toBlock="latest",
         ).get_all_entries()
 

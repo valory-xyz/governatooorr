@@ -37,6 +37,7 @@ from packages.valory.skills.abstract_round_abci.base import (
 from packages.valory.skills.proposal_voter_abci.payloads import (
     EstablishVotePayload,
     PrepareVoteTransactionPayload,
+    RetrieveSignaturePayload,
     SnapshotAPISendPayload,
     SnapshotAPISendRandomnessPayload,
     SnapshotAPISendSelectKeeperPayload,
@@ -58,6 +59,7 @@ class Event(Enum):
     DID_NOT_SEND = "did_not_send"
     API_ERROR = "api_error"
     CALL_API = "call_api"
+    RETRIEVAL_ERROR = "retrieval_error"
 
 
 class SynchronizedData(BaseSynchronizedData):
@@ -126,6 +128,10 @@ class SynchronizedData(BaseSynchronizedData):
         """Get the snapshot_api_data_signature."""
         return cast(dict, self.db.get("snapshot_api_data_signature", {}))
 
+    @property
+    def final_tx_hash(self) -> str:
+        """Get the verified tx hash."""
+        return cast(str, self.db.get_strict("final_tx_hash"))
 
 class EstablishVoteRound(CollectSameUntilThresholdRound):
     """EstablishVoteRound"""
@@ -202,7 +208,7 @@ class PrepareVoteTransactionRound(CollectSameUntilThresholdRound):
 class RetrieveSignatureRound(CollectSameUntilThresholdRound):
     """RetrieveSignatureRound"""
 
-    payload_class = PrepareVoteTransactionPayload
+    payload_class = RetrieveSignaturePayload
     synchronized_data_class = SynchronizedData
 
     SKIP_PAYLOAD = "skip_payload"
@@ -215,13 +221,17 @@ class RetrieveSignatureRound(CollectSameUntilThresholdRound):
                 return self.synchronized_data, Event.DONE
 
             payload = json.loads(self.most_voted_payload)
+            snapshot_api_data_signature = payload["snapshot_api_data_signature"]
+
+            if not snapshot_api_data_signature:
+                return self.synchronized_data, Event.RETRIEVAL_ERROR
 
             synchronized_data = self.synchronized_data.update(
                 synchronized_data_class=SynchronizedData,
                 **{
-                    get_name(SynchronizedData.snapshot_api_data_signature): payload[
-                        "snapshot_api_data_signature"
-                    ],
+                    get_name(
+                        SynchronizedData.snapshot_api_data_signature
+                    ): snapshot_api_data_signature,
                 }
             )
             return synchronized_data, Event.CALL_API
@@ -321,6 +331,7 @@ class ProposalVoterAbciApp(AbciApp[Event]):
         FinishedTransactionPreparationNoVoteRound: {},
         RetrieveSignatureRound: {
             Event.DONE: PrepareVoteTransactionRound,
+            Event.RETRIEVAL_ERROR: RetrieveSignatureRound,
             Event.CALL_API: SnapshotAPISendRandomnessRound,
             Event.NO_MAJORITY: EstablishVoteRound,
             Event.ROUND_TIMEOUT: EstablishVoteRound,

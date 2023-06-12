@@ -31,7 +31,10 @@ from packages.valory.connections.openai.connection import (
     PUBLIC_ID as LLM_CONNECTION_PUBLIC_ID,
 )
 from packages.valory.contracts.delegate.contract import DelegateContract
-from packages.valory.contracts.gnosis_safe.contract import GnosisSafeContract
+from packages.valory.contracts.gnosis_safe.contract import (
+    GnosisSafeContract,
+    SafeOperation,
+)
 from packages.valory.contracts.sign_message_lib.contract import SignMessageLibContract
 from packages.valory.protocols.contract_api import ContractApiMessage
 from packages.valory.protocols.llm.message import LlmMessage
@@ -76,9 +79,7 @@ from packages.valory.skills.proposal_voter_abci.snapshot import snapshot_vp_quer
 from packages.valory.skills.transaction_settlement_abci.payload_tools import (
     hash_payload_to_hex,
 )
-from packages.valory.contracts.gnosis_safe.contract import (
-    SafeOperation,
-)
+
 
 SAFE_TX_GAS = 0
 ETHER_VALUE = 0
@@ -301,7 +302,7 @@ class EstablishVoteBehaviour(ProposalVoterBaseBehaviour):
             content=json.dumps(
                 {"query": snapshot_vp_query, "variables": variables}
             ).encode("utf-8"),
-            headers=headers
+            headers=headers,
         )
 
         if response.status_code != HTTP_OK:
@@ -330,7 +331,9 @@ class EstablishVoteBehaviour(ProposalVoterBaseBehaviour):
         """Get votable snapshot proposals"""
         snapshot_proposals = self.synchronized_data.snapshot_proposals
 
-        now = cast(SharedState, self.context.state).round_sequence.last_round_transition_timestamp.timestamp()
+        now = cast(
+            SharedState, self.context.state
+        ).round_sequence.last_round_transition_timestamp.timestamp()
 
         for p in snapshot_proposals:
             p["remaining_seconds"] = p["end"] - now
@@ -367,11 +370,15 @@ class EstablishVoteBehaviour(ProposalVoterBaseBehaviour):
                 "voting_options": ", ".join(proposal["choices"]),
             }
 
-            self.context.logger.info(f"Sending LLM request: prompt_template={prompt_template}, prompt_values={prompt_values}")
+            self.context.logger.info(
+                f"Sending LLM request: prompt_template={prompt_template}, prompt_values={prompt_values}"
+            )
 
             vote = yield from self._get_vote(prompt_template, prompt_values)
             if vote not in proposal["choices"]:
-                self.context.logger.error(f"Invalid vote: '{vote}'. Votes are: {proposal['choices']}")
+                self.context.logger.error(
+                    f"Invalid vote: '{vote}'. Votes are: {proposal['choices']}"
+                )
                 failed_llm_votes.append(index)
                 continue
 
@@ -500,7 +507,9 @@ class PrepareVoteTransactionBehaviour(ProposalVoterBaseBehaviour):
             # Only vote on Snapshot after we have finished with the onchain votes
             if not votable_proposal_ids and votable_snapshot_proposals:
                 selected_proposal = votable_snapshot_proposals[0]
-                self.context.logger.info(f"Selected snapshot proposal: {selected_proposal['id']}")
+                self.context.logger.info(
+                    f"Selected snapshot proposal: {selected_proposal['id']}"
+                )
 
                 self.context.state.pending_vote = PendingVote(
                     proposal_id=selected_proposal["id"],
@@ -700,7 +709,12 @@ class PrepareVoteTransactionBehaviour(ProposalVoterBaseBehaviour):
 
         # temp hack:
         payload_string = hash_payload_to_hex(
-            safe_tx_hash, ether_value, safe_tx_gas, signmessagelib_address, tx_data, SafeOperation.DELEGATE_CALL.value,
+            safe_tx_hash,
+            ether_value,
+            safe_tx_gas,
+            signmessagelib_address,
+            tx_data,
+            SafeOperation.DELEGATE_CALL.value,
         )
 
         return payload_string, snapshot_api_data
@@ -740,12 +754,14 @@ class RetrieveSignatureBehaviour(ProposalVoterBaseBehaviour):
     def _get_safe_signature(self):
         """Get signature from the chain"""
 
+        self.context.logger.info(f"Retrieving signature from event for tx_hash={self.synchronized_data.most_voted_tx_hash}")
+
         contract_api_msg = yield from self.get_contract_api_response(
             performative=ContractApiMessage.Performative.GET_STATE,  # type: ignore
             contract_address=self.synchronized_data.safe_contract_address,
             contract_id=str(SignMessageLibContract.contract_id),
             contract_callable="get_safe_signature",
-            tx_hash=self.synchronized_data.most_voted_tx_hash,
+            tx_hash=self.synchronized_data.final_tx_hash,
         )
         if (
             contract_api_msg.performative != ContractApiMessage.Performative.STATE
@@ -756,6 +772,7 @@ class RetrieveSignatureBehaviour(ProposalVoterBaseBehaviour):
             return None
 
         signature = cast(str, contract_api_msg.state.body["signature"])
+        self.context.logger.info(f"Retrieved signature: {signature}")
         return signature
 
 
@@ -807,12 +824,7 @@ class SnapshotAPISendBehaviour(ProposalVoterBaseBehaviour):
         """Do the sender action"""
 
         with self.context.benchmark_tool.measure(self.behaviour_id).local():
-            success = yield from self._call_snapshot_api()
-            if success:
-                payload_content = SnapshotAPISendRound.SUCCCESS_PAYLOAD
-            else:
-                payload_content = SnapshotAPISendRound.ERROR_PAYLOAD
-
+            payload_content = yield from self._call_snapshot_api()
             sender = self.context.agent_address
             payload = SnapshotAPISendPayload(sender=sender, content=payload_content)
 
@@ -846,8 +858,8 @@ class SnapshotAPISendBehaviour(ProposalVoterBaseBehaviour):
 
         if response.status_code != HTTP_OK:
             self.context.logger.error(
-                f"Could not send data to Snapshot API. "
-                f"Received status code {response.status_code}."
+                f"Could not send the vote to Snapshot API. "
+                f"Received status code {response.status_code}: {response.json()}."
             )
             return SnapshotAPISendRound.ERROR_PAYLOAD
 

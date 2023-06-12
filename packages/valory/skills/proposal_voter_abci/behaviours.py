@@ -744,7 +744,7 @@ class RetrieveSignatureBehaviour(ProposalVoterBaseBehaviour):
             performative=ContractApiMessage.Performative.GET_STATE,  # type: ignore
             contract_address=self.synchronized_data.safe_contract_address,
             contract_id=str(SignMessageLibContract.contract_id),
-            contract_callable="sign_message",
+            contract_callable="get_safe_signature",
             tx_hash=self.synchronized_data.most_voted_tx_hash,
         )
         if (

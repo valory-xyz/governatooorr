@@ -168,7 +168,7 @@ class PrepareVoteTransactionRound(CollectSameUntilThresholdRound):
         if self.threshold_reached:
 
             payload = json.loads(self.most_voted_payload)
-            print(payload)
+
             if payload["tx_hash"] == PrepareVoteTransactionRound.ERROR_PAYLOAD:
                 return self.synchronized_data, Event.CONTRACT_ERROR
 

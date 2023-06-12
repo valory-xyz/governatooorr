@@ -498,6 +498,7 @@ class PrepareVoteTransactionBehaviour(ProposalVoterBaseBehaviour):
             # Only vote on Snapshot after we have finished with the onchain votes
             if not votable_proposal_ids and votable_snapshot_proposals:
                 selected_proposal = votable_snapshot_proposals[0]
+                self.context.logger.info(f"Selected snapshot proposal: {selected_proposal['id']}")
 
                 self.context.state.pending_vote = PendingVote(
                     proposal_id=selected_proposal["id"],
@@ -604,7 +605,7 @@ class PrepareVoteTransactionBehaviour(ProposalVoterBaseBehaviour):
             "app": "Governatooorr",
             "metadata": "{}",
             "from": self.synchronized_data.safe_contract_address,
-            "timestamp": now_timestamp,
+            "timestamp": int(now_timestamp),
         }
 
         # Vote types
@@ -643,6 +644,7 @@ class PrepareVoteTransactionBehaviour(ProposalVoterBaseBehaviour):
         """Get the safe hash for the EIP-712 signature"""
 
         snapshot_api_data = self._get_snapshot_vote_data(proposal)
+        self.context.logger.info(f"Encoding snapshot message: {snapshot_api_data}")
         encoded_proposal_data = HexBytes(encode_typed_data(snapshot_api_data)).hex()
         # encoded_proposal_data = encode_structured_data(snapshot_api_data)
         signmessagelib_address = self.params.signmessagelib_address
@@ -662,7 +664,9 @@ class PrepareVoteTransactionBehaviour(ProposalVoterBaseBehaviour):
                 f"sign_message unsuccessful!: {contract_api_msg}"
             )
             return None, snapshot_api_data
-        data = cast(bytes, contract_api_msg.state.body["data"])
+        data = cast(bytes, contract_api_msg.state.body["signature"].encode("utf-8"))
+
+        self.context.logger.info(f"Signature: {data}")
 
         # Get the safe transaction hash
         ether_value = ETHER_VALUE

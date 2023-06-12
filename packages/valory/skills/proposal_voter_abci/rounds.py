@@ -133,6 +133,7 @@ class SynchronizedData(BaseSynchronizedData):
         """Get the verified tx hash."""
         return cast(str, self.db.get_strict("final_tx_hash"))
 
+
 class EstablishVoteRound(CollectSameUntilThresholdRound):
     """EstablishVoteRound"""
 

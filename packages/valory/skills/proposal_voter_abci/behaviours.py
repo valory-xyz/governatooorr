@@ -754,7 +754,9 @@ class RetrieveSignatureBehaviour(ProposalVoterBaseBehaviour):
     def _get_safe_signature(self):
         """Get signature from the chain"""
 
-        self.context.logger.info(f"Retrieving signature from event for tx_hash={self.synchronized_data.most_voted_tx_hash}")
+        self.context.logger.info(
+            f"Retrieving signature from event for tx_hash={self.synchronized_data.final_tx_hash}"
+        )
 
         contract_api_msg = yield from self.get_contract_api_response(
             performative=ContractApiMessage.Performative.GET_STATE,  # type: ignore

@@ -76,7 +76,9 @@ from packages.valory.skills.proposal_voter_abci.snapshot import snapshot_vp_quer
 from packages.valory.skills.transaction_settlement_abci.payload_tools import (
     hash_payload_to_hex,
 )
-
+from packages.valory.contracts.gnosis_safe.contract import (
+    SafeOperation,
+)
 
 SAFE_TX_GAS = 0
 ETHER_VALUE = 0
@@ -664,9 +666,10 @@ class PrepareVoteTransactionBehaviour(ProposalVoterBaseBehaviour):
                 f"sign_message unsuccessful!: {contract_api_msg}"
             )
             return None, snapshot_api_data
-        data = cast(bytes, contract_api_msg.state.body["signature"].encode("utf-8"))
+        data = cast(str, contract_api_msg.state.body["signature"])[2:]
+        tx_data = bytes.fromhex(data)
 
-        self.context.logger.info(f"Signature: {data}")
+        self.context.logger.info(f"Signature: {tx_data}")
 
         # Get the safe transaction hash
         ether_value = ETHER_VALUE
@@ -679,8 +682,9 @@ class PrepareVoteTransactionBehaviour(ProposalVoterBaseBehaviour):
             contract_callable="get_raw_safe_transaction_hash",
             to_address=signmessagelib_address,
             value=ether_value,
-            data=data,
+            data=tx_data,
             safe_tx_gas=safe_tx_gas,
+            operation=SafeOperation.DELEGATE_CALL.value,
         )
         if (
             contract_api_msg.performative != ContractApiMessage.Performative.STATE
@@ -696,7 +700,7 @@ class PrepareVoteTransactionBehaviour(ProposalVoterBaseBehaviour):
 
         # temp hack:
         payload_string = hash_payload_to_hex(
-            safe_tx_hash, ether_value, safe_tx_gas, signmessagelib_address, data
+            safe_tx_hash, ether_value, safe_tx_gas, signmessagelib_address, tx_data, SafeOperation.DELEGATE_CALL.value,
         )
 
         return payload_string, snapshot_api_data

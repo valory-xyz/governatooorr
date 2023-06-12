@@ -624,10 +624,10 @@ class PrepareVoteTransactionBehaviour(ProposalVoterBaseBehaviour):
             "domain": {"name": "snapshot", "version": "0.1.4"},
             "types": {
                 "EIP712Domain": [  # This object is required by "encode_structured_data"
-                    # {"name": "name", "type": "string"},
+                    {"name": "name", "type": "string"},
                     # {"name": "version", "type": "string"},
                     # { 'name': 'chainId', 'type': 'uint256' },
-                    {"name": "verifyingContract", "type": "address"},
+                    # {"name": "verifyingContract", "type": "address"},
                 ],
                 "Vote": vote_types,
             },

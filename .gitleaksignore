@@ -22,3 +22,6 @@ b411310095b75c12f10876201776008eec55cc70:README.md:generic-api-key:66
 50c66854b62c69680655808974fe74e930f3e825:packages/valory/services/governatooorr/service.yaml:generic-api-key:94
 50c66854b62c69680655808974fe74e930f3e825:packages/valory/services/governatooorr/service.yaml:generic-api-key:134
 50c66854b62c69680655808974fe74e930f3e825:packages/valory/services/governatooorr/service.yaml:generic-api-key:174
+7d688f9f69e0334bea039abfd44895a36ec64882:packages/valory/skills/proposal_voter_abci/custom_eth_account/account.py:generic-api-key:643
+7d688f9f69e0334bea039abfd44895a36ec64882:packages/valory/skills/proposal_voter_abci/custom_eth_account/account.py:generic-api-key:666
+7d688f9f69e0334bea039abfd44895a36ec64882:packages/valory/skills/proposal_voter_abci/custom_eth_account/account.py:generic-api-key:695

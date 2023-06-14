@@ -21,11 +21,10 @@
 
 import json
 from abc import ABC
+from copy import deepcopy
 from typing import Dict, Generator, Optional, Set, Tuple, Type, cast
 
-from eth_account.messages import encode_structured_data
-from hexbytes import HexBytes
-from py_eth_sig_utils.eip712 import encode_typed_data
+from custom_eth_account.messages import encode_structured_data
 
 from packages.valory.connections.openai.connection import (
     PUBLIC_ID as LLM_CONNECTION_PUBLIC_ID,
@@ -88,6 +87,22 @@ VOTING_OPTIONS = "For, Against, and Abstain"
 VOTES_TO_CODE = {"FOR": 0, "AGAINST": 1, "ABSTAIN": 2}
 
 HTTP_OK = 200
+
+
+def fix_data_for_signing(data):
+    fixed_data = deepcopy(data)
+    fixed_data["message"]["proposal"] = bytearray.fromhex(
+        data["message"]["proposal"][2:]
+    )
+
+    fixed_data["types"]["EIP712Domain"] = [
+        {"name": "name", "type": "string"},
+        {"name": "version", "type": "string"},
+    ]
+
+    fixed_data["primaryType"] = "Vote"
+
+    return fixed_data
 
 
 class ProposalVoterBaseBehaviour(BaseBehaviour, ABC):
@@ -619,31 +634,21 @@ class PrepareVoteTransactionBehaviour(ProposalVoterBaseBehaviour):
             "timestamp": int(now_timestamp),
         }
 
-        # Vote types
-        vote_types = [
-            {"name": "from", "type": "address"},
-            {"name": "space", "type": "string"},
-            {"name": "timestamp", "type": "uint64"},
-            {"name": "proposal", "type": "string"},  # TODO: this is bytes32 on js
-            {"name": "choice", "type": "uint32"},
-            {"name": "reason", "type": "string"},
-            {"name": "app", "type": "string"},
-            {"name": "metadata", "type": "string"},
-        ]
-
         # Build the data structure for the EIP712 signature
         data = {
             "domain": {"name": "snapshot", "version": "0.1.4"},
             "types": {
-                "EIP712Domain": [  # This object is required by "encode_structured_data"
-                    {"name": "name", "type": "string"},
-                    # {"name": "version", "type": "string"},
-                    # { 'name': 'chainId', 'type': 'uint256' },
-                    # {"name": "verifyingContract", "type": "address"},
+                "Vote": [
+                    {"name": "from", "type": "address"},
+                    {"name": "space", "type": "string"},
+                    {"name": "timestamp", "type": "uint64"},
+                    {"name": "proposal", "type": "bytes32"},
+                    {"name": "choice", "type": "uint32"},
+                    {"name": "reason", "type": "string"},
+                    {"name": "app", "type": "string"},
+                    {"name": "metadata", "type": "string"},
                 ],
-                "Vote": vote_types,
             },
-            "primaryType": "Vote",  # Since we now have 2 type objects, we need to specify the primary one
             "message": message,
         }
 
@@ -656,7 +661,9 @@ class PrepareVoteTransactionBehaviour(ProposalVoterBaseBehaviour):
 
         snapshot_api_data = self._get_snapshot_vote_data(proposal)
         self.context.logger.info(f"Encoding snapshot message: {snapshot_api_data}")
-        encoded_proposal_data = HexBytes(encode_typed_data(snapshot_api_data)).hex()
+        encoded_proposal_data = encode_structured_data(
+            fix_data_for_signing(snapshot_api_data)
+        )
         # encoded_proposal_data = encode_structured_data(snapshot_api_data)
         signmessagelib_address = self.params.signmessagelib_address
 

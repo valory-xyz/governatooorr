@@ -48,6 +48,9 @@ query Proposals(
       name
       symbol
     }
+    strategies {
+      name
+    }
   }
 }
 """

@@ -346,6 +346,14 @@ class EstablishVoteBehaviour(ProposalVoterBaseBehaviour):
         """Get votable snapshot proposals"""
         snapshot_proposals = self.synchronized_data.snapshot_proposals
 
+        # Filter out proposals that do not use the erc20-balance-of strategy
+        snapshot_proposals = list(
+            filter(
+                lambda p: "erc20-balance-of" in [s["name"] for s in p["strategies"]],
+                snapshot_proposals,
+            )
+        )
+
         now = cast(
             SharedState, self.context.state
         ).round_sequence.last_round_transition_timestamp.timestamp()

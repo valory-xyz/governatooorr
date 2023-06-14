@@ -24,8 +24,6 @@ from abc import ABC
 from copy import deepcopy
 from typing import Dict, Generator, Optional, Set, Tuple, Type, cast
 
-from custom_eth_account.messages import encode_structured_data
-
 from packages.valory.connections.openai.connection import (
     PUBLIC_ID as LLM_CONNECTION_PUBLIC_ID,
 )
@@ -47,6 +45,9 @@ from packages.valory.skills.abstract_round_abci.common import (
     SelectKeeperBehaviour,
 )
 from packages.valory.skills.abstract_round_abci.models import Requests
+from packages.valory.skills.proposal_voter_abci.custom_eth_account.messages import (
+    encode_structured_data,
+)
 from packages.valory.skills.proposal_voter_abci.dialogues import (
     LlmDialogue,
     LlmDialogues,
@@ -331,7 +332,7 @@ class EstablishVoteBehaviour(ProposalVoterBaseBehaviour):
 
         if "errors" in response_json:
             self.context.logger.error(
-                "Got errors while retrieving voting power from Snapshot"
+                f"Got errors while retrieving voting power from Snapshot: {response_json}"
             )
             return False  # we skip this proposal for now
 
@@ -368,7 +369,7 @@ class EstablishVoteBehaviour(ProposalVoterBaseBehaviour):
         ]
 
         self.context.logger.info(
-            f"There are {len(expiring_snapshot_proposals)} finishing snapshot proposals"
+            f"There are {len(expiring_snapshot_proposals)} finishing snapshot proposals (erc20)"
         )
 
         # Check whether we have voting power for each expiring proposal
@@ -436,27 +437,32 @@ class PrepareVoteTransactionBehaviour(ProposalVoterBaseBehaviour):
             # when the transaction has been verified, and therefore we know that it is a submitted vote.
             submitted_vote = self.context.state.pending_vote
             submitted_vote_id = submitted_vote.proposal_id
-            submitted_proposal = proposals[submitted_vote_id]
-            submitted_proposal["vote"] = submitted_vote.vote_choice
-            submitted_proposal["votable"] = submitted_vote.votable
-            self.context.logger.info(f"Vote for proposal {submitted_vote_id} verified")
-
-            # remove the submitted vote from the votable list, if it is present there
-            if submitted_vote_id in votable_proposal_ids:
+            if not submitted_vote.snapshot:
+                submitted_proposal = proposals[submitted_vote_id]
+                submitted_proposal["vote"] = submitted_vote.vote_choice
+                submitted_proposal["votable"] = submitted_vote.votable
                 self.context.logger.info(
-                    f"Removing proposal {submitted_vote_id} from votable proposals"
+                    f"Vote for proposal {submitted_vote_id} verified"
                 )
-                votable_proposal_ids.remove(submitted_vote_id)
 
-            # remove the submitted vote from the snapshot proposals, if it is present there
-            proposal_id_to_index = {
-                p["id"]: index for index, p in enumerate(votable_snapshot_proposals)
-            }
-            if submitted_vote_id in proposal_id_to_index:
-                self.context.logger.info(
-                    f"Removing proposal {submitted_vote_id} from votable proposals"
-                )
-                votable_snapshot_proposals.pop(proposal_id_to_index[submitted_vote_id])
+                # remove the submitted vote from the votable list, if it is present there
+                if submitted_vote_id in votable_proposal_ids:
+                    self.context.logger.info(
+                        f"Removing proposal {submitted_vote_id} from votable proposals"
+                    )
+                    votable_proposal_ids.remove(submitted_vote_id)
+            else:
+                # remove the submitted vote from the snapshot proposals, if it is present there
+                proposal_id_to_index = {
+                    p["id"]: index for index, p in enumerate(votable_snapshot_proposals)
+                }
+                if submitted_vote_id in proposal_id_to_index:
+                    self.context.logger.info(
+                        f"Removing proposal {submitted_vote_id} from votable proposals"
+                    )
+                    votable_snapshot_proposals.pop(
+                        proposal_id_to_index[submitted_vote_id]
+                    )
 
         # Filter the votable proposals, keeping only those towards the end of their voting period
         votable_proposal_ids = list(

@@ -91,6 +91,7 @@ HTTP_OK = 200
 
 
 def fix_data_for_signing(data):
+    """Add missing required fields before signing"""
     fixed_data = deepcopy(data)
     fixed_data["message"]["proposal"] = bytearray.fromhex(
         data["message"]["proposal"][2:]
@@ -401,7 +402,7 @@ class EstablishVoteBehaviour(ProposalVoterBaseBehaviour):
             vote = yield from self._get_vote(prompt_template, prompt_values)
             if vote not in proposal["choices"]:
                 self.context.logger.error(
-                    f"Invalid vote: '{vote}'. Votes are: {proposal['choices']}"
+                    f"Invalid vote: '{vote!r}'. Votes are: {proposal['choices']}"
                 )
                 failed_llm_votes.append(index)
                 continue
@@ -678,7 +679,6 @@ class PrepareVoteTransactionBehaviour(ProposalVoterBaseBehaviour):
         encoded_proposal_data = encode_structured_data(
             fix_data_for_signing(snapshot_api_data)
         )
-        # encoded_proposal_data = encode_structured_data(snapshot_api_data)
         signmessagelib_address = self.params.signmessagelib_address
 
         # Get the raw transaction from the SignMessageLib contract

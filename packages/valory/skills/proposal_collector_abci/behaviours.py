@@ -424,7 +424,7 @@ class CollectActiveSnapshotProposalsBehaviour(ProposalCollectorBaseBehaviour):
             self.context.logger.info(f"Accumulated proposals: {len(active_proposals)}")
 
             if len(active_proposals) >= SNAPSHOT_PROPOSAL_LIMIT:
-                self.context.logger.info(f"Reached proposal payload limit")
+                self.context.logger.info("Reached proposal payload limit")
                 break
 
         return json.dumps(

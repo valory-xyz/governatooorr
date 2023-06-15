@@ -20,7 +20,7 @@
 
 
 from cytoolz import pipe
-from eth_account._utils.legacy_transactions import (
+from packages.valory.skills.proposal_voter_abci.custom_eth_account._utils.legacy_transactions import (
     ChainAwareUnsignedTransaction,
     Transaction,
     UnsignedTransaction,
@@ -28,7 +28,7 @@ from eth_account._utils.legacy_transactions import (
     serializable_unsigned_transaction_from_dict,
     strip_signature,
 )
-from eth_account._utils.typed_transactions import TypedTransaction
+from packages.valory.skills.proposal_voter_abci.custom_eth_account._utils.typed_transactions import TypedTransaction
 from eth_utils import to_bytes, to_int
 
 

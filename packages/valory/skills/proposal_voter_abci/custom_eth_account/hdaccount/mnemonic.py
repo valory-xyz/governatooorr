@@ -51,7 +51,7 @@ from bitarray import bitarray
 from bitarray.util import ba2int, int2ba
 from eth_utils import ValidationError
 
-from ._utils import normalize_string, pbkdf2_hmac_sha512, sha256
+from packages.valory.skills.proposal_voter_abci.custom_eth_account.hdaccount._utils import normalize_string, pbkdf2_hmac_sha512, sha256
 
 
 VALID_ENTROPY_SIZES = [16, 20, 24, 28, 32]

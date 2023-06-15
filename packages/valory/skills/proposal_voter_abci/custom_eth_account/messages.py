@@ -22,15 +22,15 @@
 from collections.abc import Mapping
 from typing import NamedTuple, Union
 
-from eth_account._utils.structured_data.hashing import hash_domain
-from eth_account._utils.structured_data.hashing import (
+from packages.valory.skills.proposal_voter_abci.custom_eth_account._utils.structured_data.hashing import hash_domain
+from packages.valory.skills.proposal_voter_abci.custom_eth_account._utils.structured_data.hashing import (
     hash_message as hash_eip712_message,
 )
-from eth_account._utils.structured_data.hashing import (
+from packages.valory.skills.proposal_voter_abci.custom_eth_account._utils.structured_data.hashing import (
     load_and_validate_structured_message,
 )
-from eth_account._utils.structured_data.validation import validate_structured_data
-from eth_account._utils.validation import is_valid_address
+from packages.valory.skills.proposal_voter_abci.custom_eth_account._utils.structured_data.validation import validate_structured_data
+from packages.valory.skills.proposal_voter_abci.custom_eth_account._utils.validation import is_valid_address
 from eth_typing import Address, Hash32
 from eth_utils.curried import (
     ValidationError,
@@ -197,7 +197,7 @@ def encode_defunct(
 
     .. doctest:: python
 
-        >>> from eth_account.messages import encode_defunct
+        >>> from packages.valory.skills.proposal_voter_abci.custom_eth_account.messages import encode_defunct
         >>> from eth_utils.curried import to_hex, to_bytes
 
         >>> message_text = "I♥SF"

@@ -21,8 +21,8 @@
 
 from eth_utils import ValidationError
 
-from .deterministic import HDPath
-from .mnemonic import Mnemonic
+from packages.valory.skills.proposal_voter_abci.custom_eth_account.hdaccount.deterministic import HDPath
+from packages.valory.skills.proposal_voter_abci.custom_eth_account.hdaccount.mnemonic import Mnemonic
 
 
 ETHEREUM_DEFAULT_PATH = "m/44'/60'/0'/0/0"

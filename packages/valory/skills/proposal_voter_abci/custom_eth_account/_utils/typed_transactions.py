@@ -39,12 +39,12 @@ from eth_utils.curried import (
 from hexbytes import HexBytes
 from rlp.sedes import BigEndianInt, Binary, CountableList, List, big_endian_int, binary
 
-from .transaction_utils import (
+from packages.valory.skills.proposal_voter_abci.custom_eth_account._utils.transaction_utils import (
     set_transaction_type_if_needed,
     transaction_rlp_to_rpc_structure,
     transaction_rpc_to_rlp_structure,
 )
-from .validation import (
+from packages.valory.skills.proposal_voter_abci.custom_eth_account._utils.validation import (
     LEGACY_TRANSACTION_FORMATTERS,
     LEGACY_TRANSACTION_VALID_VALUES,
     is_int_or_prefixed_hexstr,

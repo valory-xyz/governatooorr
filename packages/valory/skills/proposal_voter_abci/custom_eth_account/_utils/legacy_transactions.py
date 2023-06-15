@@ -28,9 +28,9 @@ from eth_rlp import HashableRLP
 from eth_utils.curried import apply_formatters_to_dict
 from rlp.sedes import Binary, big_endian_int, binary
 
-from .transaction_utils import set_transaction_type_if_needed
-from .typed_transactions import TypedTransaction
-from .validation import LEGACY_TRANSACTION_FORMATTERS, LEGACY_TRANSACTION_VALID_VALUES
+from packages.valory.skills.proposal_voter_abci.custom_eth_account._utils.transaction_utils import set_transaction_type_if_needed
+from packages.valory.skills.proposal_voter_abci.custom_eth_account._utils.typed_transactions import TypedTransaction
+from packages.valory.skills.proposal_voter_abci.custom_eth_account._utils.validation import LEGACY_TRANSACTION_FORMATTERS, LEGACY_TRANSACTION_VALID_VALUES
 
 
 def serializable_unsigned_transaction_from_dict(transaction_dict):

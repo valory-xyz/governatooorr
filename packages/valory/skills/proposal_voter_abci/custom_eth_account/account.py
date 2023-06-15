@@ -26,24 +26,24 @@ from collections.abc import Mapping
 from typing import Optional, Tuple, TypeVar, Union, cast
 
 from cytoolz import dissoc
-from eth_account._utils.legacy_transactions import Transaction, vrs_from
-from eth_account._utils.signing import (
+from packages.valory.skills.proposal_voter_abci.custom_eth_account._utils.legacy_transactions import Transaction, vrs_from
+from packages.valory.skills.proposal_voter_abci.custom_eth_account._utils.signing import (
     hash_of_signed_transaction,
     sign_message_hash,
     sign_transaction_dict,
     to_standard_signature_bytes,
     to_standard_v,
 )
-from eth_account._utils.typed_transactions import TypedTransaction
-from eth_account.datastructures import SignedMessage, SignedTransaction
-from eth_account.hdaccount import (
+from packages.valory.skills.proposal_voter_abci.custom_eth_account._utils.typed_transactions import TypedTransaction
+from packages.valory.skills.proposal_voter_abci.custom_eth_account.datastructures import SignedMessage, SignedTransaction
+from packages.valory.skills.proposal_voter_abci.custom_eth_account.hdaccount import (
     ETHEREUM_DEFAULT_PATH,
     generate_mnemonic,
     key_from_seed,
     seed_from_mnemonic,
 )
-from eth_account.messages import SignableMessage, _hash_eip191_message
-from eth_account.signers.local import LocalAccount
+from packages.valory.skills.proposal_voter_abci.custom_eth_account.messages import SignableMessage, _hash_eip191_message
+from packages.valory.skills.proposal_voter_abci.custom_eth_account.signers.local import LocalAccount
 from eth_keyfile import create_keyfile_json, decode_keyfile_json
 from eth_keys import KeyAPI, keys
 from eth_keys.exceptions import ValidationError
@@ -97,7 +97,7 @@ class Account:
 
         .. code-block:: python
 
-            >>> from eth_account import Account
+            >>> from packages.valory.skills.proposal_voter_abci.custom_eth_account import Account
             >>> acct = Account.create('KEYSMASH FJAFJKLDSKF7JKFDJ 1530')
             >>> acct.address
             '0x5ce9454909639D2D17A3F753ce7d93fa0b9aB12E'
@@ -268,7 +268,7 @@ class Account:
 
         .. doctest:: python
 
-            >>> from eth_account import Account
+            >>> from packages.valory.skills.proposal_voter_abci.custom_eth_account import Account
             >>> Account.enable_unaudited_hdwallet_features()
             >>> acct = Account.from_mnemonic(
             ...  "coral allow abandon recipe top tray caught video climb similar "
@@ -283,7 +283,7 @@ class Account:
 
         Or, generate multiple accounts from a mnemonic.
 
-             >>> from eth_account import Account
+             >>> from packages.valory.skills.proposal_voter_abci.custom_eth_account import Account
              >>> Account.enable_unaudited_hdwallet_features()
              >>> iterator = 0
              >>> for i in range(10):
@@ -351,7 +351,7 @@ class Account:
 
         .. doctest:: python
 
-            >>> from eth_account import Account
+            >>> from packages.valory.skills.proposal_voter_abci.custom_eth_account import Account
             >>> Account.enable_unaudited_hdwallet_features()
             >>> acct, mnemonic = Account.create_with_mnemonic()
             >>> acct.address # doctest: +SKIP
@@ -395,8 +395,8 @@ class Account:
 
         .. doctest:: python
 
-            >>> from eth_account.messages import encode_defunct
-            >>> from eth_account import Account
+            >>> from packages.valory.skills.proposal_voter_abci.custom_eth_account.messages import encode_defunct
+            >>> from packages.valory.skills.proposal_voter_abci.custom_eth_account import Account
             >>> message = encode_defunct(text="I♥SF")
             >>> vrs = (
             ...   28,
@@ -540,7 +540,7 @@ class Account:
         .. doctest:: python
 
             >>> msg = "I♥SF"
-            >>> from eth_account.messages import encode_defunct
+            >>> from packages.valory.skills.proposal_voter_abci.custom_eth_account.messages import encode_defunct
             >>> msghash = encode_defunct(text=msg)
             >>> msghash
             SignableMessage(version=b'E',

@@ -69,7 +69,7 @@ from typing import Tuple, Type, Union
 
 from eth_utils import ValidationError, to_int
 
-from ._utils import SECP256K1_N, ec_point, hmac_sha512
+from packages.valory.skills.proposal_voter_abci.custom_eth_account.hdaccount._utils import SECP256K1_N, ec_point, hmac_sha512
 
 
 BASE_NODE_IDENTIFIERS = {"m", "M"}

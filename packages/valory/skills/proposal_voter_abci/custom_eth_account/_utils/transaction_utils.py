@@ -21,11 +21,12 @@
 
 from typing import Any, Dict, Sequence
 
+from toolz import assoc, dissoc
+
 from packages.valory.skills.proposal_voter_abci.custom_eth_account._utils.validation import (
     is_rlp_structured_access_list,
     is_rpc_structured_access_list,
 )
-from toolz import assoc, dissoc
 
 
 def set_transaction_type_if_needed(transaction_dict: Dict[str, Any]) -> Dict[str, Any]:

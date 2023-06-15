@@ -19,9 +19,10 @@
 
 """This package contains round behaviours of ProposalCollector."""
 
+import datetime
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any, Dict, Optional, Type
+from typing import Any, Dict, Optional, Type, cast
 
 import pytest
 from aea.exceptions import AEAActException
@@ -46,7 +47,7 @@ from packages.valory.skills.proposal_voter_abci.behaviours import (
     PrepareVoteTransactionBehaviour,
     ProposalVoterBaseBehaviour,
 )
-from packages.valory.skills.proposal_voter_abci.models import PendingVote
+from packages.valory.skills.proposal_voter_abci.models import PendingVote, SharedState
 from packages.valory.skills.proposal_voter_abci.rounds import (
     Event,
     FinishedTransactionPreparationNoVoteRound,
@@ -213,6 +214,7 @@ class TestEstablishVoteBehaviour(BaseProposalVoterTest):
                     "Happy path",
                     initial_data=dict(
                         proposals=get_dummy_proposals(),
+                        snapshot_proposals=[],
                         delegations=get_dummy_delegations(),
                         proposals_to_refresh=["0", "1", "2"],
                     ),
@@ -224,6 +226,9 @@ class TestEstablishVoteBehaviour(BaseProposalVoterTest):
     )
     def test_run(self, test_case: BehaviourTestCase, kwargs: Any) -> None:
         """Run tests."""
+        time_in_future = datetime.datetime.now() + datetime.timedelta(hours=10)
+        state = cast(SharedState, self._skill.skill_context.state)
+        state.round_sequence._last_round_transition_timestamp = time_in_future
         self.fast_forward(test_case.initial_data)
         self.behaviour.act_wrapper()
         self.mock_llm_request(
@@ -303,7 +308,7 @@ class TestPrepareVoteTransactionNoVoteBehaviour(BaseProposalVoterTest):
     )
     def test_run(self, test_case: BehaviourTestCase, kwargs: Any) -> None:
         """Run tests."""
-        self.behaviour.context.state.pending_vote = PendingVote("1", "FOR")
+        self.behaviour.context.state.pending_vote = PendingVote("1", "FOR", False)
         self.fast_forward(test_case.initial_data)
         self.behaviour.act_wrapper()
         self.complete(test_case.event)

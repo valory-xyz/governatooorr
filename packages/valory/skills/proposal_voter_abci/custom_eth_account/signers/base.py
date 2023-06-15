@@ -21,8 +21,12 @@
 
 from abc import ABC, abstractmethod
 
-from packages.valory.skills.proposal_voter_abci.custom_eth_account.datastructures import SignedMessage
-from packages.valory.skills.proposal_voter_abci.custom_eth_account.messages import SignableMessage
+from packages.valory.skills.proposal_voter_abci.custom_eth_account.datastructures import (
+    SignedMessage,
+)
+from packages.valory.skills.proposal_voter_abci.custom_eth_account.messages import (
+    SignableMessage,
+)
 
 
 class BaseAccount(ABC):

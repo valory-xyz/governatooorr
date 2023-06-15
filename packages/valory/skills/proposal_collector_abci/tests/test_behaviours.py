@@ -36,10 +36,10 @@ from packages.valory.skills.abstract_round_abci.test_tools.base import (
     FSMBehaviourBaseCase,
 )
 from packages.valory.skills.proposal_collector_abci.behaviours import (
+    CollectActiveSnapshotProposalsBehaviour,
     CollectActiveTallyProposalsBehaviour,
     ProposalCollectorBaseBehaviour,
     SynchronizeDelegationsBehaviour,
-    CollectActiveSnapshotProposalsBehaviour,
 )
 from packages.valory.skills.proposal_collector_abci.rounds import (
     Event,

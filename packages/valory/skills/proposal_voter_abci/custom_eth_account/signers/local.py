@@ -21,7 +21,9 @@
 
 import warnings
 
-from packages.valory.skills.proposal_voter_abci.custom_eth_account.signers.base import BaseAccount
+from packages.valory.skills.proposal_voter_abci.custom_eth_account.signers.base import (
+    BaseAccount,
+)
 
 
 class LocalAccount(BaseAccount):

@@ -20,6 +20,8 @@
 
 
 from cytoolz import pipe
+from eth_utils import to_bytes, to_int
+
 from packages.valory.skills.proposal_voter_abci.custom_eth_account._utils.legacy_transactions import (
     ChainAwareUnsignedTransaction,
     Transaction,
@@ -28,8 +30,9 @@ from packages.valory.skills.proposal_voter_abci.custom_eth_account._utils.legacy
     serializable_unsigned_transaction_from_dict,
     strip_signature,
 )
-from packages.valory.skills.proposal_voter_abci.custom_eth_account._utils.typed_transactions import TypedTransaction
-from eth_utils import to_bytes, to_int
+from packages.valory.skills.proposal_voter_abci.custom_eth_account._utils.typed_transactions import (
+    TypedTransaction,
+)
 
 
 CHAIN_ID_OFFSET = 35

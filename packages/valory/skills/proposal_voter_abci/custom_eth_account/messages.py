@@ -22,15 +22,6 @@
 from collections.abc import Mapping
 from typing import NamedTuple, Union
 
-from packages.valory.skills.proposal_voter_abci.custom_eth_account._utils.structured_data.hashing import hash_domain
-from packages.valory.skills.proposal_voter_abci.custom_eth_account._utils.structured_data.hashing import (
-    hash_message as hash_eip712_message,
-)
-from packages.valory.skills.proposal_voter_abci.custom_eth_account._utils.structured_data.hashing import (
-    load_and_validate_structured_message,
-)
-from packages.valory.skills.proposal_voter_abci.custom_eth_account._utils.structured_data.validation import validate_structured_data
-from packages.valory.skills.proposal_voter_abci.custom_eth_account._utils.validation import is_valid_address
 from eth_typing import Address, Hash32
 from eth_utils.curried import (
     ValidationError,
@@ -41,6 +32,22 @@ from eth_utils.curried import (
     to_text,
 )
 from hexbytes import HexBytes
+
+from packages.valory.skills.proposal_voter_abci.custom_eth_account._utils.structured_data.hashing import (
+    hash_domain,
+)
+from packages.valory.skills.proposal_voter_abci.custom_eth_account._utils.structured_data.hashing import (
+    hash_message as hash_eip712_message,
+)
+from packages.valory.skills.proposal_voter_abci.custom_eth_account._utils.structured_data.hashing import (
+    load_and_validate_structured_message,
+)
+from packages.valory.skills.proposal_voter_abci.custom_eth_account._utils.structured_data.validation import (
+    validate_structured_data,
+)
+from packages.valory.skills.proposal_voter_abci.custom_eth_account._utils.validation import (
+    is_valid_address,
+)
 
 
 text_to_bytes = text_if_str(to_bytes)

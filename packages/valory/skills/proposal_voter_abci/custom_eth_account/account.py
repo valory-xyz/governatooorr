@@ -26,24 +26,6 @@ from collections.abc import Mapping
 from typing import Optional, Tuple, TypeVar, Union, cast
 
 from cytoolz import dissoc
-from packages.valory.skills.proposal_voter_abci.custom_eth_account._utils.legacy_transactions import Transaction, vrs_from
-from packages.valory.skills.proposal_voter_abci.custom_eth_account._utils.signing import (
-    hash_of_signed_transaction,
-    sign_message_hash,
-    sign_transaction_dict,
-    to_standard_signature_bytes,
-    to_standard_v,
-)
-from packages.valory.skills.proposal_voter_abci.custom_eth_account._utils.typed_transactions import TypedTransaction
-from packages.valory.skills.proposal_voter_abci.custom_eth_account.datastructures import SignedMessage, SignedTransaction
-from packages.valory.skills.proposal_voter_abci.custom_eth_account.hdaccount import (
-    ETHEREUM_DEFAULT_PATH,
-    generate_mnemonic,
-    key_from_seed,
-    seed_from_mnemonic,
-)
-from packages.valory.skills.proposal_voter_abci.custom_eth_account.messages import SignableMessage, _hash_eip191_message
-from packages.valory.skills.proposal_voter_abci.custom_eth_account.signers.local import LocalAccount
 from eth_keyfile import create_keyfile_json, decode_keyfile_json
 from eth_keys import KeyAPI, keys
 from eth_keys.exceptions import ValidationError
@@ -58,6 +40,38 @@ from eth_utils.curried import (
     to_int,
 )
 from hexbytes import HexBytes
+
+from packages.valory.skills.proposal_voter_abci.custom_eth_account._utils.legacy_transactions import (
+    Transaction,
+    vrs_from,
+)
+from packages.valory.skills.proposal_voter_abci.custom_eth_account._utils.signing import (
+    hash_of_signed_transaction,
+    sign_message_hash,
+    sign_transaction_dict,
+    to_standard_signature_bytes,
+    to_standard_v,
+)
+from packages.valory.skills.proposal_voter_abci.custom_eth_account._utils.typed_transactions import (
+    TypedTransaction,
+)
+from packages.valory.skills.proposal_voter_abci.custom_eth_account.datastructures import (
+    SignedMessage,
+    SignedTransaction,
+)
+from packages.valory.skills.proposal_voter_abci.custom_eth_account.hdaccount import (
+    ETHEREUM_DEFAULT_PATH,
+    generate_mnemonic,
+    key_from_seed,
+    seed_from_mnemonic,
+)
+from packages.valory.skills.proposal_voter_abci.custom_eth_account.messages import (
+    SignableMessage,
+    _hash_eip191_message,
+)
+from packages.valory.skills.proposal_voter_abci.custom_eth_account.signers.local import (
+    LocalAccount,
+)
 
 
 VRS = TypeVar("VRS", bytes, HexStr, int)

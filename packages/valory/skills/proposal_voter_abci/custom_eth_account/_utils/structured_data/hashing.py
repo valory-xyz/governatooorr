@@ -27,7 +27,9 @@ from eth_abi import encode, is_encodable, is_encodable_type
 from eth_abi.grammar import parse
 from eth_utils import keccak, to_tuple
 
-from packages.valory.skills.proposal_voter_abci.custom_eth_account._utils.structured_data.validation import validate_structured_data
+from packages.valory.skills.proposal_voter_abci.custom_eth_account._utils.structured_data.validation import (
+    validate_structured_data,
+)
 
 
 def get_dependencies(primary_type, types):

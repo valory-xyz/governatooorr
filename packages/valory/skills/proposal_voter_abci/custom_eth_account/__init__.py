@@ -19,7 +19,9 @@
 # ------------------------------------------------------------------------------
 
 
-from packages.valory.skills.proposal_voter_abci.custom_eth_account.account import Account
+from packages.valory.skills.proposal_voter_abci.custom_eth_account.account import (
+    Account,
+)
 
 
 __all__ = ["Account"]

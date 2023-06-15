@@ -39,6 +39,7 @@ from packages.valory.skills.proposal_collector_abci.behaviours import (
     CollectActiveTallyProposalsBehaviour,
     ProposalCollectorBaseBehaviour,
     SynchronizeDelegationsBehaviour,
+    CollectActiveSnapshotProposalsBehaviour,
 )
 from packages.valory.skills.proposal_collector_abci.rounds import (
     Event,
@@ -224,9 +225,7 @@ class TestCollectActiveTallyProposalsBehaviour(BaseProposalCollectorTest):
     """Tests CollectActiveTallyProposalsBehaviour"""
 
     behaviour_class = CollectActiveTallyProposalsBehaviour
-    next_behaviour_class = make_degenerate_behaviour(  # type: ignore
-        FinishedProposalRound
-    )
+    next_behaviour_class = CollectActiveSnapshotProposalsBehaviour
 
     @pytest.mark.parametrize(
         "test_case, kwargs",

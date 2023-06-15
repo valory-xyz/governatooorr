@@ -319,7 +319,6 @@ class ProposalCollectorAbciApp(AbciApp[Event]):
             Event.DONE: FinishedProposalRound,
             Event.REPEAT: CollectActiveSnapshotProposalsRound,
             Event.API_ERROR: CollectActiveSnapshotProposalsRound,
-            Event.BLOCK_RETRIEVAL_ERROR: CollectActiveSnapshotProposalsRound,
             Event.NO_MAJORITY: CollectActiveSnapshotProposalsRound,
             Event.ROUND_TIMEOUT: CollectActiveSnapshotProposalsRound,
         },

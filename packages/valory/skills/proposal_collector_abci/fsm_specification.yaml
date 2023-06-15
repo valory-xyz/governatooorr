@@ -3,6 +3,7 @@ alphabet_in:
 - BLOCK_RETRIEVAL_ERROR
 - DONE
 - NO_MAJORITY
+- REPEAT
 - ROUND_TIMEOUT
 - WRITE_DELEGATIONS
 default_start_state: SynchronizeDelegationsRound
@@ -14,14 +15,20 @@ start_states:
 - CollectActiveTallyProposalsRound
 - SynchronizeDelegationsRound
 states:
+- CollectActiveSnapshotProposalsRound
 - CollectActiveTallyProposalsRound
 - FinishedProposalRound
 - FinishedWriteDelegationsRound
 - SynchronizeDelegationsRound
 transition_func:
+    (CollectActiveSnapshotProposalsRound, API_ERROR): CollectActiveSnapshotProposalsRound
+    (CollectActiveSnapshotProposalsRound, DONE): FinishedProposalRound
+    (CollectActiveSnapshotProposalsRound, NO_MAJORITY): CollectActiveSnapshotProposalsRound
+    (CollectActiveSnapshotProposalsRound, REPEAT): CollectActiveSnapshotProposalsRound
+    (CollectActiveSnapshotProposalsRound, ROUND_TIMEOUT): CollectActiveSnapshotProposalsRound
     (CollectActiveTallyProposalsRound, API_ERROR): CollectActiveTallyProposalsRound
     (CollectActiveTallyProposalsRound, BLOCK_RETRIEVAL_ERROR): CollectActiveTallyProposalsRound
-    (CollectActiveTallyProposalsRound, DONE): FinishedProposalRound
+    (CollectActiveTallyProposalsRound, DONE): CollectActiveSnapshotProposalsRound
     (CollectActiveTallyProposalsRound, NO_MAJORITY): CollectActiveTallyProposalsRound
     (CollectActiveTallyProposalsRound, ROUND_TIMEOUT): CollectActiveTallyProposalsRound
     (SynchronizeDelegationsRound, DONE): CollectActiveTallyProposalsRound

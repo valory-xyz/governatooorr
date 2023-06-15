@@ -262,7 +262,7 @@ class Account:
         return LocalAccount(key, self)
 
     @combomethod
-    def from_mnemonic(
+    def from_mnemonic(  # nosec
         self,
         mnemonic: str,
         passphrase: str = "",
@@ -335,7 +335,7 @@ class Account:
         return LocalAccount(key, self)
 
     @combomethod
-    def create_with_mnemonic(
+    def create_with_mnemonic(  # nosec
         self,
         passphrase: str = "",
         num_words: int = 12,

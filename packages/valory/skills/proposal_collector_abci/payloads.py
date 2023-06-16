@@ -32,7 +32,14 @@ class SynchronizeDelegationsPayload(BaseTxPayload):
 
 
 @dataclass(frozen=True)
-class CollectActiveProposalsPayload(BaseTxPayload):
-    """Represent a transaction payload for the CollectActiveProposals."""
+class CollectActiveTallyProposalsPayload(BaseTxPayload):
+    """Represent a transaction payload for the CollectActiveTallyProposals."""
+
+    proposals: str
+
+
+@dataclass(frozen=True)
+class CollectActiveSnapshotProposalsPayload(BaseTxPayload):
+    """Represent a transaction payload for the CollectActiveSnapshotProposals."""
 
     proposals: str

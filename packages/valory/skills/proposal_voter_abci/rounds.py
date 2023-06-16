@@ -31,11 +31,16 @@ from packages.valory.skills.abstract_round_abci.base import (
     CollectSameUntilThresholdRound,
     DegenerateRound,
     EventToTimeout,
+    OnlyKeeperSendsRound,
     get_name,
 )
 from packages.valory.skills.proposal_voter_abci.payloads import (
     EstablishVotePayload,
     PrepareVoteTransactionPayload,
+    RetrieveSignaturePayload,
+    SnapshotAPISendPayload,
+    SnapshotAPISendRandomnessPayload,
+    SnapshotAPISendSelectKeeperPayload,
 )
 from packages.valory.skills.transaction_settlement_abci.payload_tools import (
     VerificationStatus,
@@ -51,6 +56,10 @@ class Event(Enum):
     CONTRACT_ERROR = "contract_error"
     VOTE = "vote"
     NO_VOTE = "no_vote"
+    DID_NOT_SEND = "did_not_send"
+    API_ERROR = "api_error"
+    CALL_API = "call_api"
+    RETRIEVAL_ERROR = "retrieval_error"
 
 
 class SynchronizedData(BaseSynchronizedData):
@@ -79,6 +88,11 @@ class SynchronizedData(BaseSynchronizedData):
         return cast(dict, self.db.get("proposals", {}))
 
     @property
+    def snapshot_proposals(self) -> list:
+        """Get the proposals from Snapshot."""
+        return cast(list, self.db.get("snapshot_proposals", []))
+
+    @property
     def votable_proposal_ids(self) -> set:
         """Get the votable proposal ids, sorted by their remaining blocks until expiration, in ascending order."""
         return cast(set, self.db.get("votable_proposal_ids", {}))
@@ -89,9 +103,35 @@ class SynchronizedData(BaseSynchronizedData):
         return cast(list, self.db.get("proposals_to_refresh", []))
 
     @property
+    def votable_snapshot_proposals(self) -> list:
+        """Get the proposals from Snapshot."""
+        return cast(list, self.db.get("votable_snapshot_proposals", []))
+
+    @property
     def most_voted_tx_hash(self) -> str:
         """Get the most_voted_tx_hash."""
         return cast(str, self.db.get_strict("most_voted_tx_hash"))
+
+    @property
+    def most_voted_randomness_round(self) -> int:  # pragma: no cover
+        """Get the most voted randomness round."""
+        round_ = self.db.get_strict("most_voted_randomness_round")
+        return cast(int, round_)
+
+    @property
+    def snapshot_api_data(self) -> dict:
+        """Get the snapshot_data."""
+        return cast(dict, self.db.get("snapshot_api_data", {}))
+
+    @property
+    def snapshot_api_data_signature(self) -> dict:
+        """Get the snapshot_api_data_signature."""
+        return cast(dict, self.db.get("snapshot_api_data_signature", {}))
+
+    @property
+    def final_tx_hash(self) -> str:
+        """Get the verified tx hash."""
+        return cast(str, self.db.get_strict("final_tx_hash"))
 
 
 class EstablishVoteRound(CollectSameUntilThresholdRound):
@@ -103,12 +143,14 @@ class EstablishVoteRound(CollectSameUntilThresholdRound):
     def end_block(self) -> Optional[Tuple[BaseSynchronizedData, Event]]:
         """Process the end of the block."""
         if self.threshold_reached:
+            payload = json.loads(self.most_voted_payload)
             synchronized_data = self.synchronized_data.update(
                 synchronized_data_class=SynchronizedData,
                 **{
-                    get_name(SynchronizedData.proposals): json.loads(
-                        self.most_voted_payload
-                    ),
+                    get_name(SynchronizedData.proposals): payload["proposals"],
+                    get_name(SynchronizedData.votable_snapshot_proposals): payload[
+                        "votable_snapshot_proposals"
+                    ],
                 }
             )
             return synchronized_data, Event.DONE
@@ -164,6 +206,99 @@ class PrepareVoteTransactionRound(CollectSameUntilThresholdRound):
         return None
 
 
+class RetrieveSignatureRound(CollectSameUntilThresholdRound):
+    """RetrieveSignatureRound"""
+
+    payload_class = RetrieveSignaturePayload
+    synchronized_data_class = SynchronizedData
+
+    SKIP_PAYLOAD = "skip_payload"
+
+    def end_block(self) -> Optional[Tuple[BaseSynchronizedData, Event]]:
+        """Process the end of the block."""
+        if self.threshold_reached:
+
+            if self.most_voted_payload == self.SKIP_PAYLOAD:
+                return self.synchronized_data, Event.DONE
+
+            payload = json.loads(self.most_voted_payload)
+            snapshot_api_data_signature = payload["snapshot_api_data_signature"]
+
+            if not snapshot_api_data_signature:
+                return self.synchronized_data, Event.RETRIEVAL_ERROR
+
+            synchronized_data = self.synchronized_data.update(
+                synchronized_data_class=SynchronizedData,
+                **{
+                    get_name(
+                        SynchronizedData.snapshot_api_data_signature
+                    ): snapshot_api_data_signature,
+                }
+            )
+            return synchronized_data, Event.CALL_API
+
+        if not self.is_majority_possible(
+            self.collection, self.synchronized_data.nb_participants
+        ):
+            return self.synchronized_data, Event.NO_MAJORITY
+        return None
+
+
+class SnapshotAPISendRandomnessRound(CollectSameUntilThresholdRound):
+    """A round for generating randomness"""
+
+    payload_class = SnapshotAPISendRandomnessPayload
+    synchronized_data_class = SynchronizedData
+    done_event = Event.DONE
+    no_majority_event = Event.NO_MAJORITY
+    collection_key = get_name(SynchronizedData.participant_to_randomness)
+    selection_key = (
+        get_name(SynchronizedData.most_voted_randomness_round),
+        get_name(SynchronizedData.most_voted_randomness),
+    )
+
+
+class SnapshotAPISendSelectKeeperRound(CollectSameUntilThresholdRound):
+    """A round in which a keeper is selected for transaction submission"""
+
+    payload_class = SnapshotAPISendSelectKeeperPayload
+    synchronized_data_class = SynchronizedData
+    done_event = Event.DONE
+    no_majority_event = Event.NO_MAJORITY
+    collection_key = get_name(SynchronizedData.participant_to_selection)
+    selection_key = get_name(SynchronizedData.most_voted_keeper_address)
+
+
+class SnapshotAPISendRound(OnlyKeeperSendsRound):
+    """StreamWriteRound"""
+
+    payload_class = SnapshotAPISendPayload
+    synchronized_data_class = SynchronizedData
+
+    SUCCCESS_PAYLOAD = "success"
+    ERROR_PAYLOAD = "error"
+
+    def end_block(
+        self,
+    ) -> Optional[
+        Tuple[BaseSynchronizedData, Enum]
+    ]:  # pylint: disable=too-many-return-statements
+        """Process the end of the block."""
+        if self.keeper_payload is None:
+            return None
+
+        if self.keeper_payload is None:  # pragma: no cover
+            return self.synchronized_data, Event.DID_NOT_SEND
+
+        if (
+            cast(SnapshotAPISendPayload, self.keeper_payload).content
+            == self.ERROR_PAYLOAD
+        ):
+            return self.synchronized_data, Event.API_ERROR
+
+        return self.synchronized_data, Event.DONE
+
+
 class FinishedTransactionPreparationVoteRound(DegenerateRound):
     """FinishedTransactionPreparationRound"""
 
@@ -176,7 +311,11 @@ class ProposalVoterAbciApp(AbciApp[Event]):
     """ProposalVoterAbciApp"""
 
     initial_round_cls: AppState = EstablishVoteRound
-    initial_states: Set[AppState] = {EstablishVoteRound, PrepareVoteTransactionRound}
+    initial_states: Set[AppState] = {
+        EstablishVoteRound,
+        PrepareVoteTransactionRound,
+        RetrieveSignatureRound,
+    }
     transition_function: AbciAppTransitionFunction = {
         EstablishVoteRound: {
             Event.DONE: PrepareVoteTransactionRound,
@@ -191,6 +330,29 @@ class ProposalVoterAbciApp(AbciApp[Event]):
             Event.CONTRACT_ERROR: PrepareVoteTransactionRound,
         },
         FinishedTransactionPreparationNoVoteRound: {},
+        RetrieveSignatureRound: {
+            Event.DONE: PrepareVoteTransactionRound,
+            Event.RETRIEVAL_ERROR: RetrieveSignatureRound,
+            Event.CALL_API: SnapshotAPISendRandomnessRound,
+            Event.NO_MAJORITY: EstablishVoteRound,
+            Event.ROUND_TIMEOUT: EstablishVoteRound,
+        },
+        SnapshotAPISendRandomnessRound: {
+            Event.DONE: SnapshotAPISendSelectKeeperRound,
+            Event.NO_MAJORITY: SnapshotAPISendRandomnessRound,
+            Event.ROUND_TIMEOUT: SnapshotAPISendRandomnessRound,
+        },
+        SnapshotAPISendSelectKeeperRound: {
+            Event.DONE: SnapshotAPISendRound,
+            Event.NO_MAJORITY: SnapshotAPISendRandomnessRound,
+            Event.ROUND_TIMEOUT: SnapshotAPISendRandomnessRound,
+        },
+        SnapshotAPISendRound: {
+            Event.API_ERROR: SnapshotAPISendRandomnessRound,
+            Event.DID_NOT_SEND: SnapshotAPISendRandomnessRound,
+            Event.DONE: PrepareVoteTransactionRound,
+            Event.ROUND_TIMEOUT: SnapshotAPISendRandomnessRound,
+        },
         FinishedTransactionPreparationVoteRound: {},
     }
     final_states: Set[AppState] = {
@@ -212,6 +374,9 @@ class ProposalVoterAbciApp(AbciApp[Event]):
             get_name(SynchronizedData.delegations),
             get_name(SynchronizedData.votable_proposal_ids),
         },
+        RetrieveSignatureRound: set(
+            get_name(SynchronizedData.most_voted_tx_hash),
+        ),
     }
     db_post_conditions: Dict[AppState, Set[str]] = {
         FinishedTransactionPreparationVoteRound: {

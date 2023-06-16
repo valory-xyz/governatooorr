@@ -8,21 +8,22 @@ license: Apache-2.0
 aea_version: '>=1.0.0, <2.0.0'
 fingerprint:
   __init__.py: bafybeickrxtcqbivmneh54iq7ymaoq6xzwdouvnoon3h234vzp574qouvu
-  behaviours.py: bafybeig33hoeaubnvgxggvwpx4aavi5qvkhwb3egsnmntkptt2kcpsed6u
+  behaviours.py: bafybeien3tgtiu2u552ofwcmax4y3lcjbulu46fkwo43pksljb3y5krh7i
   dialogues.py: bafybeighergy2hupd32ozp2ud5j4jujpccfkzk2l46a33xn7yi2ofk32m4
-  fsm_specification.yaml: bafybeieplrcf6tguisl4gsn6ppffq66u5b2pvnhfiqr4dxuluqoyewsqla
+  fsm_specification.yaml: bafybeifcqwkgqhexmkeg5i7iupiczt5t5ra22d73ojuiz43jkaywdnb5x4
   handlers.py: bafybeibkaxy6fkkxluminkzpt3aw3rrsa6zg66uldjmwymhevi7dr2qhbe
-  models.py: bafybeicolnipyzownntfxff64ns6svzffgquh4wgxxplrcv5oq7j6bvjrm
-  payloads.py: bafybeidep6mcmwwq2ayry7rpnxsgdcba6utzgzo6xf2qxeekl5pdzzyl5e
-  rounds.py: bafybeiba373rkcb6ahhraaf6qdp4nww2xgzzlg74bqydj2iovniwnhpjhu
+  models.py: bafybeigrf4yztnaref5jgp2wpqlg2osrib42p4axymcstfrli6wga3n2kq
+  payloads.py: bafybeigcbd5mvxypyxohxkr4qxpwobavtluarpwlwweklqtgyertvuqxgy
+  rounds.py: bafybeieulhypzle6cgexdpyqf72u4n3dwwavxem2bmgsyendg7q3gxbi6u
+  snapshot.py: bafybeig6iqvsraxdy635bws7nn7pjpkddtfuecmzq3llncgc4eolltfwna
   tally.py: bafybeih4w2gk6vzthjbw3q2hhckquxgcs7y4kvj3uezclugb6qvo3s35fq
   tests/__init__.py: bafybeic43gkt67rz4d2latl5qvjxymqjvim4mcj6aklxa6bl73yobtopra
-  tests/test_behaviours.py: bafybeidnao3v2j7qot3mbmi6ttqczfgdvpoijfvnfacwqekh7cs7dagkgq
+  tests/test_behaviours.py: bafybeihhj6ob7bunp2vyx2nusx7wwkptlj7w77oigtfjuudy223pegkmxa
   tests/test_dialogues.py: bafybeibgmzzwmydoe4v5334zwjjx3shza4ersaneykxvu6r4rpbagogx2i
   tests/test_handlers.py: bafybeia6ef2svsgeu2vx4us7gvmt4nbuygjufpdy7pjifdxfukly5nwrem
   tests/test_models.py: bafybeia4q5ncu6xxie5e2plugclkccrqnuqw3ujlqu3vus54zacvfkwyxi
-  tests/test_payloads.py: bafybeih5oszduf475trxe5itjwkcxlue6hcuvigse2flltrccld6dgd7kq
-  tests/test_rounds.py: bafybeib3n5ll3ppwwinm46eys7nxyjnwv42f3moc2fjzaocurnhvvw6vea
+  tests/test_payloads.py: bafybeifpggwuftdbammofsvoi4dpouscmjw47rozqea2syyaa27fbxvrlu
+  tests/test_rounds.py: bafybeigg5wdqe7kyoitb3il2342y7zbhgoubz7mjfeptikhehfuke6wt2i
 fingerprint_ignore_patterns: []
 connections:
 - fetchai/http_server:0.22.0:bafybeihaax5od5zo5jk2l62hv4jwuwtxloh5mijozudpsjombqc4ncmi6i
@@ -125,6 +126,7 @@ models:
         consensus_threshold: null
       share_tm_config_on_startup: false
       sleep_time: 1
+      snapshot_api_endpoint: https://hub.snapshot.org/graphql
       tally_api_endpoint: https://api.tally.xyz/query
       tally_api_key: <tally_api_key>
       tendermint_check_sleep_delay: 3

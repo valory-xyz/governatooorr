@@ -66,6 +66,7 @@ class RandomnessApi(ApiSpecs):
 
 
 MARGIN = 5
+MULTIPLIER = 10
 
 
 class SharedState(BaseSharedState):
@@ -85,9 +86,9 @@ class SharedState(BaseSharedState):
         GovernatooorrAbciApp.event_to_timeout[
             CeramicWriteEvent.ROUND_TIMEOUT
         ] = self.context.params.round_timeout_seconds
-        GovernatooorrAbciApp.event_to_timeout[
-            ProposalVoterEvent.ROUND_TIMEOUT
-        ] = self.context.params.round_timeout_seconds
+        GovernatooorrAbciApp.event_to_timeout[ProposalVoterEvent.ROUND_TIMEOUT] = (
+            self.context.params.round_timeout_seconds * MULTIPLIER
+        )
         GovernatooorrAbciApp.event_to_timeout[
             ResetPauseEvent.ROUND_TIMEOUT
         ] = self.context.params.round_timeout_seconds

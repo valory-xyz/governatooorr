@@ -31,14 +31,19 @@ from packages.valory.skills.abstract_round_abci.behaviours import (
 )
 from packages.valory.skills.proposal_collector_abci.models import Params
 from packages.valory.skills.proposal_collector_abci.payloads import (
-    CollectActiveProposalsPayload,
+    CollectActiveSnapshotProposalsPayload,
+    CollectActiveTallyProposalsPayload,
     SynchronizeDelegationsPayload,
 )
 from packages.valory.skills.proposal_collector_abci.rounds import (
-    CollectActiveProposalsRound,
+    CollectActiveSnapshotProposalsRound,
+    CollectActiveTallyProposalsRound,
     ProposalCollectorAbciApp,
     SynchronizeDelegationsRound,
     SynchronizedData,
+)
+from packages.valory.skills.proposal_collector_abci.snapshot import (
+    snapshot_proposal_query,
 )
 from packages.valory.skills.proposal_collector_abci.tally import (
     governor_query,
@@ -47,6 +52,8 @@ from packages.valory.skills.proposal_collector_abci.tally import (
 
 
 HTTP_OK = 200
+SNAPSHOT_REQUEST_STEP = 200
+SNAPSHOT_PROPOSAL_LIMIT = 200
 
 
 class ProposalCollectorBaseBehaviour(BaseBehaviour, ABC):
@@ -109,7 +116,7 @@ class SynchronizeDelegationsBehaviour(ProposalCollectorBaseBehaviour):
         self.set_done()
 
 
-class CollectActiveProposalsBehaviour(ProposalCollectorBaseBehaviour):
+class CollectActiveTallyProposalsBehaviour(ProposalCollectorBaseBehaviour):
     """
     CollectActiveProposals
 
@@ -117,7 +124,7 @@ class CollectActiveProposalsBehaviour(ProposalCollectorBaseBehaviour):
     for which the Governatooorr has received delegations.
     """
 
-    matching_round: Type[AbstractRound] = CollectActiveProposalsRound
+    matching_round: Type[AbstractRound] = CollectActiveTallyProposalsRound
 
     def async_act(self) -> Generator:
         """Do the act, supporting asynchronous execution."""
@@ -129,10 +136,9 @@ class CollectActiveProposalsBehaviour(ProposalCollectorBaseBehaviour):
 
             updated_proposals = yield from self._get_updated_proposals()
             sender = self.context.agent_address
-            payload = CollectActiveProposalsPayload(
+            payload = CollectActiveTallyProposalsPayload(
                 sender=sender, proposals=updated_proposals
             )
-            self.context.logger.info(f"updated_proposals = {updated_proposals}")
 
         with self.context.benchmark_tool.measure(self.behaviour_id).consensus():
             yield from self.send_a2a_transaction(payload)
@@ -177,13 +183,13 @@ class CollectActiveProposalsBehaviour(ProposalCollectorBaseBehaviour):
                 f"Could not retrieve data from Tally API. "
                 f"Received status code {response.status_code}."
             )
-            return CollectActiveProposalsRound.ERROR_PAYLOAD
+            return CollectActiveTallyProposalsRound.ERROR_PAYLOAD
 
         response_json = json.loads(response.body)
 
         if "errors" in response_json:
             self.context.logger.error("Got errors while retrieving the data from Tally")
-            return CollectActiveProposalsRound.ERROR_PAYLOAD
+            return CollectActiveTallyProposalsRound.ERROR_PAYLOAD
 
         # Filter out governors with no active proposals
         governors = response_json["data"]["governors"]
@@ -227,7 +233,7 @@ class CollectActiveProposalsBehaviour(ProposalCollectorBaseBehaviour):
                     f"Could not retrieve data from Tally API. "
                     f"Received status code {response.status_code}."
                 )
-                return CollectActiveProposalsRound.ERROR_PAYLOAD
+                return CollectActiveTallyProposalsRound.ERROR_PAYLOAD
 
             response_json = json.loads(response.body)
 
@@ -235,7 +241,7 @@ class CollectActiveProposalsBehaviour(ProposalCollectorBaseBehaviour):
                 self.context.logger.error(
                     "Got errors while retrieving the data from Tally"
                 )
-                return CollectActiveProposalsRound.ERROR_PAYLOAD
+                return CollectActiveTallyProposalsRound.ERROR_PAYLOAD
 
             # Filter out non-active proposals and those which use non-erc20 tokens
             filtered_proposals = list(
@@ -258,7 +264,7 @@ class CollectActiveProposalsBehaviour(ProposalCollectorBaseBehaviour):
         # Remove proposals for which the vote end block is in the past
         current_block = yield from self.get_current_block()
         if current_block is None:
-            return CollectActiveProposalsRound.BLOCK_RETRIEVAL_ERROR
+            return CollectActiveTallyProposalsRound.BLOCK_RETRIEVAL_ERROR
 
         active_proposals = filter(
             lambda ap: ap["end"]["number"] > current_block, active_proposals
@@ -325,12 +331,118 @@ class CollectActiveProposalsBehaviour(ProposalCollectorBaseBehaviour):
         )
 
 
+class CollectActiveSnapshotProposalsBehaviour(ProposalCollectorBaseBehaviour):
+    """
+    CollectActiveSnapshotProposals
+
+    Behaviour used to collect active proposals from Snapshot
+    """
+
+    matching_round: Type[AbstractRound] = CollectActiveSnapshotProposalsRound
+
+    def async_act(self) -> Generator:
+        """Do the act, supporting asynchronous execution."""
+
+        with self.context.benchmark_tool.measure(self.behaviour_id).local():
+
+            updated_proposals = yield from self._get_updated_proposals()
+            sender = self.context.agent_address
+            payload = CollectActiveSnapshotProposalsPayload(
+                sender=sender, proposals=updated_proposals
+            )
+
+        with self.context.benchmark_tool.measure(self.behaviour_id).consensus():
+            yield from self.send_a2a_transaction(payload)
+            yield from self.wait_until_round_end()
+
+        self.set_done()
+
+    def _get_updated_proposals(self) -> Generator[None, None, str]:
+        """Get updated proposals"""
+
+        active_proposals = []
+        i = 0
+        n_retrieved_proposals = len(self.synchronized_data.snapshot_proposals)
+
+        self.context.logger.info(
+            f"Getting proposals from Snapshot API: {self.params.snapshot_api_endpoint}"
+        )
+
+        headers = {
+            "Content-Type": "application/json",
+            "Accept": "application/json",
+        }
+
+        finished = False
+
+        while True:
+
+            skip = n_retrieved_proposals + SNAPSHOT_REQUEST_STEP * i
+
+            self.context.logger.info(
+                f"Getting {SNAPSHOT_REQUEST_STEP} proposals skipping the first {skip}"
+            )
+
+            variables = {
+                "first": SNAPSHOT_REQUEST_STEP,
+                "skip": skip,
+            }
+
+            # Make the request
+            response = yield from self.get_http_response(
+                method="POST",
+                url=self.params.snapshot_api_endpoint,
+                headers=headers,
+                content=json.dumps(
+                    {"query": snapshot_proposal_query, "variables": variables}
+                ).encode("utf-8"),
+            )
+
+            if response.status_code != HTTP_OK:
+                self.context.logger.error(
+                    f"Could not retrieve proposals from Snapshot API. "
+                    f"Received status code {response.status_code}.\n{response}"
+                )
+                return CollectActiveSnapshotProposalsRound.ERROR_PAYLOAD
+
+            response_json = json.loads(response.body)
+
+            if "errors" in response_json:
+                self.context.logger.error(
+                    f"Got errors while retrieving the data from Snapshot: {response_json}"
+                )
+                return CollectActiveTallyProposalsRound.ERROR_PAYLOAD
+
+            new_proposals = response_json["data"]["proposals"]
+
+            if not new_proposals:
+                finished = True
+                break
+
+            active_proposals.extend(new_proposals)
+            i += 1
+            self.context.logger.info(f"Accumulated proposals: {len(active_proposals)}")
+
+            if len(active_proposals) >= SNAPSHOT_PROPOSAL_LIMIT:
+                self.context.logger.info("Reached proposal payload limit")
+                break
+
+        return json.dumps(
+            {
+                "snapshot_proposals": active_proposals,
+                "finished": finished,
+            },
+            sort_keys=True,
+        )
+
+
 class ProposalCollectorRoundBehaviour(AbstractRoundBehaviour):
     """ProposalCollectorRoundBehaviour"""
 
     initial_behaviour_cls = SynchronizeDelegationsBehaviour
     abci_app_cls = ProposalCollectorAbciApp  # type: ignore
     behaviours: Set[Type[BaseBehaviour]] = [
-        CollectActiveProposalsBehaviour,
+        CollectActiveTallyProposalsBehaviour,
         SynchronizeDelegationsBehaviour,
+        CollectActiveSnapshotProposalsBehaviour,
     ]

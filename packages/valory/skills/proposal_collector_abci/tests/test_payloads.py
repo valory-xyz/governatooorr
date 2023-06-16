@@ -20,7 +20,7 @@
 """This package contains payload tests for the ProposalCollector."""
 
 from packages.valory.skills.proposal_collector_abci.payloads import (
-    CollectActiveProposalsPayload,
+    CollectActiveTallyProposalsPayload,
     SynchronizeDelegationsPayload,
 )
 
@@ -38,9 +38,9 @@ def test_sync_delegations_payload() -> None:
 
 
 def test_collect_proposals_payload() -> None:
-    """Test `CollectActiveProposalsPayload`."""
+    """Test `CollectActiveTallyProposalsPayload`."""
 
-    payload = CollectActiveProposalsPayload(sender="sender", proposals="proposals")
+    payload = CollectActiveTallyProposalsPayload(sender="sender", proposals="proposals")
 
     assert payload.sender == "sender"
     assert payload.proposals == "proposals"

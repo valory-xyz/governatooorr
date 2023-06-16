@@ -1,0 +1,19 @@
+name: sign_message_lib
+author: valory
+version: 0.1.0
+type: contract
+description: Contract package wrapping SignMessageLib contract instances.
+license: Apache-2.0
+aea_version: '>=1.0.0, <2.0.0'
+fingerprint:
+  __init__.py: bafybeigla745nzxpjkc2jeveuoxzphedlweprply2qnvuirmiry7yvaoke
+  build/SignMessageLib.json: bafybeibnj7ayea66dgzqwrboocmxnbwvkxdkwtrhxyrahugg5jll3vg674
+  contract.py: bafybeibwttmnszg6syoxbpuatcbhzi7e73svirwfoxdwk74vmspsrh4t6m
+fingerprint_ignore_patterns: []
+class_name: SignMessageLibContract
+contract_interface_paths:
+  ethereum: build/SignMessageLib.json
+dependencies:
+  open-aea-ledger-ethereum:
+    version: ==1.34.0
+contracts: []

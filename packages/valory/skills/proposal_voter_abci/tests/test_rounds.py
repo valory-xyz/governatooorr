@@ -86,7 +86,9 @@ def get_payloads(
 
 def get_dummy_establish_vote_payload_serialized():
     """Dummy payload"""
-    return json.dumps([], sort_keys=True)
+    return json.dumps(
+        {"proposals": [], "votable_snapshot_proposals": []}, sort_keys=True
+    )
 
 
 def get_dummy_prepare_vote_tx_payload_serialized(
@@ -156,7 +158,7 @@ class TestEstablishVoteRoundRound(BaseProposalVoterRoundTest):
                 final_data={
                     "proposals": json.loads(
                         get_dummy_establish_vote_payload_serialized()
-                    ),
+                    )["proposals"],
                 },
                 event=Event.DONE,
                 most_voted_payload=get_dummy_establish_vote_payload_serialized(),

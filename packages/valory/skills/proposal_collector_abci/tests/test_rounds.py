@@ -35,11 +35,11 @@ from packages.valory.skills.abstract_round_abci.test_tools.rounds import (
     CollectSameUntilThresholdRound,
 )
 from packages.valory.skills.proposal_collector_abci.payloads import (
-    CollectActiveProposalsPayload,
+    CollectActiveTallyProposalsPayload,
     SynchronizeDelegationsPayload,
 )
 from packages.valory.skills.proposal_collector_abci.rounds import (
-    CollectActiveProposalsRound,
+    CollectActiveTallyProposalsRound,
     Event,
     SynchronizeDelegationsRound,
     SynchronizedData,
@@ -269,10 +269,10 @@ class BaseProposalCollectorRoundTest(BaseCollectSameUntilThresholdRoundTest):
         )
 
 
-class TestCollectActiveProposalsRound(BaseProposalCollectorRoundTest):
-    """Tests for CollectActiveProposalsRound."""
+class TestCollectActiveTallyProposalsRound(BaseProposalCollectorRoundTest):
+    """Tests for CollectActiveTallyProposalsRound."""
 
-    round_class = CollectActiveProposalsRound
+    round_class = CollectActiveTallyProposalsRound
 
     @pytest.mark.parametrize(
         "test_case",
@@ -281,7 +281,7 @@ class TestCollectActiveProposalsRound(BaseProposalCollectorRoundTest):
                 name="Happy path",
                 initial_data={},
                 payloads=get_payloads(
-                    payload_cls=CollectActiveProposalsPayload,
+                    payload_cls=CollectActiveTallyProposalsPayload,
                     data=get_dummy_collect_active_proposals_payload_serialized(),
                 ),
                 final_data={
@@ -303,7 +303,7 @@ class TestCollectActiveProposalsRound(BaseProposalCollectorRoundTest):
                 name="API error",
                 initial_data={},
                 payloads=get_payloads(
-                    payload_cls=CollectActiveProposalsPayload,
+                    payload_cls=CollectActiveTallyProposalsPayload,
                     data="ERROR_PAYLOAD",
                 ),
                 final_data={},
@@ -315,7 +315,7 @@ class TestCollectActiveProposalsRound(BaseProposalCollectorRoundTest):
                 name="Block retrieval error",
                 initial_data={},
                 payloads=get_payloads(
-                    payload_cls=CollectActiveProposalsPayload,
+                    payload_cls=CollectActiveTallyProposalsPayload,
                     data="BLOCK_RETRIEVAL_ERROR",
                 ),
                 final_data={},

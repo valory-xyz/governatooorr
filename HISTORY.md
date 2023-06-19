@@ -1,5 +1,10 @@
 # Release History - `governatooorr`
 
+## 0.1.0alpha7 (2023-06-19)
+
+- Bumps to `open-autonony-0.10.6` #38
+- Implements Snapshot voting #36
+
 ## 0.1.0alpha6 (2023-06-07)
 
 - Bumps to `open-autonony-0.10.5.post2` #35

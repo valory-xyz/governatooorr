@@ -35,7 +35,7 @@ fingerprint:
   custom_eth_account/hdaccount/wordlist/korean.txt: bafybeiaqush7zp3fjxmkdlir7mgqlv34ui6uz7h5xhjumbh4ruzlx5xhpq
   custom_eth_account/hdaccount/wordlist/spanish.txt: bafybeidisgpyuidsvikepw7typnwdkibman7acsv3chkuhabxggxc4pdaa
   custom_eth_account/messages.py: bafybeif7ujcnihs5ugjrpraztah4g4gmxpyibi4pvuqcen5o4qy724oea4
-  custom_eth_account/py.typed: bafybeiftu27piztiu5bfxbvhqsbppgtseykyfot6wtlrrzeuzya6zrgpky
+  custom_eth_account/py.typed: bafybeigmgmwown66u7j5pqancojrc5ry2pwzmnlvqnwg2rfcjfi6irgplu
   custom_eth_account/signers/__init__.py: bafybeihwoea5333d7lbepij63b6du3ekwwkw7znzezyxxqoidp54mzt73i
   custom_eth_account/signers/base.py: bafybeid2uogzamgzjk52r33ndgjzjmzee6ul4xcv3bsazshj7jqq2ha2v4
   custom_eth_account/signers/local.py: bafybeiaozlhajzygxwbdydi25q5ythcj7pdiwheznc3tfjnxjkez75lp5i

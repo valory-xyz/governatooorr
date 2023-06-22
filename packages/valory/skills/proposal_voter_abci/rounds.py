@@ -184,6 +184,9 @@ class PrepareVoteTransactionRound(CollectSameUntilThresholdRound):
                     synchronized_data_class=SynchronizedData,
                     **{
                         get_name(SynchronizedData.proposals): payload["proposals"],
+                        get_name(
+                            SynchronizedData.snapshot_proposals
+                        ): [],  # clear snapshot proposals to avoid too big registration payloads
                     }
                 )
                 return synchronized_data, Event.NO_VOTE
@@ -195,6 +198,9 @@ class PrepareVoteTransactionRound(CollectSameUntilThresholdRound):
                     get_name(SynchronizedData.proposals): payload["proposals"],
                     get_name(SynchronizedData.votable_proposal_ids): payload[
                         "votable_proposal_ids"
+                    ],
+                    get_name(SynchronizedData.snapshot_api_data): payload[
+                        "snapshot_api_data"
                     ],
                 }
             )

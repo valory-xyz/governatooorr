@@ -267,7 +267,6 @@ class CollectActiveSnapshotProposalsRound(CollectSameUntilThresholdRound):
                 SynchronizedData, self.synchronized_data
             ).snapshot_proposals
             snapshot_proposals.extend(payload["snapshot_proposals"])
-            print(f"Adding {len(payload['snapshot_proposals'])}")
             synchronized_data = self.synchronized_data.update(
                 synchronized_data_class=SynchronizedData,
                 **{

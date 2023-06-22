@@ -52,7 +52,7 @@ fingerprint:
   tests/test_handlers.py: bafybeih47tjdvy6sv52ipxkurjinukqurhs5lwfgyauzpv5skrczwuhmky
   tests/test_models.py: bafybeig7lk4aojnesm22dknzz6z5bvxjahzlsrxubncusdbmxtqy6bokhq
   tests/test_payloads.py: bafybeifyheo2u743zogonqa5ofaanyzuazw4yqm2cxkcwwt3n7my7e4jvm
-  tests/test_rounds.py: bafybeigb767lvstwef2qhjfxvnab5s3lh7cr42vbkoduha34syppjuherm
+  tests/test_rounds.py: bafybeieoytcvqsc7h4lutdygkaamxguqrqte6lajxn5hotf3y7phgswf4q
 fingerprint_ignore_patterns: []
 connections:
 - valory/openai:0.1.0:bafybeietimatztynqebwicxabplia6fctov4vswzbdrin5y32brbjewo2y

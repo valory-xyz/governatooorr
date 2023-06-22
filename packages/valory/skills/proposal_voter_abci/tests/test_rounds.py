@@ -105,6 +105,7 @@ def get_dummy_prepare_vote_tx_payload_serialized(
             "tx_hash": tx_hash,
             "proposals": [],
             "votable_proposal_ids": [],
+            "snapshot_api_data": {},
         },
         sort_keys=True,
     )

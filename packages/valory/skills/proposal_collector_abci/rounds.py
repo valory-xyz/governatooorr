@@ -42,6 +42,9 @@ from packages.valory.skills.proposal_collector_abci.payloads import (
 )
 
 
+SNAPSHOT_PROPOSAL_TOTAL_LIMIT = 200  # we focus on the first expiring proposals only
+
+
 class Event(Enum):
     """ProposalCollectorAbciApp Events"""
 
@@ -267,6 +270,11 @@ class CollectActiveSnapshotProposalsRound(CollectSameUntilThresholdRound):
                 SynchronizedData, self.synchronized_data
             ).snapshot_proposals
             snapshot_proposals.extend(payload["snapshot_proposals"])
+            finished = (
+                payload["finished"]
+                or len(snapshot_proposals) >= SNAPSHOT_PROPOSAL_TOTAL_LIMIT
+            )
+
             synchronized_data = self.synchronized_data.update(
                 synchronized_data_class=SynchronizedData,
                 **{
@@ -275,7 +283,7 @@ class CollectActiveSnapshotProposalsRound(CollectSameUntilThresholdRound):
             )
             return (
                 synchronized_data,
-                Event.DONE if payload["finished"] else Event.REPEAT,
+                Event.DONE if finished else Event.REPEAT,
             )
         if not self.is_majority_possible(
             self.collection, self.synchronized_data.nb_participants

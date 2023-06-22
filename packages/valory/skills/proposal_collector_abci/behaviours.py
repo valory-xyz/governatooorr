@@ -53,7 +53,7 @@ from packages.valory.skills.proposal_collector_abci.tally import (
 
 HTTP_OK = 200
 SNAPSHOT_REQUEST_STEP = 200
-SNAPSHOT_PROPOSAL_LIMIT = 200
+SNAPSHOT_PROPOSAL_ROUND_LIMIT = 200  # avoids too big payloads
 
 
 class ProposalCollectorBaseBehaviour(BaseBehaviour, ABC):
@@ -423,7 +423,7 @@ class CollectActiveSnapshotProposalsBehaviour(ProposalCollectorBaseBehaviour):
             i += 1
             self.context.logger.info(f"Accumulated proposals: {len(active_proposals)}")
 
-            if len(active_proposals) >= SNAPSHOT_PROPOSAL_LIMIT:
+            if len(active_proposals) >= SNAPSHOT_PROPOSAL_ROUND_LIMIT:
                 self.context.logger.info("Reached proposal payload limit")
                 break
 

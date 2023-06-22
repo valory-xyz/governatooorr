@@ -31,8 +31,8 @@ query Proposals(
     where: {
       state: "active"
     },
-    orderBy: "created",
-    orderDirection: desc
+    orderBy: "end",
+    orderDirection: asc
   ) {
     id
     network

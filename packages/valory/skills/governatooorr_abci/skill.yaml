@@ -18,15 +18,15 @@ connections: []
 contracts: []
 protocols: []
 skills:
-- valory/abstract_round_abci:0.1.0:bafybeiarzpxsy7ulitk5obs4zajhll2m77motjn5st7mi6qvjtkoirfikq
-- valory/ceramic_read_abci:0.1.0:bafybeif2vkjwspf2yznau7z2thrhiwwynz2fdg3zxcbv5r3ltqrjmpwc5a
-- valory/ceramic_write_abci:0.1.0:bafybeiflbg6xwjylqflkd4lyh5ajkmvrgkxa36gprcbcrm7ob6gnytshle
-- valory/proposal_collector_abci:0.1.0:bafybeihayxmjinbryzs57re7d67aqrrrny2pr4o2clervsc7r7uiqf3xce
-- valory/proposal_voter_abci:0.1.0:bafybeiep3nyk7ty3t5r54sxaurvfz2hshonrm75nfnukydo3nvx5fgapbe
-- valory/registration_abci:0.1.0:bafybeie4suynydmpq2myqkdzhiqoro2hr4zexd5a2o4rvch7yefw65kjvq
-- valory/reset_pause_abci:0.1.0:bafybeiaickab63rqbu3kywnwyrfaa4362ai7rbvhghehxnvqk54eiaaegm
-- valory/termination_abci:0.1.0:bafybeieqpy3nu7qoy6ztfxetgiuevmgcpylufou3ngh5nw2vsgsvghid54
-- valory/transaction_settlement_abci:0.1.0:bafybeihuzoxkhnpep4zcekdq463hopohj3i7rkxvbc2ywmmcyppi3knbxy
+- valory/abstract_round_abci:0.1.0:bafybeiac62ennpw54gns2quk4g3yoaili2mb72nj6c52czobz5dcwj4mwi
+- valory/ceramic_read_abci:0.1.0:bafybeia4lpblkwvngmlmemr3ihkccsyshwqig4yas6lbi574uxpemk6fzm
+- valory/ceramic_write_abci:0.1.0:bafybeib5sci3o2xzsxpnzes4yolxuzzcijfs5bqb6hwaym5howdlwkxqx4
+- valory/proposal_collector_abci:0.1.0:bafybeictusvi7tjlaj23zsckomef7gsgh4cmr4vqvg2lfcapxt26i62n2m
+- valory/proposal_voter_abci:0.1.0:bafybeiewdix7zzyjhx7q6qsf27n2ceinbpbaamdin4j5qpwoywk7a6mnyi
+- valory/registration_abci:0.1.0:bafybeib6fsfur5jnflcveidnaeylneybwazewufzwa5twnwovdqgwtwsxm
+- valory/reset_pause_abci:0.1.0:bafybeibqz7y3i4aepuprhijwdydkcsbqjtpeea6gdzpp5fgc6abrvjz25a
+- valory/termination_abci:0.1.0:bafybeieb3gnvjxxsh73g67m7rivzknwb63xu4qeagpkv7f4mqz33ecikem
+- valory/transaction_settlement_abci:0.1.0:bafybeihdpac4ayfgop3ixflimlb3zzyeejlpqtljfptdak6tc7aq4u5fzi
 behaviours:
   main:
     args: {}

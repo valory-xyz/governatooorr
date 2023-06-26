@@ -1,7 +1,15 @@
 # Release History - `governatooorr`
 
+## 0.1.0alpha8 (2023-06-26)
+
+- Bumps frameworks to `open-autonony-0.10.7` and `open-aea-1.35` #41
+- Retrieves fewer snapshot proposals, focusing on the ones that expire first 
+  and drops snapshot proposals at the end of the period since they are retrieved every period anyway, 
+  and having too many produces a registration payload too big issue #40
+
 ## 0.1.0alpha7 (2023-06-19)
 
+- Works around a hashing issue #39
 - Bumps to `open-autonony-0.10.6` #38
 - Implements Snapshot voting #36
 

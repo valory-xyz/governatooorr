@@ -3,8 +3,8 @@
 ## 0.1.0alpha8 (2023-06-26)
 
 - Bumps frameworks to `open-autonony-0.10.7` and `open-aea-1.35` #41
-- Retrieve fewer snapshot proposals, focusing on the ones that expire first 
-  and drop snapshot proposals at the end of the period since they are retrieved every period anyway, 
+- Retrieves fewer snapshot proposals, focusing on the ones that expire first 
+  and drops snapshot proposals at the end of the period since they are retrieved every period anyway, 
   and having too many produces a registration payload too big issue #40
 
 ## 0.1.0alpha7 (2023-06-19)

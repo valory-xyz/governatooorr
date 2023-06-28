@@ -29,6 +29,9 @@ import pytest
 from packages.valory.protocols.ledger_api.custom_types import State
 from packages.valory.protocols.ledger_api.message import LedgerApiMessage
 from packages.valory.skills.abstract_round_abci.base import AbciAppDB
+from packages.valory.skills.abstract_round_abci.behaviour_utils import (
+    make_degenerate_behaviour,
+)
 from packages.valory.skills.abstract_round_abci.test_tools.base import (
     FSMBehaviourBaseCase,
 )
@@ -40,11 +43,13 @@ from packages.valory.skills.proposal_collector_abci.behaviours import (
 )
 from packages.valory.skills.proposal_collector_abci.rounds import (
     Event,
+    FinishedProposalRound,
     SynchronizedData,
 )
 
 
 TALLY_API_ENDPOINT = "https://api.tally.xyz/query"
+SNAPSHOT_API_ENDPOINT = "https://hub.snapshot.org/graphql"
 
 DUMMY_GOVERNOR_ADDRESS = "0xEC568fffba86c094cf06b22134B23074DFE2252c"
 
@@ -141,6 +146,12 @@ DUMMY_PROPOSALS_RESPONSE = {
         ]
     }
 }
+
+DUMMY_SNAPSHOT_RESPONSE = {"data": {"proposals": [{}] * 200}}
+
+DUMMY_SNAPSHOT_RESPONSE_EMPTY = {"data": {"proposals": []}}
+
+DUMMY_SNAPSHOT_RESPONSE_ERRORS = {"errors": {}}
 
 
 @dataclass
@@ -411,6 +422,178 @@ class TestCollectActiveProposalsErrorBehaviour(BaseProposalCollectorTest):
                 request_kwargs=dict(
                     method="POST",
                     headers="Content-Type: application/json\r\nAccept: application/json\r\nApi-key: <tally_api_key>\r\n",
+                    version="",
+                    url=kwargs.get("urls")[i],
+                ),
+                response_kwargs=dict(
+                    version="",
+                    status_code=kwargs.get("status_codes")[i],
+                    status_text="",
+                    body=kwargs.get("bodies")[i].encode(),
+                ),
+            )
+        # Mock get block
+        if "block_retrieval_performative" in kwargs:
+            self.mock_ledger_api_request(
+                request_kwargs=dict(
+                    performative=LedgerApiMessage.Performative.GET_STATE,
+                ),
+                response_kwargs=dict(
+                    performative=kwargs.get("block_retrieval_performative"),
+                    state=State(
+                        ledger_id="ethereum",
+                        body={"number": 10000},
+                    ),
+                ),
+            )
+        self.complete(test_case.event)
+
+
+class TestCollectSnapshotProposalsBehaviour(BaseProposalCollectorTest):
+    """Tests CollectSnapshotProposalsBehaviour"""
+
+    behaviour_class = CollectActiveSnapshotProposalsBehaviour
+    next_behaviour_class = make_degenerate_behaviour(FinishedProposalRound)
+
+    @pytest.mark.parametrize(
+        "test_case, kwargs",
+        [
+            (
+                BehaviourTestCase(
+                    "Happy path",
+                    initial_data=dict(),
+                    event=Event.DONE,
+                ),
+                {
+                    "urls": [SNAPSHOT_API_ENDPOINT],
+                    "bodies": [
+                        json.dumps(
+                            DUMMY_SNAPSHOT_RESPONSE,
+                        ),
+                    ],
+                    "headers": [
+                        "Content-Type: application/json\r\nAccept: application/json\r\n"
+                    ],
+                    "status_codes": [200],
+                },
+            ),
+            (
+                BehaviourTestCase(
+                    "Happy path: no more proposals",
+                    initial_data=dict(),
+                    event=Event.DONE,
+                ),
+                {
+                    "urls": [SNAPSHOT_API_ENDPOINT],
+                    "bodies": [
+                        json.dumps(
+                            DUMMY_SNAPSHOT_RESPONSE_EMPTY,
+                        ),
+                    ],
+                    "headers": [
+                        "Content-Type: application/json\r\nAccept: application/json\r\n"
+                    ],
+                    "status_codes": [200],
+                },
+            ),
+        ],
+    )
+    def test_run(self, test_case: BehaviourTestCase, kwargs: Any) -> None:
+        """Run tests."""
+        self.fast_forward(test_case.initial_data)
+        self.behaviour.act_wrapper()
+        # Mock API calls
+        for i in range(len(kwargs.get("urls"))):
+            self.mock_http_request(
+                request_kwargs=dict(
+                    method="POST",
+                    headers=kwargs.get("headers")[i],
+                    version="",
+                    url=kwargs.get("urls")[i],
+                ),
+                response_kwargs=dict(
+                    version="",
+                    status_code=kwargs.get("status_codes")[i],
+                    status_text="",
+                    body=kwargs.get("bodies")[i].encode(),
+                ),
+            )
+        # Mock get block
+        if "block_retrieval_performative" in kwargs:
+            self.mock_ledger_api_request(
+                request_kwargs=dict(
+                    performative=LedgerApiMessage.Performative.GET_STATE,
+                ),
+                response_kwargs=dict(
+                    performative=kwargs.get("block_retrieval_performative"),
+                    state=State(
+                        ledger_id="ethereum",
+                        body={"number": 10000},
+                    ),
+                ),
+            )
+        self.complete(test_case.event)
+
+
+class TestCollectSnapshotProposalsErrorBehaviour(BaseProposalCollectorTest):
+    """Tests CollectSnapshotProposalsBehaviour"""
+
+    behaviour_class = CollectActiveSnapshotProposalsBehaviour
+    next_behaviour_class = CollectActiveSnapshotProposalsBehaviour
+
+    @pytest.mark.parametrize(
+        "test_case, kwargs",
+        [
+            (
+                BehaviourTestCase(
+                    "Http error",
+                    initial_data=dict(),
+                    event=Event.API_ERROR,
+                ),
+                {
+                    "urls": [SNAPSHOT_API_ENDPOINT],
+                    "bodies": [
+                        json.dumps(
+                            DUMMY_SNAPSHOT_RESPONSE,
+                        ),
+                    ],
+                    "headers": [
+                        "Content-Type: application/json\r\nAccept: application/json\r\n"
+                    ],
+                    "status_codes": [400],
+                },
+            ),
+            (
+                BehaviourTestCase(
+                    "Errors in response",
+                    initial_data=dict(),
+                    event=Event.API_ERROR,
+                ),
+                {
+                    "urls": [SNAPSHOT_API_ENDPOINT],
+                    "bodies": [
+                        json.dumps(
+                            DUMMY_SNAPSHOT_RESPONSE_ERRORS,
+                        ),
+                    ],
+                    "headers": [
+                        "Content-Type: application/json\r\nAccept: application/json\r\n"
+                    ],
+                    "status_codes": [200],
+                },
+            ),
+        ],
+    )
+    def test_run(self, test_case: BehaviourTestCase, kwargs: Any) -> None:
+        """Run tests."""
+        self.fast_forward(test_case.initial_data)
+        self.behaviour.act_wrapper()
+        # Mock API calls
+        for i in range(len(kwargs.get("urls"))):
+            self.mock_http_request(
+                request_kwargs=dict(
+                    method="POST",
+                    headers=kwargs.get("headers")[i],
                     version="",
                     url=kwargs.get("urls")[i],
                 ),

@@ -35,10 +35,12 @@ from packages.valory.skills.abstract_round_abci.test_tools.rounds import (
     CollectSameUntilThresholdRound,
 )
 from packages.valory.skills.proposal_collector_abci.payloads import (
+    CollectActiveSnapshotProposalsPayload,
     CollectActiveTallyProposalsPayload,
     SynchronizeDelegationsPayload,
 )
 from packages.valory.skills.proposal_collector_abci.rounds import (
+    CollectActiveSnapshotProposalsRound,
     CollectActiveTallyProposalsRound,
     Event,
     SynchronizeDelegationsRound,
@@ -111,6 +113,14 @@ def get_dummy_collect_active_proposals_payload_serialized():
     """Dummy payload"""
     return json.dumps(
         {"proposals": [], "votable_proposal_ids": [], "proposals_to_refresh": []},
+        sort_keys=True,
+    )
+
+
+def get_dummy_collect_snapshot_proposals_payload_serialized():
+    """Dummy payload"""
+    return json.dumps(
+        {"snapshot_proposals": [], "finished": True},
         sort_keys=True,
     )
 
@@ -321,6 +331,51 @@ class TestCollectActiveTallyProposalsRound(BaseProposalCollectorRoundTest):
                 final_data={},
                 event=Event.BLOCK_RETRIEVAL_ERROR,
                 most_voted_payload="BLOCK_RETRIEVAL_ERROR",
+                synchronized_data_attr_checks=[],
+            ),
+        ),
+    )
+    def test_run(self, test_case: RoundTestCase) -> None:
+        """Run tests."""
+        self.run_test(test_case)
+
+
+class TestCollectActiveSnapshotProposalsRound(BaseProposalCollectorRoundTest):
+    """Tests for CollectActiveSnapshotProposalsRound."""
+
+    round_class = CollectActiveSnapshotProposalsRound
+
+    @pytest.mark.parametrize(
+        "test_case",
+        (
+            RoundTestCase(
+                name="Happy path",
+                initial_data={},
+                payloads=get_payloads(
+                    payload_cls=CollectActiveSnapshotProposalsPayload,
+                    data=get_dummy_collect_snapshot_proposals_payload_serialized(),
+                ),
+                final_data={
+                    "snapshot_proposals": json.loads(
+                        get_dummy_collect_snapshot_proposals_payload_serialized()
+                    )["snapshot_proposals"],
+                },
+                event=Event.DONE,
+                most_voted_payload=get_dummy_collect_snapshot_proposals_payload_serialized(),
+                synchronized_data_attr_checks=[
+                    lambda _synchronized_data: _synchronized_data.snapshot_proposals,
+                ],
+            ),
+            RoundTestCase(
+                name="Error",
+                initial_data={},
+                payloads=get_payloads(
+                    payload_cls=CollectActiveSnapshotProposalsPayload,
+                    data="ERROR_PAYLOAD",
+                ),
+                final_data={},
+                event=Event.API_ERROR,
+                most_voted_payload="ERROR_PAYLOAD",
                 synchronized_data_attr_checks=[],
             ),
         ),

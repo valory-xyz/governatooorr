@@ -20,6 +20,7 @@
 """This package contains round behaviours of ProposalCollector."""
 
 import datetime
+import json
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Dict, Optional, Type, cast
@@ -32,20 +33,32 @@ from packages.valory.connections.openai.connection import (
     PUBLIC_ID as LLM_CONNECTION_PUBLIC_ID,
 )
 from packages.valory.contracts.delegate.contract import DelegateContract
-from packages.valory.contracts.gnosis_safe.contract import GnosisSafeContract
+from packages.valory.contracts.gnosis_safe.contract import (
+    GnosisSafeContract,
+    NULL_ADDRESS,
+)
+from packages.valory.contracts.sign_message_lib.contract import SignMessageLibContract
 from packages.valory.protocols.contract_api import ContractApiMessage
 from packages.valory.protocols.llm.message import LlmMessage
 from packages.valory.skills.abstract_round_abci.base import AbciAppDB
+from packages.valory.skills.abstract_round_abci.behaviour_utils import BaseBehaviour
 from packages.valory.skills.abstract_round_abci.behaviours import (
     make_degenerate_behaviour,
 )
 from packages.valory.skills.abstract_round_abci.test_tools.base import (
     FSMBehaviourBaseCase,
 )
+from packages.valory.skills.abstract_round_abci.test_tools.common import (
+    BaseRandomnessBehaviourTest,
+)
 from packages.valory.skills.proposal_voter_abci.behaviours import (
     EstablishVoteBehaviour,
     PrepareVoteTransactionBehaviour,
     ProposalVoterBaseBehaviour,
+    RetrieveSignatureBehaviour,
+    SnapshotAPISendBehaviour,
+    SnapshotAPISendRandomnessBehaviour,
+    SnapshotAPISendSelectKeeperBehaviour,
 )
 from packages.valory.skills.proposal_voter_abci.models import PendingVote, SharedState
 from packages.valory.skills.proposal_voter_abci.rounds import (
@@ -54,9 +67,17 @@ from packages.valory.skills.proposal_voter_abci.rounds import (
     FinishedTransactionPreparationVoteRound,
     SynchronizedData,
 )
+from packages.valory.skills.transaction_settlement_abci.payload_tools import (
+    VerificationStatus,
+)
 
+
+PACKAGE_DIR = Path(__file__).parent.parent
 
 DUMMY_GOVERNOR_ADDRESS = "0xEC568fffba86c094cf06b22134B23074DFE2252c"
+SNAPSHOT_API_ENDPOINT = "https://hub.snapshot.org/graphql"
+
+NULL_ADDRESS = "0x0000000000000000000000000000000000000000"
 
 
 def get_dummy_proposals(remaining_blocks: int = 1000) -> dict:
@@ -96,6 +117,29 @@ def get_dummy_proposals(remaining_blocks: int = 1000) -> dict:
             },
         },
     }
+
+
+def get_dummy_snapshot_proposals(include_voted=False) -> list:
+    """get_dummy_proposals"""
+    proposals = [
+        {
+            "id": "0x108a9e597560c4f249cd8be23acd409059fcd17bb2290d69a550ac2232676e7d",
+            "title": "dummy_title",
+            "body": "dummy_body",
+            "space": {
+                "id": "0x108a9e597560c4f249cd8be23acd409059fcd17bb2290d69a550ac2232676e7d",
+                "name": "dummy_space_id",
+            },
+            "choice": 1,
+            "strategies": [{"name": "erc20-balance-of"}],
+            "end": 1000,
+            "choices": ["0", "1", "2"],
+        },
+    ]
+    if include_voted:
+        proposals.append({"id": "1"})
+
+    return proposals
 
 
 def get_dummy_delegations() -> list:
@@ -152,11 +196,12 @@ class BaseProposalVoterTest(FSMBehaviourBaseCase):
             == self.behaviour_class.auto_behaviour_id()
         )
 
-    def complete(self, event: Event) -> None:
+    def complete(self, event: Event, sends: bool = True) -> None:
         """Complete test"""
 
         self.behaviour.act_wrapper()
-        self.mock_a2a_transaction()
+        if sends:
+            self.mock_a2a_transaction()
         self._test_done_flag_set()
         self.end_round(done_event=event)
         assert (
@@ -269,6 +314,125 @@ class TestEstablishVoteBehaviour(BaseProposalVoterTest):
             )
 
 
+class TestEstablishVoteSnapshotBehaviour(BaseProposalVoterTest):
+    """Tests EstablishVoteBehaviour"""
+
+    behaviour_class = EstablishVoteBehaviour
+    next_behaviour_class = PrepareVoteTransactionBehaviour
+
+    @pytest.mark.parametrize(
+        "test_case, kwargs",
+        [
+            (
+                BehaviourTestCase(
+                    "Happy path",
+                    initial_data=dict(
+                        proposals=get_dummy_proposals(),
+                        snapshot_proposals=get_dummy_snapshot_proposals(),
+                        delegations=get_dummy_delegations(),
+                        proposals_to_refresh=[],
+                        safe_contract_address=NULL_ADDRESS,
+                    ),
+                    event=Event.DONE,
+                ),
+                {
+                    "http_code": 200,
+                    "response_body": {"data": {"vp": {"vp": 1}}},
+                    "vote": "0",
+                },
+            ),
+            (
+                BehaviourTestCase(
+                    "Error: code 400",
+                    initial_data=dict(
+                        proposals=get_dummy_proposals(),
+                        snapshot_proposals=get_dummy_snapshot_proposals(),
+                        delegations=get_dummy_delegations(),
+                        proposals_to_refresh=[],
+                        safe_contract_address=NULL_ADDRESS,
+                    ),
+                    event=Event.DONE,
+                ),
+                {
+                    "http_code": 400,
+                    "response_body": {"data": {"vp": {"vp": 1}}},
+                    "vote": "0",
+                },
+            ),
+            (
+                BehaviourTestCase(
+                    "Error: errors in response",
+                    initial_data=dict(
+                        proposals=get_dummy_proposals(),
+                        snapshot_proposals=get_dummy_snapshot_proposals(),
+                        delegations=get_dummy_delegations(),
+                        proposals_to_refresh=[],
+                        safe_contract_address=NULL_ADDRESS,
+                    ),
+                    event=Event.DONE,
+                ),
+                {
+                    "http_code": 200,
+                    "response_body": {"errors": [], "data": {"vp": {"vp": 1}}},
+                    "vote": "0",
+                },
+            ),
+            (
+                BehaviourTestCase(
+                    "Error: vote not in response",
+                    initial_data=dict(
+                        proposals=get_dummy_proposals(),
+                        snapshot_proposals=get_dummy_snapshot_proposals(),
+                        delegations=get_dummy_delegations(),
+                        proposals_to_refresh=[],
+                        safe_contract_address=NULL_ADDRESS,
+                    ),
+                    event=Event.DONE,
+                ),
+                {
+                    "http_code": 200,
+                    "response_body": {"data": {"vp": {"vp": 1}}},
+                    "vote": "XXX",
+                },
+            ),
+        ],
+    )
+    def test_run(self, test_case: BehaviourTestCase, kwargs: Any) -> None:
+        """Run tests."""
+        time_in_future = datetime.datetime.now() + datetime.timedelta(hours=10)
+        state = cast(SharedState, self._skill.skill_context.state)
+        state.round_sequence._last_round_transition_timestamp = time_in_future
+        self.fast_forward(test_case.initial_data)
+        self.behaviour.act_wrapper()
+
+        self.mock_http_request(
+            request_kwargs=dict(
+                method="POST",
+                headers="Content-Type: application/json\r\nAccept: application/json\r\n",
+                version="",
+                url=SNAPSHOT_API_ENDPOINT,
+            ),
+            response_kwargs=dict(
+                version="",
+                status_code=kwargs.get("http_code"),
+                status_text="",
+                body=json.dumps(kwargs.get("response_body")).encode(),
+            ),
+        )
+
+        if kwargs.get("http_code") == 200 and "errors" not in kwargs.get(
+            "response_body"
+        ):
+            self.mock_llm_request(
+                request_kwargs=dict(performative=LlmMessage.Performative.REQUEST),
+                response_kwargs=dict(
+                    performative=LlmMessage.Performative.RESPONSE,
+                    value=kwargs.get("vote"),
+                ),
+            )
+        self.complete(test_case.event)
+
+
 class TestPrepareVoteTransactionNoVoteBehaviour(BaseProposalVoterTest):
     """Tests PrepareVoteTransactionBehaviour"""
 
@@ -314,7 +478,7 @@ class TestPrepareVoteTransactionNoVoteBehaviour(BaseProposalVoterTest):
         self.complete(test_case.event)
 
 
-class TestPrepareVoteTransactionVoteBehaviour(BaseProposalVoterTest):
+class TestPrepareVoteTransactionVoteTallyBehaviour(BaseProposalVoterTest):
     """Tests PrepareVoteTransactionBehaviour"""
 
     behaviour_class = PrepareVoteTransactionBehaviour
@@ -341,7 +505,9 @@ class TestPrepareVoteTransactionVoteBehaviour(BaseProposalVoterTest):
     )
     def test_run(self, test_case: BehaviourTestCase, kwargs: Any) -> None:
         """Run tests."""
-
+        time_in_future = datetime.datetime.now() + datetime.timedelta(hours=10)
+        state = cast(SharedState, self._skill.skill_context.state)
+        state.round_sequence._last_round_transition_timestamp = time_in_future
         self.fast_forward(test_case.initial_data)
         self.behaviour.act_wrapper()
 
@@ -366,6 +532,131 @@ class TestPrepareVoteTransactionVoteBehaviour(BaseProposalVoterTest):
                 callable="get_raw_safe_transaction_hash",
                 state=State(
                     ledger_id="ethereum", body={"tx_hash": "0xb0e6add595e00477cf347d09797b156719dc5233283ac76e4efce2a674fe72d9"}  # type: ignore
+                ),
+            ),
+        )
+
+        self.complete(test_case.event)
+
+
+class TestPrepareVoteTransactionVoteSnapshotBehaviour(BaseProposalVoterTest):
+    """Tests PrepareVoteTransactionBehaviour"""
+
+    behaviour_class = PrepareVoteTransactionBehaviour
+    next_behaviour_class = make_degenerate_behaviour(  # type: ignore
+        FinishedTransactionPreparationVoteRound
+    )
+
+    @pytest.mark.parametrize(
+        "test_case, kwargs",
+        [
+            (
+                BehaviourTestCase(
+                    "Happy path: snapshot",
+                    initial_data=dict(
+                        votable_proposal_ids=[],
+                        proposals=get_dummy_proposals(1),
+                        safe_contract_address=NULL_ADDRESS,
+                        votable_snapshot_proposals=get_dummy_snapshot_proposals(True),
+                        final_verification_status=VerificationStatus.VERIFIED.value,
+                    ),
+                    event=Event.VOTE,
+                ),
+                {
+                    "pending_vote": PendingVote("1", "FOR", True),
+                },
+            ),
+        ],
+    )
+    def test_run(self, test_case: BehaviourTestCase, kwargs: Any) -> None:
+        """Run tests."""
+        pending_vote = kwargs.get("pending_vote")
+        self.behaviour.context.state.pending_vote = pending_vote
+        time_in_future = datetime.datetime.now() + datetime.timedelta(hours=10)
+        state = cast(SharedState, self._skill.skill_context.state)
+        state.round_sequence._last_round_transition_timestamp = time_in_future
+        self.fast_forward(test_case.initial_data)
+        self.behaviour.act_wrapper()
+
+        self.mock_contract_api_request(
+            request_kwargs=dict(
+                performative=ContractApiMessage.Performative.GET_STATE,
+            ),
+            contract_id=str(SignMessageLibContract.contract_id),
+            response_kwargs=dict(
+                performative=ContractApiMessage.Performative.STATE,
+                callable="get_safe_signature",
+                state=State(
+                    ledger_id="ethereum",
+                    body={"signature": "0xb0e6add595e00477cf347d09797b"},
+                ),
+            ),
+        )
+        self.mock_contract_api_request(
+            request_kwargs=dict(
+                performative=ContractApiMessage.Performative.GET_STATE,
+            ),
+            contract_id=str(GnosisSafeContract.contract_id),
+            response_kwargs=dict(
+                performative=ContractApiMessage.Performative.STATE,
+                callable="get_raw_safe_transaction_hash",
+                state=State(
+                    ledger_id="ethereum", body={"tx_hash": "0xb0e6add595e00477cf347d09797b156719dc5233283ac76e4efce2a674fe72d9"}  # type: ignore
+                ),
+            ),
+        )
+
+        self.complete(test_case.event)
+
+
+class TestPrepareVoteTransactionVoteSnapshotErrorBehaviour(BaseProposalVoterTest):
+    """Tests PrepareVoteTransactionBehaviour"""
+
+    behaviour_class = PrepareVoteTransactionBehaviour
+    next_behaviour_class = PrepareVoteTransactionBehaviour
+
+    @pytest.mark.parametrize(
+        "test_case, kwargs",
+        [
+            (
+                BehaviourTestCase(
+                    "Happy path: snapshot",
+                    initial_data=dict(
+                        votable_proposal_ids=[],
+                        proposals=get_dummy_proposals(1),
+                        safe_contract_address=NULL_ADDRESS,
+                        votable_snapshot_proposals=get_dummy_snapshot_proposals(True),
+                        final_verification_status=VerificationStatus.VERIFIED.value,
+                    ),
+                    event=Event.CONTRACT_ERROR,
+                ),
+                {
+                    "pending_vote": PendingVote("1", "FOR", True),
+                },
+            ),
+        ],
+    )
+    def test_run(self, test_case: BehaviourTestCase, kwargs: Any) -> None:
+        """Run tests."""
+        pending_vote = kwargs.get("pending_vote")
+        self.behaviour.context.state.pending_vote = pending_vote
+        time_in_future = datetime.datetime.now() + datetime.timedelta(hours=10)
+        state = cast(SharedState, self._skill.skill_context.state)
+        state.round_sequence._last_round_transition_timestamp = time_in_future
+        self.fast_forward(test_case.initial_data)
+        self.behaviour.act_wrapper()
+
+        self.mock_contract_api_request(
+            request_kwargs=dict(
+                performative=ContractApiMessage.Performative.GET_STATE,
+            ),
+            contract_id=str(SignMessageLibContract.contract_id),
+            response_kwargs=dict(
+                performative=ContractApiMessage.Performative.ERROR,
+                callable="get_safe_signature",
+                state=State(
+                    ledger_id="ethereum",
+                    body={"signature": "0xb0e6add595e00477cf347d09797b"},
                 ),
             ),
         )
@@ -447,5 +738,277 @@ class TestPrepareVoteTransactionContractErrorBehaviour(BaseProposalVoterTest):
                     ),
                 ),
             )
+
+        self.complete(test_case.event)
+
+
+class TestRetrieveSignatureNoSnapshotVoteBehaviour(BaseProposalVoterTest):
+    """Tests RetrieveSignatureBehaviour"""
+
+    behaviour_class = RetrieveSignatureBehaviour
+    next_behaviour_class = PrepareVoteTransactionBehaviour
+
+    @pytest.mark.parametrize(
+        "test_case, kwargs",
+        [
+            (
+                BehaviourTestCase(
+                    "Happy path: no snapshot vote",
+                    initial_data=dict(),
+                    event=Event.DONE,
+                ),
+                {"pending_vote": PendingVote("1", "FOR", False)},
+            ),
+        ],
+    )
+    def test_run(self, test_case: BehaviourTestCase, kwargs: Any) -> None:
+        """Run tests."""
+        pending_vote = kwargs.get("pending_vote")
+        self.behaviour.context.state.pending_vote = pending_vote
+        self.fast_forward(test_case.initial_data)
+        self.behaviour.act_wrapper()
+
+        if pending_vote.snapshot:
+            self.mock_contract_api_request(
+                request_kwargs=dict(
+                    performative=ContractApiMessage.Performative.GET_STATE,
+                ),
+                contract_id=str(SignMessageLibContract.contract_id),
+                response_kwargs=dict(
+                    performative=ContractApiMessage.Performative.STATE,
+                    callable="get_safe_signature",
+                    state=State(
+                        ledger_id="ethereum", body={"signature": "dummy_signature"}
+                    ),
+                ),
+            )
+
+        self.complete(test_case.event)
+
+
+class TestRetrieveSignatureSnapshotVoteBehaviour(BaseProposalVoterTest):
+    """Tests RetrieveSignatureBehaviour"""
+
+    behaviour_class = RetrieveSignatureBehaviour
+    next_behaviour_class = SnapshotAPISendRandomnessBehaviour
+
+    @pytest.mark.parametrize(
+        "test_case, kwargs",
+        [
+            (
+                BehaviourTestCase(
+                    "Happy path: snapshot vote",
+                    initial_data=dict(
+                        safe_contract_address="dummy_safe_contract_address",
+                        final_tx_hash="dummy_hash",
+                    ),
+                    event=Event.CALL_API,
+                ),
+                {"pending_vote": PendingVote("1", "FOR", True)},
+            ),
+        ],
+    )
+    def test_run(self, test_case: BehaviourTestCase, kwargs: Any) -> None:
+        """Run tests."""
+        pending_vote = kwargs.get("pending_vote")
+        self.behaviour.context.state.pending_vote = pending_vote
+        self.fast_forward(test_case.initial_data)
+        self.behaviour.act_wrapper()
+
+        if pending_vote.snapshot:
+            self.mock_contract_api_request(
+                request_kwargs=dict(
+                    performative=ContractApiMessage.Performative.GET_STATE,
+                ),
+                contract_id=str(SignMessageLibContract.contract_id),
+                response_kwargs=dict(
+                    performative=ContractApiMessage.Performative.STATE,
+                    callable="get_safe_signature",
+                    state=State(
+                        ledger_id="ethereum", body={"signature": "dummy_signature"}
+                    ),
+                ),
+            )
+
+        self.complete(test_case.event)
+
+
+class TestRandomnessBehaviour(BaseRandomnessBehaviourTest):
+    """Test randomness in operation."""
+
+    path_to_skill = PACKAGE_DIR
+
+    randomness_behaviour_class = SnapshotAPISendRandomnessBehaviour
+    next_behaviour_class = SnapshotAPISendSelectKeeperBehaviour
+    done_event = Event.DONE
+
+
+class BaseSelectKeeperSnapshotBehaviourTest(BaseProposalVoterTest):
+    """Test SelectKeeperBehaviour."""
+
+    select_keeper_behaviour_class: Type[BaseBehaviour]
+    next_behaviour_class: Type[BaseBehaviour]
+
+    def test_select_keeper(
+        self,
+    ) -> None:
+        """Test select keeper agent."""
+        participants = [self.skill.skill_context.agent_address, "a_1", "a_2"]
+        self.fast_forward_to_behaviour(
+            behaviour=self.behaviour,
+            behaviour_id=self.select_keeper_behaviour_class.auto_behaviour_id(),
+            synchronized_data=SynchronizedData(
+                AbciAppDB(
+                    setup_data=dict(
+                        participants=[participants],
+                        most_voted_randomness=[
+                            "56cbde9e9bbcbdcaf92f183c678eaa5288581f06b1c9c7f884ce911776727688"
+                        ],
+                        most_voted_keeper_address=["a_1"],
+                    ),
+                )
+            ),
+        )
+        assert (
+            cast(
+                BaseBehaviour,
+                cast(BaseBehaviour, self.behaviour.current_behaviour),
+            ).behaviour_id
+            == self.select_keeper_behaviour_class.auto_behaviour_id()
+        )
+        self.behaviour.act_wrapper()
+        self.mock_a2a_transaction()
+        self._test_done_flag_set()
+        self.end_round(done_event=Event.DONE)
+        behaviour = cast(BaseBehaviour, self.behaviour.current_behaviour)
+        assert behaviour.behaviour_id == self.next_behaviour_class.auto_behaviour_id()
+
+
+class TestSelectKeeperSnapshotBehaviour(BaseSelectKeeperSnapshotBehaviourTest):
+    """Test SelectKeeperBehaviour."""
+
+    select_keeper_behaviour_class = SnapshotAPISendSelectKeeperBehaviour
+    next_behaviour_class = SnapshotAPISendBehaviour
+
+
+class TestSnapshotAPISendBehaviourNonSender(BaseProposalVoterTest):
+    """Tests StreamWriteBehaviour"""
+
+    behaviour_class = SnapshotAPISendBehaviour
+    next_behaviour_class = PrepareVoteTransactionBehaviour
+
+    @pytest.mark.parametrize(
+        "test_case",
+        [
+            BehaviourTestCase(
+                "Happy path",
+                initial_data=dict(most_voted_keeper_address="not_my_address"),
+                event=Event.DONE,
+            ),
+        ],
+    )
+    def test_run(self, test_case: BehaviourTestCase) -> None:
+        """Run tests."""
+        self.fast_forward(test_case.initial_data)
+        self.complete(event=test_case.event, sends=False)
+
+
+class TestSnapshotAPISendBehaviourSender(BaseProposalVoterTest):
+    """Tests SnapshotAPISendBehaviour"""
+
+    behaviour_class = SnapshotAPISendBehaviour
+    next_behaviour_class = PrepareVoteTransactionBehaviour
+
+    @pytest.mark.parametrize(
+        "test_case, kwargs",
+        [
+            (
+                BehaviourTestCase(
+                    "Happy path",
+                    initial_data=dict(
+                        most_voted_keeper_address="test_agent_address",
+                        safe_contract_address="dummy_safe_contract_address",
+                    ),
+                    event=Event.DONE,
+                ),
+                {
+                    "body": json.dumps(
+                        {},
+                    ),
+                    "status": 200,
+                    "headers": "Accept: application/json\r\nContent-Type: application/json\r\n",
+                },
+            ),
+        ],
+    )
+    def test_run(self, test_case: BehaviourTestCase, kwargs: Any) -> None:
+        """Run tests."""
+        self.fast_forward(test_case.initial_data)
+        self.behaviour.act_wrapper()
+        self.mock_http_request(
+            request_kwargs=dict(
+                method="POST",
+                headers=kwargs.get("headers"),
+                version="",
+                url=SNAPSHOT_API_ENDPOINT,
+            ),
+            response_kwargs=dict(
+                version="",
+                status_code=kwargs.get("status"),
+                status_text="",
+                body=kwargs.get("body").encode(),
+            ),
+        )
+
+        self.complete(test_case.event)
+
+
+class TestSnapshotAPISendBehaviourSenderError(BaseProposalVoterTest):
+    """Tests SnapshotAPISendBehaviour"""
+
+    behaviour_class = SnapshotAPISendBehaviour
+    next_behaviour_class = SnapshotAPISendRandomnessBehaviour
+
+    @pytest.mark.parametrize(
+        "test_case, kwargs",
+        [
+            (
+                BehaviourTestCase(
+                    "Happy path",
+                    initial_data=dict(
+                        most_voted_keeper_address="test_agent_address",
+                        safe_contract_address="dummy_safe_contract_address",
+                    ),
+                    event=Event.API_ERROR,
+                ),
+                {
+                    "body": json.dumps(
+                        {},
+                    ),
+                    "status": 400,
+                    "headers": "Accept: application/json\r\nContent-Type: application/json\r\n",
+                },
+            ),
+        ],
+    )
+    def test_run(self, test_case: BehaviourTestCase, kwargs: Any) -> None:
+        """Run tests."""
+        self.fast_forward(test_case.initial_data)
+        self.behaviour.act_wrapper()
+        self.mock_http_request(
+            request_kwargs=dict(
+                method="POST",
+                headers=kwargs.get("headers"),
+                version="",
+                url=SNAPSHOT_API_ENDPOINT,
+            ),
+            response_kwargs=dict(
+                version="",
+                status_code=kwargs.get("status"),
+                status_text="",
+                body=kwargs.get("body").encode(),
+                headers="",
+            ),
+        )
 
         self.complete(test_case.event)

@@ -24,7 +24,7 @@ from typing import Any, Optional, Union
 
 from aea.skills.base import SkillContext
 
-from packages.valory.skills.abstract_round_abci.models import BaseParams
+from packages.valory.skills.abstract_round_abci.models import ApiSpecs, BaseParams
 from packages.valory.skills.abstract_round_abci.models import (
     BenchmarkTool as BaseBenchmarkTool,
 )
@@ -76,8 +76,14 @@ class Params(BaseParams):
         self.signmessagelib_address = self._ensure(
             "signmessagelib_address", kwargs, str
         )
-        self.snapshot_api_endpoint = kwargs.get("snapshot_api_endpoint")
+        self.snapshot_api_endpoint = kwargs.get(
+            "snapshot_api_endpoint", "https://hub.snapshot.org/graphql"
+        )
         super().__init__(*args, **kwargs)
+
+
+class RandomnessApi(ApiSpecs):
+    """A model that wraps ApiSpecs for randomness api specifications."""
 
 
 Requests = BaseRequests

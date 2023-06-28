@@ -550,7 +550,6 @@ class PrepareVoteTransactionBehaviour(ProposalVoterBaseBehaviour):
                 tx_hash, snapshot_api_data = yield from self._get_snapshot_tx_hash(
                     selected_proposal
                 )
-
                 self.context.logger.info(
                     f"Voting for snapshot proposal {selected_proposal['id']}: {selected_proposal['choice']}"
                 )

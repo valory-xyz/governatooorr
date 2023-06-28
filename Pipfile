@@ -49,7 +49,7 @@ eth-utils = ">=1.3.0,<2"
 hexbytes = ">=0.1.0,<1"
 rlp = ">=1.0.0,<3"
 eth_typing = "==2.3.0"
-cytoolz = "0.12.1"
+cytoolz = "==0.12.1"
 toolz = "==0.12.0"
 
 [requires]

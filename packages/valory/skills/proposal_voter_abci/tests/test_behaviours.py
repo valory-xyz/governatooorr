@@ -33,10 +33,7 @@ from packages.valory.connections.openai.connection import (
     PUBLIC_ID as LLM_CONNECTION_PUBLIC_ID,
 )
 from packages.valory.contracts.delegate.contract import DelegateContract
-from packages.valory.contracts.gnosis_safe.contract import (
-    GnosisSafeContract,
-    NULL_ADDRESS,
-)
+from packages.valory.contracts.gnosis_safe.contract import GnosisSafeContract
 from packages.valory.contracts.sign_message_lib.contract import SignMessageLibContract
 from packages.valory.protocols.contract_api import ContractApiMessage
 from packages.valory.protocols.llm.message import LlmMessage

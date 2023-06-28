@@ -47,12 +47,12 @@ fingerprint:
   rounds.py: bafybeifxsr2nnoi4tbci3n3fqxejf6vj5trgduml7zwofo4rse53zzwioi
   snapshot.py: bafybeiael35k6td5gdw5z552gjkt6r2itsoarmoxisdlj2psu2inpzubne
   tests/__init__.py: bafybeiggsebc3qlofutznro2j42mbsympgfnpj2ad6buqfwiqdzqov3d5u
-  tests/test_behaviours.py: bafybeifbsomcvzub7dkollbuxz3tf3aqbk7lzdvvphh25c7sbqy6g47ona
+  tests/test_behaviours.py: bafybeicpmesnxbshzl6yol7jcydjp6jgtoij5phxrmju5o3nzomnymyune
   tests/test_dialogues.py: bafybeigunltuvpia5cmtil4eyjslghitejdllhm5bzdqi3uvz5mprwetku
   tests/test_handlers.py: bafybeih47tjdvy6sv52ipxkurjinukqurhs5lwfgyauzpv5skrczwuhmky
   tests/test_models.py: bafybeig7lk4aojnesm22dknzz6z5bvxjahzlsrxubncusdbmxtqy6bokhq
   tests/test_payloads.py: bafybeifyheo2u743zogonqa5ofaanyzuazw4yqm2cxkcwwt3n7my7e4jvm
-  tests/test_rounds.py: bafybeibmszlggbwlhes3ilg4eusq2l3xhangf5eusrcltgiuu5i3ncfl4y
+  tests/test_rounds.py: bafybeiec4swkw2f4c5mjxviabhtnauabxla3zfmsqmsyqwnkqyokp4m5p4
 fingerprint_ignore_patterns: []
 connections:
 - valory/openai:0.1.0:bafybeietimatztynqebwicxabplia6fctov4vswzbdrin5y32brbjewo2y

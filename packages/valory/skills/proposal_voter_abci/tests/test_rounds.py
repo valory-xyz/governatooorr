@@ -21,17 +21,7 @@
 
 import json
 from dataclasses import dataclass, field
-from typing import (
-    Any,
-    Callable,
-    Dict,
-    FrozenSet,
-    Hashable,
-    List,
-    Mapping,
-    Optional,
-    cast,
-)
+from typing import Any, Callable, Dict, Hashable, List, Mapping, Optional, cast
 from unittest import mock
 
 import pytest
@@ -258,6 +248,7 @@ class TestPrepareVoteTransactionRoundRound(BaseProposalVoterRoundTest):
 
 
 def get_dummy_retrieve_signature_payload_serialized(error: bool = False):
+    """get_dummy_retrieve_signature_payload_serialized"""
     return json.dumps(
         {"snapshot_api_data_signature": None if error else "dummy_signature"}
     )

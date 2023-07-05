@@ -21,17 +21,13 @@
 
 import json
 from abc import ABC
-from typing import Dict, Generator, Optional, Set, Tuple, Type, cast
+from typing import Dict, Generator, Optional, Set, Type, cast
 
 from packages.valory.connections.openai.connection import (
     PUBLIC_ID as LLM_CONNECTION_PUBLIC_ID,
 )
 from packages.valory.contracts.delegate.contract import DelegateContract
-from packages.valory.contracts.gnosis_safe.contract import (
-    GnosisSafeContract,
-    SafeOperation,
-)
-from packages.valory.contracts.sign_message_lib.contract import SignMessageLibContract
+from packages.valory.contracts.gnosis_safe.contract import GnosisSafeContract
 from packages.valory.protocols.contract_api import ContractApiMessage
 from packages.valory.protocols.llm.message import LlmMessage
 from packages.valory.skills.abstract_round_abci.base import AbstractRound
@@ -40,18 +36,11 @@ from packages.valory.skills.abstract_round_abci.behaviours import (
     BaseBehaviour,
 )
 from packages.valory.skills.abstract_round_abci.models import Requests
-from packages.valory.skills.proposal_voter_solana_abci.custom_eth_account.messages import (
-    encode_structured_data,
-)
 from packages.valory.skills.proposal_voter_solana_abci.dialogues import (
     LlmDialogue,
     LlmDialogues,
 )
-from packages.valory.skills.proposal_voter_solana_abci.models import (
-    Params,
-    PendingVote,
-    SharedState,
-)
+from packages.valory.skills.proposal_voter_solana_abci.models import Params, PendingVote
 from packages.valory.skills.proposal_voter_solana_abci.payloads import (
     EstablishVotePayload,
     PrepareVoteTransactionPayload,
@@ -62,7 +51,6 @@ from packages.valory.skills.proposal_voter_solana_abci.rounds import (
     ProposalVoterSolanaAbciApp,
     SynchronizedData,
 )
-from packages.valory.skills.proposal_voter_solana_abci.snapshot import snapshot_vp_query
 from packages.valory.skills.transaction_settlement_abci.payload_tools import (
     hash_payload_to_hex,
 )

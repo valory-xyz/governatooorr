@@ -32,9 +32,9 @@ protocols:
 skills:
 - valory/abstract_abci:0.1.0:bafybeiff2dqnkeorf343fmb3547fhiznvdw4ewbwl4rqluek2cv6ibl5hi
 - valory/abstract_round_abci:0.1.0:bafybeiac62ennpw54gns2quk4g3yoaili2mb72nj6c52czobz5dcwj4mwi
-- valory/governatooorr_solana_abci:0.1.0:bafybeiaprdmwkjhcjbmpkna5wtx4s7l5xoaw4ktxzhbu4oo5a7qhpyork4
-- valory/proposal_collector_solana_abci:0.1.0:bafybeieisihrj2pyl65lsnkvxeakz4fjbuo7yucdabxyne7tzyb4snsv7u
-- valory/proposal_voter_solana_abci:0.1.0:bafybeid4lhz6n6zi6edwuthlgtnwzed6r7a7otjndzjnvwgntuh4p2deki
+- valory/governatooorr_solana_abci:0.1.0:bafybeid6wau66g6ygg7nmnmbq77oryy2hmtoisxfcof3tdj2qpz7b7vqry
+- valory/proposal_collector_solana_abci:0.1.0:bafybeidtqx6xoidu2j4jviqcsobppc4j7g4dg55f3wnimojqcq23twb7my
+- valory/proposal_voter_solana_abci:0.1.0:bafybeidksvjqaqciqnyeb5eg3gddjjvvzr6nnzm2hb536uklm2rqkl5zmy
 - valory/registration_abci:0.1.0:bafybeib6fsfur5jnflcveidnaeylneybwazewufzwa5twnwovdqgwtwsxm
 - valory/reset_pause_abci:0.1.0:bafybeibqz7y3i4aepuprhijwdydkcsbqjtpeea6gdzpp5fgc6abrvjz25a
 - valory/termination_abci:0.1.0:bafybeieb3gnvjxxsh73g67m7rivzknwb63xu4qeagpkv7f4mqz33ecikem

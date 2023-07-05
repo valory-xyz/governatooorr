@@ -17,7 +17,7 @@
 #
 # ------------------------------------------------------------------------------
 
-"""This package contains round behaviours of ProposalCollectorAbciApp."""
+"""This package contains round behaviours of ProposalCollectorSolanaAbciApp."""
 
 import json
 from abc import ABC
@@ -34,7 +34,7 @@ from packages.valory.skills.proposal_collector_solana_abci.payloads import (
 )
 from packages.valory.skills.proposal_collector_solana_abci.rounds import (
     CollectActiveRealmsProposalsRound,
-    ProposalCollectorAbciApp,
+    ProposalCollectorSolanaAbciApp,
     SynchronizedData,
 )
 
@@ -102,7 +102,7 @@ class ProposalCollectorRoundBehaviour(AbstractRoundBehaviour):
     """ProposalCollectorRoundBehaviour"""
 
     initial_behaviour_cls = CollectActiveRealmsProposalsBehaviour
-    abci_app_cls = ProposalCollectorAbciApp  # type: ignore
+    abci_app_cls = ProposalCollectorSolanaAbciApp  # type: ignore
     behaviours: Set[Type[BaseBehaviour]] = [
         CollectActiveRealmsProposalsBehaviour,
     ]

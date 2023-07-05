@@ -17,7 +17,7 @@
 #
 # ------------------------------------------------------------------------------
 
-"""This module contains the shared state for the abci skill of ProposalCollectorAbciApp."""
+"""This module contains the shared state for the abci skill of ProposalCollectorSolanaAbciApp."""
 
 from typing import Any
 

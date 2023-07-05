@@ -19,8 +19,8 @@
 
 """This package contains round behaviours of GovernatooorrAbciApp."""
 
-import packages.valory.skills.proposal_collector_solana_abci.rounds as ProposalCollectorAbciApp
-import packages.valory.skills.proposal_voter_solana_abci.rounds as ProposalVoterAbciApp
+import packages.valory.skills.proposal_collector_solana_abci.rounds as ProposalCollectorSolanaAbciApp
+import packages.valory.skills.proposal_voter_solana_abci.rounds as ProposalVoterSolanaAbciApp
 import packages.valory.skills.registration_abci.rounds as RegistrationAbci
 import packages.valory.skills.reset_pause_abci.rounds as ResetAndPauseAbci
 import packages.valory.skills.transaction_settlement_abci.rounds as TransactionSubmissionAbciApp
@@ -36,21 +36,21 @@ from packages.valory.skills.termination_abci.rounds import TerminationAbciApp
 # Here we define how the transition between the FSMs should happen
 # more information here: https://docs.autonolas.network/fsm_app_introduction/#composition-of-fsm-apps
 abci_app_transition_mapping: AbciAppTransitionMapping = {
-    RegistrationAbci.FinishedRegistrationRound: ProposalCollectorAbciApp.CollectActiveRealmsProposalsRound,
-    ProposalCollectorAbciApp.FinishedCollectRealmsProposalRound: ProposalVoterAbciApp.EstablishVoteRound,
-    ProposalVoterAbciApp.FinishedTransactionPreparationNoVoteRound: ResetAndPauseAbci.ResetAndPauseRound,
-    ProposalVoterAbciApp.FinishedTransactionPreparationVoteRound: TransactionSubmissionAbciApp.RandomnessTransactionSubmissionRound,
-    TransactionSubmissionAbciApp.FinishedTransactionSubmissionRound: ProposalVoterAbciApp.PrepareVoteTransactionRound,
-    TransactionSubmissionAbciApp.FailedRound: ProposalVoterAbciApp.PrepareVoteTransactionRound,
-    ResetAndPauseAbci.FinishedResetAndPauseRound: ProposalCollectorAbciApp.SynchronizeDelegationsRound,
+    RegistrationAbci.FinishedRegistrationRound: ProposalCollectorSolanaAbciApp.CollectActiveRealmsProposalsRound,
+    ProposalCollectorSolanaAbciApp.FinishedCollectRealmsProposalRound: ProposalVoterSolanaAbciApp.EstablishVoteRound,
+    ProposalVoterSolanaAbciApp.FinishedTransactionPreparationNoVoteRound: ResetAndPauseAbci.ResetAndPauseRound,
+    ProposalVoterSolanaAbciApp.FinishedTransactionPreparationVoteRound: TransactionSubmissionAbciApp.RandomnessTransactionSubmissionRound,
+    TransactionSubmissionAbciApp.FinishedTransactionSubmissionRound: ProposalVoterSolanaAbciApp.PrepareVoteTransactionRound,
+    TransactionSubmissionAbciApp.FailedRound: ProposalVoterSolanaAbciApp.PrepareVoteTransactionRound,
+    ResetAndPauseAbci.FinishedResetAndPauseRound: ProposalCollectorSolanaAbciApp.CollectActiveRealmsProposalsRound,
     ResetAndPauseAbci.FinishedResetAndPauseErrorRound: RegistrationAbci.RegistrationRound,
 }
 
 GovernatooorrAbciApp = chain(
     (
         RegistrationAbci.AgentRegistrationAbciApp,
-        ProposalCollectorAbciApp.ProposalCollectorAbciApp,
-        ProposalVoterAbciApp.ProposalVoterAbciApp,
+        ProposalCollectorSolanaAbciApp.ProposalCollectorSolanaAbciApp,
+        ProposalVoterSolanaAbciApp.ProposalVoterSolanaAbciApp,
         ResetAndPauseAbci.ResetPauseAbciApp,
         TransactionSubmissionAbciApp.TransactionSubmissionAbciApp,
     ),

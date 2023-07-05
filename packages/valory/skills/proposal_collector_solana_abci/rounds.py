@@ -17,7 +17,7 @@
 #
 # ------------------------------------------------------------------------------
 
-"""This package contains the rounds of ProposalCollectorAbciApp."""
+"""This package contains the rounds of ProposalCollectorSolanaAbciApp."""
 
 import json
 from enum import Enum
@@ -39,7 +39,7 @@ from packages.valory.skills.proposal_collector_solana_abci.payloads import (
 
 
 class Event(Enum):
-    """ProposalCollectorAbciApp Events"""
+    """ProposalCollectorSolanaAbciApp Events"""
 
     ROUND_TIMEOUT = "round_timeout"
     NO_MAJORITY = "no_majority"
@@ -94,8 +94,8 @@ class FinishedCollectRealmsProposalRound(DegenerateRound):
     """FinishedCollectRealmsProposalRound"""
 
 
-class ProposalCollectorAbciApp(AbciApp[Event]):
-    """ProposalCollectorAbciApp"""
+class ProposalCollectorSolanaAbciApp(AbciApp[Event]):
+    """ProposalCollectorSolanaAbciApp"""
 
     initial_round_cls: AppState = CollectActiveRealmsProposalsRound
     initial_states: Set[AppState] = {
@@ -117,6 +117,7 @@ class ProposalCollectorAbciApp(AbciApp[Event]):
     }
     cross_period_persisted_keys: Set[str] = set()
     db_pre_conditions: Dict[AppState, Set[str]] = {
+        CollectActiveRealmsProposalsRound: set()
     }
     db_post_conditions: Dict[AppState, Set[str]] = {
         FinishedCollectRealmsProposalRound: {

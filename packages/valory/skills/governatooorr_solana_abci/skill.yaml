@@ -8,9 +8,9 @@ aea_version: '>=1.0.0, <2.0.0'
 fingerprint:
   __init__.py: bafybeieiz7mdnqem2cm6x5b6ayinoni54yzzifaqk2kufyxah3gq532ax4
   behaviours.py: bafybeibpb6yv7pphzudn37b7b7xux6grgz5wekdhoagpyzcfxohwwsnpua
-  composition.py: bafybeidt33qc2zeiw23mk6tcxsnymyeet3e5nqxfgbflaof2kch7ljxn5a
+  composition.py: bafybeihfvq32lghxxaku7fxknjyggsh2ezjzsqmkgckuuih5udxpzfvuye
   dialogues.py: bafybeie5bpxwbazuhja2mcayeqa4kbuuha7z24kduargw3onyoktr4dgqq
-  fsm_specification.yaml: bafybeieouic335qh3wpnpm3eaqbo4r4nqmvtniov3zpltzr4vtzlb3n4cm
+  fsm_specification.yaml: bafybeifkouglxfc2qwruix7ro5iec2c45qn7atpfbxfotptmerv2plwu7y
   handlers.py: bafybeieclwxviroj67a6hx26xbjo37xcwuam5gna6nz2mvdjmilqqhxdye
   models.py: bafybeigl5gr5hhliu4ii3iwx3wpjz4azscxgifdljqbapdkf3magvamasi
 fingerprint_ignore_patterns: []
@@ -19,8 +19,8 @@ contracts: []
 protocols: []
 skills:
 - valory/abstract_round_abci:0.1.0:bafybeiac62ennpw54gns2quk4g3yoaili2mb72nj6c52czobz5dcwj4mwi
-- valory/proposal_collector_solana_abci:0.1.0:bafybeieisihrj2pyl65lsnkvxeakz4fjbuo7yucdabxyne7tzyb4snsv7u
-- valory/proposal_voter_solana_abci:0.1.0:bafybeid4lhz6n6zi6edwuthlgtnwzed6r7a7otjndzjnvwgntuh4p2deki
+- valory/proposal_collector_solana_abci:0.1.0:bafybeidtqx6xoidu2j4jviqcsobppc4j7g4dg55f3wnimojqcq23twb7my
+- valory/proposal_voter_solana_abci:0.1.0:bafybeidksvjqaqciqnyeb5eg3gddjjvvzr6nnzm2hb536uklm2rqkl5zmy
 - valory/registration_abci:0.1.0:bafybeib6fsfur5jnflcveidnaeylneybwazewufzwa5twnwovdqgwtwsxm
 - valory/reset_pause_abci:0.1.0:bafybeibqz7y3i4aepuprhijwdydkcsbqjtpeea6gdzpp5fgc6abrvjz25a
 - valory/termination_abci:0.1.0:bafybeieb3gnvjxxsh73g67m7rivzknwb63xu4qeagpkv7f4mqz33ecikem

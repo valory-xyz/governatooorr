@@ -1,16 +1,16 @@
 {
     "dev": {
         "skill/valory/proposal_collector_abci/0.1.0": "bafybeidz3u2z7h3cto5e7swmpoywlnpyhvvpqt5pa32witkdhe774qotdu",
-        "skill/valory/proposal_collector_solana_abci/0.1.0": "bafybeieisihrj2pyl65lsnkvxeakz4fjbuo7yucdabxyne7tzyb4snsv7u",
+        "skill/valory/proposal_collector_solana_abci/0.1.0": "bafybeidtqx6xoidu2j4jviqcsobppc4j7g4dg55f3wnimojqcq23twb7my",
         "connection/valory/openai/0.1.0": "bafybeietimatztynqebwicxabplia6fctov4vswzbdrin5y32brbjewo2y",
         "contract/valory/delegate/0.1.0": "bafybeiaslboosyvpzccaqgie56wta3aqrdkgfx5vs5ogxu7ebiez67wp6i",
         "protocol/valory/llm/1.0.0": "bafybeicpd5hxe5rlgp75kaqotzpy3jkdyl5pbdcutwqdzlqfknnmkgadsy",
         "skill/valory/proposal_voter_abci/0.1.0": "bafybeidexpjwlexun27azqtpm4glzl34pu66oiicherzjkirjcvtuftafe",
-        "skill/valory/proposal_voter_solana_abci/0.1.0": "bafybeid4lhz6n6zi6edwuthlgtnwzed6r7a7otjndzjnvwgntuh4p2deki",
+        "skill/valory/proposal_voter_solana_abci/0.1.0": "bafybeidksvjqaqciqnyeb5eg3gddjjvvzr6nnzm2hb536uklm2rqkl5zmy",
         "skill/valory/governatooorr_abci/0.1.0": "bafybeihmldgecm6yhv5zm4sasx2rgsysxrt4wxoq7bp7uzempg4uacvtte",
-        "skill/valory/governatooorr_solana_abci/0.1.0": "bafybeiaprdmwkjhcjbmpkna5wtx4s7l5xoaw4ktxzhbu4oo5a7qhpyork4",
+        "skill/valory/governatooorr_solana_abci/0.1.0": "bafybeid6wau66g6ygg7nmnmbq77oryy2hmtoisxfcof3tdj2qpz7b7vqry",
         "agent/valory/governatooorr/0.1.0": "bafybeihnuw2rycty2oj3nw4e2x3nse4w4zzwajf2tvo5xqaecmnkln2a5q",
-        "agent/valory/governatooorr_solana/0.1.0": "bafybeibkpzwpg6bzd6n4uworuw2tyhjbc5ieg3o3wciydbs6jrryfv3vym",
+        "agent/valory/governatooorr_solana/0.1.0": "bafybeif4syyqzigzvztwkr4ugawao4ten4ddrn7jy3odaqo5zajw6imqeq",
         "service/valory/governatooorr/0.1.0": "bafybeidaxavebtysnteey2z67jzovsxi32rsisruoo5nffeureafemmwhu",
         "service/valory/governatooorr_local/0.1.0": "bafybeigzpfx35hzy66llz67wuugfv4sz5hooxplwzi3ceaw746klzva4oi",
         "contract/valory/sign_message_lib/0.1.0": "bafybeiamc2cle3kx26gpqigwzfq5bph5nfrzwei72cyu3v6xwcvkip6dce"

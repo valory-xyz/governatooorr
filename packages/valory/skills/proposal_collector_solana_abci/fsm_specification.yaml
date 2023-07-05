@@ -1,37 +1,17 @@
 alphabet_in:
-- API_ERROR
-- BLOCK_RETRIEVAL_ERROR
 - DONE
 - NO_MAJORITY
-- REPEAT
 - ROUND_TIMEOUT
-- WRITE_DELEGATIONS
-default_start_state: SynchronizeDelegationsRound
+default_start_state: CollectActiveRealmsProposalsRound
 final_states:
-- FinishedProposalRound
-- FinishedWriteDelegationsRound
-label: ProposalCollectorAbciApp
+- FinishedCollectRealmsProposalRound
+label: ProposalCollectorSolanaAbciApp
 start_states:
-- CollectActiveTallyProposalsRound
-- SynchronizeDelegationsRound
+- CollectActiveRealmsProposalsRound
 states:
 - CollectActiveRealmsProposalsRound
-- CollectActiveTallyProposalsRound
-- FinishedProposalRound
-- FinishedWriteDelegationsRound
-- SynchronizeDelegationsRound
+- FinishedCollectRealmsProposalRound
 transition_func:
-    (CollectActiveRealmsProposalsRound, API_ERROR): CollectActiveRealmsProposalsRound
-    (CollectActiveRealmsProposalsRound, DONE): FinishedProposalRound
+    (CollectActiveRealmsProposalsRound, DONE): FinishedCollectRealmsProposalRound
     (CollectActiveRealmsProposalsRound, NO_MAJORITY): CollectActiveRealmsProposalsRound
-    (CollectActiveRealmsProposalsRound, REPEAT): CollectActiveRealmsProposalsRound
     (CollectActiveRealmsProposalsRound, ROUND_TIMEOUT): CollectActiveRealmsProposalsRound
-    (CollectActiveTallyProposalsRound, API_ERROR): CollectActiveTallyProposalsRound
-    (CollectActiveTallyProposalsRound, BLOCK_RETRIEVAL_ERROR): CollectActiveTallyProposalsRound
-    (CollectActiveTallyProposalsRound, DONE): CollectActiveRealmsProposalsRound
-    (CollectActiveTallyProposalsRound, NO_MAJORITY): CollectActiveTallyProposalsRound
-    (CollectActiveTallyProposalsRound, ROUND_TIMEOUT): CollectActiveTallyProposalsRound
-    (SynchronizeDelegationsRound, DONE): CollectActiveTallyProposalsRound
-    (SynchronizeDelegationsRound, NO_MAJORITY): SynchronizeDelegationsRound
-    (SynchronizeDelegationsRound, ROUND_TIMEOUT): SynchronizeDelegationsRound
-    (SynchronizeDelegationsRound, WRITE_DELEGATIONS): FinishedWriteDelegationsRound

@@ -17,4 +17,9 @@
 #
 # ------------------------------------------------------------------------------
 
-"""This module contains tests for the proposal collector skill."""
+"""This module contains the implementation of the default skill."""
+
+from aea.configurations.base import PublicId
+
+
+PUBLIC_ID = PublicId.from_str("valory/proposal_collector_solana_abci:0.1.0")

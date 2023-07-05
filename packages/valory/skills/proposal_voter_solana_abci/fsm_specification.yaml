@@ -1,0 +1,53 @@
+alphabet_in:
+- API_ERROR
+- CALL_API
+- CONTRACT_ERROR
+- DID_NOT_SEND
+- DONE
+- NO_MAJORITY
+- NO_VOTE
+- RETRIEVAL_ERROR
+- ROUND_TIMEOUT
+- VOTE
+default_start_state: EstablishVoteRound
+final_states:
+- FinishedTransactionPreparationNoVoteRound
+- FinishedTransactionPreparationVoteRound
+label: ProposalVoterSolanaAbciApp
+start_states:
+- EstablishVoteRound
+- PrepareVoteTransactionRound
+- RetrieveSignatureRound
+states:
+- EstablishVoteRound
+- FinishedTransactionPreparationNoVoteRound
+- FinishedTransactionPreparationVoteRound
+- PrepareVoteTransactionRound
+- RetrieveSignatureRound
+- SnapshotAPISendRandomnessRound
+- SnapshotAPISendRound
+- SnapshotAPISendSelectKeeperRound
+transition_func:
+    (EstablishVoteRound, DONE): PrepareVoteTransactionRound
+    (EstablishVoteRound, NO_MAJORITY): EstablishVoteRound
+    (EstablishVoteRound, ROUND_TIMEOUT): EstablishVoteRound
+    (PrepareVoteTransactionRound, CONTRACT_ERROR): PrepareVoteTransactionRound
+    (PrepareVoteTransactionRound, NO_MAJORITY): PrepareVoteTransactionRound
+    (PrepareVoteTransactionRound, NO_VOTE): FinishedTransactionPreparationNoVoteRound
+    (PrepareVoteTransactionRound, ROUND_TIMEOUT): PrepareVoteTransactionRound
+    (PrepareVoteTransactionRound, VOTE): FinishedTransactionPreparationVoteRound
+    (RetrieveSignatureRound, CALL_API): SnapshotAPISendRandomnessRound
+    (RetrieveSignatureRound, DONE): PrepareVoteTransactionRound
+    (RetrieveSignatureRound, NO_MAJORITY): EstablishVoteRound
+    (RetrieveSignatureRound, RETRIEVAL_ERROR): RetrieveSignatureRound
+    (RetrieveSignatureRound, ROUND_TIMEOUT): EstablishVoteRound
+    (SnapshotAPISendRandomnessRound, DONE): SnapshotAPISendSelectKeeperRound
+    (SnapshotAPISendRandomnessRound, NO_MAJORITY): SnapshotAPISendRandomnessRound
+    (SnapshotAPISendRandomnessRound, ROUND_TIMEOUT): SnapshotAPISendRandomnessRound
+    (SnapshotAPISendRound, API_ERROR): SnapshotAPISendRandomnessRound
+    (SnapshotAPISendRound, DID_NOT_SEND): SnapshotAPISendRandomnessRound
+    (SnapshotAPISendRound, DONE): PrepareVoteTransactionRound
+    (SnapshotAPISendRound, ROUND_TIMEOUT): SnapshotAPISendRandomnessRound
+    (SnapshotAPISendSelectKeeperRound, DONE): SnapshotAPISendRound
+    (SnapshotAPISendSelectKeeperRound, NO_MAJORITY): SnapshotAPISendRandomnessRound
+    (SnapshotAPISendSelectKeeperRound, ROUND_TIMEOUT): SnapshotAPISendRandomnessRound

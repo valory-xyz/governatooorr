@@ -58,4 +58,7 @@ governatooorr
 governatooorr_local
 !packages/valory/services/governatooorr_local
 
+governatooorr_solana
+!packages/valory/services/governatooorr_solana
+
 ethereum_private_key.txt

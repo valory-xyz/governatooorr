@@ -120,6 +120,6 @@ class ProposalCollectorAbciApp(AbciApp[Event]):
     }
     db_post_conditions: Dict[AppState, Set[str]] = {
         FinishedCollectRealmsProposalRound: {
-            get_name(SynchronizedData.realms_proposals),
+            get_name(SynchronizedData.realms_active_proposals),
         },
     }

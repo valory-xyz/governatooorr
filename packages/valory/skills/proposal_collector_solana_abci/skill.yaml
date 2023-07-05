@@ -7,23 +7,14 @@ description: The proposal collector abci is responsible for collecting and aggre
 license: Apache-2.0
 aea_version: '>=1.0.0, <2.0.0'
 fingerprint:
-  __init__.py: bafybeickrxtcqbivmneh54iq7ymaoq6xzwdouvnoon3h234vzp574qouvu
-  behaviours.py: bafybeifqox3x5ew23w3z6qgcd7zkwplnqfbhhd267d76vexlc2zoo36nem
-  dialogues.py: bafybeighergy2hupd32ozp2ud5j4jujpccfkzk2l46a33xn7yi2ofk32m4
-  fsm_specification.yaml: bafybeifcqwkgqhexmkeg5i7iupiczt5t5ra22d73ojuiz43jkaywdnb5x4
-  handlers.py: bafybeibkaxy6fkkxluminkzpt3aw3rrsa6zg66uldjmwymhevi7dr2qhbe
-  models.py: bafybeigrf4yztnaref5jgp2wpqlg2osrib42p4axymcstfrli6wga3n2kq
-  payloads.py: bafybeigcbd5mvxypyxohxkr4qxpwobavtluarpwlwweklqtgyertvuqxgy
-  rounds.py: bafybeiecotjwvkqqpocw5jutckh33aewcwowo632l3g4cdb7s6kw7yszjm
-  snapshot.py: bafybeihrke4mzlx3n72utzfcvtcvnxm6aci2jr6veqmox54vqn77vm5oqe
-  tally.py: bafybeih4w2gk6vzthjbw3q2hhckquxgcs7y4kvj3uezclugb6qvo3s35fq
-  tests/__init__.py: bafybeic43gkt67rz4d2latl5qvjxymqjvim4mcj6aklxa6bl73yobtopra
-  tests/test_behaviours.py: bafybeia7yhchuhugarg2gndbcokqrfjjkzqcjbyhnd4sakqkwcp5lxuku4
-  tests/test_dialogues.py: bafybeibgmzzwmydoe4v5334zwjjx3shza4ersaneykxvu6r4rpbagogx2i
-  tests/test_handlers.py: bafybeia6ef2svsgeu2vx4us7gvmt4nbuygjufpdy7pjifdxfukly5nwrem
-  tests/test_models.py: bafybeia4q5ncu6xxie5e2plugclkccrqnuqw3ujlqu3vus54zacvfkwyxi
-  tests/test_payloads.py: bafybeifpggwuftdbammofsvoi4dpouscmjw47rozqea2syyaa27fbxvrlu
-  tests/test_rounds.py: bafybeigepdbosiey6aegdorbw2hqzk77i6a4bqszvtfcw4slotdk5wtria
+  __init__.py: bafybeidyutot7cboq63psgfgk2n7hgftvycuqz4p7oxlhutv235eryc364
+  behaviours.py: bafybeie273vqfy3z7msmyaookwew63glfjcgj7mgf4szqdynxwgxtsxptq
+  dialogues.py: bafybeih6sqgx2ttjbzti6oqgeofbmg7f3g3ev2gv44te2irpuhimaaoqc4
+  fsm_specification.yaml: bafybeig3a6fm3wpiguoq7me2j3wumxrtm3jp4zvw2a5lb3nw7raon7zbky
+  handlers.py: bafybeiemqloowh7yc3rgm3jg6jedii5bh647hedrx57vhpy2uh6mav33ba
+  models.py: bafybeic6qlnq7jt7bmv7r6ptwqjohsnj4xgldpkigxx7gk3qjslrqhf5ha
+  payloads.py: bafybeiedhu6racpfu6goerlvpd3wyku2mymq2knmq6cmjvkclgbqm7uii4
+  rounds.py: bafybeift7avoqymo6q7k2hhjrun32qiy3avjugtj6xax7qgjg44nuia66i
 fingerprint_ignore_patterns: []
 connections:
 - fetchai/http_server:0.22.0:bafybeihaax5od5zo5jk2l62hv4jwuwtxloh5mijozudpsjombqc4ncmi6i
@@ -135,7 +126,7 @@ models:
       tx_timeout: 10.0
       use_termination: false
       validate_timeout: 1205
-      target_proposal_id: "34AxJwqZeUjYY1U3QpxP92oCCh6T61wHoWQmG5WMyDFe"
+      target_proposal_id: 34AxJwqZeUjYY1U3QpxP92oCCh6T61wHoWQmG5WMyDFe
     class_name: Params
   requests:
     args: {}

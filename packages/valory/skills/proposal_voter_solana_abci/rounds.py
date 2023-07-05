@@ -170,7 +170,6 @@ class ProposalVoterSolanaAbciApp(AbciApp[Event]):
     initial_states: Set[AppState] = {
         EstablishVoteRound,
         PrepareVoteTransactionRound,
-        RetrieveSignatureRound,
     }
     transition_function: AbciAppTransitionFunction = {
         EstablishVoteRound: {
@@ -186,29 +185,6 @@ class ProposalVoterSolanaAbciApp(AbciApp[Event]):
             Event.CONTRACT_ERROR: PrepareVoteTransactionRound,
         },
         FinishedTransactionPreparationNoVoteRound: {},
-        RetrieveSignatureRound: {
-            Event.DONE: PrepareVoteTransactionRound,
-            Event.RETRIEVAL_ERROR: RetrieveSignatureRound,
-            Event.CALL_API: SnapshotAPISendRandomnessRound,
-            Event.NO_MAJORITY: EstablishVoteRound,
-            Event.ROUND_TIMEOUT: EstablishVoteRound,
-        },
-        SnapshotAPISendRandomnessRound: {
-            Event.DONE: SnapshotAPISendSelectKeeperRound,
-            Event.NO_MAJORITY: SnapshotAPISendRandomnessRound,
-            Event.ROUND_TIMEOUT: SnapshotAPISendRandomnessRound,
-        },
-        SnapshotAPISendSelectKeeperRound: {
-            Event.DONE: SnapshotAPISendRound,
-            Event.NO_MAJORITY: SnapshotAPISendRandomnessRound,
-            Event.ROUND_TIMEOUT: SnapshotAPISendRandomnessRound,
-        },
-        SnapshotAPISendRound: {
-            Event.API_ERROR: SnapshotAPISendRandomnessRound,
-            Event.DID_NOT_SEND: SnapshotAPISendRandomnessRound,
-            Event.DONE: PrepareVoteTransactionRound,
-            Event.ROUND_TIMEOUT: SnapshotAPISendRandomnessRound,
-        },
         FinishedTransactionPreparationVoteRound: {},
     }
     final_states: Set[AppState] = {
@@ -219,20 +195,13 @@ class ProposalVoterSolanaAbciApp(AbciApp[Event]):
         Event.ROUND_TIMEOUT: 30.0,
     }
     cross_period_persisted_keys: Set[str] = {
-        get_name(SynchronizedData.delegations),
-        get_name(SynchronizedData.proposals),
         get_name(SynchronizedData.votable_proposal_ids),
     }
     db_pre_conditions: Dict[AppState, Set[str]] = {
         EstablishVoteRound: set(),
         PrepareVoteTransactionRound: {
-            get_name(SynchronizedData.proposals),
-            get_name(SynchronizedData.delegations),
-            get_name(SynchronizedData.votable_proposal_ids),
+            get_name(SynchronizedData.realms_active_proposals),
         },
-        RetrieveSignatureRound: set(
-            get_name(SynchronizedData.most_voted_tx_hash),
-        ),
     }
     db_post_conditions: Dict[AppState, Set[str]] = {
         FinishedTransactionPreparationVoteRound: {

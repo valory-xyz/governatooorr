@@ -5,13 +5,7 @@ license: Apache-2.0
 description: The governatooorr_solana agent.
 aea_version: '>=1.19.0, <2.0.0'
 fingerprint:
-  __init__.py: bafybeiguw4i7zplzdw65vdyrtj25rys2hifrzsnt57p32xtrzyzh2l77di
-  tests/__init__.py: bafybeihiyimopudltfy4riab6ariq2ktn6w2fqv77vd5t7k4xr7tlkthya
-  tests/helpers/__init__.py: bafybeif7verbag26h6i35gr5rlatxl7veq4drup5ykwdvhgtussf2jreei
-  tests/helpers/constants.py: bafybeibbokz7gzdlubnjwxrmh4tqckc7j75hfy3ae6l5a63mrbd4hp6l7u
-  tests/helpers/data/json_server/data.json: bafybeics26yd33ng22lhzb3had4eevbfkfdj2jbp3qhvjpygwhkwlzhrq4
-  tests/helpers/docker.py: bafybeibbi6m47mzsl43bmix4k7o7oyekzhzsljuf3dkwk23bfns6k7odkm
-  tests/helpers/fixtures.py: bafybeiarm4ezp54po7nv5m4e2w3eghetma5xymnzgoovvdwh7hp2lcitqu
+  __init__.py: bafybeia5k5hpk4bva262k3dlg5tjo6di7bgarop3u37imjt44vjvc4gmvy
 fingerprint_ignore_patterns: []
 connections:
 - fetchai/http_server:0.22.0:bafybeihaax5od5zo5jk2l62hv4jwuwtxloh5mijozudpsjombqc4ncmi6i
@@ -38,9 +32,9 @@ protocols:
 skills:
 - valory/abstract_abci:0.1.0:bafybeiff2dqnkeorf343fmb3547fhiznvdw4ewbwl4rqluek2cv6ibl5hi
 - valory/abstract_round_abci:0.1.0:bafybeiac62ennpw54gns2quk4g3yoaili2mb72nj6c52czobz5dcwj4mwi
-- valory/governatooorr_solana_abci:0.1.0:bafybeial3gqmgqsneo7lziv5vi6tfnjagv263rdnpb4colj6ymvqvgk56e
-- valory/proposal_collector_solana_abci:0.1.0:bafybeifedrq2kueigerrkztlzmtqrq4catvwsrdjmxk3jzk4d4cl2vtvla
-- valory/proposal_voter_solana_abci:0.1.0:bafybeibitkumfgyyeq3pjah6s3n5cwliw6y2niejlv4gi6bgl3uu3fu4ny
+- valory/governatooorr_solana_abci:0.1.0:bafybeiaprdmwkjhcjbmpkna5wtx4s7l5xoaw4ktxzhbu4oo5a7qhpyork4
+- valory/proposal_collector_solana_abci:0.1.0:bafybeieisihrj2pyl65lsnkvxeakz4fjbuo7yucdabxyne7tzyb4snsv7u
+- valory/proposal_voter_solana_abci:0.1.0:bafybeid4lhz6n6zi6edwuthlgtnwzed6r7a7otjndzjnvwgntuh4p2deki
 - valory/registration_abci:0.1.0:bafybeib6fsfur5jnflcveidnaeylneybwazewufzwa5twnwovdqgwtwsxm
 - valory/reset_pause_abci:0.1.0:bafybeibqz7y3i4aepuprhijwdydkcsbqjtpeea6gdzpp5fgc6abrvjz25a
 - valory/termination_abci:0.1.0:bafybeieb3gnvjxxsh73g67m7rivzknwb63xu4qeagpkv7f4mqz33ecikem

@@ -8,7 +8,6 @@ fingerprint:
   __init__.py: bafybeia5k5hpk4bva262k3dlg5tjo6di7bgarop3u37imjt44vjvc4gmvy
 fingerprint_ignore_patterns: []
 connections:
-- fetchai/http_server:0.22.0:bafybeihaax5od5zo5jk2l62hv4jwuwtxloh5mijozudpsjombqc4ncmi6i
 - valory/abci:0.1.0:bafybeihofnsokowicviac6yz3uhur52l3mf54s2hz4i2je5ie4vlruouga
 - valory/http_client:0.23.0:bafybeidykl4elwbcjkqn32wt5h4h7tlpeqovrcq3c5bcplt6nhpznhgczi
 - valory/ledger:0.19.0:bafybeicgfupeudtmvehbwziqfxiz6ztsxr5rxzvalzvsdsspzz73o5fzfi
@@ -18,7 +17,6 @@ contracts:
 - valory/delegate:0.1.0:bafybeiaslboosyvpzccaqgie56wta3aqrdkgfx5vs5ogxu7ebiez67wp6i
 - valory/gnosis_safe:0.1.0:bafybeif5fdwoxq5mscrurtuimadmtctyxxeeui45u4g6leqobzls7bsl3u
 - valory/gnosis_safe_proxy_factory:0.1.0:bafybeiaa6fgwtykrti6i7sbt22raavpsbobsq2xgem4nkbcg744agnmkae
-- valory/sign_message_lib:0.1.0:bafybeiamc2cle3kx26gpqigwzfq5bph5nfrzwei72cyu3v6xwcvkip6dce
 protocols:
 - open_aea/signing:1.0.0:bafybeibqlfmikg5hk4phzak6gqzhpkt6akckx7xppbp53mvwt6r73h7tk4
 - valory/abci:0.1.0:bafybeig3dj5jhsowlvg3t73kgobf6xn4nka7rkttakdb2gwsg5bp7rt7q4
@@ -32,9 +30,9 @@ protocols:
 skills:
 - valory/abstract_abci:0.1.0:bafybeiff2dqnkeorf343fmb3547fhiznvdw4ewbwl4rqluek2cv6ibl5hi
 - valory/abstract_round_abci:0.1.0:bafybeiac62ennpw54gns2quk4g3yoaili2mb72nj6c52czobz5dcwj4mwi
-- valory/governatooorr_solana_abci:0.1.0:bafybeid6wau66g6ygg7nmnmbq77oryy2hmtoisxfcof3tdj2qpz7b7vqry
-- valory/proposal_collector_solana_abci:0.1.0:bafybeidtqx6xoidu2j4jviqcsobppc4j7g4dg55f3wnimojqcq23twb7my
-- valory/proposal_voter_solana_abci:0.1.0:bafybeidksvjqaqciqnyeb5eg3gddjjvvzr6nnzm2hb536uklm2rqkl5zmy
+- valory/governatooorr_solana_abci:0.1.0:bafybeidwftss4mfw6aqsxtegd7ube6qaxrxz3ji2bw2amez35g5itxayum
+- valory/proposal_collector_solana_abci:0.1.0:bafybeiccfbxqbxsexhifcf2ctc26edqmkpviwm5chmdysiyz4cad6e65l4
+- valory/proposal_voter_solana_abci:0.1.0:bafybeifxxayxx4jl5bydhasbh6a3i5l5wjweaxak5csostj7tq5hlhx4ay
 - valory/registration_abci:0.1.0:bafybeib6fsfur5jnflcveidnaeylneybwazewufzwa5twnwovdqgwtwsxm
 - valory/reset_pause_abci:0.1.0:bafybeibqz7y3i4aepuprhijwdydkcsbqjtpeea6gdzpp5fgc6abrvjz25a
 - valory/termination_abci:0.1.0:bafybeieb3gnvjxxsh73g67m7rivzknwb63xu4qeagpkv7f4mqz33ecikem
@@ -184,10 +182,4 @@ models:
       default_write_stream_id: ${str:default_write_stream_id}
       default_read_target_property: ${str:delegations}
       default_write_target_property: ${str:delegations}
-      signmessagelib_address: ${str:0xA65387F16B013cf2Af4605Ad8aA5ec25a2cbA3a2}
----
-public_id: fetchai/http_server:0.22.0:bafybeicblltx7ha3ulthg7bzfccuqqyjmihhrvfeztlgrlcoxhr7kf6nbq
-type: connection
-config:
-  host: 0.0.0.0
-  target_skill_id: valory/governatooorr_solana_abci:0.1.0
+      target_proposal_id: ${str:34AxJwqZeUjYY1U3QpxP92oCCh6T61wHoWQmG5WMyDFe}

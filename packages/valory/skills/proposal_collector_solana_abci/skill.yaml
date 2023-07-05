@@ -16,12 +16,9 @@ fingerprint:
   payloads.py: bafybeiedhu6racpfu6goerlvpd3wyku2mymq2knmq6cmjvkclgbqm7uii4
   rounds.py: bafybeidfsdjbkpeyxohoxiypmd7netxptuzq4enynbv3y5vczffqxo4k3e
 fingerprint_ignore_patterns: []
-connections:
-- fetchai/http_server:0.22.0:bafybeihaax5od5zo5jk2l62hv4jwuwtxloh5mijozudpsjombqc4ncmi6i
+connections: []
 contracts: []
-protocols:
-- valory/http:1.0.0:bafybeifyoio7nlh5zzyn5yz7krkou56l22to3cwg7gw5v5o3vxwklibhty
-- valory/ledger_api:1.0.0:bafybeibo4bdtcrxi2suyzldwoetjar6pqfzm6vt5xal22ravkkcvdmtksi
+protocols: []
 skills:
 - valory/abstract_round_abci:0.1.0:bafybeiac62ennpw54gns2quk4g3yoaili2mb72nj6c52czobz5dcwj4mwi
 behaviours:

@@ -19,8 +19,8 @@ contracts: []
 protocols: []
 skills:
 - valory/abstract_round_abci:0.1.0:bafybeiac62ennpw54gns2quk4g3yoaili2mb72nj6c52czobz5dcwj4mwi
-- valory/proposal_collector_solana_abci:0.1.0:bafybeidtqx6xoidu2j4jviqcsobppc4j7g4dg55f3wnimojqcq23twb7my
-- valory/proposal_voter_solana_abci:0.1.0:bafybeidksvjqaqciqnyeb5eg3gddjjvvzr6nnzm2hb536uklm2rqkl5zmy
+- valory/proposal_collector_solana_abci:0.1.0:bafybeiccfbxqbxsexhifcf2ctc26edqmkpviwm5chmdysiyz4cad6e65l4
+- valory/proposal_voter_solana_abci:0.1.0:bafybeifxxayxx4jl5bydhasbh6a3i5l5wjweaxak5csostj7tq5hlhx4ay
 - valory/registration_abci:0.1.0:bafybeib6fsfur5jnflcveidnaeylneybwazewufzwa5twnwovdqgwtwsxm
 - valory/reset_pause_abci:0.1.0:bafybeibqz7y3i4aepuprhijwdydkcsbqjtpeea6gdzpp5fgc6abrvjz25a
 - valory/termination_abci:0.1.0:bafybeieb3gnvjxxsh73g67m7rivzknwb63xu4qeagpkv7f4mqz33ecikem
@@ -132,7 +132,6 @@ models:
         safe_contract_address: '0x0000000000000000000000000000000000000000'
         consensus_threshold: null
       share_tm_config_on_startup: false
-      signmessagelib_address: '0xA65387F16B013cf2Af4605Ad8aA5ec25a2cbA3a2'
       sleep_time: 1
       tendermint_check_sleep_delay: 3
       tendermint_com_url: http://localhost:8080
@@ -145,6 +144,7 @@ models:
       validate_timeout: 1205
       voting_block_threshold: 300
       voting_seconds_threshold: 10000
+      target_proposal_id: 34AxJwqZeUjYY1U3QpxP92oCCh6T61wHoWQmG5WMyDFe
     class_name: Params
   randomness_api:
     args:

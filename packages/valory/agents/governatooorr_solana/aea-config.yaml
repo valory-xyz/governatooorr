@@ -176,9 +176,6 @@ models:
       termination_sleep: ${int:900}
       tx_timeout: 10.0
       use_termination: ${bool:false}
-      tally_api_endpoint: ${str:https://api.tally.xyz/query}
-      tally_api_key: ${str:<tally_api_key>}
-      snapshot_api_endpoint: ${str:https://hub.snapshot.org/graphql}
       service_endpoint_base: ${str:https://governatooorr.staging.autonolas.tech/}
       validate_timeout: 1205
       voting_block_threshold: ${int:300}

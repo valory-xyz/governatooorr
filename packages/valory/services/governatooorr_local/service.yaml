@@ -8,7 +8,7 @@ license: Apache-2.0
 fingerprint:
   README.md: bafybeifvddbrix4wlzp5mfaxjg7bargwbcqxjdfvaz5tctxfvzowggkusu
 fingerprint_ignore_patterns: []
-agent: valory/governatooorr:0.1.0:bafybeichsue5x4l2jlz7hxkwcvvxsz4h4cpw24djzuvd2xbnbokgiw52ui
+agent: valory/governatooorr:0.1.0:bafybeidjdv7lhsf7t2g76mljmfxqn55pzwnnnbkyhzq36nlirwa3xsjszm
 number_of_agents: 1
 deployment:
   agent:
@@ -52,7 +52,7 @@ models:
       max_attempts: 10
       max_healthcheck: 120
       on_chain_service_id: null
-      reset_tendermint_after: 2
+      reset_tendermint_after: ${RESET_TENDERMINT_AFTER:int:30}
       retry_attempts: 400
       retry_timeout: 3
       reset_pause_duration: ${RESET_PAUSE_DURATION:int:10}

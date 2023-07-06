@@ -38,8 +38,8 @@ protocols:
 skills:
 - valory/abstract_abci:0.1.0:bafybeiff2dqnkeorf343fmb3547fhiznvdw4ewbwl4rqluek2cv6ibl5hi
 - valory/abstract_round_abci:0.1.0:bafybeiac62ennpw54gns2quk4g3yoaili2mb72nj6c52czobz5dcwj4mwi
-- valory/governatooorr_abci:0.1.0:bafybeial3gqmgqsneo7lziv5vi6tfnjagv263rdnpb4colj6ymvqvgk56e
-- valory/proposal_collector_abci:0.1.0:bafybeifedrq2kueigerrkztlzmtqrq4catvwsrdjmxk3jzk4d4cl2vtvla
+- valory/governatooorr_abci:0.1.0:bafybeicrrslgvrhzk3hzg2uutff2zyp6asr2wvogfvp35srovahzukpvmu
+- valory/proposal_collector_abci:0.1.0:bafybeibl2d5odjkb2qrqtdeemottk5lqvqwq3ois6n23ty7qmivzwkkuny
 - valory/proposal_voter_abci:0.1.0:bafybeibitkumfgyyeq3pjah6s3n5cwliw6y2niejlv4gi6bgl3uu3fu4ny
 - valory/registration_abci:0.1.0:bafybeib6fsfur5jnflcveidnaeylneybwazewufzwa5twnwovdqgwtwsxm
 - valory/reset_pause_abci:0.1.0:bafybeibqz7y3i4aepuprhijwdydkcsbqjtpeea6gdzpp5fgc6abrvjz25a
@@ -161,7 +161,7 @@ models:
       max_healthcheck: 120
       multisend_address: ${str:0x0000000000000000000000000000000000000000}
       on_chain_service_id: ${int:null}
-      reset_tendermint_after: 2
+      reset_tendermint_after: ${int:2}
       retry_attempts: 400
       retry_timeout: 3
       reset_pause_duration: 10

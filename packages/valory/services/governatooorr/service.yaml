@@ -8,7 +8,7 @@ license: Apache-2.0
 fingerprint:
   README.md: bafybeid6vqhnovhpsrjwws2wcb67i7fwr4dq54rpowqgrf3njt2anp5nc4
 fingerprint_ignore_patterns: []
-agent: valory/governatooorr:0.1.0:bafybeichsue5x4l2jlz7hxkwcvvxsz4h4cpw24djzuvd2xbnbokgiw52ui
+agent: valory/governatooorr:0.1.0:bafybeidjdv7lhsf7t2g76mljmfxqn55pzwnnnbkyhzq36nlirwa3xsjszm
 number_of_agents: 4
 deployment:
   agent:
@@ -60,7 +60,7 @@ type: skill
         max_healthcheck: 120
         multisend_address: ${MULTISEND_ADDRESS:str:0xA238CBeb142c10Ef7Ad8442C6D1f9E89e07e7761}
         on_chain_service_id: ${ON_CHAIN_SERVICE_ID:int:null}
-        reset_tendermint_after: 2
+        reset_tendermint_after: ${RESET_TENDERMINT_AFTER:int:30}
         retry_attempts: 400
         retry_timeout: 3
         reset_pause_duration: ${RESET_PAUSE_DURATION:int:10}
@@ -117,7 +117,7 @@ type: skill
         max_healthcheck: 120
         multisend_address: ${MULTISEND_ADDRESS:str:0xA238CBeb142c10Ef7Ad8442C6D1f9E89e07e7761}
         on_chain_service_id: ${ON_CHAIN_SERVICE_ID:int:null}
-        reset_tendermint_after: 2
+        reset_tendermint_after: ${RESET_TENDERMINT_AFTER:int:30}
         retry_attempts: 400
         retry_timeout: 3
         reset_pause_duration: ${RESET_PAUSE_DURATION:int:10}
@@ -171,7 +171,7 @@ type: skill
         max_healthcheck: 120
         multisend_address: ${MULTISEND_ADDRESS:str:0xA238CBeb142c10Ef7Ad8442C6D1f9E89e07e7761}
         on_chain_service_id: ${ON_CHAIN_SERVICE_ID:int:null}
-        reset_tendermint_after: 2
+        reset_tendermint_after: ${RESET_TENDERMINT_AFTER:int:30}
         retry_attempts: 400
         retry_timeout: 3
         reset_pause_duration: ${RESET_PAUSE_DURATION:int:10}
@@ -225,7 +225,7 @@ type: skill
         max_healthcheck: 120
         multisend_address: ${MULTISEND_ADDRESS:str:0xA238CBeb142c10Ef7Ad8442C6D1f9E89e07e7761}
         on_chain_service_id: ${ON_CHAIN_SERVICE_ID:int:null}
-        reset_tendermint_after: 2
+        reset_tendermint_after: ${RESET_TENDERMINT_AFTER:int:30}
         retry_attempts: 400
         retry_timeout: 3
         reset_pause_duration: ${RESET_PAUSE_DURATION:int:10}

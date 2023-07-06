@@ -97,6 +97,16 @@ class SynchronizedData(BaseSynchronizedData):
         """Checks whether there are changes pending to be written to Ceramic."""
         return cast(bool, self.db.get("pending_write", False))
 
+    @property
+    def tally_api_retries(self) -> int:
+        """Get the amount of API call retries."""
+        return cast(int, self.db.get("tally_api_retries", 0))
+
+    @property
+    def snapshot_api_retries(self) -> int:
+        """Get the amount of API call retries."""
+        return cast(int, self.db.get("snapshot_api_retries", 0))
+
 
 class SynchronizeDelegationsRound(CollectDifferentUntilAllRound):
     """SynchronizeDelegations"""
@@ -197,6 +207,7 @@ class CollectActiveTallyProposalsRound(CollectSameUntilThresholdRound):
     """CollectActiveProposals"""
 
     ERROR_PAYLOAD = "ERROR_PAYLOAD"
+    MAX_RETRIES_PAYLOAD = "MAX_RETRIES_PAYLOAD"
     BLOCK_RETRIEVAL_ERROR = "BLOCK_RETRIEVAL_ERROR"
 
     payload_class = CollectActiveTallyProposalsPayload
@@ -210,7 +221,32 @@ class CollectActiveTallyProposalsRound(CollectSameUntilThresholdRound):
                 self.most_voted_payload
                 == CollectActiveTallyProposalsRound.ERROR_PAYLOAD
             ):
-                return self.synchronized_data, Event.API_ERROR
+                tally_api_retries = cast(
+                    SynchronizedData, self.synchronized_data
+                ).tally_api_retries
+                synchronized_data = self.synchronized_data.update(
+                    synchronized_data_class=SynchronizedData,
+                    **{
+                        get_name(SynchronizedData.tally_api_retries): tally_api_retries
+                        + 1,
+                    },
+                )
+                return synchronized_data, Event.API_ERROR
+
+            if (
+                self.most_voted_payload
+                == CollectActiveTallyProposalsRound.MAX_RETRIES_PAYLOAD
+            ):
+                synchronized_data = self.synchronized_data.update(
+                    synchronized_data_class=SynchronizedData,
+                    **{
+                        get_name(SynchronizedData.votable_proposal_ids): [],
+                        get_name(
+                            SynchronizedData.snapshot_proposals
+                        ): [],  # clean snapshot proposals
+                    },
+                )
+                return synchronized_data, Event.DONE
 
             if (
                 self.most_voted_payload
@@ -253,6 +289,7 @@ class CollectActiveSnapshotProposalsRound(CollectSameUntilThresholdRound):
     """CollectActiveSnapshotProposals"""
 
     ERROR_PAYLOAD = "ERROR_PAYLOAD"
+    MAX_RETRIES_PAYLOAD = "MAX_RETRIES_PAYLOAD"
 
     payload_class = CollectActiveSnapshotProposalsPayload
     synchronized_data_class = SynchronizedData
@@ -262,7 +299,25 @@ class CollectActiveSnapshotProposalsRound(CollectSameUntilThresholdRound):
         if self.threshold_reached:
 
             if self.most_voted_payload == self.ERROR_PAYLOAD:
-                return self.synchronized_data, Event.API_ERROR
+                snapshot_api_retries = cast(
+                    SynchronizedData, self.synchronized_data
+                ).snapshot_api_retries
+                synchronized_data = self.synchronized_data.update(
+                    synchronized_data_class=SynchronizedData,
+                    **{
+                        get_name(
+                            SynchronizedData.snapshot_api_retries
+                        ): snapshot_api_retries
+                        + 1,
+                    },
+                )
+                return synchronized_data, Event.API_ERROR
+
+            if (
+                self.most_voted_payload
+                == CollectActiveSnapshotProposalsRound.MAX_RETRIES_PAYLOAD
+            ):
+                return self.synchronized_data, Event.DONE
 
             payload = json.loads(self.most_voted_payload)
 

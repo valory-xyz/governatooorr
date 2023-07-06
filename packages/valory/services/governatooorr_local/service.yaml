@@ -52,7 +52,7 @@ models:
       max_attempts: 10
       max_healthcheck: 120
       on_chain_service_id: null
-      reset_tendermint_after: 2
+      reset_tendermint_after: ${RESET_TENDERMINT_AFTER:int:30}
       retry_attempts: 400
       retry_timeout: 3
       reset_pause_duration: ${RESET_PAUSE_DURATION:int:10}

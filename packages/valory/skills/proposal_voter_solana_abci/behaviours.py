@@ -59,7 +59,7 @@ from packages.valory.skills.transaction_settlement_abci.payload_tools import (
 SAFE_TX_GAS = 0
 ETHER_VALUE = 0
 
-VOTING_OPTIONS = ["Yes", "No"]
+VOTING_OPTIONS = ["YES", "NO"]
 
 HTTP_OK = 200
 

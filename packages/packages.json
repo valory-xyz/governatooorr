@@ -6,16 +6,16 @@
         "contract/valory/delegate/0.1.0": "bafybeiaslboosyvpzccaqgie56wta3aqrdkgfx5vs5ogxu7ebiez67wp6i",
         "protocol/valory/llm/1.0.0": "bafybeicpd5hxe5rlgp75kaqotzpy3jkdyl5pbdcutwqdzlqfknnmkgadsy",
         "skill/valory/proposal_voter_abci/0.1.0": "bafybeidexpjwlexun27azqtpm4glzl34pu66oiicherzjkirjcvtuftafe",
-        "skill/valory/proposal_voter_solana_abci/0.1.0": "bafybeifxxayxx4jl5bydhasbh6a3i5l5wjweaxak5csostj7tq5hlhx4ay",
+        "skill/valory/proposal_voter_solana_abci/0.1.0": "bafybeidrgtzdkbt4arlauqs5bftqtoxa432wb54i2oliblgqkuvclpcnj4",
         "skill/valory/governatooorr_abci/0.1.0": "bafybeihmldgecm6yhv5zm4sasx2rgsysxrt4wxoq7bp7uzempg4uacvtte",
-        "skill/valory/governatooorr_solana_abci/0.1.0": "bafybeidwftss4mfw6aqsxtegd7ube6qaxrxz3ji2bw2amez35g5itxayum",
+        "skill/valory/governatooorr_solana_abci/0.1.0": "bafybeigemr66tpmchskhapahid6lffgvxpt44dl3oaug7kww7cxjmm6ple",
         "agent/valory/governatooorr/0.1.0": "bafybeihwy4loekhklgpqzf44i43x4u36echelhujdfj2jkfq246gbuvdli",
-        "agent/valory/governatooorr_solana/0.1.0": "bafybeibjkbkgfghnozvjyk2a7opakl6hdobv5apd6d2n6t2ijyrsqo3dqq",
+        "agent/valory/governatooorr_solana/0.1.0": "bafybeifohdekjxcv22dptj7hwcigv3kkbtbmmzidkx7mvz3vgtatox5tli",
         "service/valory/governatooorr/0.1.0": "bafybeifdk4essbg452pwyesg7cfo4sfljbhr2u5pbdqm2obrn5bgnz3jge",
         "service/valory/governatooorr_local/0.1.0": "bafybeiggrbiryt2dyl2fzf3vgwzfowtkkc55zr3sknqhmc3ja4mquxr3gq",
         "contract/valory/sign_message_lib/0.1.0": "bafybeiamc2cle3kx26gpqigwzfq5bph5nfrzwei72cyu3v6xwcvkip6dce",
-        "service/valory/governatooorr_solana/0.1.0": "bafybeigr6vozwgf7kplbvl6fdxqurkjjllzhmlt6ixvxxhav4oe6jyksvu",
-        "service/valory/governatooorr_solana_local/0.1.0": "bafybeiglblu4xs3x6boghav27tjc6u5xr5quzlzm6lxd6veahg35dbc5ea"
+        "service/valory/governatooorr_solana/0.1.0": "bafybeialrcsfk2ny2o234majlubmwgf6msqruaa4mclzdax3uvv7ip7e2q",
+        "service/valory/governatooorr_solana_local/0.1.0": "bafybeig7c27rl55lwjrjax3vtii6vecaikgx27xkho72tfmptjivtdgsdm"
     },
     "third_party": {
         "protocol/open_aea/signing/1.0.0": "bafybeibqlfmikg5hk4phzak6gqzhpkt6akckx7xppbp53mvwt6r73h7tk4",

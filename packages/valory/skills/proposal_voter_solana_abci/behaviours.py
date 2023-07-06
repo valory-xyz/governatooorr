@@ -90,13 +90,19 @@ class EstablishVoteBehaviour(ProposalVoterBaseBehaviour):
 
             realms_active_proposals = yield from self._refresh_proposal_vote()
 
+            self.context.logger.info(f"Refreshed realms_active_proposals: {realms_active_proposals}")
+
+            votable_proposal_ids = list(realms_active_proposals.keys()) # all are votable for now
+
+            self.context.logger.info(f"votable_proposals_ids: {votable_proposal_ids}")
+
             sender = self.context.agent_address
             payload = EstablishVotePayload(
                 sender=sender,
-                proposals=json.dumps(
+                content=json.dumps(
                     {
                         "realms_active_proposals": realms_active_proposals,
-                        "votable_proposals_ids": set(realms_active_proposals.keys())  # all are votable
+                        "votable_proposal_ids": votable_proposal_ids
                     },
                     sort_keys=True,
                 ),
@@ -263,10 +269,9 @@ class PrepareVoteTransactionBehaviour(ProposalVoterBaseBehaviour):
                 self.context.state.pending_vote = PendingVote(
                     proposal_id=selected_proposal_id,
                     vote_choice=vote_choice,
-                    snapshot=False,
                 )
 
-                governor_address = selected_proposal["governor"]["id"].split(":")[-1]
+                governor_address = selected_proposal["governor"]["id"].split(":")[-1]  # TODO: set here the correct address
                 vote_choice = selected_proposal["vote_choice"]
 
                 # Vote for the first proposal in the list
@@ -303,6 +308,8 @@ class PrepareVoteTransactionBehaviour(ProposalVoterBaseBehaviour):
     ) -> Generator[None, None, Optional[str]]:
         """Get the transaction hash of the Safe tx."""
         # Get the raw transaction from the Bravo Delegate contract
+        # TODO: update this so we call the correct governor/delegate contract. A contract package is needed.
+        # This is an example where we call the Bravo delegate contract
         contract_api_msg = yield from self.get_contract_api_response(
             performative=ContractApiMessage.Performative.GET_STATE,  # type: ignore
             contract_address=governor_address,
@@ -324,6 +331,7 @@ class PrepareVoteTransactionBehaviour(ProposalVoterBaseBehaviour):
         ether_value = ETHER_VALUE
         safe_tx_gas = SAFE_TX_GAS
 
+        # TODO: update this to call the correct multisig. This is an example where we call the Safe
         contract_api_msg = yield from self.get_contract_api_response(
             performative=ContractApiMessage.Performative.GET_STATE,  # type: ignore
             contract_address=self.synchronized_data.safe_contract_address,

@@ -237,7 +237,16 @@ class CollectActiveTallyProposalsRound(CollectSameUntilThresholdRound):
                 self.most_voted_payload
                 == CollectActiveTallyProposalsRound.MAX_RETRIES_PAYLOAD
             ):
-                return self.synchronized_data, Event.DONE
+                synchronized_data = self.synchronized_data.update(
+                    synchronized_data_class=SynchronizedData,
+                    **{
+                        get_name(SynchronizedData.votable_proposal_ids): [],
+                        get_name(
+                            SynchronizedData.snapshot_proposals
+                        ): [],  # clean snapshot proposals
+                    },
+                )
+                return synchronized_data, Event.DONE
 
             if (
                 self.most_voted_payload

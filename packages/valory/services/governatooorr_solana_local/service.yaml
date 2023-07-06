@@ -1,4 +1,4 @@
-name: governatooorr_local
+name: governatooorr_solana_local
 author: valory
 version: 0.1.0
 description: The Governatooorr is a service that autonomously votes on on-chain governance
@@ -6,9 +6,9 @@ description: The Governatooorr is a service that autonomously votes on on-chain 
 aea_version: '>=1.0.0, <2.0.0'
 license: Apache-2.0
 fingerprint:
-  README.md: bafybeifvddbrix4wlzp5mfaxjg7bargwbcqxjdfvaz5tctxfvzowggkusu
+  README.md: bafybeifn6lynhda22zzijrl7uqecszmzgfwdg6u5i5ggigkwuh4uy7ozva
 fingerprint_ignore_patterns: []
-agent: valory/governatooorr:0.1.0:bafybeihwy4loekhklgpqzf44i43x4u36echelhujdfj2jkfq246gbuvdli
+agent: valory/governatooorr_solana:0.1.0:bafybeibjkbkgfghnozvjyk2a7opakl6hdobv5apd6d2n6t2ijyrsqo3dqq
 number_of_agents: 1
 deployment:
   agent:
@@ -16,7 +16,7 @@ deployment:
       0:
         8000: 8000
 ---
-public_id: valory/governatooorr_abci:0.1.0
+public_id: valory/governatooorr_solana_abci:0.1.0
 type: skill
 models:
   benchmark_tool:
@@ -59,7 +59,7 @@ models:
       request_retry_delay: 1.0
       request_timeout: 10.0
       round_timeout_seconds: 30.0
-      service_id: governatooorr
+      service_id: governatooorr_solana
       service_registry_address: null
       setup:
         all_participants:

@@ -1,4 +1,4 @@
-name: governatooorr
+name: governatooorr_solana
 author: valory
 version: 0.1.0
 description: The Governatooorr is a service that autonomously votes on on-chain governance
@@ -6,9 +6,9 @@ description: The Governatooorr is a service that autonomously votes on on-chain 
 aea_version: '>=1.0.0, <2.0.0'
 license: Apache-2.0
 fingerprint:
-  README.md: bafybeid6vqhnovhpsrjwws2wcb67i7fwr4dq54rpowqgrf3njt2anp5nc4
+  README.md: bafybeibotqiu2nzbjbkud3dz46ymrzsqtjybndablkzku7hnspnwztcvby
 fingerprint_ignore_patterns: []
-agent: valory/governatooorr:0.1.0:bafybeihwy4loekhklgpqzf44i43x4u36echelhujdfj2jkfq246gbuvdli
+agent: valory/governatooorr_solana:0.1.0:bafybeibjkbkgfghnozvjyk2a7opakl6hdobv5apd6d2n6t2ijyrsqo3dqq
 number_of_agents: 4
 deployment:
   agent:
@@ -22,7 +22,7 @@ deployment:
       3:
         8003: 8000
 ---
-public_id: valory/governatooorr_abci:0.1.0
+public_id: valory/governatooorr_solana_abci:0.1.0
 type: skill
 0:
   models:
@@ -67,7 +67,7 @@ type: skill
         request_retry_delay: 1.0
         request_timeout: 10.0
         round_timeout_seconds: 30.0
-        service_id: governatooorr
+        service_id: governatooorr_solana
         service_registry_address: ${SERVICE_REGISTRY_ADDRESS:str:0x0000000000000000000000000000000000000000}
         setup: &id003
           all_participants: ${ALL_PARTICIPANTS:list:[]}
@@ -124,7 +124,7 @@ type: skill
         request_retry_delay: 1.0
         request_timeout: 10.0
         round_timeout_seconds: 30.0
-        service_id: governatooorr
+        service_id: governatooorr_solana
         service_registry_address: ${SERVICE_REGISTRY_ADDRESS:str:0x0000000000000000000000000000000000000000}
         setup: *id003
         share_tm_config_on_startup: ${USE_ACN:bool:false}
@@ -178,7 +178,7 @@ type: skill
         request_retry_delay: 1.0
         request_timeout: 10.0
         round_timeout_seconds: 30.0
-        service_id: governatooorr
+        service_id: governatooorr_solana
         service_registry_address: ${SERVICE_REGISTRY_ADDRESS:str:0x0000000000000000000000000000000000000000}
         setup: *id003
         share_tm_config_on_startup: ${USE_ACN:bool:false}
@@ -232,7 +232,7 @@ type: skill
         request_retry_delay: 1.0
         request_timeout: 10.0
         round_timeout_seconds: 30.0
-        service_id: governatooorr
+        service_id: governatooorr_solana
         service_registry_address: ${SERVICE_REGISTRY_ADDRESS:str:0x0000000000000000000000000000000000000000}
         setup: *id003
         share_tm_config_on_startup: ${USE_ACN:bool:false}

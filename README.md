@@ -1,6 +1,6 @@
-# governatooorr
+# Governatooorr
 
-The Governatooorr is an autonomous, AI-powered delegate that votes on on-chain governance proposals on the Ethereum mainnet (and later off-chain governance proposals on Snapshot).
+The Governatooorr is an autonomous, AI-powered delegate that votes on on-chain governance proposals on both the Ethereum and Solana networks (and later off-chain governance proposals on Snapshot on the Ethereum network).
 
 - Clone the repository:
 
@@ -36,7 +36,7 @@ The Governatooorr is an autonomous, AI-powered delegate that votes on on-chain g
 
 ## Development
 
-### Testing service locally against a local mainnet fork
+### Testing service locally against a local Ethereum mainnet fork
 
 Install Ganache, curl and (optionally) jq:
 - `sudo npm install ganache@7.7.7 --global`

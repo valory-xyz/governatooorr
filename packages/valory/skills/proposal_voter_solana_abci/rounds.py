@@ -21,7 +21,7 @@
 
 import json
 from enum import Enum
-from typing import Dict, Optional, Set, Tuple, cast
+from typing import Dict, List, Optional, Set, Tuple, cast
 
 from packages.valory.skills.abstract_round_abci.base import (
     AbciApp,
@@ -36,9 +36,6 @@ from packages.valory.skills.abstract_round_abci.base import (
 from packages.valory.skills.proposal_voter_solana_abci.payloads import (
     EstablishVotePayload,
     PrepareVoteTransactionPayload,
-)
-from packages.valory.skills.transaction_settlement_abci.payload_tools import (
-    VerificationStatus,
 )
 
 
@@ -67,10 +64,8 @@ class SynchronizedData(BaseSynchronizedData):
     @property
     def just_voted(self) -> bool:
         """Get the final verification status."""
-        status_value = self.db.get(
-            "final_verification_status", VerificationStatus.NOT_VERIFIED.value
-        )
-        return status_value == VerificationStatus.VERIFIED.value
+        # TODO: fix
+        return True
 
     @property
     def realms_active_proposals(self) -> dict:
@@ -83,9 +78,9 @@ class SynchronizedData(BaseSynchronizedData):
         return cast(set, self.db.get("votable_proposal_ids", {}))
 
     @property
-    def most_voted_tx_hash(self) -> str:
-        """Get the most_voted_tx_hash."""
-        return cast(str, self.db.get_strict("most_voted_tx_hash"))
+    def most_voted_instruction_set(self) -> List[Dict]:
+        """Get the most_voted_instruction_set."""
+        return cast(str, self.db.get_strict("most_voted_instruction_set"))
 
 
 class EstablishVoteRound(CollectSameUntilThresholdRound):
@@ -129,19 +124,16 @@ class PrepareVoteTransactionRound(CollectSameUntilThresholdRound):
     def end_block(self) -> Optional[Tuple[BaseSynchronizedData, Event]]:
         """Process the end of the block."""
         if self.threshold_reached:
-
             payload = json.loads(self.most_voted_payload)
-
-            if payload["tx_hash"] == PrepareVoteTransactionRound.ERROR_PAYLOAD:
-                return self.synchronized_data, Event.CONTRACT_ERROR
-
-            if payload["tx_hash"] == PrepareVoteTransactionRound.NO_VOTE_PAYLOAD:
+            if payload["tx_hash"] is None:
                 return self.synchronized_data, Event.NO_VOTE
 
             synchronized_data = self.synchronized_data.update(
                 synchronized_data_class=SynchronizedData,
                 **{
-                    get_name(SynchronizedData.most_voted_tx_hash): payload["tx_hash"],
+                    get_name(SynchronizedData.most_voted_instruction_set): [
+                        payload["tx_hash"]
+                    ],
                     get_name(SynchronizedData.votable_proposal_ids): payload[
                         "votable_proposal_ids"
                     ],
@@ -205,7 +197,7 @@ class ProposalVoterSolanaAbciApp(AbciApp[Event]):
     }
     db_post_conditions: Dict[AppState, Set[str]] = {
         FinishedTransactionPreparationVoteRound: {
-            get_name(SynchronizedData.most_voted_tx_hash)
+            get_name(SynchronizedData.most_voted_instruction_set)
         },
         FinishedTransactionPreparationNoVoteRound: set(),
     }

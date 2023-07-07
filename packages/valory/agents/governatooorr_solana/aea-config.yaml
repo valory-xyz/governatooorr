@@ -17,6 +17,7 @@ contracts:
 - valory/delegate:0.1.0:bafybeiaslboosyvpzccaqgie56wta3aqrdkgfx5vs5ogxu7ebiez67wp6i
 - valory/gnosis_safe:0.1.0:bafybeif5fdwoxq5mscrurtuimadmtctyxxeeui45u4g6leqobzls7bsl3u
 - valory/gnosis_safe_proxy_factory:0.1.0:bafybeiaa6fgwtykrti6i7sbt22raavpsbobsq2xgem4nkbcg744agnmkae
+- valory/solana_governance:0.1.0:bafybeihewqsjhugs33meyotlt6c34v2otbb3iprjvkwqntd3vix7y2krbm
 protocols:
 - open_aea/signing:1.0.0:bafybeibqlfmikg5hk4phzak6gqzhpkt6akckx7xppbp53mvwt6r73h7tk4
 - valory/abci:0.1.0:bafybeig3dj5jhsowlvg3t73kgobf6xn4nka7rkttakdb2gwsg5bp7rt7q4
@@ -30,13 +31,14 @@ protocols:
 skills:
 - valory/abstract_abci:0.1.0:bafybeiff2dqnkeorf343fmb3547fhiznvdw4ewbwl4rqluek2cv6ibl5hi
 - valory/abstract_round_abci:0.1.0:bafybeiac62ennpw54gns2quk4g3yoaili2mb72nj6c52czobz5dcwj4mwi
-- valory/governatooorr_solana_abci:0.1.0:bafybeih2x3kka6dsgwyg4d643lvhqatjgbw6euylv33jvf27lsqu4hk32m
-- valory/proposal_collector_solana_abci:0.1.0:bafybeiccfbxqbxsexhifcf2ctc26edqmkpviwm5chmdysiyz4cad6e65l4
-- valory/proposal_voter_solana_abci:0.1.0:bafybeia567wavruntezqm4gl5cdbadm2zmk74zo47b7nfvxj6plhgxk6va
+- valory/governatooorr_solana_abci:0.1.0:bafybeigott3ahy45xluttvixzsjizysszdifunhxpzq5gfnggn2narjkom
+- valory/proposal_collector_solana_abci:0.1.0:bafybeihssd4wlllwnbd2gfur4aqdyigc7f2zmbss34njh5eltl5onbua4i
+- valory/proposal_voter_solana_abci:0.1.0:bafybeidqao6uxuvcehkfay7sr36z4vgipw22efzdqcocu4qeddjrrh4rky
 - valory/registration_abci:0.1.0:bafybeib6fsfur5jnflcveidnaeylneybwazewufzwa5twnwovdqgwtwsxm
 - valory/reset_pause_abci:0.1.0:bafybeibqz7y3i4aepuprhijwdydkcsbqjtpeea6gdzpp5fgc6abrvjz25a
 - valory/termination_abci:0.1.0:bafybeieb3gnvjxxsh73g67m7rivzknwb63xu4qeagpkv7f4mqz33ecikem
 - valory/transaction_settlement_abci:0.1.0:bafybeihdpac4ayfgop3ixflimlb3zzyeejlpqtljfptdak6tc7aq4u5fzi
+- valory/solana_transaction_settlement_abci:0.1.0:bafybeihqkkhbxjw6dxf2kcqmj33uccg4kdr7nv3om3zurq3gpbdms2c5b4
 default_ledger: ethereum
 required_ledgers:
 - ethereum

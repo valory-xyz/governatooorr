@@ -7,7 +7,7 @@ license: Apache-2.0
 aea_version: '>=1.0.0, <2.0.0'
 fingerprint:
   README.md: bafybeif2bp4lnssdvp5n4fsj3ukd52h3prxcfg4pdi64ctpwtwgdk65xae
-  __init__.py: bafybeia7gouata2b22eyey3xfbvthal7ffw3xvn6ubr3uprlejvgpb73xi
+  __init__.py: bafybeiestxhttyxm4ybkoq3yaeoxa6psmdnigo4ccv3c2jbah2byq2bamq
   behaviours.py: bafybeifrstogcl26dc4vslnnsv6pqmjcme7pvmbllibyzq76mh76wjfaqe
   dialogues.py: bafybeigabhaykiyzbluu4mk6bbrmqhzld2kyp32pg24bvjmzrrb74einwm
   handlers.py: bafybeic3n42bw6dy65zvc7d6iivoyxmosusl7m4g4e5kjbgtna4dt5dybu
@@ -17,7 +17,7 @@ fingerprint:
 fingerprint_ignore_patterns: []
 connections: []
 contracts:
-- valory/squads_multisig:0.1.0:bafybeigcq7n3deknjbghxm7vggbknrwq7dueogvz6zoaet32t77uabxbwq
+- valory/squads_multisig:0.1.0:bafybeihjv5gwbqsnwjkhljtkamdx2olscvunk7j53jicvd2rgymtgzmbvi
 protocols:
 - valory/contract_api:1.0.0:bafybeidv6wxpjyb2sdyibnmmum45et4zcla6tl63bnol6ztyoqvpl4spmy
 skills:

@@ -6,9 +6,9 @@ description: The scaffold contract scaffolds a contract to be implemented by the
 license: Apache-2.0
 aea_version: '>=1.0.0, <2.0.0'
 fingerprint:
-  __init__.py: bafybeieeus2bbbexmthy4pnsdtgen4flxzk3ao5ekjbocvmrkhhszffbgu
+  __init__.py: bafybeid44rjitrzhhmkfkdpqu3pu5dq4vu7jxajde6xtw3yjtlad4xk65e
   build/SolanaGovernance.json: bafybeiah4q3xn6spbiyhohcv7twx3iz5amd6xreuatgt3zllxd2wb7vdfm
-  contract.py: bafybeidnnm3xcg3ou7fwnzcnjvuyxi2vgiuqin4w4t6gqmodmsicbs2g3i
+  contract.py: bafybeihrwphbon72frqpvcgy6a77wrmezq7fo7qjy4hb7bf45qctgs2iau
 fingerprint_ignore_patterns: []
 class_name: SolanaGovernanceContract
 contract_interface_paths:

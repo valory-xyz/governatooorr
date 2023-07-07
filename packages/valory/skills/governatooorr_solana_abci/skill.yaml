@@ -19,11 +19,11 @@ protocols: []
 skills:
 - valory/abstract_round_abci:0.1.0:bafybeiac62ennpw54gns2quk4g3yoaili2mb72nj6c52czobz5dcwj4mwi
 - valory/proposal_collector_solana_abci:0.1.0:bafybeihssd4wlllwnbd2gfur4aqdyigc7f2zmbss34njh5eltl5onbua4i
-- valory/proposal_voter_solana_abci:0.1.0:bafybeiafkauno6u5s7fe7foakzavq52x4txooxpionnwy2sfjeslfthno4
+- valory/proposal_voter_solana_abci:0.1.0:bafybeia4gdgflcylzc3xp5zwzb6w5v7lfnvzam7chuec5gltzy7thm3kzq
 - valory/registration_abci:0.1.0:bafybeib6fsfur5jnflcveidnaeylneybwazewufzwa5twnwovdqgwtwsxm
 - valory/reset_pause_abci:0.1.0:bafybeibqz7y3i4aepuprhijwdydkcsbqjtpeea6gdzpp5fgc6abrvjz25a
 - valory/termination_abci:0.1.0:bafybeieb3gnvjxxsh73g67m7rivzknwb63xu4qeagpkv7f4mqz33ecikem
-- valory/solana_transaction_settlement_abci:0.1.0:bafybeihqkkhbxjw6dxf2kcqmj33uccg4kdr7nv3om3zurq3gpbdms2c5b4
+- valory/solana_transaction_settlement_abci:0.1.0:bafybeigtthka37ndtoe4mshyfgwio6ghmimdpwc7stxiposnr7hl2qrrdm
 behaviours:
   main:
     args: {}

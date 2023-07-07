@@ -1,34 +1,35 @@
-name: proposal_collector_solana_abci
+name: solana_transaction_settlement_abci
 author: valory
 version: 0.1.0
 type: skill
-description: The proposal collector abci is responsible for collecting and aggregating
-  proposals.
+description: ABCI application for transaction settlement.
 license: Apache-2.0
 aea_version: '>=1.0.0, <2.0.0'
 fingerprint:
-  __init__.py: bafybeidyutot7cboq63psgfgk2n7hgftvycuqz4p7oxlhutv235eryc364
-  behaviours.py: bafybeias5sa5rvfrm73zo7l6tfyfs7ffk6wleq66kp3zkijwv4tpctnzze
-  dialogues.py: bafybeih6sqgx2ttjbzti6oqgeofbmg7f3g3ev2gv44te2irpuhimaaoqc4
-  fsm_specification.yaml: bafybeie3sh6ulac5bqjntmac546ph64nvt4kmq2ajjyxnpf7lub7kjmina
-  handlers.py: bafybeiemqloowh7yc3rgm3jg6jedii5bh647hedrx57vhpy2uh6mav33ba
-  models.py: bafybeifrgixh3ulfqpl6wj3agvdfv4pscaflnyp72xmdxnfmf7ydcme4ya
-  payloads.py: bafybeiedhu6racpfu6goerlvpd3wyku2mymq2knmq6cmjvkclgbqm7uii4
-  rounds.py: bafybeidfsdjbkpeyxohoxiypmd7netxptuzq4enynbv3y5vczffqxo4k3e
+  README.md: bafybeif2bp4lnssdvp5n4fsj3ukd52h3prxcfg4pdi64ctpwtwgdk65xae
+  __init__.py: bafybeia7gouata2b22eyey3xfbvthal7ffw3xvn6ubr3uprlejvgpb73xi
+  behaviours.py: bafybeifrstogcl26dc4vslnnsv6pqmjcme7pvmbllibyzq76mh76wjfaqe
+  dialogues.py: bafybeigabhaykiyzbluu4mk6bbrmqhzld2kyp32pg24bvjmzrrb74einwm
+  handlers.py: bafybeic3n42bw6dy65zvc7d6iivoyxmosusl7m4g4e5kjbgtna4dt5dybu
+  models.py: bafybeic2to4tzpguq7dww7yxjs5dtrwi5y7sdjut4l4i4t6eyhlfcn5soi
+  payloads.py: bafybeihjcwrk6uyeh7kt7y6a2golezpazn7jnynbezurc3zuphfct7vjdi
+  rounds.py: bafybeia6xw6qhgtu65zyxbqdv6xwzukhn3dk6uouwah2dooxmbauy257h4
 fingerprint_ignore_patterns: []
 connections: []
-contracts: []
-protocols: []
+contracts:
+- valory/squads_multisig:0.1.0:bafybeigcq7n3deknjbghxm7vggbknrwq7dueogvz6zoaet32t77uabxbwq
+protocols:
+- valory/contract_api:1.0.0:bafybeidv6wxpjyb2sdyibnmmum45et4zcla6tl63bnol6ztyoqvpl4spmy
 skills:
 - valory/abstract_round_abci:0.1.0:bafybeiac62ennpw54gns2quk4g3yoaili2mb72nj6c52czobz5dcwj4mwi
 behaviours:
   main:
     args: {}
-    class_name: ProposalCollectorRoundBehaviour
+    class_name: SolanaTransactionSettlementRoundBehaviour
 handlers:
   abci:
     args: {}
-    class_name: ABCIRoundHandler
+    class_name: ABCIHandler
   contract_api:
     args: {}
     class_name: ContractApiHandler
@@ -74,6 +75,7 @@ models:
       drand_public_key: 868f005eb8e6e4ca0a47c8a77ceaa5309a47978a7c71bc5cce96366b5d7a569937c529eeda66c7293784a9402801af31
       finalize_timeout: 60.0
       genesis_config:
+        genesis_time: '2022-05-20T16:00:21.735122717Z'
         chain_id: chain-c4daS1
         consensus_params:
           block:
@@ -81,22 +83,20 @@ models:
             max_gas: '-1'
             time_iota_ms: '1000'
           evidence:
-            max_age_duration: '172800000000000'
             max_age_num_blocks: '100000'
+            max_age_duration: '172800000000000'
             max_bytes: '1048576'
           validator:
             pub_key_types:
             - ed25519
           version: {}
-        genesis_time: '2022-05-20T16:00:21.735122717Z'
         voting_power: '10'
       history_check_timeout: 1205
-      ipfs_domain_name: null
+      init_fallback_gas: 0
       keeper_allowed_retries: 3
       keeper_timeout: 30.0
       max_attempts: 10
       max_healthcheck: 120
-      multisend_address: '0x0000000000000000000000000000000000000000'
       on_chain_service_id: null
       request_retry_delay: 1.0
       request_timeout: 10.0
@@ -105,13 +105,9 @@ models:
       retry_attempts: 400
       retry_timeout: 3
       round_timeout_seconds: 30.0
-      service_endpoint_base: https://governatooorr.staging.autonolas.tech/
-      service_id: proposal_collector_solana_abci
+      service_id: registration
       service_registry_address: null
-      setup:
-        all_participants: []
-        safe_contract_address: '0x0000000000000000000000000000000000000000'
-        consensus_threshold: null
+      setup: {}
       share_tm_config_on_startup: false
       sleep_time: 1
       tendermint_check_sleep_delay: 3
@@ -119,12 +115,23 @@ models:
       tendermint_max_retries: 5
       tendermint_p2p_url: localhost:26656
       tendermint_url: http://localhost:26657
-      termination_sleep: 900
       tx_timeout: 10.0
+      tx_verification_retries: 5
+      tx_verification_sleep: 3.0
       use_termination: false
       validate_timeout: 1205
-      target_proposal_id: 34AxJwqZeUjYY1U3QpxP92oCCh6T61wHoWQmG5WMyDFe
-    class_name: Params
+    class_name: TransactionParams
+  randomness_api:
+    args:
+      api_id: cloudflare
+      headers: {}
+      method: GET
+      parameters: {}
+      response_key: null
+      response_type: dict
+      retries: 5
+      url: https://drand.cloudflare.com/public/latest
+    class_name: RandomnessApi
   requests:
     args: {}
     class_name: Requests
@@ -137,5 +144,9 @@ models:
   tendermint_dialogues:
     args: {}
     class_name: TendermintDialogues
-dependencies: {}
+dependencies:
+  open-aea-test-autonomy:
+    version: ==0.10.7
+  web3:
+    version: ==5.31.4
 is_abstract: true

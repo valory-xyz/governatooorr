@@ -23,7 +23,7 @@ import packages.valory.skills.proposal_collector_solana_abci.rounds as ProposalC
 import packages.valory.skills.proposal_voter_solana_abci.rounds as ProposalVoterSolanaAbciApp
 import packages.valory.skills.registration_abci.rounds as RegistrationAbci
 import packages.valory.skills.reset_pause_abci.rounds as ResetAndPauseAbci
-import packages.valory.skills.transaction_settlement_abci.rounds as TransactionSubmissionAbciApp
+import packages.valory.skills.solana_transaction_settlement_abci.rounds as SolanaTransactionSubmissionAbciApp
 from packages.valory.skills.abstract_round_abci.abci_app_chain import (
     AbciAppTransitionMapping,
     chain,
@@ -39,9 +39,9 @@ abci_app_transition_mapping: AbciAppTransitionMapping = {
     RegistrationAbci.FinishedRegistrationRound: ProposalCollectorSolanaAbciApp.CollectActiveRealmsProposalsRound,
     ProposalCollectorSolanaAbciApp.FinishedCollectRealmsProposalRound: ProposalVoterSolanaAbciApp.EstablishVoteRound,
     ProposalVoterSolanaAbciApp.FinishedTransactionPreparationNoVoteRound: ResetAndPauseAbci.ResetAndPauseRound,
-    ProposalVoterSolanaAbciApp.FinishedTransactionPreparationVoteRound: TransactionSubmissionAbciApp.RandomnessTransactionSubmissionRound,
-    TransactionSubmissionAbciApp.FinishedTransactionSubmissionRound: ProposalVoterSolanaAbciApp.PrepareVoteTransactionRound,
-    TransactionSubmissionAbciApp.FailedRound: ProposalVoterSolanaAbciApp.PrepareVoteTransactionRound,
+    ProposalVoterSolanaAbciApp.FinishedTransactionPreparationVoteRound: SolanaTransactionSubmissionAbciApp.CreateTxRandomnessRound,
+    SolanaTransactionSubmissionAbciApp.FinishedTransactionSubmissionRound: ProposalVoterSolanaAbciApp.PrepareVoteTransactionRound,
+    SolanaTransactionSubmissionAbciApp.FailedRound: ProposalVoterSolanaAbciApp.PrepareVoteTransactionRound,
     ResetAndPauseAbci.FinishedResetAndPauseRound: ProposalCollectorSolanaAbciApp.CollectActiveRealmsProposalsRound,
     ResetAndPauseAbci.FinishedResetAndPauseErrorRound: RegistrationAbci.RegistrationRound,
 }
@@ -52,7 +52,7 @@ GovernatooorrAbciApp = chain(
         ProposalCollectorSolanaAbciApp.ProposalCollectorSolanaAbciApp,
         ProposalVoterSolanaAbciApp.ProposalVoterSolanaAbciApp,
         ResetAndPauseAbci.ResetPauseAbciApp,
-        TransactionSubmissionAbciApp.TransactionSubmissionAbciApp,
+        SolanaTransactionSubmissionAbciApp.SolanaTransactionSubmissionAbciApp,
     ),
     abci_app_transition_mapping,
 ).add_termination(

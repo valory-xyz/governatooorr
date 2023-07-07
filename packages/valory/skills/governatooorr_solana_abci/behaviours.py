@@ -41,12 +41,12 @@ from packages.valory.skills.registration_abci.behaviours import (
 from packages.valory.skills.reset_pause_abci.behaviours import (
     ResetPauseABCIConsensusBehaviour,
 )
+from packages.valory.skills.solana_transaction_settlement_abci.behaviours import (
+    SolanaTransactionSettlementRoundBehaviour,
+)
 from packages.valory.skills.termination_abci.behaviours import (
     BackgroundBehaviour,
     TerminationAbciBehaviours,
-)
-from packages.valory.skills.transaction_settlement_abci.behaviours import (
-    TransactionSettlementRoundBehaviour,
 )
 
 
@@ -60,7 +60,7 @@ class GovernatooorrConsensusBehaviour(AbstractRoundBehaviour):
         *ProposalVoterRoundBehaviour.behaviours,
         *AgentRegistrationRoundBehaviour.behaviours,
         *ResetPauseABCIConsensusBehaviour.behaviours,
-        *TransactionSettlementRoundBehaviour.behaviours,
+        *SolanaTransactionSettlementRoundBehaviour.behaviours,
         *TerminationAbciBehaviours.behaviours,
     }
     background_behaviour_cls = BackgroundBehaviour

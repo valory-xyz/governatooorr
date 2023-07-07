@@ -66,7 +66,6 @@ class CollectActiveRealmsProposalsBehaviour(ProposalCollectorBaseBehaviour):
         """Do the act, supporting asynchronous execution."""
 
         with self.context.benchmark_tool.measure(self.behaviour_id).local():
-
             realms_active_proposals = self._get_realms_active_proposals()
             sender = self.context.agent_address
             payload = CollectActiveRealmsProposalsPayload(
@@ -86,7 +85,14 @@ class CollectActiveRealmsProposalsBehaviour(ProposalCollectorBaseBehaviour):
             self.params.target_proposal_id: {
                 "proposal_id": self.params.target_proposal_id,
                 "title": "Triton rpc payment Jul",
-                "description": "Payment for triton rpc service invoice date 1 Jul 2023 - 7200 USDC"
+                "description": "Payment for triton rpc service invoice date 1 Jul 2023 - 7200 USDC",
+                "voter": self.context.agent_address,
+                "realm": "SOLANA_ADDRESS",
+                "proposal": "SOLANA_ADDRESS",
+                "governing_token_mint": "SOLANA_ADDRESS",
+                "governance": "SOLANA_ADDRESS",
+                "proposal_owner": "SOLANA_ADDRESS",
+                "vote_choice": None,
             }
         }
 

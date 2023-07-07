@@ -7,10 +7,9 @@ license: Apache-2.0
 aea_version: '>=1.0.0, <2.0.0'
 fingerprint:
   __init__.py: bafybeieiz7mdnqem2cm6x5b6ayinoni54yzzifaqk2kufyxah3gq532ax4
-  behaviours.py: bafybeibpb6yv7pphzudn37b7b7xux6grgz5wekdhoagpyzcfxohwwsnpua
-  composition.py: bafybeihfvq32lghxxaku7fxknjyggsh2ezjzsqmkgckuuih5udxpzfvuye
+  behaviours.py: bafybeicgc6b5nrcspbnroku4yvmndqunx6g3hrkbjeietawomhzqs66ndq
+  composition.py: bafybeieb232x4tg22reguidfm3ulqucrcx3ashwsdvm5vffagluexk7esi
   dialogues.py: bafybeie5bpxwbazuhja2mcayeqa4kbuuha7z24kduargw3onyoktr4dgqq
-  fsm_specification.yaml: bafybeifkouglxfc2qwruix7ro5iec2c45qn7atpfbxfotptmerv2plwu7y
   handlers.py: bafybeieclwxviroj67a6hx26xbjo37xcwuam5gna6nz2mvdjmilqqhxdye
   models.py: bafybeigl5gr5hhliu4ii3iwx3wpjz4azscxgifdljqbapdkf3magvamasi
 fingerprint_ignore_patterns: []
@@ -19,12 +18,12 @@ contracts: []
 protocols: []
 skills:
 - valory/abstract_round_abci:0.1.0:bafybeiac62ennpw54gns2quk4g3yoaili2mb72nj6c52czobz5dcwj4mwi
-- valory/proposal_collector_solana_abci:0.1.0:bafybeiccfbxqbxsexhifcf2ctc26edqmkpviwm5chmdysiyz4cad6e65l4
-- valory/proposal_voter_solana_abci:0.1.0:bafybeia567wavruntezqm4gl5cdbadm2zmk74zo47b7nfvxj6plhgxk6va
+- valory/proposal_collector_solana_abci:0.1.0:bafybeihssd4wlllwnbd2gfur4aqdyigc7f2zmbss34njh5eltl5onbua4i
+- valory/proposal_voter_solana_abci:0.1.0:bafybeiafkauno6u5s7fe7foakzavq52x4txooxpionnwy2sfjeslfthno4
 - valory/registration_abci:0.1.0:bafybeib6fsfur5jnflcveidnaeylneybwazewufzwa5twnwovdqgwtwsxm
 - valory/reset_pause_abci:0.1.0:bafybeibqz7y3i4aepuprhijwdydkcsbqjtpeea6gdzpp5fgc6abrvjz25a
 - valory/termination_abci:0.1.0:bafybeieb3gnvjxxsh73g67m7rivzknwb63xu4qeagpkv7f4mqz33ecikem
-- valory/transaction_settlement_abci:0.1.0:bafybeihdpac4ayfgop3ixflimlb3zzyeejlpqtljfptdak6tc7aq4u5fzi
+- valory/solana_transaction_settlement_abci:0.1.0:bafybeihqkkhbxjw6dxf2kcqmj33uccg4kdr7nv3om3zurq3gpbdms2c5b4
 behaviours:
   main:
     args: {}

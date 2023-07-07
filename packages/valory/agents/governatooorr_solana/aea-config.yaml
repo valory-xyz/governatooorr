@@ -31,9 +31,9 @@ protocols:
 skills:
 - valory/abstract_abci:0.1.0:bafybeiff2dqnkeorf343fmb3547fhiznvdw4ewbwl4rqluek2cv6ibl5hi
 - valory/abstract_round_abci:0.1.0:bafybeiac62ennpw54gns2quk4g3yoaili2mb72nj6c52czobz5dcwj4mwi
-- valory/governatooorr_solana_abci:0.1.0:bafybeigott3ahy45xluttvixzsjizysszdifunhxpzq5gfnggn2narjkom
+- valory/governatooorr_solana_abci:0.1.0:bafybeiazsskw7d2slczjie257tef6usjipioukypnbggvbq2hfhpyg6n5i
 - valory/proposal_collector_solana_abci:0.1.0:bafybeihssd4wlllwnbd2gfur4aqdyigc7f2zmbss34njh5eltl5onbua4i
-- valory/proposal_voter_solana_abci:0.1.0:bafybeidqao6uxuvcehkfay7sr36z4vgipw22efzdqcocu4qeddjrrh4rky
+- valory/proposal_voter_solana_abci:0.1.0:bafybeiafkauno6u5s7fe7foakzavq52x4txooxpionnwy2sfjeslfthno4
 - valory/registration_abci:0.1.0:bafybeib6fsfur5jnflcveidnaeylneybwazewufzwa5twnwovdqgwtwsxm
 - valory/reset_pause_abci:0.1.0:bafybeibqz7y3i4aepuprhijwdydkcsbqjtpeea6gdzpp5fgc6abrvjz25a
 - valory/termination_abci:0.1.0:bafybeieb3gnvjxxsh73g67m7rivzknwb63xu4qeagpkv7f4mqz33ecikem

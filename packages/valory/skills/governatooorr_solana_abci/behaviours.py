@@ -41,12 +41,12 @@ from packages.valory.skills.registration_abci.behaviours import (
 from packages.valory.skills.reset_pause_abci.behaviours import (
     ResetPauseABCIConsensusBehaviour,
 )
+from packages.valory.skills.solana_transaction_settlement_abci.behaviours import (
+    SolanaTransactionSettlementRoundBehaviour,
+)
 from packages.valory.skills.termination_abci.behaviours import (
     BackgroundBehaviour,
     TerminationAbciBehaviours,
-)
-from packages.valory.skills.solana_transaction_settlement_abci.behaviours import (
-    SolanaTransactionSettlementRoundBehaviour,
 )
 
 

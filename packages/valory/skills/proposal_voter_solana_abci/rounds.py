@@ -45,7 +45,6 @@ class Event(Enum):
     NO_MAJORITY = "no_majority"
     ROUND_TIMEOUT = "round_timeout"
     DONE = "done"
-    CONTRACT_ERROR = "contract_error"
     VOTE = "vote"
     NO_VOTE = "no_vote"
     DID_NOT_SEND = "did_not_send"
@@ -174,7 +173,6 @@ class ProposalVoterSolanaAbciApp(AbciApp[Event]):
             Event.VOTE: FinishedTransactionPreparationVoteRound,
             Event.NO_MAJORITY: PrepareVoteTransactionRound,
             Event.ROUND_TIMEOUT: PrepareVoteTransactionRound,
-            Event.CONTRACT_ERROR: PrepareVoteTransactionRound,
         },
         FinishedTransactionPreparationNoVoteRound: {},
         FinishedTransactionPreparationVoteRound: {},

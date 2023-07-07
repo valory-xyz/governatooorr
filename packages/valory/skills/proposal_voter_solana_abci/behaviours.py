@@ -53,6 +53,7 @@ from packages.valory.skills.proposal_voter_solana_abci.rounds import (
     SynchronizedData,
 )
 
+
 SPL_GOVERNANCE_PROGRAM = "GovER5Lthms3bLBqWub97yVrMmEogzX7xNjdXpPPCVZw"
 
 VOTING_OPTIONS = [

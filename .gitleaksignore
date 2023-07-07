@@ -25,7 +25,6 @@ b411310095b75c12f10876201776008eec55cc70:README.md:generic-api-key:66
 7d688f9f69e0334bea039abfd44895a36ec64882:packages/valory/skills/proposal_voter_abci/custom_eth_account/account.py:generic-api-key:643
 7d688f9f69e0334bea039abfd44895a36ec64882:packages/valory/skills/proposal_voter_abci/custom_eth_account/account.py:generic-api-key:666
 7d688f9f69e0334bea039abfd44895a36ec64882:packages/valory/skills/proposal_voter_abci/custom_eth_account/account.py:generic-api-key:695
-ffc6405d7a9588d3ebf4bc0e216bf2be877cc557:packages/valory/skills/solana_transaction_settlement_abci/skill.yaml:generic-api-key:75
 5960c616c86da3f6e60fceed750e48a007e29705:packages/valory/services/governatooorr_solana_local/service.yaml:generic-api-key:29
 5960c616c86da3f6e60fceed750e48a007e29705:packages/valory/services/governatooorr_solana/service.yaml:generic-api-key:36
 5960c616c86da3f6e60fceed750e48a007e29705:packages/valory/services/governatooorr_solana/service.yaml:generic-api-key:109

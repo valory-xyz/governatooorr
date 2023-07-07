@@ -8,13 +8,13 @@ license: Apache-2.0
 aea_version: '>=1.0.0, <2.0.0'
 fingerprint:
   __init__.py: bafybeickrxtcqbivmneh54iq7ymaoq6xzwdouvnoon3h234vzp574qouvu
-  behaviours.py: bafybeifqox3x5ew23w3z6qgcd7zkwplnqfbhhd267d76vexlc2zoo36nem
+  behaviours.py: bafybeihevelveh5rqikall7ljus6af6x23ocyndnwgj3ovqhk6swtkb7eu
   dialogues.py: bafybeighergy2hupd32ozp2ud5j4jujpccfkzk2l46a33xn7yi2ofk32m4
   fsm_specification.yaml: bafybeifcqwkgqhexmkeg5i7iupiczt5t5ra22d73ojuiz43jkaywdnb5x4
   handlers.py: bafybeibkaxy6fkkxluminkzpt3aw3rrsa6zg66uldjmwymhevi7dr2qhbe
   models.py: bafybeigrf4yztnaref5jgp2wpqlg2osrib42p4axymcstfrli6wga3n2kq
   payloads.py: bafybeigcbd5mvxypyxohxkr4qxpwobavtluarpwlwweklqtgyertvuqxgy
-  rounds.py: bafybeiecotjwvkqqpocw5jutckh33aewcwowo632l3g4cdb7s6kw7yszjm
+  rounds.py: bafybeiatrnbt6fvrrns5a2un7rrrdz7ti5gj6sn2qfvds5zuas5ktw64o4
   snapshot.py: bafybeihrke4mzlx3n72utzfcvtcvnxm6aci2jr6veqmox54vqn77vm5oqe
   tally.py: bafybeih4w2gk6vzthjbw3q2hhckquxgcs7y4kvj3uezclugb6qvo3s35fq
   tests/test_behaviours.py: bafybeia7yhchuhugarg2gndbcokqrfjjkzqcjbyhnd4sakqkwcp5lxuku4

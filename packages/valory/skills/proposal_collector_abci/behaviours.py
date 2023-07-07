@@ -54,6 +54,7 @@ from packages.valory.skills.proposal_collector_abci.tally import (
 HTTP_OK = 200
 SNAPSHOT_REQUEST_STEP = 200
 SNAPSHOT_PROPOSAL_ROUND_LIMIT = 200  # avoids too big payloads
+MAX_RETRIES = 3
 
 
 class ProposalCollectorBaseBehaviour(BaseBehaviour, ABC):
@@ -183,6 +184,9 @@ class CollectActiveTallyProposalsBehaviour(ProposalCollectorBaseBehaviour):
                 f"Could not retrieve data from Tally API. "
                 f"Received status code {response.status_code}."
             )
+            retries = self.synchronized_data.tally_api_retries + 1
+            if retries >= MAX_RETRIES:
+                return CollectActiveTallyProposalsRound.MAX_RETRIES_PAYLOAD
             return CollectActiveTallyProposalsRound.ERROR_PAYLOAD
 
         response_json = json.loads(response.body)
@@ -233,6 +237,9 @@ class CollectActiveTallyProposalsBehaviour(ProposalCollectorBaseBehaviour):
                     f"Could not retrieve data from Tally API. "
                     f"Received status code {response.status_code}."
                 )
+                retries = self.synchronized_data.tally_api_retries + 1
+                if retries >= MAX_RETRIES:
+                    return CollectActiveTallyProposalsRound.MAX_RETRIES_PAYLOAD
                 return CollectActiveTallyProposalsRound.ERROR_PAYLOAD
 
             response_json = json.loads(response.body)
@@ -403,6 +410,9 @@ class CollectActiveSnapshotProposalsBehaviour(ProposalCollectorBaseBehaviour):
                     f"Could not retrieve proposals from Snapshot API. "
                     f"Received status code {response.status_code}.\n{response}"
                 )
+                retries = self.synchronized_data.snapshot_api_retries + 1
+                if retries >= MAX_RETRIES:
+                    return CollectActiveSnapshotProposalsRound.MAX_RETRIES_PAYLOAD
                 return CollectActiveSnapshotProposalsRound.ERROR_PAYLOAD
 
             response_json = json.loads(response.body)

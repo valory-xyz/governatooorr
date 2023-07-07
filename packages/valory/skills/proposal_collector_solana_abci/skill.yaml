@@ -1,36 +1,30 @@
-name: governatooorr_abci
+name: proposal_collector_solana_abci
 author: valory
 version: 0.1.0
 type: skill
-description: The chained abci for the governatooorr skill.
+description: The proposal collector abci is responsible for collecting and aggregating
+  proposals.
 license: Apache-2.0
 aea_version: '>=1.0.0, <2.0.0'
 fingerprint:
-  __init__.py: bafybeigk2kb335wy5vmgapbrqmfotvwqm4dqsuqr7gt7qic4v4npx2pqxy
-  behaviours.py: bafybeifjf4gdptsjmtgvwq6con2nyn42uqzkhgjegzrphf263n3xygdbga
-  composition.py: bafybeia24u6svrnwjncaa3fokkmr4jeuupfe33iwmvwpzlqu5p3mtt5lpi
-  dialogues.py: bafybeiayva5koyr6upomicnhbfefypjk2sebogk7ew24wxwwnccuqktcki
-  fsm_specification.yaml: bafybeieouic335qh3wpnpm3eaqbo4r4nqmvtniov3zpltzr4vtzlb3n4cm
-  handlers.py: bafybeiefhvk666md6clddjpkv6ccnletnxmekptz2p5qjjnubfokwlofia
-  models.py: bafybeihkrp2h2mcnuv3clu7vqjjd7taeec5fxicx7uqukxhhpknxltgn6q
+  __init__.py: bafybeidyutot7cboq63psgfgk2n7hgftvycuqz4p7oxlhutv235eryc364
+  behaviours.py: bafybeias5sa5rvfrm73zo7l6tfyfs7ffk6wleq66kp3zkijwv4tpctnzze
+  dialogues.py: bafybeih6sqgx2ttjbzti6oqgeofbmg7f3g3ev2gv44te2irpuhimaaoqc4
+  fsm_specification.yaml: bafybeie3sh6ulac5bqjntmac546ph64nvt4kmq2ajjyxnpf7lub7kjmina
+  handlers.py: bafybeiemqloowh7yc3rgm3jg6jedii5bh647hedrx57vhpy2uh6mav33ba
+  models.py: bafybeifrgixh3ulfqpl6wj3agvdfv4pscaflnyp72xmdxnfmf7ydcme4ya
+  payloads.py: bafybeiedhu6racpfu6goerlvpd3wyku2mymq2knmq6cmjvkclgbqm7uii4
+  rounds.py: bafybeidfsdjbkpeyxohoxiypmd7netxptuzq4enynbv3y5vczffqxo4k3e
 fingerprint_ignore_patterns: []
 connections: []
 contracts: []
 protocols: []
 skills:
 - valory/abstract_round_abci:0.1.0:bafybeiac62ennpw54gns2quk4g3yoaili2mb72nj6c52czobz5dcwj4mwi
-- valory/ceramic_read_abci:0.1.0:bafybeia4lpblkwvngmlmemr3ihkccsyshwqig4yas6lbi574uxpemk6fzm
-- valory/ceramic_write_abci:0.1.0:bafybeib5sci3o2xzsxpnzes4yolxuzzcijfs5bqb6hwaym5howdlwkxqx4
-- valory/proposal_collector_abci:0.1.0:bafybeie5y5fr7quiddwzw5fwvi3tuiwmdj5hq22gh5vny5m7klklspnd4i
-- valory/proposal_voter_abci:0.1.0:bafybeidexpjwlexun27azqtpm4glzl34pu66oiicherzjkirjcvtuftafe
-- valory/registration_abci:0.1.0:bafybeib6fsfur5jnflcveidnaeylneybwazewufzwa5twnwovdqgwtwsxm
-- valory/reset_pause_abci:0.1.0:bafybeibqz7y3i4aepuprhijwdydkcsbqjtpeea6gdzpp5fgc6abrvjz25a
-- valory/termination_abci:0.1.0:bafybeieb3gnvjxxsh73g67m7rivzknwb63xu4qeagpkv7f4mqz33ecikem
-- valory/transaction_settlement_abci:0.1.0:bafybeihdpac4ayfgop3ixflimlb3zzyeejlpqtljfptdak6tc7aq4u5fzi
 behaviours:
   main:
     args: {}
-    class_name: GovernatooorrConsensusBehaviour
+    class_name: ProposalCollectorRoundBehaviour
 handlers:
   abci:
     args: {}
@@ -47,9 +41,6 @@ handlers:
   ledger_api:
     args: {}
     class_name: LedgerApiHandler
-  llm:
-    args: {}
-    class_name: LlmHandler
   signing:
     args: {}
     class_name: SigningHandler
@@ -76,26 +67,13 @@ models:
   ledger_api_dialogues:
     args: {}
     class_name: LedgerApiDialogues
-  llm_dialogues:
-    args: {}
-    class_name: LlmDialogues
   params:
     args:
-      ceramic_api_base: https://ceramic-valory.hirenodes.io/
-      ceramic_api_commit_endpoint: api/v0/commits
-      ceramic_api_read_endpoint: api/v0/commits/{stream_id}
-      ceramic_did_seed: '0101010101010101010101010101010101010101010101010101010101010101'
-      ceramic_did_str: z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX
       cleanup_history_depth: 1
       cleanup_history_depth_current: null
-      default_read_stream_id: default_read_stream_id
-      default_read_target_property: default_read_target_property
-      default_write_stream_id: default_write_stream_id
-      default_write_target_property: default_write_target_property
       drand_public_key: 868f005eb8e6e4ca0a47c8a77ceaa5309a47978a7c71bc5cce96366b5d7a569937c529eeda66c7293784a9402801af31
       finalize_timeout: 60.0
       genesis_config:
-        genesis_time: '2022-09-26T00:00:00.000000000Z'
         chain_id: chain-c4daS1
         consensus_params:
           block:
@@ -103,16 +81,17 @@ models:
             max_gas: '-1'
             time_iota_ms: '1000'
           evidence:
-            max_age_num_blocks: '100000'
             max_age_duration: '172800000000000'
+            max_age_num_blocks: '100000'
             max_bytes: '1048576'
           validator:
             pub_key_types:
             - ed25519
           version: {}
+        genesis_time: '2022-05-20T16:00:21.735122717Z'
         voting_power: '10'
       history_check_timeout: 1205
-      init_fallback_gas: 0
+      ipfs_domain_name: null
       keeper_allowed_retries: 3
       keeper_timeout: 30.0
       max_attempts: 10
@@ -127,18 +106,14 @@ models:
       retry_timeout: 3
       round_timeout_seconds: 30.0
       service_endpoint_base: https://governatooorr.staging.autonolas.tech/
-      service_id: governatooorr
+      service_id: proposal_collector_solana_abci
       service_registry_address: null
       setup:
         all_participants: []
         safe_contract_address: '0x0000000000000000000000000000000000000000'
         consensus_threshold: null
       share_tm_config_on_startup: false
-      signmessagelib_address: '0xA65387F16B013cf2Af4605Ad8aA5ec25a2cbA3a2'
       sleep_time: 1
-      snapshot_api_endpoint: https://hub.snapshot.org/graphql
-      tally_api_endpoint: https://api.tally.xyz/query
-      tally_api_key: <tally_api_key>
       tendermint_check_sleep_delay: 3
       tendermint_com_url: http://localhost:8080
       tendermint_max_retries: 5
@@ -148,20 +123,8 @@ models:
       tx_timeout: 10.0
       use_termination: false
       validate_timeout: 1205
-      voting_block_threshold: 300
-      voting_seconds_threshold: 10000
+      target_proposal_id: 34AxJwqZeUjYY1U3QpxP92oCCh6T61wHoWQmG5WMyDFe
     class_name: Params
-  randomness_api:
-    args:
-      api_id: cloudflare
-      headers: {}
-      method: GET
-      parameters: {}
-      response_key: null
-      response_type: dict
-      retries: 5
-      url: https://drand.cloudflare.com/public/latest
-    class_name: RandomnessApi
   requests:
     args: {}
     class_name: Requests
@@ -174,7 +137,5 @@ models:
   tendermint_dialogues:
     args: {}
     class_name: TendermintDialogues
-dependencies:
-  open-aea-cli-ipfs:
-    version: <2.0.0,>=1.27.0
-is_abstract: false
+dependencies: {}
+is_abstract: true

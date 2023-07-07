@@ -1,20 +1,13 @@
-agent_name: governatooorr
+agent_name: governatooorr_solana
 author: valory
 version: 0.1.0
 license: Apache-2.0
-description: The governatooorr agent.
+description: The governatooorr_solana agent.
 aea_version: '>=1.19.0, <2.0.0'
 fingerprint:
-  __init__.py: bafybeiguw4i7zplzdw65vdyrtj25rys2hifrzsnt57p32xtrzyzh2l77di
-  tests/__init__.py: bafybeihiyimopudltfy4riab6ariq2ktn6w2fqv77vd5t7k4xr7tlkthya
-  tests/helpers/__init__.py: bafybeif7verbag26h6i35gr5rlatxl7veq4drup5ykwdvhgtussf2jreei
-  tests/helpers/constants.py: bafybeibbokz7gzdlubnjwxrmh4tqckc7j75hfy3ae6l5a63mrbd4hp6l7u
-  tests/helpers/data/json_server/data.json: bafybeics26yd33ng22lhzb3had4eevbfkfdj2jbp3qhvjpygwhkwlzhrq4
-  tests/helpers/docker.py: bafybeibbi6m47mzsl43bmix4k7o7oyekzhzsljuf3dkwk23bfns6k7odkm
-  tests/helpers/fixtures.py: bafybeiarm4ezp54po7nv5m4e2w3eghetma5xymnzgoovvdwh7hp2lcitqu
+  __init__.py: bafybeia5k5hpk4bva262k3dlg5tjo6di7bgarop3u37imjt44vjvc4gmvy
 fingerprint_ignore_patterns: []
 connections:
-- fetchai/http_server:0.22.0:bafybeihaax5od5zo5jk2l62hv4jwuwtxloh5mijozudpsjombqc4ncmi6i
 - valory/abci:0.1.0:bafybeihofnsokowicviac6yz3uhur52l3mf54s2hz4i2je5ie4vlruouga
 - valory/http_client:0.23.0:bafybeidykl4elwbcjkqn32wt5h4h7tlpeqovrcq3c5bcplt6nhpznhgczi
 - valory/ledger:0.19.0:bafybeicgfupeudtmvehbwziqfxiz6ztsxr5rxzvalzvsdsspzz73o5fzfi
@@ -24,7 +17,7 @@ contracts:
 - valory/delegate:0.1.0:bafybeiaslboosyvpzccaqgie56wta3aqrdkgfx5vs5ogxu7ebiez67wp6i
 - valory/gnosis_safe:0.1.0:bafybeif5fdwoxq5mscrurtuimadmtctyxxeeui45u4g6leqobzls7bsl3u
 - valory/gnosis_safe_proxy_factory:0.1.0:bafybeiaa6fgwtykrti6i7sbt22raavpsbobsq2xgem4nkbcg744agnmkae
-- valory/sign_message_lib:0.1.0:bafybeiamc2cle3kx26gpqigwzfq5bph5nfrzwei72cyu3v6xwcvkip6dce
+- valory/solana_governance:0.1.0:bafybeiai6xmkddnu3dmd4aar2om6bqmta6wesdne7wjcsm7q4qhrfnsdia
 protocols:
 - open_aea/signing:1.0.0:bafybeibqlfmikg5hk4phzak6gqzhpkt6akckx7xppbp53mvwt6r73h7tk4
 - valory/abci:0.1.0:bafybeig3dj5jhsowlvg3t73kgobf6xn4nka7rkttakdb2gwsg5bp7rt7q4
@@ -38,15 +31,14 @@ protocols:
 skills:
 - valory/abstract_abci:0.1.0:bafybeiff2dqnkeorf343fmb3547fhiznvdw4ewbwl4rqluek2cv6ibl5hi
 - valory/abstract_round_abci:0.1.0:bafybeiac62ennpw54gns2quk4g3yoaili2mb72nj6c52czobz5dcwj4mwi
-- valory/governatooorr_abci:0.1.0:bafybeiawhe4uyzqdsgvi2scmnuco6taui7h3cjx4en42jyk7ttdir3lgku
-- valory/proposal_collector_abci:0.1.0:bafybeie5y5fr7quiddwzw5fwvi3tuiwmdj5hq22gh5vny5m7klklspnd4i
-- valory/proposal_voter_abci:0.1.0:bafybeidexpjwlexun27azqtpm4glzl34pu66oiicherzjkirjcvtuftafe
+- valory/governatooorr_solana_abci:0.1.0:bafybeicsrftp3whudsim2l7lx5cp3z3qvvsaa5jywwazn77gwkkp6ncpiu
+- valory/proposal_collector_solana_abci:0.1.0:bafybeihssd4wlllwnbd2gfur4aqdyigc7f2zmbss34njh5eltl5onbua4i
+- valory/proposal_voter_solana_abci:0.1.0:bafybeia4gdgflcylzc3xp5zwzb6w5v7lfnvzam7chuec5gltzy7thm3kzq
 - valory/registration_abci:0.1.0:bafybeib6fsfur5jnflcveidnaeylneybwazewufzwa5twnwovdqgwtwsxm
 - valory/reset_pause_abci:0.1.0:bafybeibqz7y3i4aepuprhijwdydkcsbqjtpeea6gdzpp5fgc6abrvjz25a
 - valory/termination_abci:0.1.0:bafybeieb3gnvjxxsh73g67m7rivzknwb63xu4qeagpkv7f4mqz33ecikem
 - valory/transaction_settlement_abci:0.1.0:bafybeihdpac4ayfgop3ixflimlb3zzyeejlpqtljfptdak6tc7aq4u5fzi
-- valory/ceramic_read_abci:0.1.0:bafybeia4lpblkwvngmlmemr3ihkccsyshwqig4yas6lbi574uxpemk6fzm
-- valory/ceramic_write_abci:0.1.0:bafybeib5sci3o2xzsxpnzes4yolxuzzcijfs5bqb6hwaym5howdlwkxqx4
+- valory/solana_transaction_settlement_abci:0.1.0:bafybeigtthka37ndtoe4mshyfgwio6ghmimdpwc7stxiposnr7hl2qrrdm
 default_ledger: ethereum
 required_ledgers:
 - ethereum
@@ -85,7 +77,7 @@ default_connection: null
 public_id: valory/abci:0.1.0
 type: connection
 config:
-  target_skill_id: valory/governatooorr_abci:0.1.0
+  target_skill_id: valory/governatooorr_solana_abci:0.1.0
   host: ${str:localhost}
   port: ${int:26658}
   use_tendermint: ${bool:false}
@@ -124,7 +116,7 @@ cert_requests:
   save_path: .certs/acn_cosmos_11000.txt
 is_abstract: false
 ---
-public_id: valory/governatooorr_abci:0.1.0
+public_id: valory/governatooorr_solana_abci:0.1.0
 type: skill
 models:
   benchmark_tool:
@@ -168,7 +160,7 @@ models:
       request_retry_delay: 1.0
       request_timeout: 10.0
       round_timeout_seconds: 30.0
-      service_id: governatooorr
+      service_id: governatooorr_solana
       service_registry_address: ${str:0x1cEe30D08943EB58EFF84DD1AB44a6ee6FEff63a}
       setup:
         all_participants: ${list:["0x10E867Ac2Fb0Aa156ca81eF440a5cdf373bE1AaC"]}
@@ -184,26 +176,12 @@ models:
       termination_sleep: ${int:900}
       tx_timeout: 10.0
       use_termination: ${bool:false}
-      tally_api_endpoint: ${str:https://api.tally.xyz/query}
-      tally_api_key: ${str:<tally_api_key>}
-      snapshot_api_endpoint: ${str:https://hub.snapshot.org/graphql}
       service_endpoint_base: ${str:https://governatooorr.staging.autonolas.tech/}
       validate_timeout: 1205
       voting_block_threshold: ${int:300}
       voting_seconds_threshold: ${int:10000}
-      ceramic_api_base: ${str:https://ceramic-valory.hirenodes.io/}
-      ceramic_api_commit_endpoint: ${str:api/v0/commits}
-      ceramic_api_read_endpoint: ${str:api/v0/commits/{stream_id}}
-      ceramic_did_seed: ${str:0101010101010101010101010101010101010101010101010101010101010101}
-      ceramic_did_str: ${str:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX}
       default_read_stream_id: ${str:default_read_stream_id}
       default_write_stream_id: ${str:default_write_stream_id}
       default_read_target_property: ${str:delegations}
       default_write_target_property: ${str:delegations}
-      signmessagelib_address: ${str:0xA65387F16B013cf2Af4605Ad8aA5ec25a2cbA3a2}
----
-public_id: fetchai/http_server:0.22.0:bafybeicblltx7ha3ulthg7bzfccuqqyjmihhrvfeztlgrlcoxhr7kf6nbq
-type: connection
-config:
-  host: 0.0.0.0
-  target_skill_id: valory/governatooorr_abci:0.1.0
+      target_proposal_id: ${str:34AxJwqZeUjYY1U3QpxP92oCCh6T61wHoWQmG5WMyDFe}

@@ -1,4 +1,4 @@
-name: governatooorr_abci
+name: governatooorr_solana_abci
 author: valory
 version: 0.1.0
 type: skill
@@ -6,27 +6,24 @@ description: The chained abci for the governatooorr skill.
 license: Apache-2.0
 aea_version: '>=1.0.0, <2.0.0'
 fingerprint:
-  __init__.py: bafybeigk2kb335wy5vmgapbrqmfotvwqm4dqsuqr7gt7qic4v4npx2pqxy
-  behaviours.py: bafybeifjf4gdptsjmtgvwq6con2nyn42uqzkhgjegzrphf263n3xygdbga
-  composition.py: bafybeia24u6svrnwjncaa3fokkmr4jeuupfe33iwmvwpzlqu5p3mtt5lpi
-  dialogues.py: bafybeiayva5koyr6upomicnhbfefypjk2sebogk7ew24wxwwnccuqktcki
-  fsm_specification.yaml: bafybeieouic335qh3wpnpm3eaqbo4r4nqmvtniov3zpltzr4vtzlb3n4cm
-  handlers.py: bafybeiefhvk666md6clddjpkv6ccnletnxmekptz2p5qjjnubfokwlofia
-  models.py: bafybeihkrp2h2mcnuv3clu7vqjjd7taeec5fxicx7uqukxhhpknxltgn6q
+  __init__.py: bafybeieiz7mdnqem2cm6x5b6ayinoni54yzzifaqk2kufyxah3gq532ax4
+  behaviours.py: bafybeicgc6b5nrcspbnroku4yvmndqunx6g3hrkbjeietawomhzqs66ndq
+  composition.py: bafybeieb232x4tg22reguidfm3ulqucrcx3ashwsdvm5vffagluexk7esi
+  dialogues.py: bafybeie5bpxwbazuhja2mcayeqa4kbuuha7z24kduargw3onyoktr4dgqq
+  handlers.py: bafybeieclwxviroj67a6hx26xbjo37xcwuam5gna6nz2mvdjmilqqhxdye
+  models.py: bafybeigl5gr5hhliu4ii3iwx3wpjz4azscxgifdljqbapdkf3magvamasi
 fingerprint_ignore_patterns: []
 connections: []
 contracts: []
 protocols: []
 skills:
 - valory/abstract_round_abci:0.1.0:bafybeiac62ennpw54gns2quk4g3yoaili2mb72nj6c52czobz5dcwj4mwi
-- valory/ceramic_read_abci:0.1.0:bafybeia4lpblkwvngmlmemr3ihkccsyshwqig4yas6lbi574uxpemk6fzm
-- valory/ceramic_write_abci:0.1.0:bafybeib5sci3o2xzsxpnzes4yolxuzzcijfs5bqb6hwaym5howdlwkxqx4
-- valory/proposal_collector_abci:0.1.0:bafybeie5y5fr7quiddwzw5fwvi3tuiwmdj5hq22gh5vny5m7klklspnd4i
-- valory/proposal_voter_abci:0.1.0:bafybeidexpjwlexun27azqtpm4glzl34pu66oiicherzjkirjcvtuftafe
+- valory/proposal_collector_solana_abci:0.1.0:bafybeihssd4wlllwnbd2gfur4aqdyigc7f2zmbss34njh5eltl5onbua4i
+- valory/proposal_voter_solana_abci:0.1.0:bafybeia4gdgflcylzc3xp5zwzb6w5v7lfnvzam7chuec5gltzy7thm3kzq
 - valory/registration_abci:0.1.0:bafybeib6fsfur5jnflcveidnaeylneybwazewufzwa5twnwovdqgwtwsxm
 - valory/reset_pause_abci:0.1.0:bafybeibqz7y3i4aepuprhijwdydkcsbqjtpeea6gdzpp5fgc6abrvjz25a
 - valory/termination_abci:0.1.0:bafybeieb3gnvjxxsh73g67m7rivzknwb63xu4qeagpkv7f4mqz33ecikem
-- valory/transaction_settlement_abci:0.1.0:bafybeihdpac4ayfgop3ixflimlb3zzyeejlpqtljfptdak6tc7aq4u5fzi
+- valory/solana_transaction_settlement_abci:0.1.0:bafybeigtthka37ndtoe4mshyfgwio6ghmimdpwc7stxiposnr7hl2qrrdm
 behaviours:
   main:
     args: {}
@@ -134,11 +131,7 @@ models:
         safe_contract_address: '0x0000000000000000000000000000000000000000'
         consensus_threshold: null
       share_tm_config_on_startup: false
-      signmessagelib_address: '0xA65387F16B013cf2Af4605Ad8aA5ec25a2cbA3a2'
       sleep_time: 1
-      snapshot_api_endpoint: https://hub.snapshot.org/graphql
-      tally_api_endpoint: https://api.tally.xyz/query
-      tally_api_key: <tally_api_key>
       tendermint_check_sleep_delay: 3
       tendermint_com_url: http://localhost:8080
       tendermint_max_retries: 5
@@ -150,6 +143,7 @@ models:
       validate_timeout: 1205
       voting_block_threshold: 300
       voting_seconds_threshold: 10000
+      target_proposal_id: 34AxJwqZeUjYY1U3QpxP92oCCh6T61wHoWQmG5WMyDFe
     class_name: Params
   randomness_api:
     args:

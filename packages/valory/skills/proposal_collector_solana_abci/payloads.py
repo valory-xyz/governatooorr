@@ -17,4 +17,15 @@
 #
 # ------------------------------------------------------------------------------
 
-"""This module contains tests for the proposal collector skill."""
+"""This module contains the transaction payloads of the ProposalCollectorSolanaAbciApp."""
+
+from dataclasses import dataclass
+
+from packages.valory.skills.abstract_round_abci.base import BaseTxPayload
+
+
+@dataclass(frozen=True)
+class CollectActiveRealmsProposalsPayload(BaseTxPayload):
+    """Represent a transaction payload for the CollectActiveRealmsProposals."""
+
+    proposals: str

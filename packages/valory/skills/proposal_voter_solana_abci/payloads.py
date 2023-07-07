@@ -17,4 +17,22 @@
 #
 # ------------------------------------------------------------------------------
 
-"""This module contains tests for the proposal voter skill."""
+"""This module contains the transaction payloads of the ProposalVoterSolanaAbciApp."""
+
+from dataclasses import dataclass
+
+from packages.valory.skills.abstract_round_abci.base import BaseTxPayload
+
+
+@dataclass(frozen=True)
+class EstablishVotePayload(BaseTxPayload):
+    """Represent a transaction payload for the EstablishVoteRound."""
+
+    content: str
+
+
+@dataclass(frozen=True)
+class PrepareVoteTransactionPayload(BaseTxPayload):
+    """Represent a transaction payload for the PrepareVoteTransactionRound."""
+
+    content: str

@@ -34,3 +34,4 @@ b411310095b75c12f10876201776008eec55cc70:README.md:generic-api-key:66
 59a12d49b0303b5ba98f358dd8a5f3b75d172408:packages/valory/skills/governatooorr_solana_abci/skill.yaml:generic-api-key:93
 6b6a2d99ba79b162c3d489a718a596e8207bab2d:packages/valory/skills/proposal_collector_solana_abci/skill.yaml:generic-api-key:86
 6b6a2d99ba79b162c3d489a718a596e8207bab2d:packages/valory/skills/proposal_voter_solana_abci/skill.yaml:generic-api-key:125
+ffc6405d7a9588d3ebf4bc0e216bf2be877cc557:packages/valory/skills/solana_transaction_settlement_abci/skill.yaml:generic-api-key:75

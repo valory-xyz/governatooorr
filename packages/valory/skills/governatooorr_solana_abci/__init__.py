@@ -17,10 +17,9 @@
 #
 # ------------------------------------------------------------------------------
 
-"""Test the dialogues.py module of the GenericScoring."""
+"""This module contains the implementation of the governatooorr_solana_abci skill."""
 
-import packages.valory.skills.proposal_voter_abci.dialogues  # noqa
+from aea.configurations.base import PublicId
 
 
-def test_import() -> None:
-    """Test that the 'dialogues.py' of the GenericScoring can be imported."""
+PUBLIC_ID = PublicId.from_str("valory/governatooorr_solana_abci:0.1.0")

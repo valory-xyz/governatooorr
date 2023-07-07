@@ -1,0 +1,17 @@
+alphabet_in:
+- DONE
+- NO_MAJORITY
+- ROUND_TIMEOUT
+default_start_state: CollectActiveRealmsProposalsRound
+final_states:
+- FinishedCollectRealmsProposalRound
+label: ProposalCollectorSolanaAbciApp
+start_states:
+- CollectActiveRealmsProposalsRound
+states:
+- CollectActiveRealmsProposalsRound
+- FinishedCollectRealmsProposalRound
+transition_func:
+    (CollectActiveRealmsProposalsRound, DONE): FinishedCollectRealmsProposalRound
+    (CollectActiveRealmsProposalsRound, NO_MAJORITY): CollectActiveRealmsProposalsRound
+    (CollectActiveRealmsProposalsRound, ROUND_TIMEOUT): CollectActiveRealmsProposalsRound

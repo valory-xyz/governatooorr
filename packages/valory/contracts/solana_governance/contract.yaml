@@ -1,0 +1,17 @@
+name: solana_governance
+author: valory
+version: 0.1.0
+type: contract
+description: The scaffold contract scaffolds a contract to be implemented by the developer.
+license: Apache-2.0
+aea_version: '>=1.0.0, <2.0.0'
+fingerprint:
+  __init__.py: bafybeid44rjitrzhhmkfkdpqu3pu5dq4vu7jxajde6xtw3yjtlad4xk65e
+  build/SolanaGovernance.json: bafybeiah4q3xn6spbiyhohcv7twx3iz5amd6xreuatgt3zllxd2wb7vdfm
+  contract.py: bafybeihrwphbon72frqpvcgy6a77wrmezq7fo7qjy4hb7bf45qctgs2iau
+fingerprint_ignore_patterns: []
+class_name: SolanaGovernanceContract
+contract_interface_paths:
+  solana: build/SolanaGovernance.json
+dependencies: {}
+contracts: []

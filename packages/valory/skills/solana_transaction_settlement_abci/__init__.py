@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 # ------------------------------------------------------------------------------
 #
@@ -17,3 +16,10 @@
 #   limitations under the License.
 #
 # ------------------------------------------------------------------------------
+
+"""This module contains the ABCI transaction settlement skill for an AEA."""
+
+from aea.configurations.base import PublicId
+
+
+PUBLIC_ID = PublicId.from_str("valory/solana_transaction_settlement_abci:0.1.0")

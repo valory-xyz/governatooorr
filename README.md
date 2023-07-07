@@ -96,15 +96,15 @@ Then run the following commands:
       curl localhost:8000/delegations/0x999999cf1046e68e36E1aA2E0E07105eDDD1f08E | jq
       ```
 
-### Run a single agent instance
+### Running a single agent instance
 
-You can run a single agent using `run_agent.sh` or `run_agent_solana.sh` scripts just run
+You can run a single agent using `run_agent.sh` or `run_agent_solana.sh` scripts just run:
 
 ```
 bash run_agent.sh
 ```
 
-and in a separate terminal run
+and in a separate terminal run:
 
 ```
 bash run_tm.sh

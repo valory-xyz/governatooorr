@@ -95,3 +95,21 @@ Then run the following commands:
       # Get the delegations for a specific wallet address
       curl localhost:8000/delegations/0x999999cf1046e68e36E1aA2E0E07105eDDD1f08E | jq
       ```
+
+### Run a single agent instance
+
+You can run a single agent using `run_agent.sh` or `run_agent_solana.sh` scripts just run
+
+```
+bash run_agent.sh
+```
+
+and in a separate terminal run
+
+```
+bash run_tm.sh
+```
+
+**Note:** Fill in all of the API keys required by you agent in the `aea-config.yaml` file for the agent you're running before running the scripts.
+
+

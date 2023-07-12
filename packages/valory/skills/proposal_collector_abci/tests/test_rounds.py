@@ -322,6 +322,18 @@ class TestCollectActiveTallyProposalsRound(BaseProposalCollectorRoundTest):
                 synchronized_data_attr_checks=[],
             ),
             RoundTestCase(
+                name="Max retries",
+                initial_data={},
+                payloads=get_payloads(
+                    payload_cls=CollectActiveTallyProposalsPayload,
+                    data="MAX_RETRIES_PAYLOAD",
+                ),
+                final_data={},
+                event=Event.DONE,
+                most_voted_payload="MAX_RETRIES_PAYLOAD",
+                synchronized_data_attr_checks=[],
+            ),
+            RoundTestCase(
                 name="Block retrieval error",
                 initial_data={},
                 payloads=get_payloads(
@@ -376,6 +388,18 @@ class TestCollectActiveSnapshotProposalsRound(BaseProposalCollectorRoundTest):
                 final_data={},
                 event=Event.API_ERROR,
                 most_voted_payload="ERROR_PAYLOAD",
+                synchronized_data_attr_checks=[],
+            ),
+            RoundTestCase(
+                name="Max retries",
+                initial_data={},
+                payloads=get_payloads(
+                    payload_cls=CollectActiveSnapshotProposalsPayload,
+                    data="MAX_RETRIES_PAYLOAD",
+                ),
+                final_data={},
+                event=Event.DONE,
+                most_voted_payload="MAX_RETRIES_PAYLOAD",
                 synchronized_data_attr_checks=[],
             ),
         ),

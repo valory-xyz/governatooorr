@@ -518,20 +518,7 @@ class TestCollectSnapshotProposalsBehaviour(BaseProposalCollectorTest):
                     body=kwargs.get("bodies")[i].encode(),
                 ),
             )
-        # Mock get block
-        if "block_retrieval_performative" in kwargs:
-            self.mock_ledger_api_request(
-                request_kwargs=dict(
-                    performative=LedgerApiMessage.Performative.GET_STATE,
-                ),
-                response_kwargs=dict(
-                    performative=kwargs.get("block_retrieval_performative"),
-                    state=State(
-                        ledger_id="ethereum",
-                        body={"number": 10000},
-                    ),
-                ),
-            )
+
         self.complete(test_case.event)
 
 
@@ -604,18 +591,5 @@ class TestCollectSnapshotProposalsErrorBehaviour(BaseProposalCollectorTest):
                     body=kwargs.get("bodies")[i].encode(),
                 ),
             )
-        # Mock get block
-        if "block_retrieval_performative" in kwargs:
-            self.mock_ledger_api_request(
-                request_kwargs=dict(
-                    performative=LedgerApiMessage.Performative.GET_STATE,
-                ),
-                response_kwargs=dict(
-                    performative=kwargs.get("block_retrieval_performative"),
-                    state=State(
-                        ledger_id="ethereum",
-                        body={"number": 10000},
-                    ),
-                ),
-            )
+
         self.complete(test_case.event)

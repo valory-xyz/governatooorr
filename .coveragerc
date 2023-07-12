@@ -1,0 +1,3 @@
+[run]
+omit =
+        packages/valory/skills/proposal_voter_abci/custom_eth_account/*

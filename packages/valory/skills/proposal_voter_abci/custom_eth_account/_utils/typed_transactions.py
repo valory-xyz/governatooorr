@@ -77,7 +77,7 @@ TYPED_TRANSACTION_FORMATTERS = merge(
 
 # Define typed transaction common sedes.
 # [[{20 bytes}, [{32 bytes}...]]...], where ... means
-# “zero or more of the thing to the left”.
+# zero or more of the thing to the left.
 access_list_sede_type = CountableList(
     List(
         [

@@ -411,7 +411,7 @@ class Account:
 
             >>> from packages.valory.skills.proposal_voter_abci.custom_eth_account.messages import encode_defunct
             >>> from packages.valory.skills.proposal_voter_abci.custom_eth_account import Account
-            >>> message = encode_defunct(text="I♥SF")
+            >>> message = encode_defunct(text="ISF")
             >>> vrs = (
             ...   28,
             ...   '0xe6ca9bba58c88611fad66a6ce8f996908195593807c4b38bd528d2cff09d4eb3',
@@ -553,7 +553,7 @@ class Account:
 
         .. doctest:: python
 
-            >>> msg = "I♥SF"
+            >>> msg = "ISF"
             >>> from packages.valory.skills.proposal_voter_abci.custom_eth_account.messages import encode_defunct
             >>> msghash = encode_defunct(text=msg)
             >>> msghash

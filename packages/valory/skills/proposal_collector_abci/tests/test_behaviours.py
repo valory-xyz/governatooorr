@@ -270,7 +270,78 @@ class TestCollectActiveTallyProposalsBehaviour(BaseProposalCollectorTest):
                             DUMMY_PROPOSALS_RESPONSE,
                         ),
                     ],
-                    "status_code": 200,
+                    "status_codes": [200, 200],
+                },
+            ),
+            (
+                BehaviourTestCase(
+                    "Max retries - A",
+                    initial_data=dict(
+                        proposals={
+                            "0": {
+                                "governor": {
+                                    "id": f"eip155:1:{DUMMY_GOVERNOR_ADDRESS}",
+                                    "type": "AAVE",
+                                    "name": "Aave",
+                                    "tokens": [
+                                        {
+                                            "id": "eip155:1/erc20aave:0x7Fc66500c84A76Ad7e9c93437bFc5Ac33E2DDaE9"
+                                        }
+                                    ],
+                                },
+                                "end": {"number": 50},
+                                "vote": None,
+                            },
+                        },
+                        tally_api_retries=2,
+                    ),
+                    event=Event.DONE,
+                ),
+                {
+                    "urls": [TALLY_API_ENDPOINT],
+                    "bodies": [
+                        json.dumps(
+                            DUMMY_GOVERNORS_RESPONSE,
+                        ),
+                    ],
+                    "status_codes": [400],
+                },
+            ),
+            (
+                BehaviourTestCase(
+                    "Max retries - B",
+                    initial_data=dict(
+                        proposals={
+                            "0": {
+                                "governor": {
+                                    "id": f"eip155:1:{DUMMY_GOVERNOR_ADDRESS}",
+                                    "type": "AAVE",
+                                    "name": "Aave",
+                                    "tokens": [
+                                        {
+                                            "id": "eip155:1/erc20aave:0x7Fc66500c84A76Ad7e9c93437bFc5Ac33E2DDaE9"
+                                        }
+                                    ],
+                                },
+                                "end": {"number": 50},
+                                "vote": None,
+                            },
+                        },
+                        tally_api_retries=2,
+                    ),
+                    event=Event.DONE,
+                ),
+                {
+                    "urls": [TALLY_API_ENDPOINT, TALLY_API_ENDPOINT],
+                    "bodies": [
+                        json.dumps(
+                            DUMMY_GOVERNORS_RESPONSE,
+                        ),
+                        json.dumps(
+                            DUMMY_PROPOSALS_RESPONSE,
+                        ),
+                    ],
+                    "status_codes": [200, 400],
                 },
             ),
         ],
@@ -290,24 +361,25 @@ class TestCollectActiveTallyProposalsBehaviour(BaseProposalCollectorTest):
                 ),
                 response_kwargs=dict(
                     version="",
-                    status_code=kwargs.get("status_code"),
+                    status_code=kwargs.get("status_codes")[i],
                     status_text="",
                     body=kwargs.get("bodies")[i].encode(),
                 ),
             )
         # Mock get block
-        self.mock_ledger_api_request(
-            request_kwargs=dict(
-                performative=LedgerApiMessage.Performative.GET_STATE,
-            ),
-            response_kwargs=dict(
-                performative=LedgerApiMessage.Performative.STATE,
-                state=State(
-                    ledger_id="ethereum",
-                    body={"number": 10000},
+        if all([code == 200 for code in kwargs.get("status_codes")]):
+            self.mock_ledger_api_request(
+                request_kwargs=dict(
+                    performative=LedgerApiMessage.Performative.GET_STATE,
                 ),
-            ),
-        )
+                response_kwargs=dict(
+                    performative=LedgerApiMessage.Performative.STATE,
+                    state=State(
+                        ledger_id="ethereum",
+                        body={"number": 10000},
+                    ),
+                ),
+            )
         self.complete(test_case.event)
 
 
@@ -496,6 +568,27 @@ class TestCollectSnapshotProposalsBehaviour(BaseProposalCollectorTest):
                     "status_codes": [200],
                 },
             ),
+            (
+                BehaviourTestCase(
+                    "Max retries",
+                    initial_data=dict(
+                        snapshot_api_retries=2,
+                    ),
+                    event=Event.DONE,
+                ),
+                {
+                    "urls": [SNAPSHOT_API_ENDPOINT],
+                    "bodies": [
+                        json.dumps(
+                            DUMMY_SNAPSHOT_RESPONSE_EMPTY,
+                        ),
+                    ],
+                    "headers": [
+                        "Content-Type: application/json\r\nAccept: application/json\r\n"
+                    ],
+                    "status_codes": [400],
+                },
+            ),
         ],
     )
     def test_run(self, test_case: BehaviourTestCase, kwargs: Any) -> None:
@@ -518,20 +611,7 @@ class TestCollectSnapshotProposalsBehaviour(BaseProposalCollectorTest):
                     body=kwargs.get("bodies")[i].encode(),
                 ),
             )
-        # Mock get block
-        if "block_retrieval_performative" in kwargs:
-            self.mock_ledger_api_request(
-                request_kwargs=dict(
-                    performative=LedgerApiMessage.Performative.GET_STATE,
-                ),
-                response_kwargs=dict(
-                    performative=kwargs.get("block_retrieval_performative"),
-                    state=State(
-                        ledger_id="ethereum",
-                        body={"number": 10000},
-                    ),
-                ),
-            )
+
         self.complete(test_case.event)
 
 
@@ -604,18 +684,5 @@ class TestCollectSnapshotProposalsErrorBehaviour(BaseProposalCollectorTest):
                     body=kwargs.get("bodies")[i].encode(),
                 ),
             )
-        # Mock get block
-        if "block_retrieval_performative" in kwargs:
-            self.mock_ledger_api_request(
-                request_kwargs=dict(
-                    performative=LedgerApiMessage.Performative.GET_STATE,
-                ),
-                response_kwargs=dict(
-                    performative=kwargs.get("block_retrieval_performative"),
-                    state=State(
-                        ledger_id="ethereum",
-                        body={"number": 10000},
-                    ),
-                ),
-            )
+
         self.complete(test_case.event)

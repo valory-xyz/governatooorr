@@ -764,22 +764,6 @@ class TestRetrieveSignatureNoSnapshotVoteBehaviour(BaseProposalVoterTest):
         self.behaviour.context.state.pending_vote = pending_vote
         self.fast_forward(test_case.initial_data)
         self.behaviour.act_wrapper()
-
-        if pending_vote.snapshot:
-            self.mock_contract_api_request(
-                request_kwargs=dict(
-                    performative=ContractApiMessage.Performative.GET_STATE,
-                ),
-                contract_id=str(SignMessageLibContract.contract_id),
-                response_kwargs=dict(
-                    performative=ContractApiMessage.Performative.STATE,
-                    callable="get_safe_signature",
-                    state=State(
-                        ledger_id="ethereum", body={"signature": "dummy_signature"}
-                    ),
-                ),
-            )
-
         self.complete(test_case.event)
 
 

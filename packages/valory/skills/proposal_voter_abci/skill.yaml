@@ -45,7 +45,8 @@ fingerprint:
   payloads.py: bafybeid5phynue7fcvsqwkg2wafm65vasc3m6aeyakqocnxrteiqghb3ia
   rounds.py: bafybeifxsr2nnoi4tbci3n3fqxejf6vj5trgduml7zwofo4rse53zzwioi
   snapshot.py: bafybeiael35k6td5gdw5z552gjkt6r2itsoarmoxisdlj2psu2inpzubne
-  tests/test_behaviours.py: bafybeicpmesnxbshzl6yol7jcydjp6jgtoij5phxrmju5o3nzomnymyune
+  tests/__init__.py: bafybeicnpfbu2732mdlaputxl4izv5yfievyodmjzy5w64r2e5zyqycigu
+  tests/test_behaviours.py: bafybeiefueo4wr5n6lxjvdlheteq65wsff4f32r6cgmjpcy7wnyy5ajaqi
   tests/test_handlers.py: bafybeih47tjdvy6sv52ipxkurjinukqurhs5lwfgyauzpv5skrczwuhmky
   tests/test_models.py: bafybeig7lk4aojnesm22dknzz6z5bvxjahzlsrxubncusdbmxtqy6bokhq
   tests/test_payloads.py: bafybeifyheo2u743zogonqa5ofaanyzuazw4yqm2cxkcwwt3n7my7e4jvm

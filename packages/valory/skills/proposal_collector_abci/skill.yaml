@@ -17,11 +17,12 @@ fingerprint:
   rounds.py: bafybeiatrnbt6fvrrns5a2un7rrrdz7ti5gj6sn2qfvds5zuas5ktw64o4
   snapshot.py: bafybeihrke4mzlx3n72utzfcvtcvnxm6aci2jr6veqmox54vqn77vm5oqe
   tally.py: bafybeih4w2gk6vzthjbw3q2hhckquxgcs7y4kvj3uezclugb6qvo3s35fq
-  tests/test_behaviours.py: bafybeia7yhchuhugarg2gndbcokqrfjjkzqcjbyhnd4sakqkwcp5lxuku4
+  tests/__init__.py: bafybeicqptpyrejemtnjmtvarhf4sk3roprka5wedztzeehei42rygpfwy
+  tests/test_behaviours.py: bafybeick7htaj3ovsgpqwxdqky5zd3saxvquhiwq3trbqwohpnuvsikgaq
   tests/test_handlers.py: bafybeia6ef2svsgeu2vx4us7gvmt4nbuygjufpdy7pjifdxfukly5nwrem
   tests/test_models.py: bafybeia4q5ncu6xxie5e2plugclkccrqnuqw3ujlqu3vus54zacvfkwyxi
   tests/test_payloads.py: bafybeifpggwuftdbammofsvoi4dpouscmjw47rozqea2syyaa27fbxvrlu
-  tests/test_rounds.py: bafybeigepdbosiey6aegdorbw2hqzk77i6a4bqszvtfcw4slotdk5wtria
+  tests/test_rounds.py: bafybeia2fzm6qdbtfpiigvlp7yongewx563wi2joljgagu7docuqxzh3pu
 fingerprint_ignore_patterns: []
 connections:
 - fetchai/http_server:0.22.0:bafybeihaax5od5zo5jk2l62hv4jwuwtxloh5mijozudpsjombqc4ncmi6i

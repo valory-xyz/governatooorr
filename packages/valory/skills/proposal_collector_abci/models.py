@@ -73,6 +73,9 @@ class Params(BaseParams):
         self.tally_api_key = kwargs.pop("tally_api_key", None)
         self.service_endpoint_base = self._ensure("service_endpoint_base", kwargs, str)
         self.snapshot_api_endpoint = kwargs.get("snapshot_api_endpoint")
+        self.tally_api_call_sleep_seconds = self._ensure(
+            "tally_api_call_sleep_seconds", kwargs, int
+        )
         super().__init__(*args, **kwargs)
 
 

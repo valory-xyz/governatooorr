@@ -8,7 +8,7 @@ license: Apache-2.0
 fingerprint:
   README.md: bafybeid6vqhnovhpsrjwws2wcb67i7fwr4dq54rpowqgrf3njt2anp5nc4
 fingerprint_ignore_patterns: []
-agent: valory/governatooorr:0.1.0:bafybeia65ypronc44z6fi4vg675snokgkhdjhnnnjozh5bnjdhjwfmooxm
+agent: valory/governatooorr:0.1.0:bafybeiauxrurnpeyo3pksc7ndgohwolsihvz5fsaeukrvtibygoojm7m54
 number_of_agents: 4
 deployment:
   agent:
@@ -85,6 +85,7 @@ type: skill
         use_termination: ${USE_TERMINATION:bool:false}
         tally_api_endpoint: ${TALLY_API_ENDPOINT:str:https://api.tally.xyz/query}
         tally_api_key: ${TALLY_API_KEY_0:str:<tally_api_key>}
+        tally_api_call_sleep_seconds: ${TALLY_API_CALL_SLEEP_SECONDS:int:2}
         snapshot_api_endpoint: ${SNAPSHOT_API_ENDPOINT:str:https://hub.snapshot.org/graphql}
         service_endpoint_base: ${SERVICE_ENDPOINT_BASE:str:https://governatooorr.staging.autonolas.tech/}
         validate_timeout: 1205
@@ -139,6 +140,7 @@ type: skill
         use_termination: ${USE_TERMINATION:bool:false}
         tally_api_endpoint: ${TALLY_API_ENDPOINT:str:https://api.tally.xyz/query}
         tally_api_key: ${TALLY_API_KEY_1:str:<tally_api_key>}
+        tally_api_call_sleep_seconds: ${TALLY_API_CALL_SLEEP_SECONDS:int:2}
         snapshot_api_endpoint: ${SNAPSHOT_API_ENDPOINT:str:https://hub.snapshot.org/graphql}
         service_endpoint_base: ${SERVICE_ENDPOINT_BASE:str:https://governatooorr.staging.autonolas.tech/}
         validate_timeout: 1205
@@ -193,6 +195,7 @@ type: skill
         use_termination: ${USE_TERMINATION:bool:false}
         tally_api_endpoint: ${TALLY_API_ENDPOINT:str:https://api.tally.xyz/query}
         tally_api_key: ${TALLY_API_KEY_2:str:<tally_api_key>}
+        tally_api_call_sleep_seconds: ${TALLY_API_CALL_SLEEP_SECONDS:int:2}
         snapshot_api_endpoint: ${SNAPSHOT_API_ENDPOINT:str:https://hub.snapshot.org/graphql}
         service_endpoint_base: ${SERVICE_ENDPOINT_BASE:str:https://governatooorr.staging.autonolas.tech/}
         validate_timeout: 1205
@@ -247,6 +250,7 @@ type: skill
         use_termination: ${USE_TERMINATION:bool:false}
         tally_api_endpoint: ${TALLY_API_ENDPOINT:str:https://api.tally.xyz/query}
         tally_api_key: ${TALLY_API_KEY_3:str:<tally_api_key>}
+        tally_api_call_sleep_seconds: ${TALLY_API_CALL_SLEEP_SECONDS:int:2}
         snapshot_api_endpoint: ${SNAPSHOT_API_ENDPOINT:str:https://hub.snapshot.org/graphql}
         service_endpoint_base: ${SERVICE_ENDPOINT_BASE:str:https://governatooorr.staging.autonolas.tech/}
         validate_timeout: 1205

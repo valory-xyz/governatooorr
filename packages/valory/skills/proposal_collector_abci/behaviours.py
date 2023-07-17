@@ -223,7 +223,7 @@ class CollectActiveTallyProposalsBehaviour(ProposalCollectorBaseBehaviour):
             )
 
             # Wait for a couple seconds to avoid 429
-            yield from self.sleep(2)
+            yield from self.sleep(self.params.tally_api_call_sleep_seconds)
 
             # Make the request
             response = yield from self.get_http_response(

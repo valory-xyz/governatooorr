@@ -22,7 +22,8 @@
 import json
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any, Dict, Optional, Type
+from typing import Any, Dict, Generator, Optional, Type
+from unittest import mock
 
 import pytest
 
@@ -152,6 +153,12 @@ DUMMY_SNAPSHOT_RESPONSE = {"data": {"proposals": [{}] * 200}}
 DUMMY_SNAPSHOT_RESPONSE_EMPTY = {"data": {"proposals": []}}
 
 DUMMY_SNAPSHOT_RESPONSE_ERRORS = {"errors": {}}
+
+
+def mock_sleep(_seconds: int) -> Generator:
+    """A method that mocks sleep."""
+    return
+    yield
 
 
 @dataclass
@@ -351,21 +358,24 @@ class TestCollectActiveTallyProposalsBehaviour(BaseProposalCollectorTest):
         self.fast_forward(test_case.initial_data)
         self.behaviour.act_wrapper()
         # Mock API calls
-        for i in range(len(kwargs.get("urls"))):
-            self.mock_http_request(
-                request_kwargs=dict(
-                    method="POST",
-                    headers="Content-Type: application/json\r\nAccept: application/json\r\nApi-key: <tally_api_key>\r\n",
-                    version="",
-                    url=kwargs.get("urls")[i],
-                ),
-                response_kwargs=dict(
-                    version="",
-                    status_code=kwargs.get("status_codes")[i],
-                    status_text="",
-                    body=kwargs.get("bodies")[i].encode(),
-                ),
-            )
+        with mock.patch.object(
+            self.behaviour.behaviours[0], "sleep", side_effect=mock_sleep
+        ):
+            for i in range(len(kwargs.get("urls"))):
+                self.mock_http_request(
+                    request_kwargs=dict(
+                        method="POST",
+                        headers="Content-Type: application/json\r\nAccept: application/json\r\nApi-key: <tally_api_key>\r\n",
+                        version="",
+                        url=kwargs.get("urls")[i],
+                    ),
+                    response_kwargs=dict(
+                        version="",
+                        status_code=kwargs.get("status_codes")[i],
+                        status_text="",
+                        body=kwargs.get("bodies")[i].encode(),
+                    ),
+                )
         # Mock get block
         if all([code == 200 for code in kwargs.get("status_codes")]):
             self.mock_ledger_api_request(
@@ -489,21 +499,24 @@ class TestCollectActiveProposalsErrorBehaviour(BaseProposalCollectorTest):
         self.fast_forward(test_case.initial_data)
         self.behaviour.act_wrapper()
         # Mock API calls
-        for i in range(len(kwargs.get("urls"))):
-            self.mock_http_request(
-                request_kwargs=dict(
-                    method="POST",
-                    headers="Content-Type: application/json\r\nAccept: application/json\r\nApi-key: <tally_api_key>\r\n",
-                    version="",
-                    url=kwargs.get("urls")[i],
-                ),
-                response_kwargs=dict(
-                    version="",
-                    status_code=kwargs.get("status_codes")[i],
-                    status_text="",
-                    body=kwargs.get("bodies")[i].encode(),
-                ),
-            )
+        with mock.patch.object(
+            self.behaviour.behaviours[0], "sleep", side_effect=mock_sleep
+        ):
+            for i in range(len(kwargs.get("urls"))):
+                self.mock_http_request(
+                    request_kwargs=dict(
+                        method="POST",
+                        headers="Content-Type: application/json\r\nAccept: application/json\r\nApi-key: <tally_api_key>\r\n",
+                        version="",
+                        url=kwargs.get("urls")[i],
+                    ),
+                    response_kwargs=dict(
+                        version="",
+                        status_code=kwargs.get("status_codes")[i],
+                        status_text="",
+                        body=kwargs.get("bodies")[i].encode(),
+                    ),
+                )
         # Mock get block
         if "block_retrieval_performative" in kwargs:
             self.mock_ledger_api_request(

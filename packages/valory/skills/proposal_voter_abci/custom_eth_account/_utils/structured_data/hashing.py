@@ -91,9 +91,6 @@ def encode_type(primary_type, types):
     """
     Serialize types into an encoded string.
 
-    The type of a struct is encoded as:
-    name ‖ "(" ‖ member₁ ‖ "," ‖ member₂ ‖ "," ‖ … ‖ memberₙ ")"
-    where each member is written as type ‖ " " ‖ name.
     """
     # Getting the dependencies and sorting them alphabetically as per EIP712
     deps = get_dependencies(primary_type, types)

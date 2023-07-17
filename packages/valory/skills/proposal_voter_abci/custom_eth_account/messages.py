@@ -207,7 +207,7 @@ def encode_defunct(
         >>> from packages.valory.skills.proposal_voter_abci.custom_eth_account.messages import encode_defunct
         >>> from eth_utils.curried import to_hex, to_bytes
 
-        >>> message_text = "I♥SF"
+        >>> message_text = "ISF"
         >>> encode_defunct(text=message_text)
         SignableMessage(version=b'E',
                         header=b'thereum Signed Message:\n6',

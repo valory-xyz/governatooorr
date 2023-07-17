@@ -36,6 +36,10 @@ from packages.valory.protocols.llm.message import LlmMessage
 
 PUBLIC_ID = PublicId.from_str("valory/openai:0.1.0")
 
+ENGINES = {
+    "chat": ["gpt-3.5-turbo", "gpt-4"],
+    "completion": ["text-davinci-002", "text-davinci-003"],
+}
 
 class LlmDialogues(BaseLlmDialogues):
     """A class to keep track of IPFS dialogues."""
@@ -166,21 +170,38 @@ class OpenaiConnection(BaseSyncConnection):
         """Get response from openai."""
         # Format the prompt using input variables and prompt_values
         formatted_prompt = prompt_template.format(**prompt_values)
+        engine=self.openai_settings["engine"],
 
         # Call the OpenAI API
+        if engine in ENGINES["chat"]:
+            messages = [
+                {"role": "system", "content": "You are a helpful assistant."},
+                {"role": "user", "content": formatted_prompt},
+            ]
+            response = openai.ChatCompletion.create(
+                model=engine,
+                messages=messages,
+                temperature=self.openai_settings["temperature"],
+                max_tokens=self.openai_settings["max_tokens"],
+                n=1,
+                timeout=120,
+                stop=None,
+            )
+            return response.choices[0].message.content
+        
         response = openai.Completion.create(
-            engine=self.openai_settings["engine"],
+            engine=engine,
             prompt=formatted_prompt,
+            temperature=self.openai_settings["temperature"],
             max_tokens=self.openai_settings["max_tokens"],
             n=1,
             stop=None,
-            temperature=self.openai_settings["temperature"],
+            #top_p=1,
+            #frequency_penalty=0,
+            #timeout=120,
+            #presence_penalty=0,
         )
-
-        # Extract the result from the API response
-        result = response.choices[0].text
-
-        return result
+        return response.choices[0].text
 
     def on_connect(self) -> None:
         """

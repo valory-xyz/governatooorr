@@ -41,6 +41,7 @@ ENGINES = {
     "completion": ["text-davinci-002", "text-davinci-003"],
 }
 
+
 class LlmDialogues(BaseLlmDialogues):
     """A class to keep track of IPFS dialogues."""
 
@@ -170,7 +171,7 @@ class OpenaiConnection(BaseSyncConnection):
         """Get response from openai."""
         # Format the prompt using input variables and prompt_values
         formatted_prompt = prompt_template.format(**prompt_values)
-        engine=self.openai_settings["engine"],
+        engine = (self.openai_settings["engine"],)
 
         # Call the OpenAI API
         if engine in ENGINES["chat"]:
@@ -196,13 +197,9 @@ class OpenaiConnection(BaseSyncConnection):
                 max_tokens=self.openai_settings["max_tokens"],
                 n=1,
                 stop=None,
-                #top_p=1,
-                #frequency_penalty=0,
-                #timeout=120,
-                #presence_penalty=0,
             )
             output = response.choices[0].text
-        
+
         return output
 
     def on_connect(self) -> None:

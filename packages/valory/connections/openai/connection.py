@@ -187,21 +187,23 @@ class OpenaiConnection(BaseSyncConnection):
                 timeout=120,
                 stop=None,
             )
-            return response.choices[0].message.content
+            output = response.choices[0].message.content
+        else:
+            response = openai.Completion.create(
+                engine=engine,
+                prompt=formatted_prompt,
+                temperature=self.openai_settings["temperature"],
+                max_tokens=self.openai_settings["max_tokens"],
+                n=1,
+                stop=None,
+                #top_p=1,
+                #frequency_penalty=0,
+                #timeout=120,
+                #presence_penalty=0,
+            )
+            output = response.choices[0].text
         
-        response = openai.Completion.create(
-            engine=engine,
-            prompt=formatted_prompt,
-            temperature=self.openai_settings["temperature"],
-            max_tokens=self.openai_settings["max_tokens"],
-            n=1,
-            stop=None,
-            #top_p=1,
-            #frequency_penalty=0,
-            #timeout=120,
-            #presence_penalty=0,
-        )
-        return response.choices[0].text
+        return output
 
     def on_connect(self) -> None:
         """

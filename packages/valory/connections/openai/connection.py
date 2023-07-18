@@ -171,7 +171,7 @@ class OpenaiConnection(BaseSyncConnection):
         """Get response from openai."""
         # Format the prompt using input variables and prompt_values
         formatted_prompt = prompt_template.format(**prompt_values)
-        engine = (self.openai_settings["engine"],)
+        engine = self.openai_settings["engine"]
 
         # Call the OpenAI API
         if engine in ENGINES["chat"]:

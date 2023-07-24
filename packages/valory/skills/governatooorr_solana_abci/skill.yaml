@@ -18,12 +18,12 @@ contracts: []
 protocols: []
 skills:
 - valory/abstract_round_abci:0.1.0:bafybeiac62ennpw54gns2quk4g3yoaili2mb72nj6c52czobz5dcwj4mwi
-- valory/proposal_collector_solana_abci:0.1.0:bafybeihglvqdyekmy2icuftp2j6iqjr6tfmkismqyxzvddgqkw536yrpq4
-- valory/proposal_voter_solana_abci:0.1.0:bafybeidrkdvnw6g47muc2oqnbydlhaclegj5cwdliffo42se3l3snlqysq
+- valory/proposal_collector_solana_abci:0.1.0:bafybeihssd4wlllwnbd2gfur4aqdyigc7f2zmbss34njh5eltl5onbua4i
+- valory/proposal_voter_solana_abci:0.1.0:bafybeia4gdgflcylzc3xp5zwzb6w5v7lfnvzam7chuec5gltzy7thm3kzq
 - valory/registration_abci:0.1.0:bafybeib6fsfur5jnflcveidnaeylneybwazewufzwa5twnwovdqgwtwsxm
 - valory/reset_pause_abci:0.1.0:bafybeibqz7y3i4aepuprhijwdydkcsbqjtpeea6gdzpp5fgc6abrvjz25a
-- valory/solana_transaction_settlement_abci:0.1.0:bafybeidtrawsqflfgad3giakewhe3lqw345rz52a76sjz3qky2jtdfgusa
 - valory/termination_abci:0.1.0:bafybeieb3gnvjxxsh73g67m7rivzknwb63xu4qeagpkv7f4mqz33ecikem
+- valory/solana_transaction_settlement_abci:0.1.0:bafybeigtthka37ndtoe4mshyfgwio6ghmimdpwc7stxiposnr7hl2qrrdm
 behaviours:
   main:
     args: {}
@@ -132,7 +132,6 @@ models:
         consensus_threshold: null
       share_tm_config_on_startup: false
       sleep_time: 1
-      target_proposal_id: 34AxJwqZeUjYY1U3QpxP92oCCh6T61wHoWQmG5WMyDFe
       tendermint_check_sleep_delay: 3
       tendermint_com_url: http://localhost:8080
       tendermint_max_retries: 5
@@ -144,6 +143,7 @@ models:
       validate_timeout: 1205
       voting_block_threshold: 300
       voting_seconds_threshold: 10000
+      target_proposal_id: 34AxJwqZeUjYY1U3QpxP92oCCh6T61wHoWQmG5WMyDFe
     class_name: Params
   randomness_api:
     args:

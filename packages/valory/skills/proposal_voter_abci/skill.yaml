@@ -46,9 +46,9 @@ fingerprint_ignore_patterns: []
 connections:
 - valory/openai:0.1.0:bafybeietimatztynqebwicxabplia6fctov4vswzbdrin5y32brbjewo2y
 contracts:
-- valory/delegate:0.1.0:bafybeifcqdsyaecespxay57ak5apnkrbmjuxfpwvcfguaeq3s3kjdr4e3i
+- valory/delegate:0.1.0:bafybeiaslboosyvpzccaqgie56wta3aqrdkgfx5vs5ogxu7ebiez67wp6i
 - valory/gnosis_safe:0.1.0:bafybeif5fdwoxq5mscrurtuimadmtctyxxeeui45u4g6leqobzls7bsl3u
-- valory/sign_message_lib:0.1.0:bafybeihgxkdftnczghimw3igzgcmwvzojghvnncpfpdv3ldi7nsrmdplhi
+- valory/sign_message_lib:0.1.0:bafybeiamc2cle3kx26gpqigwzfq5bph5nfrzwei72cyu3v6xwcvkip6dce
 protocols:
 - valory/contract_api:1.0.0:bafybeidv6wxpjyb2sdyibnmmum45et4zcla6tl63bnol6ztyoqvpl4spmy
 - valory/llm:1.0.0:bafybeicpd5hxe5rlgp75kaqotzpy3jkdyl5pbdcutwqdzlqfknnmkgadsy
@@ -191,25 +191,25 @@ models:
     class_name: TendermintDialogues
 dependencies:
   bitarray:
-    version: <1.3.0,>=1.2.1
-  cytoolz:
-    version: ==0.12.1
+    version: '>=1.2.1,<1.3.0'
   eth-abi:
-    version: <3,>=2.0.0b7
+    version: '>=2.0.0b7,<3'
   eth-keyfile:
-    version: <0.6.0,>=0.5.0
+    version: '>=0.5.0,<0.6.0'
   eth-keys:
-    version: '!=0.3.2,<0.4.0,>=0.2.1'
+    version: '>=0.2.1,<0.4.0,!=0.3.2'
   eth-rlp:
-    version: <2,>=0.1.2
+    version: '>=0.1.2,<2'
   eth-utils:
-    version: <2,>=1.3.0
+    version: '>=1.3.0,<2'
+  hexbytes:
+    version: '>=0.1.0,<1'
+  rlp:
+    version: '>=1.0.0,<3'
   eth_typing:
     version: ==2.3.0
-  hexbytes:
-    version: <1,>=0.1.0
-  rlp:
-    version: <3,>=1.0.0
+  cytoolz:
+    version: ==0.12.1
   toolz:
     version: ==0.12.0
 is_abstract: true

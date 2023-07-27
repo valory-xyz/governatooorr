@@ -82,7 +82,7 @@ class SharedState(BaseSharedState):
         ] = self.context.params.round_timeout_seconds
         GovernatooorrAbciApp.event_to_timeout[
             ProposalCollectorEvent.ROUND_TIMEOUT
-        ] = self.context.params.round_timeout_seconds
+        ] = self.context.params.round_timeout_seconds * MULTIPLIER
         GovernatooorrAbciApp.event_to_timeout[
             CeramicWriteEvent.ROUND_TIMEOUT
         ] = self.context.params.round_timeout_seconds

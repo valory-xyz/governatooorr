@@ -11,7 +11,7 @@ fingerprint:
   __init__.py: bafybeifuuqsyfumvixszhvpvk7tozjbadyr3lwmqcw2ky5p4hbo5ks6e5u
   dialogues.py: bafybeieqg57udbbsohjcsbav2qzor3nxbyrtwxyuhhnk33plc4nwpwbjym
   llm.proto: bafybeiah7wq6spk7sr2ctwlutj3dn6sq3erbgm6ihja7abl7czoyoanyu4
-  llm_pb2.py: bafybeihagcvaz53kkozrbipqlusn3vd5juse27wqufeccddxp5hqa3uere
+  llm_pb2.py: bafybeiaj5kmlnktngoq5yqvldwfqbylkwbaeq2j2v6ingrq64hm74vrc4y
   message.py: bafybeichahp2zsq7qy4pihnoln7cypvhaz26tpvqy7cl4bhmykba7n3lvq
   serialization.py: bafybeihevnup6zufmj7glxoysfgzwvod7jtqqvhsr7fylm4j3u7rhhxowe
   tests/test_llm_dialogues.py: bafybeidwlfooa5twtj74wm3wumlune2e7h5voef7he5sa37hy4fca56a4i

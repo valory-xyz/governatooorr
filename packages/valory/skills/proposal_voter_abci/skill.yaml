@@ -8,7 +8,7 @@ license: Apache-2.0
 aea_version: '>=1.0.0, <2.0.0'
 fingerprint:
   __init__.py: bafybeifps6e4vfc55iyb5jaab7dxem7y3a2wyflai32pyzf4z75m5ngym4
-  behaviours.py: bafybeieuk6votox65v7k42i6k535vv7k6addghkzn7ii52xc2ukuvob5za
+  behaviours.py: bafybeifxqngyy35ewjmfzuiig6yi4rusdkeyivnh5svqyut23ncrcvictu
   custom_eth_account/__init__.py: bafybeigca3depnxqoqjq4hrxzjtiohya7p7637lwhrfg6a7c2d2ufnz6xm
   custom_eth_account/_utils/legacy_transactions.py: bafybeidno6ltysjvihm7562kdmoixxvhgy7zp5liyg5k7bdqo5wjb6uc6e
   custom_eth_account/_utils/signing.py: bafybeifwpyl2y6ct6jfdoo7r2sngdur2hfs7ks5tafmottv4ehipqg6pje
@@ -34,7 +34,7 @@ fingerprint:
   handlers.py: bafybeihex227foehp7a7wfc6vh25ahk5g65b5itu325hph2xj33mgp6kue
   models.py: bafybeiezhvva5nlqt7bu37fcuwj73rweomojd4qadn7tx6q2mwkvh46kli
   payloads.py: bafybeid5phynue7fcvsqwkg2wafm65vasc3m6aeyakqocnxrteiqghb3ia
-  rounds.py: bafybeifxsr2nnoi4tbci3n3fqxejf6vj5trgduml7zwofo4rse53zzwioi
+  rounds.py: bafybeig4xjloe6l6bm4wekopxfgx3bi7tjbvlapmpnf54edf66hri2zlyu
   snapshot.py: bafybeiael35k6td5gdw5z552gjkt6r2itsoarmoxisdlj2psu2inpzubne
   tests/__init__.py: bafybeicnpfbu2732mdlaputxl4izv5yfievyodmjzy5w64r2e5zyqycigu
   tests/test_behaviours.py: bafybeiefueo4wr5n6lxjvdlheteq65wsff4f32r6cgmjpcy7wnyy5ajaqi
@@ -44,17 +44,17 @@ fingerprint:
   tests/test_rounds.py: bafybeiec4swkw2f4c5mjxviabhtnauabxla3zfmsqmsyqwnkqyokp4m5p4
 fingerprint_ignore_patterns: []
 connections:
-- valory/openai:0.1.0:bafybeietimatztynqebwicxabplia6fctov4vswzbdrin5y32brbjewo2y
+- valory/openai:0.1.0:bafybeifq7khwp42btuiulw2fdnr5wnf5uqimnclswzyk3bneunrimwaamm
 contracts:
-- valory/delegate:0.1.0:bafybeiaslboosyvpzccaqgie56wta3aqrdkgfx5vs5ogxu7ebiez67wp6i
-- valory/gnosis_safe:0.1.0:bafybeif5fdwoxq5mscrurtuimadmtctyxxeeui45u4g6leqobzls7bsl3u
-- valory/sign_message_lib:0.1.0:bafybeiamc2cle3kx26gpqigwzfq5bph5nfrzwei72cyu3v6xwcvkip6dce
+- valory/delegate:0.1.0:bafybeieqjhcoyuvyaluqxkuyr7jt6la7lkjjz6ntex6urru4tfa6chkcme
+- valory/gnosis_safe:0.1.0:bafybeibhezhwgi5ustv675gfohsq5l5xjijp36gqueuicyl2ofrtkrortm
+- valory/sign_message_lib:0.1.0:bafybeic6y2kclcjgbel4hbr3devww7hmax44x6sx5lmnu2gpn3pvwldxlu
 protocols:
-- valory/contract_api:1.0.0:bafybeidv6wxpjyb2sdyibnmmum45et4zcla6tl63bnol6ztyoqvpl4spmy
-- valory/llm:1.0.0:bafybeicpd5hxe5rlgp75kaqotzpy3jkdyl5pbdcutwqdzlqfknnmkgadsy
+- valory/contract_api:1.0.0:bafybeiasywsvax45qmugus5kxogejj66c5taen27h4voriodz7rgushtqa
+- valory/llm:1.0.0:bafybeicb4fmd2ravxzypvjllfg2uwp7plyctjtgeychk3wksz4t3ziqx3i
 skills:
-- valory/abstract_round_abci:0.1.0:bafybeiac62ennpw54gns2quk4g3yoaili2mb72nj6c52czobz5dcwj4mwi
-- valory/transaction_settlement_abci:0.1.0:bafybeihdpac4ayfgop3ixflimlb3zzyeejlpqtljfptdak6tc7aq4u5fzi
+- valory/abstract_round_abci:0.1.0:bafybeibqpzbklnljvtc67yon4ciijxj75d7vazm7rurcvbbfnk6jtudukm
+- valory/transaction_settlement_abci:0.1.0:bafybeiepus7qsa47gt7dyk32gaqsoae6whjoxfnplttulxrvmcauyerrdm
 behaviours:
   main:
     args: {}

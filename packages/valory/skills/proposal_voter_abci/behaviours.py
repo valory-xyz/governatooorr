@@ -339,7 +339,7 @@ class EstablishVoteBehaviour(ProposalVoterBaseBehaviour):
         voting_power = response_json["data"]["vp"]["vp"]
         has_voting_power = voting_power > 0
         self.context.logger.info(
-            f"Voting power for proposal {proposal['id']}: {voting_power}"
+            f"Voting power for proposal {proposal['id']} [{proposal['space']['name']}]: {voting_power}"
         )
         return has_voting_power
 

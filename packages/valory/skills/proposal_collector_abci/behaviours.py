@@ -131,7 +131,6 @@ class CollectActiveTallyProposalsBehaviour(ProposalCollectorBaseBehaviour):
         """Do the act, supporting asynchronous execution."""
 
         with self.context.benchmark_tool.measure(self.behaviour_id).local():
-
             # Clear the new delegations # TODO: move this elsewhere
             self.context.state.new_delegations = []
 
@@ -209,7 +208,6 @@ class CollectActiveTallyProposalsBehaviour(ProposalCollectorBaseBehaviour):
 
         active_proposals = []
         for gid in governor_ids:
-
             # Get all the proposals for this governor
             variables = {
                 "chainId": "eip155:1",
@@ -354,7 +352,6 @@ class CollectActiveSnapshotProposalsBehaviour(ProposalCollectorBaseBehaviour):
         """Do the act, supporting asynchronous execution."""
 
         with self.context.benchmark_tool.measure(self.behaviour_id).local():
-
             updated_proposals = yield from self._get_updated_proposals()
             sender = self.context.agent_address
             payload = CollectActiveSnapshotProposalsPayload(
@@ -386,7 +383,6 @@ class CollectActiveSnapshotProposalsBehaviour(ProposalCollectorBaseBehaviour):
         finished = False
 
         while True:
-
             skip = n_retrieved_proposals + SNAPSHOT_REQUEST_STEP * i
 
             self.context.logger.info(

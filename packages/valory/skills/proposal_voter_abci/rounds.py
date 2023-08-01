@@ -173,7 +173,6 @@ class PrepareVoteTransactionRound(CollectSameUntilThresholdRound):
     def end_block(self) -> Optional[Tuple[BaseSynchronizedData, Event]]:
         """Process the end of the block."""
         if self.threshold_reached:
-
             payload = json.loads(self.most_voted_payload)
 
             if payload["tx_hash"] == PrepareVoteTransactionRound.ERROR_PAYLOAD:
@@ -223,7 +222,6 @@ class RetrieveSignatureRound(CollectSameUntilThresholdRound):
     def end_block(self) -> Optional[Tuple[BaseSynchronizedData, Event]]:
         """Process the end of the block."""
         if self.threshold_reached:
-
             if self.most_voted_payload == self.SKIP_PAYLOAD:
                 return self.synchronized_data, Event.DONE
 

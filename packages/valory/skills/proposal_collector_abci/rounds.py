@@ -144,7 +144,6 @@ class SynchronizeDelegationsRound(CollectDifferentUntilAllRound):
         """Process the end of the block."""
 
         if self.collection_threshold_reached:
-
             delegations = cast(SynchronizedData, self.synchronized_data).delegations
             proposals = cast(SynchronizedData, self.synchronized_data).proposals
             proposals_to_refresh = set()
@@ -216,7 +215,6 @@ class CollectActiveTallyProposalsRound(CollectSameUntilThresholdRound):
     def end_block(self) -> Optional[Tuple[BaseSynchronizedData, Event]]:
         """Process the end of the block."""
         if self.threshold_reached:
-
             if (
                 self.most_voted_payload
                 == CollectActiveTallyProposalsRound.ERROR_PAYLOAD
@@ -297,7 +295,6 @@ class CollectActiveSnapshotProposalsRound(CollectSameUntilThresholdRound):
     def end_block(self) -> Optional[Tuple[BaseSynchronizedData, Event]]:
         """Process the end of the block."""
         if self.threshold_reached:
-
             if self.most_voted_payload == self.ERROR_PAYLOAD:
                 snapshot_api_retries = cast(
                     SynchronizedData, self.synchronized_data

@@ -130,7 +130,6 @@ class EstablishVoteBehaviour(ProposalVoterBaseBehaviour):
         """Do the act, supporting asynchronous execution."""
 
         with self.context.benchmark_tool.measure(self.behaviour_id).local():
-
             proposals = yield from self._refresh_proposal_vote()
             votable_snapshot_proposals = (
                 yield from self._get_votable_snapshot_proposals()
@@ -749,7 +748,6 @@ class RetrieveSignatureBehaviour(ProposalVoterBaseBehaviour):
         """Do the act, supporting asynchronous execution."""
 
         with self.context.benchmark_tool.measure(self.behaviour_id).local():
-
             if not self.context.state.pending_vote.snapshot:
                 payload_content = RetrieveSignatureRound.SKIP_PAYLOAD
             else:

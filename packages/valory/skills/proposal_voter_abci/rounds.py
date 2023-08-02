@@ -295,8 +295,8 @@ class SnapshotAPISendRound(OnlyKeeperSendsRound):
         Tuple[BaseSynchronizedData, Enum]
     ]:  # pylint: disable=too-many-return-statements
         """Process the end of the block."""
-        if self.keeper_payload is None:  # pragma: no cover
-            return self.synchronized_data, Event.DID_NOT_SEND
+        if self.keeper_payload is None:
+            return None
 
         if (
             cast(SnapshotAPISendPayload, self.keeper_payload).content
@@ -325,7 +325,13 @@ class SnapshotAPISendRound(OnlyKeeperSendsRound):
             )
             return synchronized_data, Event.MAX_RETRIES
 
-        return self.synchronized_data, Event.DONE
+        if (
+            cast(SnapshotAPISendPayload, self.keeper_payload).content
+            == self.SUCCCESS_PAYLOAD
+        ):
+            return self.synchronized_data, Event.DONE
+
+        return self.synchronized_data, Event.DID_NOT_SEND
 
 
 class FinishedTransactionPreparationVoteRound(DegenerateRound):

@@ -443,8 +443,8 @@ class TestSelectKeeperRound(BaseRoundTestClass):
         assert event == Event.DONE
 
 
-class TestStreamWriteRound(BaseOnlyKeeperSendsRoundTest):
-    """Test StreamWriteRound."""
+class TestSnapshotAPISendRound(BaseOnlyKeeperSendsRoundTest):
+    """Test SnapshotAPISendRound."""
 
     _synchronized_data_class = SynchronizedData
     _event_class = Event

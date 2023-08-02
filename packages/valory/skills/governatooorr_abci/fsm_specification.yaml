@@ -14,6 +14,7 @@ alphabet_in:
 - FINALIZE_TIMEOUT
 - INCORRECT_SERIALIZATION
 - INSUFFICIENT_FUNDS
+- MAX_RETRIES
 - MAX_RETRIES_ERROR
 - NEGATIVE
 - NONE
@@ -150,6 +151,7 @@ transition_func:
     (SnapshotAPISendRound, API_ERROR): SnapshotAPISendRandomnessRound
     (SnapshotAPISendRound, DID_NOT_SEND): SnapshotAPISendRandomnessRound
     (SnapshotAPISendRound, DONE): PrepareVoteTransactionRound
+    (SnapshotAPISendRound, MAX_RETRIES): PrepareVoteTransactionRound
     (SnapshotAPISendRound, ROUND_TIMEOUT): SnapshotAPISendRandomnessRound
     (SnapshotAPISendSelectKeeperRound, DONE): SnapshotAPISendRound
     (SnapshotAPISendSelectKeeperRound, NO_MAJORITY): SnapshotAPISendRandomnessRound

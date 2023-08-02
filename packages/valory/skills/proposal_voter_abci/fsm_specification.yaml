@@ -4,6 +4,7 @@ alphabet_in:
 - CONTRACT_ERROR
 - DID_NOT_SEND
 - DONE
+- MAX_RETRIES
 - NO_MAJORITY
 - NO_VOTE
 - RETRIEVAL_ERROR
@@ -47,6 +48,7 @@ transition_func:
     (SnapshotAPISendRound, API_ERROR): SnapshotAPISendRandomnessRound
     (SnapshotAPISendRound, DID_NOT_SEND): SnapshotAPISendRandomnessRound
     (SnapshotAPISendRound, DONE): PrepareVoteTransactionRound
+    (SnapshotAPISendRound, MAX_RETRIES): PrepareVoteTransactionRound
     (SnapshotAPISendRound, ROUND_TIMEOUT): SnapshotAPISendRandomnessRound
     (SnapshotAPISendSelectKeeperRound, DONE): SnapshotAPISendRound
     (SnapshotAPISendSelectKeeperRound, NO_MAJORITY): SnapshotAPISendRandomnessRound

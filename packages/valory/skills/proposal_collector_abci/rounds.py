@@ -203,9 +203,6 @@ class SynchronizeDelegationsRound(CollectDifferentUntilAllRound):
 class WriteDelegationsRound(CollectSameUntilThresholdRound):
     """WriteDelegationsRound"""
 
-    ERROR_PAYLOAD = "ERROR_PAYLOAD"
-    MAX_RETRIES_PAYLOAD = "MAX_RETRIES_PAYLOAD"
-
     payload_class = CollectActiveSnapshotProposalsPayload
     synchronized_data_class = SynchronizedData
 
@@ -213,10 +210,6 @@ class WriteDelegationsRound(CollectSameUntilThresholdRound):
         """Process the end of the block."""
         if self.threshold_reached:
             write_data = json.loads(self.most_voted_payload)
-            write_data["data"] = cast(
-                SynchronizedData, self.synchronized_data
-            ).delegations
-
             synchronized_data = self.synchronized_data.update(
                 synchronized_data_class=SynchronizedData,
                 **{

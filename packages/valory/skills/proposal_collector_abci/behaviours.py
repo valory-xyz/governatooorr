@@ -138,6 +138,7 @@ class WriteDelegationsBehaviour(ProposalCollectorBaseBehaviour):
                     "stream_id": self.params.delegations_stream_id,
                     "did_str": self.params.ceramic_did_str,
                     "did_seed": self.params.ceramic_did_seed,
+                    "data": self.synchronized_data.delegations,
                 }
             ]
 

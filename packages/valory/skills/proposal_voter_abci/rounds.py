@@ -60,6 +60,7 @@ class Event(Enum):
     API_ERROR = "api_error"
     CALL_API = "call_api"
     RETRIEVAL_ERROR = "retrieval_error"
+    MAX_RETRIES = "max_retries"
 
 
 class SynchronizedData(BaseSynchronizedData):
@@ -133,6 +134,11 @@ class SynchronizedData(BaseSynchronizedData):
         """Get the verified tx hash."""
         return cast(str, self.db.get_strict("final_tx_hash"))
 
+    @property
+    def snapshot_api_retries(self) -> int:
+        """Get the amount of API call retries."""
+        return cast(int, self.db.get("snapshot_api_retries", 0))
+
 
 class EstablishVoteRound(CollectSameUntilThresholdRound):
     """EstablishVoteRound"""
@@ -151,7 +157,7 @@ class EstablishVoteRound(CollectSameUntilThresholdRound):
                     get_name(SynchronizedData.votable_snapshot_proposals): payload[
                         "votable_snapshot_proposals"
                     ],
-                }
+                },
             )
             return synchronized_data, Event.DONE
         if not self.is_majority_possible(
@@ -186,7 +192,7 @@ class PrepareVoteTransactionRound(CollectSameUntilThresholdRound):
                         get_name(
                             SynchronizedData.snapshot_proposals
                         ): [],  # clear snapshot proposals to avoid too big registration payloads
-                    }
+                    },
                 )
                 return synchronized_data, Event.NO_VOTE
 
@@ -201,7 +207,7 @@ class PrepareVoteTransactionRound(CollectSameUntilThresholdRound):
                     get_name(SynchronizedData.snapshot_api_data): payload[
                         "snapshot_api_data"
                     ],
-                }
+                },
             )
             return synchronized_data, Event.VOTE
         if not self.is_majority_possible(
@@ -237,7 +243,7 @@ class RetrieveSignatureRound(CollectSameUntilThresholdRound):
                     get_name(
                         SynchronizedData.snapshot_api_data_signature
                     ): snapshot_api_data_signature,
-                }
+                },
             )
             return synchronized_data, Event.CALL_API
 
@@ -281,6 +287,7 @@ class SnapshotAPISendRound(OnlyKeeperSendsRound):
 
     SUCCCESS_PAYLOAD = "success"
     ERROR_PAYLOAD = "error"
+    MAX_RETRIES_PAYLOAD = "max_retries_payload"
 
     def end_block(
         self,
@@ -288,9 +295,6 @@ class SnapshotAPISendRound(OnlyKeeperSendsRound):
         Tuple[BaseSynchronizedData, Enum]
     ]:  # pylint: disable=too-many-return-statements
         """Process the end of the block."""
-        if self.keeper_payload is None:
-            return None
-
         if self.keeper_payload is None:  # pragma: no cover
             return self.synchronized_data, Event.DID_NOT_SEND
 
@@ -298,7 +302,28 @@ class SnapshotAPISendRound(OnlyKeeperSendsRound):
             cast(SnapshotAPISendPayload, self.keeper_payload).content
             == self.ERROR_PAYLOAD
         ):
-            return self.synchronized_data, Event.API_ERROR
+            snapshot_api_retries = cast(
+                SynchronizedData, self.synchronized_data
+            ).snapshot_api_retries
+            synchronized_data = self.synchronized_data.update(
+                synchronized_data_class=SynchronizedData,
+                **{
+                    get_name(
+                        SynchronizedData.snapshot_api_retries
+                    ): snapshot_api_retries
+                    + 1,
+                },
+            )
+            return synchronized_data, Event.API_ERROR
+
+        if self.keeper_payload == SnapshotAPISendRound.MAX_RETRIES_PAYLOAD:
+            synchronized_data = self.synchronized_data.update(
+                synchronized_data_class=SynchronizedData,
+                **{
+                    get_name(SynchronizedData.snapshot_api_retries): 0,
+                },
+            )
+            return synchronized_data, Event.MAX_RETRIES
 
         return self.synchronized_data, Event.DONE
 
@@ -356,6 +381,7 @@ class ProposalVoterAbciApp(AbciApp[Event]):
             Event.DID_NOT_SEND: SnapshotAPISendRandomnessRound,
             Event.DONE: PrepareVoteTransactionRound,
             Event.ROUND_TIMEOUT: SnapshotAPISendRandomnessRound,
+            Event.MAX_RETRIES: PrepareVoteTransactionRound,
         },
         FinishedTransactionPreparationVoteRound: {},
     }

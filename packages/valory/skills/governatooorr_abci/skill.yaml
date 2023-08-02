@@ -21,7 +21,7 @@ skills:
 - valory/abstract_round_abci:0.1.0:bafybeibqpzbklnljvtc67yon4ciijxj75d7vazm7rurcvbbfnk6jtudukm
 - valory/ceramic_read_abci:0.1.0:bafybeib36m6fi5swu43s3amtbk7w5rfie2gvzgw3xhxd7yfnka4kpcegme
 - valory/ceramic_write_abci:0.1.0:bafybeifdjb2iisvtgwo44xoddhrbgqehbis6tbjdktuhh6ehwm5bnuee74
-- valory/proposal_collector_abci:0.1.0:bafybeidg3nxyo6ecmual74wcujo7wjvnytr4co5golyen6hehko5fwdv4q
+- valory/proposal_collector_abci:0.1.0:bafybeigcb62jq7hjtjq3fwclggyfxtb3zvzivn36z247yfp4mewsumxxuq
 - valory/proposal_voter_abci:0.1.0:bafybeiavifumevnp3s6z2yp3hssc67wglrvvwd4ynnp6e3vm3rtbkz7gsu
 - valory/registration_abci:0.1.0:bafybeia25gpusnkakb2dp4heqkwtuftbc2apppq3i4bds6sphltsovgzvi
 - valory/reset_pause_abci:0.1.0:bafybeigzvwbzktclahjbsyiwqnj6poree4iveon5pric6s5ixb6wrhkdhq
@@ -91,7 +91,6 @@ models:
       default_read_stream_id: default_read_stream_id
       default_read_target_property: default_read_target_property
       default_write_stream_id: default_write_stream_id
-      default_write_target_property: default_write_target_property
       drand_public_key: 868f005eb8e6e4ca0a47c8a77ceaa5309a47978a7c71bc5cce96366b5d7a569937c529eeda66c7293784a9402801af31
       finalize_timeout: 60.0
       genesis_config:

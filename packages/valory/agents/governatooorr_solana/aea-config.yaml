@@ -31,7 +31,7 @@ protocols:
 skills:
 - valory/abstract_abci:0.1.0:bafybeih3bwx5apteinnoxts7sqmjlskntdbo7vvnmdbs5noo2pv76by7fu
 - valory/abstract_round_abci:0.1.0:bafybeibqpzbklnljvtc67yon4ciijxj75d7vazm7rurcvbbfnk6jtudukm
-- valory/governatooorr_solana_abci:0.1.0:bafybeif3abs2d5mlb4qyxa6ebqawj5n2ly6ufwbqlbecvhatdt5tubzoua
+- valory/governatooorr_solana_abci:0.1.0:bafybeieobugmqkjt7fekecrbdgeskm4dd6gyat5sujpakewurmloh23sou
 - valory/proposal_collector_solana_abci:0.1.0:bafybeigsl3ezgoizzaxvjbn5n3ayrc7o3jn3ispo5jag3pntcgcuxuznee
 - valory/proposal_voter_solana_abci:0.1.0:bafybeia2u2qhqm6vwglw2f3qeem6ieh764m7yj2a6nvjj7j25hsbpe7c3e
 - valory/registration_abci:0.1.0:bafybeia25gpusnkakb2dp4heqkwtuftbc2apppq3i4bds6sphltsovgzvi
@@ -183,5 +183,4 @@ models:
       default_read_stream_id: ${str:default_read_stream_id}
       default_write_stream_id: ${str:default_write_stream_id}
       default_read_target_property: ${str:delegations}
-      default_write_target_property: ${str:delegations}
       target_proposal_id: ${str:34AxJwqZeUjYY1U3QpxP92oCCh6T61wHoWQmG5WMyDFe}

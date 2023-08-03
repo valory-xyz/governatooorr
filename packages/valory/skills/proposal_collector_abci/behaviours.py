@@ -29,7 +29,7 @@ from packages.valory.skills.abstract_round_abci.behaviours import (
     AbstractRoundBehaviour,
     BaseBehaviour,
 )
-from packages.valory.skills.proposal_collector_abci.models import Params
+from packages.valory.skills.proposal_collector_abci.models import Params, SharedState
 from packages.valory.skills.proposal_collector_abci.payloads import (
     CollectActiveSnapshotProposalsPayload,
     CollectActiveTallyProposalsPayload,
@@ -46,6 +46,7 @@ from packages.valory.skills.proposal_collector_abci.rounds import (
 )
 from packages.valory.skills.proposal_collector_abci.snapshot import (
     snapshot_proposal_query,
+    snapshot_vp_query,
 )
 from packages.valory.skills.proposal_collector_abci.tally import (
     governor_query,
@@ -138,7 +139,7 @@ class WriteDelegationsBehaviour(ProposalCollectorBaseBehaviour):
                     "stream_id": self.params.delegations_stream_id,
                     "did_str": self.params.ceramic_did_str,
                     "did_seed": self.params.ceramic_did_seed,
-                    "data": self.synchronized_data.delegations,
+                    "data": self.synchronized_data.ceramic_db,
                 }
             ]
 
@@ -171,10 +172,10 @@ class CollectActiveTallyProposalsBehaviour(ProposalCollectorBaseBehaviour):
             # Clear the new delegations # TODO: move this elsewhere
             self.context.state.new_delegations = []
 
-            updated_proposals = yield from self._get_updated_proposals()
+            updated_proposal_data = yield from self._get_updated_proposal_data()
             sender = self.context.agent_address
             payload = CollectActiveTallyProposalsPayload(
-                sender=sender, proposals=updated_proposals
+                sender=sender, proposal_data=updated_proposal_data
             )
 
         with self.context.benchmark_tool.measure(self.behaviour_id).consensus():
@@ -183,7 +184,7 @@ class CollectActiveTallyProposalsBehaviour(ProposalCollectorBaseBehaviour):
 
         self.set_done()
 
-    def _get_updated_proposals(self) -> Generator[None, None, str]:
+    def _get_updated_proposal_data(self) -> Generator[None, None, str]:
         """Get proposals mentions"""
 
         headers = {
@@ -288,7 +289,7 @@ class CollectActiveTallyProposalsBehaviour(ProposalCollectorBaseBehaviour):
                 )
                 return CollectActiveTallyProposalsRound.ERROR_PAYLOAD
 
-            # Filter out non-active proposals and those which use non-erc20 tokens
+            # Filter out non-active proposals and those which use non-erc20 tokens, as well as those which use more than 1 token
             filtered_proposals = list(
                 filter(
                     lambda p: p["statusChanges"][-1]["type"] == "ACTIVE"
@@ -315,62 +316,51 @@ class CollectActiveTallyProposalsBehaviour(ProposalCollectorBaseBehaviour):
             lambda ap: ap["end"]["number"] > current_block, active_proposals
         )
 
-        # Update the current proposals
-        proposals = self.synchronized_data.proposals
+        # Remove proposals where we don't have voting power
+        ceramic_db = self.synchronized_data.ceramic_db
+        delegations = ceramic_db["delegations"]
+        delegated_tokens = [d["token_address"] for d in delegations]
+        delegation_governors = [d["governor_address"] for d in delegations]
 
-        # Set all the current proposals "votable" field to False
-        for proposal in proposals.values():
-            proposal["votable"] = False
+        active_proposals = filter(
+            lambda ap: ap["governor"]["tokens"][0]["id"] in delegated_tokens
+            and ap["governor"]["id"].split(":")[-1] in delegation_governors,
+            active_proposals,
+        )
 
-        proposals_to_refresh = set()
+        # Remove proposals where we have already voted
+        active_proposals = filter(
+            lambda ap: ap["id"] not in ceramic_db["voted_proposals"]["tally"],
+            active_proposals,
+        )
+
+        # Process active proposals
+        previous_proposals = self.synchronized_data.active_proposals["tally"]
+        previous_proposals = {
+            k: v
+            for k, v in previous_proposals.items()
+            if v["end"]["number"] > current_block  # remove previous expired proposals
+        }
 
         for active_proposal in active_proposals:
-            if active_proposal["id"] not in proposals:  # This is a new proposal
-                proposals[active_proposal["id"]] = {
+            if (
+                active_proposal["id"] not in previous_proposals
+            ):  # This is a new proposal
+                previous_proposals[active_proposal["id"]] = {
                     **active_proposal,
-                    "votable": True,
                     "vote_intention": None,
-                    "vote_choice": None,
-                    "vote": None,  # We have not voted for this one yet
                     "remaining_blocks": active_proposal["end"]["number"]
                     - current_block,
                 }
-                proposals_to_refresh.add(active_proposal["id"])
             else:
-                # The proposal is still votable
-                proposals[active_proposal["id"]]["votable"] = True
-                proposals[active_proposal["id"]]["remaining_blocks"] = (
-                    proposals[active_proposal["id"]]["end"]["number"] - current_block
+                previous_proposals[active_proposal["id"]]["remaining_blocks"] = (
+                    previous_proposals[active_proposal["id"]]["end"]["number"]
+                    - current_block
                 )
-
-        # Get all the governors from the current delegations
-        delegation_governors = [
-            d["governor_address"] for d in self.synchronized_data.delegations
-        ]
-
-        # Get the proposals where we can vote:
-        # - Votable
-        # - Not voted before
-        # - Governor in the delegation list
-        votable_proposals = (
-            proposal
-            for proposal in proposals.values()
-            if proposal["votable"]
-            and not proposal["vote"]
-            and proposal["governor"]["id"].split(":")[-1] in delegation_governors
-        )
-
-        # Sort votable_proposals by vote end block number, in ascending order
-        votable_proposal_ids = [
-            p["id"]
-            for p in sorted(votable_proposals, key=lambda p: p["remaining_blocks"])
-        ]
 
         return json.dumps(
             {
-                "proposals": proposals,
-                "votable_proposal_ids": votable_proposal_ids,
-                "proposals_to_refresh": list(proposals_to_refresh),
+                "updated_tally_proposals": previous_proposals,
             },
             sort_keys=True,
         )
@@ -389,10 +379,10 @@ class CollectActiveSnapshotProposalsBehaviour(ProposalCollectorBaseBehaviour):
         """Do the act, supporting asynchronous execution."""
 
         with self.context.benchmark_tool.measure(self.behaviour_id).local():
-            updated_proposals = yield from self._get_updated_proposals()
+            proposal_data = yield from self._get_updated_proposal_data()
             sender = self.context.agent_address
             payload = CollectActiveSnapshotProposalsPayload(
-                sender=sender, proposals=updated_proposals
+                sender=sender, proposal_data=proposal_data
             )
 
         with self.context.benchmark_tool.measure(self.behaviour_id).consensus():
@@ -401,12 +391,8 @@ class CollectActiveSnapshotProposalsBehaviour(ProposalCollectorBaseBehaviour):
 
         self.set_done()
 
-    def _get_updated_proposals(self) -> Generator[None, None, str]:
-        """Get updated proposals"""
-
-        active_proposals = []
-        i = 0
-        n_retrieved_proposals = len(self.synchronized_data.snapshot_proposals)
+    def _get_updated_proposal_data(self) -> Generator[None, None, str]:
+        """Get updated proposal data"""
 
         self.context.logger.info(
             f"Getting proposals from Snapshot API: {self.params.snapshot_api_endpoint}"
@@ -418,6 +404,9 @@ class CollectActiveSnapshotProposalsBehaviour(ProposalCollectorBaseBehaviour):
         }
 
         finished = False
+        i = 0
+        n_retrieved_proposals = self.synchronized_data.n_snapshot_retrieved_proposals
+        active_proposals = []
 
         while True:
             skip = n_retrieved_proposals + SNAPSHOT_REQUEST_STEP * i
@@ -473,13 +462,105 @@ class CollectActiveSnapshotProposalsBehaviour(ProposalCollectorBaseBehaviour):
                 self.context.logger.info("Reached proposal payload limit")
                 break
 
+        n_retrieved_proposals += len(active_proposals)
+        ceramic_db = self.synchronized_data.ceramic_db
+        previous_proposals = self.synchronized_data.active_proposals["snapshot"]
+
+        # Remove previous expired proposals
+        now = cast(
+            SharedState, self.context.state
+        ).round_sequence.last_round_transition_timestamp.timestamp()
+
+        previous_proposals = {
+            k: v for k, v in previous_proposals.items() if v["end"] > now
+        }
+
+        # Remove active proposals where we have already voted
+        active_proposals = filter(
+            lambda ap: ap["id"] not in ceramic_db["voted_proposals"]["snapshot"],
+            active_proposals,
+        )
+
+        # Filter out proposals that do not use the erc20-balance-of strategy
+        active_proposals = filter(
+            lambda ap: "erc20-balance-of" in [s["name"] for s in ap["strategies"]],
+            active_proposals,
+        )
+
+        # Remove proposals where we dont have voting power
+        active_proposals = filter(
+            lambda ap: self._has_snapshot_voting_power(ap),
+            active_proposals,
+        )
+
+        for active_proposal in active_proposals:
+            if (
+                active_proposal["id"] not in previous_proposals
+            ):  # This is a new proposal
+                previous_proposals[active_proposal["id"]] = {
+                    **active_proposal,
+                    "vote_intention": None,
+                    "remaining_seconds": active_proposal["end"] - now,
+                }
+            else:
+                previous_proposals[active_proposal["id"]]["remaining_seconds"] = (
+                    active_proposal["end"] - now
+                )
+
         return json.dumps(
             {
-                "snapshot_proposals": active_proposals,
+                "updated_snapshot_proposals": active_proposals,
+                "n_retrieved_proposals": n_retrieved_proposals,
                 "finished": finished,
             },
             sort_keys=True,
         )
+
+    def _has_snapshot_voting_power(self, proposal) -> Generator[None, None, bool]:
+        """Checks whether the safe has voting power on this proposal"""
+
+        variables = {
+            "voter": self.synchronized_data.safe_contract_address,
+            "space": proposal["space"]["name"],
+            "proposal": proposal["id"],
+        }
+
+        headers = {
+            "Content-Type": "application/json",
+            "Accept": "application/json",
+        }
+
+        # Make the request
+        response = yield from self.get_http_response(
+            method="POST",
+            url=self.params.snapshot_api_endpoint,
+            content=json.dumps(
+                {"query": snapshot_vp_query, "variables": variables}
+            ).encode("utf-8"),
+            headers=headers,
+        )
+
+        if response.status_code != HTTP_OK:
+            self.context.logger.error(
+                f"Could not retrieve voting power from Snapshot API. "
+                f"Received status code {response.status_code}."
+            )
+            return False  # we skip this proposal for now
+
+        response_json = json.loads(response.body)
+
+        if "errors" in response_json:
+            self.context.logger.error(
+                f"Got errors while retrieving voting power from Snapshot: {response_json}"
+            )
+            return False  # we skip this proposal for now
+
+        voting_power = response_json["data"]["vp"]["vp"]
+        has_voting_power = voting_power > 0
+        self.context.logger.info(
+            f"Voting power for proposal {proposal['id']} [{proposal['space']['name']}]: {voting_power}"
+        )
+        return has_voting_power
 
 
 class ProposalCollectorRoundBehaviour(AbstractRoundBehaviour):

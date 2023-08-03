@@ -41,9 +41,7 @@ class PendingVote:
 
     proposal_id: str
     vote_choice: Union[str, int]
-    snapshot: bool  # onchain or snapshot
-    # a pending vote is not votable anymore
-    votable = False
+    is_snapshot: bool  # onchain or snapshot
 
 
 class SharedState(BaseSharedState):

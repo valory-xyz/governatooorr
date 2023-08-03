@@ -42,11 +42,11 @@ class WriteDelegationsPayload(BaseTxPayload):
 class CollectActiveTallyProposalsPayload(BaseTxPayload):
     """Represent a transaction payload for the CollectActiveTallyProposals."""
 
-    proposals: str
+    proposal_data: str
 
 
 @dataclass(frozen=True)
 class CollectActiveSnapshotProposalsPayload(BaseTxPayload):
     """Represent a transaction payload for the CollectActiveSnapshotProposals."""
 
-    proposals: str
+    proposal_data: str

@@ -75,7 +75,6 @@ from packages.valory.skills.proposal_voter_abci.rounds import (
     SnapshotAPISendSelectKeeperRound,
     SynchronizedData,
 )
-from packages.valory.skills.proposal_voter_abci.snapshot import snapshot_vp_query
 from packages.valory.skills.transaction_settlement_abci.payload_tools import (
     hash_payload_to_hex,
 )
@@ -89,6 +88,7 @@ VOTES_TO_CODE = {"FOR": 0, "AGAINST": 1, "ABSTAIN": 2}
 
 HTTP_OK = 200
 MAX_RETRIES = 3
+CALL_SLEEP = 2
 
 
 def fix_data_for_signing(data):
@@ -131,18 +131,19 @@ class EstablishVoteBehaviour(ProposalVoterBaseBehaviour):
         """Do the act, supporting asynchronous execution."""
 
         with self.context.benchmark_tool.measure(self.behaviour_id).local():
-            proposals = yield from self._refresh_proposal_vote()
-            votable_snapshot_proposals = (
-                yield from self._get_votable_snapshot_proposals()
-            )
+            expiring_tally_proposals = yield from self._get_expiring_tally_proposals()
+            expiring_snapshot_proposals = self._get_expiring_snapshot_proposals()
+
+            expiring_proposals = {
+                "tally": expiring_tally_proposals,
+                "snapshot": expiring_snapshot_proposals,
+            }
+
             sender = self.context.agent_address
             payload = EstablishVotePayload(
                 sender=sender,
                 proposals=json.dumps(
-                    {
-                        "proposals": proposals,
-                        "votable_snapshot_proposals": votable_snapshot_proposals,
-                    },
+                    {"expiring_proposals": expiring_proposals},
                     sort_keys=True,
                 ),
             )
@@ -153,23 +154,30 @@ class EstablishVoteBehaviour(ProposalVoterBaseBehaviour):
 
         self.set_done()
 
-    def _refresh_proposal_vote(self) -> Generator[None, None, dict]:
+    def _get_expiring_tally_proposals(self) -> Generator[None, None, dict]:
         """Generate proposal votes"""
 
-        proposal_ids_to_refresh = self.synchronized_data.proposals_to_refresh
-        proposals = self.synchronized_data.proposals
+        active_proposals = self.synchronized_data.active_proposals["tally"]
 
-        # Update the proposals' vote intention
-        for proposal_id in proposal_ids_to_refresh:
-            if not proposals[proposal_id]["votable"]:
-                self.context.logger.info(f"Proposal {proposal_id} is not votable")
-                continue
+        # Sort by expiration block
+        sorted_active_proposals = list(
+            sorted(active_proposals.values(), key=lambda ap: ap["remaining_blocks"])
+        )
 
+        # Get expiring proposals
+        expiring_proposals = {
+            ap["id"]: {"vote": None}
+            for ap in sorted_active_proposals
+            if ap["remaining_blocks"] <= self.params.voting_block_threshold
+        }
+
+        # Get the proposals' vote intention
+        for proposal_id in expiring_proposals.keys():
             self.context.logger.info(
                 f"Getting vote intention for proposal {proposal_id}"
             )
 
-            proposal_token = proposals[proposal_id]["governor"]["tokens"][0][
+            proposal_token = active_proposals[proposal_id]["governor"]["tokens"][0][
                 "id"
             ].split(":")[-1]
 
@@ -179,7 +187,7 @@ class EstablishVoteBehaviour(ProposalVoterBaseBehaviour):
                     proposal_token
                 )
             )
-            proposals[proposal_id]["vote_intention"] = vote_intention
+            active_proposals[proposal_id]["vote_intention"] = vote_intention
 
             self.context.logger.info(f"Vote intention: {vote_intention}")
 
@@ -195,9 +203,9 @@ class EstablishVoteBehaviour(ProposalVoterBaseBehaviour):
                 else "contribute positively to the protocol"
             )
             prompt_values = {
-                "proposal": proposals[proposal_id]["title"]
+                "proposal": active_proposals[proposal_id]["title"]
                 + "\n"
-                + proposals[proposal_id]["description"],
+                + active_proposals[proposal_id]["description"],
                 "voting_intention_snippet": voting_intention_snippet,
                 "voting_options": VOTING_OPTIONS,
             }
@@ -212,9 +220,9 @@ class EstablishVoteBehaviour(ProposalVoterBaseBehaviour):
 
             self.context.logger.info(f"Vote: {vote}")
 
-            proposals[proposal_id]["vote_choice"] = vote
+            expiring_proposals[proposal_id]["vote"] = vote
 
-        return proposals
+        return expiring_proposals
 
     def _get_vote(
         self, prompt_template: str, prompt_values: Dict[str, str]
@@ -267,7 +275,7 @@ class EstablishVoteBehaviour(ProposalVoterBaseBehaviour):
 
         vote_preference_counts = {"GOOD": 0, "EVIL": 0}
 
-        current_delegations = self.synchronized_data.delegations
+        current_delegations = self.synchronized_data.ceramic_db["delegations"]
         current_delegations = list(
             filter(lambda d: token_address in d["token_address"], current_delegations)
         )
@@ -298,96 +306,29 @@ class EstablishVoteBehaviour(ProposalVoterBaseBehaviour):
         # Return the option with most votes
         return sorted_preferences[0][0]
 
-    def _has_snapshot_voting_power(self, proposal) -> Generator[None, None, bool]:
-        """Checks whether the safe has voting power on this proposal"""
-
-        variables = {
-            "voter": self.synchronized_data.safe_contract_address,
-            "space": proposal["space"]["name"],
-            "proposal": proposal["id"],
-        }
-
-        headers = {
-            "Content-Type": "application/json",
-            "Accept": "application/json",
-        }
-
-        # Make the request
-        response = yield from self.get_http_response(
-            method="POST",
-            url=self.params.snapshot_api_endpoint,
-            content=json.dumps(
-                {"query": snapshot_vp_query, "variables": variables}
-            ).encode("utf-8"),
-            headers=headers,
-        )
-
-        if response.status_code != HTTP_OK:
-            self.context.logger.error(
-                f"Could not retrieve voting power from Snapshot API. "
-                f"Received status code {response.status_code}."
-            )
-            return False  # we skip this proposal for now
-
-        response_json = json.loads(response.body)
-
-        if "errors" in response_json:
-            self.context.logger.error(
-                f"Got errors while retrieving voting power from Snapshot: {response_json}"
-            )
-            return False  # we skip this proposal for now
-
-        voting_power = response_json["data"]["vp"]["vp"]
-        has_voting_power = voting_power > 0
-        self.context.logger.info(
-            f"Voting power for proposal {proposal['id']} [{proposal['space']['name']}]: {voting_power}"
-        )
-        return has_voting_power
-
-    def _get_votable_snapshot_proposals(self) -> Generator[None, None, list]:
+    def _get_expiring_snapshot_proposals(self) -> Generator[None, None, dict]:
         """Get votable snapshot proposals"""
-        snapshot_proposals = self.synchronized_data.snapshot_proposals
+        active_proposals = self.synchronized_data.active_proposals["snapshot"]
 
-        # Filter out proposals that do not use the erc20-balance-of strategy
-        snapshot_proposals = list(
-            filter(
-                lambda p: "erc20-balance-of" in [s["name"] for s in p["strategies"]],
-                snapshot_proposals,
-            )
+        # Sort by expiration block
+        sorted_active_proposals = list(
+            sorted(active_proposals.values(), key=lambda ap: ap["remaining_seconds"])
         )
 
-        now = cast(
-            SharedState, self.context.state
-        ).round_sequence.last_round_transition_timestamp.timestamp()
-
-        for p in snapshot_proposals:
-            p["remaining_seconds"] = p["end"] - now
-
-        expiring_snapshot_proposals = [
-            p
-            for p in snapshot_proposals
-            if p["remaining_seconds"] <= self.params.voting_seconds_threshold
-        ]
+        # Get expiring proposals
+        expiring_proposals = {
+            ap["id"]: {"vote": None, "sent": False, "expiration": ap["end"]}
+            for ap in sorted_active_proposals
+            if ap["remaining_seconds"] <= self.params.voting_seconds_threshold
+        }
 
         self.context.logger.info(
-            f"There are {len(expiring_snapshot_proposals)} finishing snapshot proposals (erc20)"
-        )
-
-        # Check whether we have voting power for each expiring proposal
-        votable_snapshot_proposals = []
-        for proposal in expiring_snapshot_proposals:
-            can_vote = yield from self._has_snapshot_voting_power(proposal)
-            if can_vote:
-                votable_snapshot_proposals.append(proposal)
-
-        # Sort proposals from the most urgent to the least one
-        votable_snapshot_proposals = list(
-            sorted(votable_snapshot_proposals, key=lambda ap: ap["remaining_seconds"])
+            f"There are {len(expiring_proposals)} finishing snapshot proposals (erc20)"
         )
 
         # LLM calls
-        failed_llm_votes = []
-        for index, proposal in enumerate(votable_snapshot_proposals):
+        for proposal_id in expiring_proposals:
+            proposal = active_proposals[proposal_id]
             prompt_template = "Here is a voting proposal for a protocol: `{proposal}`. How should I vote on the voting proposal if my intent was to contribute positively to the protocol and the voting options are {voting_options}? Please answer with only the voting option."
 
             prompt_values = {
@@ -401,23 +342,15 @@ class EstablishVoteBehaviour(ProposalVoterBaseBehaviour):
 
             vote = yield from self._get_vote(prompt_template, prompt_values)
             if vote not in proposal["choices"]:
-                self.context.logger.error(
-                    f"Invalid vote: '{vote!r}'. Votes are: {proposal['choices']}"
-                )
-                failed_llm_votes.append(index)
-                continue
+                raise ValueError(f"Invalid vote: {vote}")
 
             self.context.logger.info(f"Vote: {vote}")
 
-            proposal["choice"] = (
+            expiring_proposals[proposal_id]["vote"] = (
                 proposal["choices"].index(vote) + 1
             )  # choices are 1-based indices
 
-        # Remove failed votes
-        for i in sorted(failed_llm_votes, reverse=True):
-            votable_snapshot_proposals.pop(i)
-
-        return votable_snapshot_proposals
+        return expiring_proposals
 
 
 class PrepareVoteTransactionBehaviour(ProposalVoterBaseBehaviour):
@@ -425,94 +358,80 @@ class PrepareVoteTransactionBehaviour(ProposalVoterBaseBehaviour):
 
     matching_round: Type[AbstractRound] = PrepareVoteTransactionRound
 
-    def _get_proposal_info(self):
-        """Get the votable proposals' ids and the proposals."""
-        votable_proposal_ids = self.synchronized_data.votable_proposal_ids
-        proposals = self.synchronized_data.proposals
-        votable_snapshot_proposals = self.synchronized_data.votable_snapshot_proposals
-
-        self.context.logger.info(f"Just voted? {self.synchronized_data.just_voted}")
-
-        if self.synchronized_data.just_voted:
-            # Pending votes are stored in the shared state and only updated in the proposals list
-            # when the transaction has been verified, and therefore we know that it is a submitted vote.
-            submitted_vote = self.context.state.pending_vote
-            submitted_vote_id = submitted_vote.proposal_id
-            if not submitted_vote.snapshot:
-                submitted_proposal = proposals[submitted_vote_id]
-                submitted_proposal["vote"] = submitted_vote.vote_choice
-                submitted_proposal["votable"] = submitted_vote.votable
-                self.context.logger.info(
-                    f"Vote for proposal {submitted_vote_id} verified"
-                )
-
-                # remove the submitted vote from the votable list, if it is present there
-                if submitted_vote_id in votable_proposal_ids:
-                    self.context.logger.info(
-                        f"Removing proposal {submitted_vote_id} from votable proposals"
-                    )
-                    votable_proposal_ids.remove(submitted_vote_id)
-            else:
-                # remove the submitted vote from the snapshot proposals, if it is present there
-                proposal_id_to_index = {
-                    p["id"]: index for index, p in enumerate(votable_snapshot_proposals)
-                }
-                if submitted_vote_id in proposal_id_to_index:
-                    self.context.logger.info(
-                        f"Removing proposal {submitted_vote_id} from votable proposals"
-                    )
-                    votable_snapshot_proposals.pop(
-                        proposal_id_to_index[submitted_vote_id]
-                    )
-
-        # Filter the votable proposals, keeping only those towards the end of their voting period
-        votable_proposal_ids = list(
-            filter(
-                lambda p_id: proposals[p_id]["remaining_blocks"]
-                <= self.params.voting_block_threshold,
-                votable_proposal_ids,
-            )
-        )
-
-        return votable_proposal_ids, proposals, votable_snapshot_proposals
-
     def async_act(self) -> Generator:
         """Do the act, supporting asynchronous execution."""
 
         with self.context.benchmark_tool.measure(self.behaviour_id).local():
-            (
-                votable_proposal_ids,
-                proposals,
-                votable_snapshot_proposals,
-            ) = self._get_proposal_info()
+            active_proposals = self.synchronized_data.active_proposals
+            expiring_proposals = self.synchronized_data.expiring_proposals
+            ceramic_db = self.synchronized_data.ceramic_db
+            pending_write = False
+
+            self.context.logger.info(f"Just voted? {self.synchronized_data.just_voted}")
+
+            # Check submitted votes
+            if self.synchronized_data.just_voted:
+                # Pending votes are stored in the shared state and only updated in the proposals list
+                # when the transaction has been verified, and therefore we know that it is a submitted vote.
+                submitted_vote = self.context.state.pending_vote
+                submitted_vote_id = submitted_vote.proposal_id
+
+                access_key = "snapshot" if submitted_vote.is_snapshot else "tally"
+
+                # Remove proposal from active proposals
+                del active_proposals[access_key][submitted_vote_id]
+
+                # Move proposal info from expiring proposals to voted_proposals
+                vote_info = expiring_proposals[access_key][submitted_vote_id]
+                ceramic_db["voted_proposals"][access_key][submitted_vote_id] = vote_info
+                del expiring_proposals[access_key][submitted_vote_id]
+
+                # Signal that the Ceramic db needs to be updated
+                pending_write = True
+
+                self.context.logger.info(
+                    f"Vote on {access_key} for proposal {submitted_vote_id} has been verified"
+                )
+
+            votable_tally_proposal_ids = list(expiring_proposals["tally"].keys())
+            votable_snapshot_proposal_ids = list(expiring_proposals["snapshot"].keys())
 
             self.context.logger.info(
-                f"Votable Tally proposal ids: {votable_proposal_ids}\n"
-                f"Votable Snapshot proposal ids: {[p['id'] for p in votable_snapshot_proposals]}"
+                f"Expiring Tally proposal ids: {votable_tally_proposal_ids}\n"
+            )
+            self.context.logger.info(
+                f"Expiring Snapshot proposal ids: {votable_snapshot_proposal_ids}\n"
             )
 
             payload_content = {
-                "proposals": proposals,
-                "votable_proposal_ids": votable_proposal_ids,
-                "votable_snapshot_proposals": votable_snapshot_proposals,
+                "active_proposals": active_proposals,
+                "expiring_proposals": expiring_proposals,
+                "ceramic_db": ceramic_db,
+                "pending_write": pending_write,
             }
 
-            if not votable_proposal_ids and not votable_snapshot_proposals:
+            # No vote
+            if not votable_tally_proposal_ids and not votable_snapshot_proposal_ids:
                 self.context.logger.info("No proposals to vote on")
-                tx_hash = PrepareVoteTransactionRound.NO_VOTE_PAYLOAD
-                payload_content["tx_hash"] = tx_hash
+                payload_content["tx_hash"] = PrepareVoteTransactionRound.NO_VOTE_PAYLOAD
+                payload_content["snapshot_api_data"] = {}
 
-            if votable_proposal_ids:
-                # we get the first one, because the votable proposal ids are sorted by their remaining blocks, ascending
-                selected_proposal_id = votable_proposal_ids[0]
-                selected_proposal = proposals[selected_proposal_id]
-                vote_choice = selected_proposal["vote_choice"]
+            if votable_tally_proposal_ids:
+                # We get the first one, because the votable proposal ids are sorted by their remaining blocks, ascending
+                selected_proposal_id = votable_tally_proposal_ids[0]
+                selected_proposal = active_proposals[selected_proposal_id]
+                vote_choice = expiring_proposals["tally"][selected_proposal_id]["vote"]
+
+                self.context.logger.info(
+                    f"Selected Tally proposal: {selected_proposal_id}"
+                )
+
                 # Pending votes are stored in the shared state and only updated in the proposals list
                 # when the transaction has been verified, and therefore we know that it is a submitted vote.
                 self.context.state.pending_vote = PendingVote(
                     proposal_id=selected_proposal_id,
                     vote_choice=vote_choice,
-                    snapshot=False,
+                    is_snapshot=False,
                 )
 
                 governor_address = selected_proposal["governor"]["id"].split(":")[-1]
@@ -524,7 +443,7 @@ class PrepareVoteTransactionBehaviour(ProposalVoterBaseBehaviour):
                 )
 
                 self.context.logger.info(
-                    f"Voting for onchain proposal {selected_proposal_id}: {vote_choice}"
+                    f"Voting for Tally proposal {selected_proposal_id}: {vote_choice}"
                 )
                 self.context.logger.info(f"tx_hash is {tx_hash}")
 
@@ -535,23 +454,28 @@ class PrepareVoteTransactionBehaviour(ProposalVoterBaseBehaviour):
                 payload_content["snapshot_api_data"] = {}
 
             # Only vote on Snapshot after we have finished with the onchain votes
-            if not votable_proposal_ids and votable_snapshot_proposals:
-                selected_proposal = votable_snapshot_proposals[0]
+            if not votable_tally_proposal_ids and votable_snapshot_proposal_ids:
+                selected_proposal_id = votable_snapshot_proposal_ids[0]
+                selected_proposal = active_proposals[selected_proposal_id]
+                vote_choice = expiring_proposals["snapshot"][selected_proposal_id][
+                    "vote"
+                ]
+
                 self.context.logger.info(
-                    f"Selected snapshot proposal: {selected_proposal['id']}"
+                    f"Selected Snapshot proposal: {selected_proposal_id}"
                 )
 
                 self.context.state.pending_vote = PendingVote(
                     proposal_id=selected_proposal["id"],
-                    vote_choice=selected_proposal["choice"],
-                    snapshot=True,
+                    vote_choice=vote_choice,
+                    is_snapshot=True,
                 )
 
                 tx_hash, snapshot_api_data = yield from self._get_snapshot_tx_hash(
                     selected_proposal
                 )
                 self.context.logger.info(
-                    f"Voting for snapshot proposal {selected_proposal['id']}: {selected_proposal['choice']}"
+                    f"Voting for Snapshot proposal {selected_proposal['id']}: {selected_proposal['choice']}"
                 )
                 self.context.logger.info(f"tx_hash is {tx_hash}")
 
@@ -794,7 +718,7 @@ class RetrieveSignatureBehaviour(ProposalVoterBaseBehaviour):
 
         signature = cast(str, contract_api_msg.state.body["signature"])
         self.context.logger.info(f"Retrieved signature: {signature}")
-        return signature
+        return "0x" + signature
 
 
 class SnapshotAPISendRandomnessBehaviour(RandomnessBehaviour):
@@ -857,39 +781,77 @@ class SnapshotAPISendBehaviour(ProposalVoterBaseBehaviour):
 
     def _call_snapshot_api(self):
         """Send the vote to Snapshot's API"""
+        ceramic_db = self.synchronized_data.ceramic_db
 
-        envelope = {
-            "address": self.synchronized_data.safe_contract_address,
-            "data": self.synchronized_data.snapshot_api_data,
-            "sig": self.synchronized_data.snapshot_api_data_signature,
-        }
+        now = cast(
+            SharedState, self.context.state
+        ).round_sequence.last_round_transition_timestamp.timestamp()
 
-        headers = {
-            "Accept": "application/json",
-            "Content-Type": "application/json",
-        }
+        pending_snapshot_calls = [
+            p
+            for p in ceramic_db["vote_info"]["snapshot"]
+            if not p["sent"] and p["expiration"] > now
+        ]
 
-        self.context.logger.info(f"Sending vote data to Snapshot API: {envelope}")
-
-        # Make the request
-        response = yield from self.get_http_response(
-            method="POST",
-            url=self.params.snapshot_api_endpoint,
-            content=json.dumps(envelope).encode("utf-8"),
-            headers=headers,
+        self.context.logger.info(
+            f"Pending Snapshot votes to send: {pending_snapshot_calls}"
         )
 
-        if response.status_code != HTTP_OK:
-            self.context.logger.error(
-                f"Could not send the vote to Snapshot API. "
-                f"Received status code {response.status_code}: {response.json()}."
-            )
-            retries = self.synchronized_data.snapshot_api_retries + 1
-            if retries >= MAX_RETRIES:
-                return SnapshotAPISendRound.MAX_RETRIES_PAYLOAD
-            return SnapshotAPISendRound.ERROR_PAYLOAD
+        pending_write = False
 
-        return SnapshotAPISendRound.SUCCCESS_PAYLOAD
+        for pending_call in pending_snapshot_calls:
+            retries = 0
+            while retries < MAX_RETRIES:
+                envelope = {
+                    "address": self.synchronized_data.safe_contract_address,
+                    "data": pending_call["data"],
+                    "sig": pending_call["signature"],
+                }
+
+                headers = {
+                    "Accept": "application/json",
+                    "Content-Type": "application/json",
+                }
+
+                self.context.logger.info(
+                    f"Sending vote data to Snapshot API: {envelope}"
+                )
+
+                # Make the request
+                response = yield from self.get_http_response(
+                    method="POST",
+                    url=self.params.snapshot_api_endpoint,
+                    content=json.dumps(envelope).encode("utf-8"),
+                    headers=headers,
+                )
+
+                # Avoid calling too quicly
+                yield from self.sleep(CALL_SLEEP)
+
+                if response.status_code != HTTP_OK:
+                    retries += 1
+                    self.context.logger.error(
+                        f"Could not send the vote to Snapshot API [{retries} retries]. "
+                        f"Received status code {response.status_code}: {response.json()}."
+                    )
+                else:
+                    self.context.logger.info(f"Succesfully submitted the vote.")
+
+                    # Set the vote as sent
+                    pending_write = True
+                    ceramic_db["vote_info"]["snapshot"][pending_call["id"]][
+                        "sent"
+                    ] = True
+
+                    break
+
+        return json.dumps(
+            {
+                "ceramic_db": ceramic_db,
+                "pending_write": pending_write,
+            },
+            sort_keys=True,
+        )
 
 
 class ProposalVoterRoundBehaviour(AbstractRoundBehaviour):

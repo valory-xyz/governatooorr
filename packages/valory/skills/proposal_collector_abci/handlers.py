@@ -248,7 +248,6 @@ class HttpHandler(BaseHttpHandler):
     def _handle_post_delegate(
         self, http_msg: HttpMessage, http_dialogue: HttpDialogue
     ) -> None:
-
         self.context.logger.info("Received delegation")
 
         delegation_data = json.loads(http_msg.body)  # TODO: is this ok?
@@ -271,7 +270,6 @@ class HttpHandler(BaseHttpHandler):
     def _handle_get_delegations(
         self, http_msg: HttpMessage, http_dialogue: HttpDialogue
     ) -> None:
-
         # Get the token address
         address = http_msg.url.split("/")[-1]
 
@@ -288,7 +286,6 @@ class HttpHandler(BaseHttpHandler):
     def _handle_get_proposals(
         self, http_msg: HttpMessage, http_dialogue: HttpDialogue
     ) -> None:
-
         response_body_data = list(self.synchronized_data.proposals.values())
 
         self._send_ok_response(http_msg, http_dialogue, response_body_data)
@@ -296,7 +293,6 @@ class HttpHandler(BaseHttpHandler):
     def _handle_get_proposal(
         self, http_msg: HttpMessage, http_dialogue: HttpDialogue
     ) -> None:
-
         proposal_id = http_msg.url.split("/")[-1]
         proposal = (
             None

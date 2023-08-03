@@ -34,6 +34,7 @@ from packages.valory.skills.proposal_collector_abci.payloads import (
     CollectActiveSnapshotProposalsPayload,
     CollectActiveTallyProposalsPayload,
     SynchronizeDelegationsPayload,
+    WriteDelegationsPayload,
 )
 from packages.valory.skills.proposal_collector_abci.rounds import (
     CollectActiveSnapshotProposalsRound,
@@ -41,6 +42,7 @@ from packages.valory.skills.proposal_collector_abci.rounds import (
     ProposalCollectorAbciApp,
     SynchronizeDelegationsRound,
     SynchronizedData,
+    WriteDelegationsRound,
 )
 from packages.valory.skills.proposal_collector_abci.snapshot import (
     snapshot_proposal_query,
@@ -117,6 +119,41 @@ class SynchronizeDelegationsBehaviour(ProposalCollectorBaseBehaviour):
         self.set_done()
 
 
+class WriteDelegationsBehaviour(ProposalCollectorBaseBehaviour):
+    """
+    WriteDelegations
+
+    Prepares write data before writing to Ceramic.
+    """
+
+    matching_round: Type[AbstractRound] = WriteDelegationsRound
+
+    def async_act(self) -> Generator:
+        """Do the act, supporting asynchronous execution."""
+
+        with self.context.benchmark_tool.measure(self.behaviour_id).local():
+            write_data = [
+                {
+                    "op": "update",
+                    "stream_id": self.params.delegations_stream_id,
+                    "did_str": self.params.ceramic_did_str,
+                    "did_seed": self.params.ceramic_did_seed,
+                    "data": self.synchronized_data.delegations,
+                }
+            ]
+
+            sender = self.context.agent_address
+            payload = WriteDelegationsPayload(
+                sender=sender, write_data=json.dumps(write_data, sort_keys=True)
+            )
+
+        with self.context.benchmark_tool.measure(self.behaviour_id).consensus():
+            yield from self.send_a2a_transaction(payload)
+            yield from self.wait_until_round_end()
+
+        self.set_done()
+
+
 class CollectActiveTallyProposalsBehaviour(ProposalCollectorBaseBehaviour):
     """
     CollectActiveProposals
@@ -131,7 +168,6 @@ class CollectActiveTallyProposalsBehaviour(ProposalCollectorBaseBehaviour):
         """Do the act, supporting asynchronous execution."""
 
         with self.context.benchmark_tool.measure(self.behaviour_id).local():
-
             # Clear the new delegations # TODO: move this elsewhere
             self.context.state.new_delegations = []
 
@@ -209,7 +245,6 @@ class CollectActiveTallyProposalsBehaviour(ProposalCollectorBaseBehaviour):
 
         active_proposals = []
         for gid in governor_ids:
-
             # Get all the proposals for this governor
             variables = {
                 "chainId": "eip155:1",
@@ -354,7 +389,6 @@ class CollectActiveSnapshotProposalsBehaviour(ProposalCollectorBaseBehaviour):
         """Do the act, supporting asynchronous execution."""
 
         with self.context.benchmark_tool.measure(self.behaviour_id).local():
-
             updated_proposals = yield from self._get_updated_proposals()
             sender = self.context.agent_address
             payload = CollectActiveSnapshotProposalsPayload(
@@ -386,7 +420,6 @@ class CollectActiveSnapshotProposalsBehaviour(ProposalCollectorBaseBehaviour):
         finished = False
 
         while True:
-
             skip = n_retrieved_proposals + SNAPSHOT_REQUEST_STEP * i
 
             self.context.logger.info(
@@ -457,5 +490,6 @@ class ProposalCollectorRoundBehaviour(AbstractRoundBehaviour):
     behaviours: Set[Type[BaseBehaviour]] = [
         CollectActiveTallyProposalsBehaviour,
         SynchronizeDelegationsBehaviour,
+        WriteDelegationsBehaviour,
         CollectActiveSnapshotProposalsBehaviour,
     ]

@@ -93,11 +93,6 @@ class SynchronizedData(BaseSynchronizedData):
         return cast(list, self.db.get("proposals_to_refresh", []))
 
     @property
-    def pending_write(self) -> bool:
-        """Checks whether there are changes pending to be written to Ceramic."""
-        return cast(bool, self.db.get("pending_write", False))
-
-    @property
     def tally_api_retries(self) -> int:
         """Get the amount of API call retries."""
         return cast(int, self.db.get("tally_api_retries", 0))
@@ -106,6 +101,11 @@ class SynchronizedData(BaseSynchronizedData):
     def snapshot_api_retries(self) -> int:
         """Get the amount of API call retries."""
         return cast(int, self.db.get("snapshot_api_retries", 0))
+
+    @property
+    def write_data(self) -> list:
+        """Get the write_data."""
+        return cast(list, self.db.get_strict("write_data"))
 
 
 class SynchronizeDelegationsRound(CollectDifferentUntilAllRound):
@@ -160,7 +160,6 @@ class SynchronizeDelegationsRound(CollectDifferentUntilAllRound):
                         get_name(SynchronizedData.proposals_to_refresh): list(
                             proposals_to_refresh
                         ),
-                        get_name(SynchronizedData.pending_write): False,
                     },
                 )
                 return synchronized_data, Event.DONE
@@ -191,10 +190,33 @@ class SynchronizeDelegationsRound(CollectDifferentUntilAllRound):
                     get_name(SynchronizedData.proposals_to_refresh): list(
                         proposals_to_refresh
                     ),
-                    get_name(SynchronizedData.pending_write): True,
                 },
             )
             return synchronized_data, Event.WRITE_DELEGATIONS
+        if not self.is_majority_possible(
+            self.collection, self.synchronized_data.nb_participants
+        ):
+            return self.synchronized_data, Event.NO_MAJORITY
+        return None
+
+
+class WriteDelegationsRound(CollectSameUntilThresholdRound):
+    """WriteDelegationsRound"""
+
+    payload_class = CollectActiveSnapshotProposalsPayload
+    synchronized_data_class = SynchronizedData
+
+    def end_block(self) -> Optional[Tuple[BaseSynchronizedData, Event]]:
+        """Process the end of the block."""
+        if self.threshold_reached:
+            write_data = json.loads(self.most_voted_payload)
+            synchronized_data = self.synchronized_data.update(
+                synchronized_data_class=SynchronizedData,
+                **{
+                    get_name(SynchronizedData.write_data): write_data,
+                },
+            )
+            return (synchronized_data, Event.DONE)
         if not self.is_majority_possible(
             self.collection, self.synchronized_data.nb_participants
         ):
@@ -363,7 +385,12 @@ class ProposalCollectorAbciApp(AbciApp[Event]):
     transition_function: AbciAppTransitionFunction = {
         SynchronizeDelegationsRound: {
             Event.DONE: CollectActiveTallyProposalsRound,
-            Event.WRITE_DELEGATIONS: FinishedWriteDelegationsRound,
+            Event.WRITE_DELEGATIONS: WriteDelegationsRound,
+            Event.NO_MAJORITY: SynchronizeDelegationsRound,
+            Event.ROUND_TIMEOUT: SynchronizeDelegationsRound,
+        },
+        WriteDelegationsRound: {
+            Event.DONE: FinishedWriteDelegationsRound,
             Event.NO_MAJORITY: SynchronizeDelegationsRound,
             Event.ROUND_TIMEOUT: SynchronizeDelegationsRound,
         },

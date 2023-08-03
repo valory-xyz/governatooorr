@@ -88,6 +88,7 @@ VOTING_OPTIONS = "For, Against, and Abstain"
 VOTES_TO_CODE = {"FOR": 0, "AGAINST": 1, "ABSTAIN": 2}
 
 HTTP_OK = 200
+MAX_RETRIES = 3
 
 
 def fix_data_for_signing(data):
@@ -868,6 +869,8 @@ class SnapshotAPISendBehaviour(ProposalVoterBaseBehaviour):
             "Content-Type": "application/json",
         }
 
+        self.context.logger.info(f"Sending vote data to Snapshot API: {envelope}")
+
         # Make the request
         response = yield from self.get_http_response(
             method="POST",
@@ -881,6 +884,9 @@ class SnapshotAPISendBehaviour(ProposalVoterBaseBehaviour):
                 f"Could not send the vote to Snapshot API. "
                 f"Received status code {response.status_code}: {response.json()}."
             )
+            retries = self.synchronized_data.snapshot_api_retries + 1
+            if retries >= MAX_RETRIES:
+                return SnapshotAPISendRound.MAX_RETRIES_PAYLOAD
             return SnapshotAPISendRound.ERROR_PAYLOAD
 
         return SnapshotAPISendRound.SUCCCESS_PAYLOAD

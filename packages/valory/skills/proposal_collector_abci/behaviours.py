@@ -34,6 +34,7 @@ from packages.valory.skills.proposal_collector_abci.payloads import (
     CollectActiveSnapshotProposalsPayload,
     CollectActiveTallyProposalsPayload,
     SynchronizeDelegationsPayload,
+    WriteDelegationsPayload,
 )
 from packages.valory.skills.proposal_collector_abci.rounds import (
     CollectActiveSnapshotProposalsRound,
@@ -41,6 +42,7 @@ from packages.valory.skills.proposal_collector_abci.rounds import (
     ProposalCollectorAbciApp,
     SynchronizeDelegationsRound,
     SynchronizedData,
+    WriteDelegationsRound,
 )
 from packages.valory.skills.proposal_collector_abci.snapshot import (
     snapshot_proposal_query,
@@ -109,6 +111,41 @@ class SynchronizeDelegationsBehaviour(ProposalCollectorBaseBehaviour):
                 sender=sender, new_delegations=new_delegations
             )
             self.context.logger.info(f"New delegations = {new_delegations}")
+
+        with self.context.benchmark_tool.measure(self.behaviour_id).consensus():
+            yield from self.send_a2a_transaction(payload)
+            yield from self.wait_until_round_end()
+
+        self.set_done()
+
+
+class WriteDelegationsBehaviour(ProposalCollectorBaseBehaviour):
+    """
+    WriteDelegations
+
+    Prepares write data before writing to Ceramic.
+    """
+
+    matching_round: Type[AbstractRound] = WriteDelegationsRound
+
+    def async_act(self) -> Generator:
+        """Do the act, supporting asynchronous execution."""
+
+        with self.context.benchmark_tool.measure(self.behaviour_id).local():
+            write_data = [
+                {
+                    "op": "update",
+                    "stream_id": self.params.delegations_stream_id,
+                    "did_str": self.params.ceramic_did_str,
+                    "did_seed": self.params.ceramic_did_seed,
+                    "data": self.synchronized_data.delegations,
+                }
+            ]
+
+            sender = self.context.agent_address
+            payload = WriteDelegationsPayload(
+                sender=sender, write_data=json.dumps(write_data, sort_keys=True)
+            )
 
         with self.context.benchmark_tool.measure(self.behaviour_id).consensus():
             yield from self.send_a2a_transaction(payload)
@@ -453,5 +490,6 @@ class ProposalCollectorRoundBehaviour(AbstractRoundBehaviour):
     behaviours: Set[Type[BaseBehaviour]] = [
         CollectActiveTallyProposalsBehaviour,
         SynchronizeDelegationsBehaviour,
+        WriteDelegationsBehaviour,
         CollectActiveSnapshotProposalsBehaviour,
     ]

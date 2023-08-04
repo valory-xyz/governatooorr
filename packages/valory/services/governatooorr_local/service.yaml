@@ -8,7 +8,7 @@ license: Apache-2.0
 fingerprint:
   README.md: bafybeifvddbrix4wlzp5mfaxjg7bargwbcqxjdfvaz5tctxfvzowggkusu
 fingerprint_ignore_patterns: []
-agent: valory/governatooorr:0.1.0:bafybeighrbo4d3ax42kf5ngybbyulfganliuv2o6wuwgujunft6wbs5juy
+agent: valory/governatooorr:0.1.0:bafybeib3pqwwbweohx5grxlrwdg5a74mo3rtsxoskeq3gj4o3c5bstmpcy
 number_of_agents: 1
 deployment:
   agent:
@@ -89,8 +89,8 @@ models:
       ceramic_api_read_endpoint: ${CERAMIC_API_READ_ENDPOINT:str:api/v0/commits/{stream_id}}
       ceramic_did_seed: ${CERAMIC_DID_SEED:str:dummy_did_seed}
       ceramic_did_str: ${CERAMIC_DID_STR:str:dummy_did_str}
-      default_read_stream_id: ${DEFAULT_READ_STREAM_ID:str:default_read_stream_id}
-      default_write_stream_id: ${DEFAULT_WRITE_STREAM_ID:str:default_write_stream_id}
+      default_read_stream_id: ${DEFAULT_READ_STREAM_ID:str:kjzl6cwe1jw149erp7y8pg1kwk0103714knt33k66rkdrwn1zmskykj8ho8y15n}
+      ceramic_stream_id: ${CERAMIC_STREAM_ID:str:kjzl6cwe1jw149erp7y8pg1kwk0103714knt33k66rkdrwn1zmskykj8ho8y15n}
       signmessagelib_address: ${SIGNMESSAGELIB_ADDRESS:str:0xA65387F16B013cf2Af4605Ad8aA5ec25a2cbA3a2}
 ---
 public_id: valory/ledger:0.19.0

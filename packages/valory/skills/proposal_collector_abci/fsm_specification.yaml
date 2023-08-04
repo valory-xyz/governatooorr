@@ -20,7 +20,7 @@ states:
 - FinishedProposalRound
 - FinishedWriteDelegationsRound
 - SynchronizeDelegationsRound
-- WriteDelegationsRound
+- WriteDBRound
 transition_func:
     (CollectActiveSnapshotProposalsRound, API_ERROR): CollectActiveSnapshotProposalsRound
     (CollectActiveSnapshotProposalsRound, DONE): FinishedProposalRound
@@ -35,7 +35,7 @@ transition_func:
     (SynchronizeDelegationsRound, DONE): CollectActiveTallyProposalsRound
     (SynchronizeDelegationsRound, NO_MAJORITY): SynchronizeDelegationsRound
     (SynchronizeDelegationsRound, ROUND_TIMEOUT): SynchronizeDelegationsRound
-    (SynchronizeDelegationsRound, WRITE_DB): WriteDelegationsRound
-    (WriteDelegationsRound, DONE): FinishedWriteDelegationsRound
-    (WriteDelegationsRound, NO_MAJORITY): SynchronizeDelegationsRound
-    (WriteDelegationsRound, ROUND_TIMEOUT): SynchronizeDelegationsRound
+    (SynchronizeDelegationsRound, WRITE_DB): WriteDBRound
+    (WriteDBRound, DONE): FinishedWriteDelegationsRound
+    (WriteDBRound, NO_MAJORITY): SynchronizeDelegationsRound
+    (WriteDBRound, ROUND_TIMEOUT): SynchronizeDelegationsRound

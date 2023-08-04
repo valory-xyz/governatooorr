@@ -66,7 +66,7 @@ states:
 - SynchronizeLateMessagesRound
 - ValidateTransactionRound
 - VerificationRound
-- WriteDelegationsRound
+- WriteDBRound
 transition_func:
     (CheckLateTxHashesRound, CHECK_LATE_ARRIVING_MESSAGE): SynchronizeLateMessagesRound
     (CheckLateTxHashesRound, CHECK_TIMEOUT): CheckLateTxHashesRound
@@ -164,7 +164,7 @@ transition_func:
     (SynchronizeDelegationsRound, DONE): CollectActiveTallyProposalsRound
     (SynchronizeDelegationsRound, NO_MAJORITY): SynchronizeDelegationsRound
     (SynchronizeDelegationsRound, ROUND_TIMEOUT): SynchronizeDelegationsRound
-    (SynchronizeDelegationsRound, WRITE_DB): WriteDelegationsRound
+    (SynchronizeDelegationsRound, WRITE_DB): WriteDBRound
     (SynchronizeLateMessagesRound, DONE): CheckLateTxHashesRound
     (SynchronizeLateMessagesRound, NONE): SelectKeeperTransactionSubmissionBRound
     (SynchronizeLateMessagesRound, ROUND_TIMEOUT): SynchronizeLateMessagesRound
@@ -179,6 +179,6 @@ transition_func:
     (VerificationRound, NO_MAJORITY): RandomnessRound
     (VerificationRound, ROUND_TIMEOUT): RandomnessRound
     (VerificationRound, VERIFICATION_ERROR): RandomnessRound
-    (WriteDelegationsRound, DONE): RandomnessRound
-    (WriteDelegationsRound, NO_MAJORITY): SynchronizeDelegationsRound
-    (WriteDelegationsRound, ROUND_TIMEOUT): SynchronizeDelegationsRound
+    (WriteDBRound, DONE): RandomnessRound
+    (WriteDBRound, NO_MAJORITY): SynchronizeDelegationsRound
+    (WriteDBRound, ROUND_TIMEOUT): SynchronizeDelegationsRound

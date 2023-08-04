@@ -75,8 +75,7 @@ Then run the following commands:
     SAFE_CONTRACT_ADDRESS=<your_safe_address>
     CERAMIC_DID_STR=<your_did_without_the_did:key_part>
     CERAMIC_DID_SEED=<your_did_seed>
-    DEFAULT_READ_STREAM_ID=<your_stream_id>
-    DEFAULT_WRITE_STREAM_ID=<your_stream_id>
+    CERAMIC_STREAM_ID=<your_stream_id>
     ```
 9. Execute `autonomy deploy build keys.json -ltm`
 10. Execute `autonomy deploy run --build-dir abci_build/`

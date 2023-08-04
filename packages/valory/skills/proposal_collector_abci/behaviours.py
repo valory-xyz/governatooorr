@@ -34,7 +34,7 @@ from packages.valory.skills.proposal_collector_abci.payloads import (
     CollectActiveSnapshotProposalsPayload,
     CollectActiveTallyProposalsPayload,
     SynchronizeDelegationsPayload,
-    WriteDelegationsPayload,
+    WriteDBPayload,
 )
 from packages.valory.skills.proposal_collector_abci.rounds import (
     CollectActiveSnapshotProposalsRound,
@@ -42,7 +42,7 @@ from packages.valory.skills.proposal_collector_abci.rounds import (
     ProposalCollectorAbciApp,
     SynchronizeDelegationsRound,
     SynchronizedData,
-    WriteDelegationsRound,
+    WriteDBRound,
 )
 from packages.valory.skills.proposal_collector_abci.snapshot import (
     snapshot_proposal_query,
@@ -120,14 +120,14 @@ class SynchronizeDelegationsBehaviour(ProposalCollectorBaseBehaviour):
         self.set_done()
 
 
-class WriteDelegationsBehaviour(ProposalCollectorBaseBehaviour):
+class WriteDBBehaviour(ProposalCollectorBaseBehaviour):
     """
-    WriteDelegations
+    WriteDBBehaviour
 
     Prepares write data before writing to Ceramic.
     """
 
-    matching_round: Type[AbstractRound] = WriteDelegationsRound
+    matching_round: Type[AbstractRound] = WriteDBRound
 
     def async_act(self) -> Generator:
         """Do the act, supporting asynchronous execution."""
@@ -136,7 +136,7 @@ class WriteDelegationsBehaviour(ProposalCollectorBaseBehaviour):
             write_data = [
                 {
                     "op": "update",
-                    "stream_id": self.params.delegations_stream_id,
+                    "stream_id": self.params.ceramic_stream_id,
                     "did_str": self.params.ceramic_did_str,
                     "did_seed": self.params.ceramic_did_seed,
                     "data": self.synchronized_data.ceramic_db,
@@ -144,7 +144,7 @@ class WriteDelegationsBehaviour(ProposalCollectorBaseBehaviour):
             ]
 
             sender = self.context.agent_address
-            payload = WriteDelegationsPayload(
+            payload = WriteDBPayload(
                 sender=sender, write_data=json.dumps(write_data, sort_keys=True)
             )
 
@@ -571,6 +571,6 @@ class ProposalCollectorRoundBehaviour(AbstractRoundBehaviour):
     behaviours: Set[Type[BaseBehaviour]] = [
         CollectActiveTallyProposalsBehaviour,
         SynchronizeDelegationsBehaviour,
-        WriteDelegationsBehaviour,
+        WriteDBBehaviour,
         CollectActiveSnapshotProposalsBehaviour,
     ]

@@ -183,8 +183,8 @@ class SynchronizeDelegationsRound(CollectDifferentUntilAllRound):
         return None
 
 
-class WriteDelegationsRound(CollectSameUntilThresholdRound):
-    """WriteDelegationsRound"""
+class WriteDBRound(CollectSameUntilThresholdRound):
+    """WriteDBRound"""
 
     payload_class = CollectActiveSnapshotProposalsPayload
     synchronized_data_class = SynchronizedData
@@ -356,11 +356,11 @@ class ProposalCollectorAbciApp(AbciApp[Event]):
     transition_function: AbciAppTransitionFunction = {
         SynchronizeDelegationsRound: {
             Event.DONE: CollectActiveTallyProposalsRound,
-            Event.WRITE_DB: WriteDelegationsRound,
+            Event.WRITE_DB: WriteDBRound,
             Event.NO_MAJORITY: SynchronizeDelegationsRound,
             Event.ROUND_TIMEOUT: SynchronizeDelegationsRound,
         },
-        WriteDelegationsRound: {
+        WriteDBRound: {
             Event.DONE: FinishedWriteDelegationsRound,
             Event.NO_MAJORITY: SynchronizeDelegationsRound,
             Event.ROUND_TIMEOUT: SynchronizeDelegationsRound,

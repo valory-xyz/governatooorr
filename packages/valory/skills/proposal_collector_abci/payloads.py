@@ -32,8 +32,8 @@ class SynchronizeDelegationsPayload(BaseTxPayload):
 
 
 @dataclass(frozen=True)
-class WriteDelegationsPayload(BaseTxPayload):
-    """Represent a transaction payload for the WriteDelegations."""
+class WriteDBPayload(BaseTxPayload):
+    """Represent a transaction payload for the WriteDB."""
 
     write_data: str
 

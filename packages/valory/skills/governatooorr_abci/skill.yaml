@@ -10,7 +10,7 @@ fingerprint:
   behaviours.py: bafybeifjf4gdptsjmtgvwq6con2nyn42uqzkhgjegzrphf263n3xygdbga
   composition.py: bafybeia24u6svrnwjncaa3fokkmr4jeuupfe33iwmvwpzlqu5p3mtt5lpi
   dialogues.py: bafybeiayva5koyr6upomicnhbfefypjk2sebogk7ew24wxwwnccuqktcki
-  fsm_specification.yaml: bafybeihafxi5zxqbzxfaxdzmevwvr7bznvoud7wrr2dfji4k2gmz72gthq
+  fsm_specification.yaml: bafybeiawrxvrzmvn5gqpqv5iaak3wla7vggz5ojqa4m2fedgh7zghhim5q
   handlers.py: bafybeiefhvk666md6clddjpkv6ccnletnxmekptz2p5qjjnubfokwlofia
   models.py: bafybeigoq2xaulowhod3viikl4rsbdfqvoe2jsgsqpsedqwv4jto2toxuq
 fingerprint_ignore_patterns: []
@@ -21,7 +21,7 @@ skills:
 - valory/abstract_round_abci:0.1.0:bafybeibqpzbklnljvtc67yon4ciijxj75d7vazm7rurcvbbfnk6jtudukm
 - valory/ceramic_read_abci:0.1.0:bafybeib36m6fi5swu43s3amtbk7w5rfie2gvzgw3xhxd7yfnka4kpcegme
 - valory/ceramic_write_abci:0.1.0:bafybeifdjb2iisvtgwo44xoddhrbgqehbis6tbjdktuhh6ehwm5bnuee74
-- valory/proposal_collector_abci:0.1.0:bafybeicb3sm2lo5h2sd37vcak3t4iwjp3iqsonu4nnzaibpymnfqjmoxlu
+- valory/proposal_collector_abci:0.1.0:bafybeicpitntdqvvmkcjnvwm4w2x6xpdtz47ota33acjivfk5l3qc2zpcq
 - valory/proposal_voter_abci:0.1.0:bafybeia4tg7yq5ccpsqy54kmyslnsr2glpsmvi2cy3j22kqcsyhkkd3ufe
 - valory/registration_abci:0.1.0:bafybeia25gpusnkakb2dp4heqkwtuftbc2apppq3i4bds6sphltsovgzvi
 - valory/reset_pause_abci:0.1.0:bafybeigzvwbzktclahjbsyiwqnj6poree4iveon5pric6s5ixb6wrhkdhq
@@ -91,7 +91,7 @@ models:
       cleanup_history_depth_current: null
       default_read_stream_id: default_read_stream_id
       default_read_target_property: default_read_target_property
-      default_write_stream_id: default_write_stream_id
+      ceramic_stream_id: ceramic_stream_id
       drand_public_key: 868f005eb8e6e4ca0a47c8a77ceaa5309a47978a7c71bc5cce96366b5d7a569937c529eeda66c7293784a9402801af31
       finalize_timeout: 60.0
       genesis_config:

@@ -477,7 +477,7 @@ class CollectActiveSnapshotProposalsBehaviour(ProposalCollectorBaseBehaviour):
 
         # Remove active proposals where we have already voted
         active_proposals = filter(
-            lambda ap: ap["id"] not in ceramic_db["voted_proposals"]["snapshot"],
+            lambda ap: ap["id"] not in ceramic_db["vote_data"]["snapshot"],
             active_proposals,
         )
 
@@ -488,28 +488,29 @@ class CollectActiveSnapshotProposalsBehaviour(ProposalCollectorBaseBehaviour):
         )
 
         # Remove proposals where we dont have voting power
-        active_proposals = filter(
-            lambda ap: self._has_snapshot_voting_power(ap),
-            active_proposals,
-        )
+        votable_proposals = []
+        for ap in active_proposals:
+            has_voting_power = yield from self._has_snapshot_voting_power(ap)
+            if has_voting_power:
+                votable_proposals.append(ap)
 
-        for active_proposal in active_proposals:
+        for votable_proposal in votable_proposals:
             if (
-                active_proposal["id"] not in previous_proposals
+                votable_proposal["id"] not in previous_proposals
             ):  # This is a new proposal
-                previous_proposals[active_proposal["id"]] = {
-                    **active_proposal,
+                previous_proposals[votable_proposal["id"]] = {
+                    **votable_proposal,
                     "vote_intention": None,
-                    "remaining_seconds": active_proposal["end"] - now,
+                    "remaining_seconds": votable_proposal["end"] - now,
                 }
             else:
-                previous_proposals[active_proposal["id"]]["remaining_seconds"] = (
-                    active_proposal["end"] - now
+                previous_proposals[votable_proposal["id"]]["remaining_seconds"] = (
+                    votable_proposal["end"] - now
                 )
 
         return json.dumps(
             {
-                "updated_snapshot_proposals": active_proposals,
+                "updated_snapshot_proposals": previous_proposals,
                 "n_retrieved_proposals": n_retrieved_proposals,
                 "finished": finished,
             },
@@ -529,6 +530,9 @@ class CollectActiveSnapshotProposalsBehaviour(ProposalCollectorBaseBehaviour):
             "Content-Type": "application/json",
             "Accept": "application/json",
         }
+
+        # Wait for a couple seconds to avoid 429
+        yield from self.sleep(self.params.tally_api_call_sleep_seconds)
 
         # Make the request
         response = yield from self.get_http_response(

@@ -8,7 +8,7 @@ license: Apache-2.0
 aea_version: '>=1.0.0, <2.0.0'
 fingerprint:
   __init__.py: bafybeifps6e4vfc55iyb5jaab7dxem7y3a2wyflai32pyzf4z75m5ngym4
-  behaviours.py: bafybeifuh7xi2ikkipmckct7hhkhlnhc7quhmxzjti7n5jpdkadqf3kza4
+  behaviours.py: bafybeiddlkeyzfwxtpyfb4r3avakamz7fszpnfdoqp67fxdjsflzcah6ge
   custom_eth_account/__init__.py: bafybeigca3depnxqoqjq4hrxzjtiohya7p7637lwhrfg6a7c2d2ufnz6xm
   custom_eth_account/_utils/legacy_transactions.py: bafybeidno6ltysjvihm7562kdmoixxvhgy7zp5liyg5k7bdqo5wjb6uc6e
   custom_eth_account/_utils/signing.py: bafybeifwpyl2y6ct6jfdoo7r2sngdur2hfs7ks5tafmottv4ehipqg6pje
@@ -32,7 +32,7 @@ fingerprint:
   dialogues.py: bafybeihdakfnmps5o7n5rgepn3fl3lzttqsddhiny7mh7ddwhniutri6bq
   fsm_specification.yaml: bafybeiccxanm2pl5wjkkhf4ej4letbjwmnz5zr6a7s2n2ofmocmnsaifpu
   handlers.py: bafybeihex227foehp7a7wfc6vh25ahk5g65b5itu325hph2xj33mgp6kue
-  models.py: bafybeiat4lc76ybzpnegoo57jfdo2lakq4yfpqikdwqs6ah25q7gs4wpwi
+  models.py: bafybeig4rqlpc3il7nwc622yk6giw7ygfcnxzbfgjntmmvipkadwssldl4
   payloads.py: bafybeid5phynue7fcvsqwkg2wafm65vasc3m6aeyakqocnxrteiqghb3ia
   rounds.py: bafybeicf3f2hey5zcgkp6lb26hhugoyoe7ccdkowphupfwua7zprvmj23a
   tests/__init__.py: bafybeicnpfbu2732mdlaputxl4izv5yfievyodmjzy5w64r2e5zyqycigu

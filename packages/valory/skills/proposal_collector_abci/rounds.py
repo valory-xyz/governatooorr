@@ -75,7 +75,9 @@ class SynchronizedData(BaseSynchronizedData):
     @property
     def active_proposals(self) -> dict:
         """Get the active proposals."""
-        return cast(dict, self.db.get("active_proposals", {}))
+        return cast(
+            dict, self.db.get("active_proposals", {"tally": {}, "snapshot": {}})
+        )
 
     @property
     def n_snapshot_retrieved_proposals(self) -> int:

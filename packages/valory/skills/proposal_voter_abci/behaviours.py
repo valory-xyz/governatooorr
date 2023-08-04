@@ -88,7 +88,6 @@ VOTES_TO_CODE = {"FOR": 0, "AGAINST": 1, "ABSTAIN": 2}
 
 HTTP_OK = 200
 MAX_RETRIES = 3
-CALL_SLEEP = 2
 
 
 def fix_data_for_signing(data):
@@ -132,7 +131,9 @@ class EstablishVoteBehaviour(ProposalVoterBaseBehaviour):
 
         with self.context.benchmark_tool.measure(self.behaviour_id).local():
             expiring_tally_proposals = yield from self._get_expiring_tally_proposals()
-            expiring_snapshot_proposals = self._get_expiring_snapshot_proposals()
+            expiring_snapshot_proposals = (
+                yield from self._get_expiring_snapshot_proposals()
+            )
 
             expiring_proposals = {
                 "tally": expiring_tally_proposals,
@@ -383,7 +384,7 @@ class PrepareVoteTransactionBehaviour(ProposalVoterBaseBehaviour):
 
                 # Move proposal info from expiring proposals to voted_proposals
                 vote_info = expiring_proposals[access_key][submitted_vote_id]
-                ceramic_db["voted_proposals"][access_key][submitted_vote_id] = vote_info
+                ceramic_db["vote_data"][access_key][submitted_vote_id] = vote_info
                 del expiring_proposals[access_key][submitted_vote_id]
 
                 # Signal that the Ceramic db needs to be updated
@@ -826,7 +827,7 @@ class SnapshotAPISendBehaviour(ProposalVoterBaseBehaviour):
                 )
 
                 # Avoid calling too quicly
-                yield from self.sleep(CALL_SLEEP)
+                yield from self.sleep(self.params.tally_api_call_sleep_seconds)
 
                 if response.status_code != HTTP_OK:
                     retries += 1

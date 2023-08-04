@@ -77,6 +77,7 @@ class Params(BaseParams):
         self.snapshot_api_endpoint = kwargs.get(
             "snapshot_api_endpoint", "https://hub.snapshot.org/graphql"
         )
+        self.tally_api_call_sleep_seconds = kwargs.get("tally_api_call_sleep_seconds")
         super().__init__(*args, **kwargs)
 
 

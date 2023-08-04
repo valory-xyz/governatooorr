@@ -14,7 +14,6 @@ alphabet_in:
 - FINALIZE_TIMEOUT
 - INCORRECT_SERIALIZATION
 - INSUFFICIENT_FUNDS
-- MAX_RETRIES
 - MAX_RETRIES_ERROR
 - NEGATIVE
 - NONE
@@ -29,7 +28,7 @@ alphabet_in:
 - VALIDATE_TIMEOUT
 - VERIFICATION_ERROR
 - VOTE
-- WRITE_DELEGATIONS
+- WRITE_DB
 default_start_state: RegistrationStartupRound
 final_states:
 - FinishedMaxRetriesRound
@@ -148,10 +147,7 @@ transition_func:
     (SnapshotAPISendRandomnessRound, DONE): SnapshotAPISendSelectKeeperRound
     (SnapshotAPISendRandomnessRound, NO_MAJORITY): SnapshotAPISendRandomnessRound
     (SnapshotAPISendRandomnessRound, ROUND_TIMEOUT): SnapshotAPISendRandomnessRound
-    (SnapshotAPISendRound, API_ERROR): SnapshotAPISendRandomnessRound
-    (SnapshotAPISendRound, DID_NOT_SEND): SnapshotAPISendRandomnessRound
     (SnapshotAPISendRound, DONE): PrepareVoteTransactionRound
-    (SnapshotAPISendRound, MAX_RETRIES): PrepareVoteTransactionRound
     (SnapshotAPISendRound, ROUND_TIMEOUT): SnapshotAPISendRandomnessRound
     (SnapshotAPISendSelectKeeperRound, DONE): SnapshotAPISendRound
     (SnapshotAPISendSelectKeeperRound, NO_MAJORITY): SnapshotAPISendRandomnessRound
@@ -168,7 +164,7 @@ transition_func:
     (SynchronizeDelegationsRound, DONE): CollectActiveTallyProposalsRound
     (SynchronizeDelegationsRound, NO_MAJORITY): SynchronizeDelegationsRound
     (SynchronizeDelegationsRound, ROUND_TIMEOUT): SynchronizeDelegationsRound
-    (SynchronizeDelegationsRound, WRITE_DELEGATIONS): WriteDelegationsRound
+    (SynchronizeDelegationsRound, WRITE_DB): WriteDelegationsRound
     (SynchronizeLateMessagesRound, DONE): CheckLateTxHashesRound
     (SynchronizeLateMessagesRound, NONE): SelectKeeperTransactionSubmissionBRound
     (SynchronizeLateMessagesRound, ROUND_TIMEOUT): SynchronizeLateMessagesRound

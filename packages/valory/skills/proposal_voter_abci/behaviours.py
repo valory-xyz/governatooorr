@@ -835,7 +835,7 @@ class SnapshotAPISendBehaviour(ProposalVoterBaseBehaviour):
                         f"Received status code {response.status_code}: {response.json()}."
                     )
                 else:
-                    self.context.logger.info(f"Succesfully submitted the vote.")
+                    self.context.logger.info("Succesfully submitted the vote.")
 
                     # Set the vote as sent
                     pending_write = True

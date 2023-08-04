@@ -8,21 +8,21 @@ license: Apache-2.0
 aea_version: '>=1.0.0, <2.0.0'
 fingerprint:
   __init__.py: bafybeickrxtcqbivmneh54iq7ymaoq6xzwdouvnoon3h234vzp574qouvu
-  behaviours.py: bafybeidbldyisy6pjretagn3eryfwl7ytdehxacj4caekiabgttxjm3yty
+  behaviours.py: bafybeicy7hrjqpvilw7wpkyzfcbgmgjqgdpfpilrijshtri5dfzygezslu
   dialogues.py: bafybeighergy2hupd32ozp2ud5j4jujpccfkzk2l46a33xn7yi2ofk32m4
-  fsm_specification.yaml: bafybeigqibab2wre5m6gt7z7qqtxjksvjal53arryy7gxakdmzb5qknkmu
+  fsm_specification.yaml: bafybeifi3h7nu46dow4mrma4skpnuchf5qmg4gjux4rnoxf7zk5zoe7pii
   handlers.py: bafybeihil2ciszow4moliizgpiaxxsyohhfpzobzpjregefkj4v4ngpkky
-  models.py: bafybeibujlhp7zwtia3tgnab5gx3in3tqgy5gnko6ul3e2ihamcs7rctuu
-  payloads.py: bafybeifs3o3t4vme3rmq6agjxjip34nntphk2opn5oxnyo2vtttcnek364
-  rounds.py: bafybeihwd556c4yhssblr4ydxawgxps5iz7p3hezelnzeua46q43udxoi4
-  snapshot.py: bafybeihrke4mzlx3n72utzfcvtcvnxm6aci2jr6veqmox54vqn77vm5oqe
+  models.py: bafybeidwojsfwjguljeh3gtf7oh2bevbvpbd7ozgsarpnx7gvyxcltsezq
+  payloads.py: bafybeif6xgurziduff6f2hgxwatjnsd6sx7ragdqavcktz5gpyfrxekoka
+  rounds.py: bafybeihf7ttidehhxpqwm47duvt3hprpgn67viepzpjsgfae7zpg4sdwli
+  snapshot.py: bafybeidh7xenkjsh5rcqmaany3rpe6mnytr5gcg5cnod6dcxqnlsxeziru
   tally.py: bafybeih4w2gk6vzthjbw3q2hhckquxgcs7y4kvj3uezclugb6qvo3s35fq
   tests/__init__.py: bafybeicqptpyrejemtnjmtvarhf4sk3roprka5wedztzeehei42rygpfwy
   tests/test_behaviours.py: bafybeie6zhoujz4rxfqhpnbvndjyiwj35qk4m6ooivokeiefjon6zdwz6u
   tests/test_handlers.py: bafybeih4m22e2z6lnfmwncibddvag5b534cyzalyhciih3u65rzchv2tam
   tests/test_models.py: bafybeia4q5ncu6xxie5e2plugclkccrqnuqw3ujlqu3vus54zacvfkwyxi
   tests/test_payloads.py: bafybeifpggwuftdbammofsvoi4dpouscmjw47rozqea2syyaa27fbxvrlu
-  tests/test_rounds.py: bafybeia2fzm6qdbtfpiigvlp7yongewx563wi2joljgagu7docuqxzh3pu
+  tests/test_rounds.py: bafybeifszyd22ejwaujbjyjjcohjnyzyu6wk2ais6ai3xim757j3kopsp4
 fingerprint_ignore_patterns: []
 connections:
 - fetchai/http_server:0.22.0:bafybeihp5umafxzx45aad5pj7s3343se2wjkgnbirt4pybrape22swm6de

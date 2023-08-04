@@ -5,7 +5,7 @@ alphabet_in:
 - NO_MAJORITY
 - REPEAT
 - ROUND_TIMEOUT
-- WRITE_DELEGATIONS
+- WRITE_DB
 default_start_state: SynchronizeDelegationsRound
 final_states:
 - FinishedProposalRound
@@ -35,7 +35,7 @@ transition_func:
     (SynchronizeDelegationsRound, DONE): CollectActiveTallyProposalsRound
     (SynchronizeDelegationsRound, NO_MAJORITY): SynchronizeDelegationsRound
     (SynchronizeDelegationsRound, ROUND_TIMEOUT): SynchronizeDelegationsRound
-    (SynchronizeDelegationsRound, WRITE_DELEGATIONS): WriteDelegationsRound
+    (SynchronizeDelegationsRound, WRITE_DB): WriteDelegationsRound
     (WriteDelegationsRound, DONE): FinishedWriteDelegationsRound
     (WriteDelegationsRound, NO_MAJORITY): SynchronizeDelegationsRound
     (WriteDelegationsRound, ROUND_TIMEOUT): SynchronizeDelegationsRound

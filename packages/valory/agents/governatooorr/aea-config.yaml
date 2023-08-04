@@ -38,9 +38,9 @@ protocols:
 skills:
 - valory/abstract_abci:0.1.0:bafybeih3bwx5apteinnoxts7sqmjlskntdbo7vvnmdbs5noo2pv76by7fu
 - valory/abstract_round_abci:0.1.0:bafybeibqpzbklnljvtc67yon4ciijxj75d7vazm7rurcvbbfnk6jtudukm
-- valory/governatooorr_abci:0.1.0:bafybeibs76u45o5qyskr7b2jybeealczrtqmgkmibh6oul43s74d5qkb7u
-- valory/proposal_collector_abci:0.1.0:bafybeidswlgcv2sizbuhppukil4e6tdkoryuxyoczhlk7v33tks6a6gtqq
-- valory/proposal_voter_abci:0.1.0:bafybeife47kvtuje3k5ldie75ebsbfrdyc7po2excwam7jmghuqf5ppds4
+- valory/governatooorr_abci:0.1.0:bafybeif5g75s76schglafdwznpic63666wkb7nbidbqgglk4poimbp7nsy
+- valory/proposal_collector_abci:0.1.0:bafybeicb3sm2lo5h2sd37vcak3t4iwjp3iqsonu4nnzaibpymnfqjmoxlu
+- valory/proposal_voter_abci:0.1.0:bafybeia4tg7yq5ccpsqy54kmyslnsr2glpsmvi2cy3j22kqcsyhkkd3ufe
 - valory/registration_abci:0.1.0:bafybeia25gpusnkakb2dp4heqkwtuftbc2apppq3i4bds6sphltsovgzvi
 - valory/reset_pause_abci:0.1.0:bafybeigzvwbzktclahjbsyiwqnj6poree4iveon5pric6s5ixb6wrhkdhq
 - valory/termination_abci:0.1.0:bafybeibcdgnarxyyqexncpfewcemraryywtwueuv7qthsjuean5l77lp2e
@@ -193,6 +193,7 @@ models:
       voting_block_threshold: ${int:300}
       voting_seconds_threshold: ${int:10000}
       ceramic_api_base: ${str:https://ceramic-valory.hirenodes.io/}
+      ceramic_api_create_endpoint: ${str:api/v0/streams}
       ceramic_api_commit_endpoint: ${str:api/v0/commits}
       ceramic_api_read_endpoint: ${str:api/v0/commits/{stream_id}}
       ceramic_did_seed: ${str:0101010101010101010101010101010101010101010101010101010101010101}

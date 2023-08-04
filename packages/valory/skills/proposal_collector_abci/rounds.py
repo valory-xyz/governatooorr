@@ -356,7 +356,7 @@ class ProposalCollectorAbciApp(AbciApp[Event]):
     transition_function: AbciAppTransitionFunction = {
         SynchronizeDelegationsRound: {
             Event.DONE: CollectActiveTallyProposalsRound,
-            Event.WRITE_DELEGATIONS: WriteDelegationsRound,
+            Event.WRITE_DB: WriteDelegationsRound,
             Event.NO_MAJORITY: SynchronizeDelegationsRound,
             Event.ROUND_TIMEOUT: SynchronizeDelegationsRound,
         },

@@ -39,6 +39,7 @@ from packages.valory.skills.proposal_collector_abci.payloads import (
     CollectActiveSnapshotProposalsPayload,
     CollectActiveTallyProposalsPayload,
     SynchronizeDelegationsPayload,
+    WriteDBPayload,
 )
 
 
@@ -188,7 +189,7 @@ class SynchronizeDelegationsRound(CollectDifferentUntilAllRound):
 class WriteDBRound(CollectSameUntilThresholdRound):
     """WriteDBRound"""
 
-    payload_class = CollectActiveSnapshotProposalsPayload
+    payload_class = WriteDBPayload
     synchronized_data_class = SynchronizedData
 
     def end_block(self) -> Optional[Tuple[BaseSynchronizedData, Event]]:

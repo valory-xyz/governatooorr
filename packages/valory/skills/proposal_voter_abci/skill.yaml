@@ -8,7 +8,7 @@ license: Apache-2.0
 aea_version: '>=1.0.0, <2.0.0'
 fingerprint:
   __init__.py: bafybeifps6e4vfc55iyb5jaab7dxem7y3a2wyflai32pyzf4z75m5ngym4
-  behaviours.py: bafybeiddlkeyzfwxtpyfb4r3avakamz7fszpnfdoqp67fxdjsflzcah6ge
+  behaviours.py: bafybeicgrgs7fuutgiw44mnrldf4s7xdwihdyicmt3lmh4ym4ylbuqmg6u
   custom_eth_account/__init__.py: bafybeigca3depnxqoqjq4hrxzjtiohya7p7637lwhrfg6a7c2d2ufnz6xm
   custom_eth_account/_utils/legacy_transactions.py: bafybeidno6ltysjvihm7562kdmoixxvhgy7zp5liyg5k7bdqo5wjb6uc6e
   custom_eth_account/_utils/signing.py: bafybeifwpyl2y6ct6jfdoo7r2sngdur2hfs7ks5tafmottv4ehipqg6pje
@@ -190,25 +190,25 @@ models:
     class_name: TendermintDialogues
 dependencies:
   bitarray:
-    version: '>=1.2.1,<1.3.0'
-  eth-abi:
-    version: '>=2.0.0b7,<3'
-  eth-keyfile:
-    version: '>=0.5.0,<0.6.0'
-  eth-keys:
-    version: '>=0.2.1,<0.4.0,!=0.3.2'
-  eth-rlp:
-    version: '>=0.1.2,<2'
-  eth-utils:
-    version: '>=1.3.0,<2'
-  hexbytes:
-    version: '>=0.1.0,<1'
-  rlp:
-    version: '>=1.0.0,<3'
-  eth_typing:
-    version: ==2.3.0
+    version: <1.3.0,>=1.2.1
   cytoolz:
     version: ==0.12.1
+  eth-abi:
+    version: <3,>=2.0.0b7
+  eth-keyfile:
+    version: <0.6.0,>=0.5.0
+  eth-keys:
+    version: '!=0.3.2,<0.4.0,>=0.2.1'
+  eth-rlp:
+    version: <2,>=0.1.2
+  eth-utils:
+    version: <2,>=1.3.0
+  eth_typing:
+    version: ==2.3.0
+  hexbytes:
+    version: <1,>=0.1.0
+  rlp:
+    version: <3,>=1.0.0
   toolz:
     version: ==0.12.0
 is_abstract: true

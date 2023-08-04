@@ -398,10 +398,10 @@ class PrepareVoteTransactionBehaviour(ProposalVoterBaseBehaviour):
             votable_snapshot_proposal_ids = list(expiring_proposals["snapshot"].keys())
 
             self.context.logger.info(
-                f"Expiring Tally proposal ids: {votable_tally_proposal_ids}\n"
+                f"Expiring Tally proposal ids: {votable_tally_proposal_ids}"
             )
             self.context.logger.info(
-                f"Expiring Snapshot proposal ids: {votable_snapshot_proposal_ids}\n"
+                f"Expiring Snapshot proposal ids: {votable_snapshot_proposal_ids}"
             )
 
             payload_content = {

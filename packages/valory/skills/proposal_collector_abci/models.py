@@ -72,8 +72,8 @@ class Params(BaseParams):
         self.tally_api_endpoint = self._ensure("tally_api_endpoint", kwargs, str)
         self.tally_api_key = kwargs.pop("tally_api_key", None)
         self.service_endpoint_base = self._ensure("service_endpoint_base", kwargs, str)
-        self.tally_api_call_sleep_seconds = self._ensure(
-            "tally_api_call_sleep_seconds", kwargs, int
+        self.tally_api_call_sleep_seconds = kwargs.get(
+            "tally_api_call_sleep_seconds", 2
         )
         self.ceramic_stream_id = kwargs.get("ceramic_stream_id")
         self.ceramic_did_str = kwargs.get("ceramic_did_str")

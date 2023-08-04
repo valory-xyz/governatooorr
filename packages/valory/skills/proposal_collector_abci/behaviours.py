@@ -329,9 +329,15 @@ class CollectActiveTallyProposalsBehaviour(ProposalCollectorBaseBehaviour):
         )
 
         # Remove proposals where we have already voted
-        active_proposals = filter(
-            lambda ap: ap["id"] not in ceramic_db["voted_proposals"]["tally"],
-            active_proposals,
+        active_proposals = list(
+            filter(
+                lambda ap: ap["id"] not in ceramic_db["voted_proposals"]["tally"],
+                active_proposals,
+            )
+        )
+
+        self.context.logger.info(
+            f"Retrieved {len(active_proposals)} new votable proposals from Tally"
         )
 
         # Process active proposals
@@ -494,6 +500,10 @@ class CollectActiveSnapshotProposalsBehaviour(ProposalCollectorBaseBehaviour):
             if has_voting_power:
                 votable_proposals.append(ap)
 
+        self.context.logger.info(
+            f"Retrieved {len(votable_proposals)} new votable proposals from Snapshot"
+        )
+
         for votable_proposal in votable_proposals:
             if (
                 votable_proposal["id"] not in previous_proposals
@@ -530,6 +540,10 @@ class CollectActiveSnapshotProposalsBehaviour(ProposalCollectorBaseBehaviour):
             "Content-Type": "application/json",
             "Accept": "application/json",
         }
+
+        self.context.logger.info(
+            f"Getting voting power for proposal {proposal['id']} [{proposal['space']['name']}]"
+        )
 
         # Wait for a couple seconds to avoid 429
         yield from self.sleep(self.params.tally_api_call_sleep_seconds)

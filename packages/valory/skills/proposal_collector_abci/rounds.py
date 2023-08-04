@@ -43,7 +43,7 @@ from packages.valory.skills.proposal_collector_abci.payloads import (
 )
 
 
-SNAPSHOT_PROPOSAL_TOTAL_LIMIT = 200  # we focus on the first expiring proposals only
+SNAPSHOT_PROPOSAL_TOTAL_LIMIT = 100
 
 
 class Event(Enum):

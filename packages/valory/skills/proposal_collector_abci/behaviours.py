@@ -55,8 +55,8 @@ from packages.valory.skills.proposal_collector_abci.tally import (
 
 
 HTTP_OK = 200
-SNAPSHOT_REQUEST_STEP = 200
-SNAPSHOT_PROPOSAL_ROUND_LIMIT = 200  # avoids too big payloads
+SNAPSHOT_REQUEST_STEP = 100
+SNAPSHOT_PROPOSAL_ROUND_LIMIT = 100  # avoids too big payloads
 MAX_RETRIES = 3
 
 

@@ -21,6 +21,7 @@
 
 import json
 import re
+from datetime import datetime
 from enum import Enum
 from typing import Callable, Dict, List, Optional, Tuple, Union, cast
 from urllib.parse import urlparse
@@ -56,6 +57,7 @@ from packages.valory.skills.proposal_collector_abci.dialogues import (
     HttpDialogue,
     HttpDialogues,
 )
+from packages.valory.skills.proposal_collector_abci.models import SharedState
 from packages.valory.skills.proposal_collector_abci.rounds import SynchronizedData
 
 
@@ -109,6 +111,7 @@ class HttpHandler(BaseHttpHandler):
         hostname_regex = rf".*({service_endpoint_base}|{propel_uri_base_hostname}|localhost|127.0.0.1|0.0.0.0)(:\d+)?"
         self.handler_url_regex = rf"{hostname_regex}\/.*"
         eth_address_regex = r"0x[a-fA-F0-9]{40}"
+        health_url_regex = rf"{hostname_regex}\/healthcheck"
 
         # Endpoint regexes
         delegate_url_regex = rf"{hostname_regex}\/delegate\/?$"
@@ -127,6 +130,7 @@ class HttpHandler(BaseHttpHandler):
                 (delegations_url_regex, self._handle_get_delegations),
                 (proposals_url_regex, self._handle_get_proposals),
                 (proposal_url_regex, self._handle_get_proposal),
+                (health_url_regex, self._handle_get_health),
             ],
         }
 
@@ -275,7 +279,7 @@ class HttpHandler(BaseHttpHandler):
 
         delegations = [
             delegation_to_camel_case(d)
-            for d in self.synchronized_data.delegations
+            for d in self.synchronized_data.ceramic_db["delegations"]
             if d["user_address"] == address
         ]
 
@@ -286,7 +290,9 @@ class HttpHandler(BaseHttpHandler):
     def _handle_get_proposals(
         self, http_msg: HttpMessage, http_dialogue: HttpDialogue
     ) -> None:
-        response_body_data = list(self.synchronized_data.proposals.values())
+        response_body_data = list(
+            self.synchronized_data.active_proposals["tally"].values()
+        )
 
         self._send_ok_response(http_msg, http_dialogue, response_body_data)
 
@@ -296,8 +302,8 @@ class HttpHandler(BaseHttpHandler):
         proposal_id = http_msg.url.split("/")[-1]
         proposal = (
             None
-            if proposal_id not in self.synchronized_data.proposals
-            else self.synchronized_data.proposals[proposal_id]
+            if proposal_id not in self.synchronized_data.active_proposals["tally"]
+            else self.synchronized_data.active_proposals["tally"][proposal_id]
         )
 
         if not proposal:
@@ -307,6 +313,38 @@ class HttpHandler(BaseHttpHandler):
         response_body_data = proposal
 
         self._send_ok_response(http_msg, http_dialogue, response_body_data)
+
+    def _handle_get_health(
+        self, http_msg: HttpMessage, http_dialogue: HttpDialogue
+    ) -> None:
+        """
+        Handle a Http request of verb GET.
+
+        :param http_msg: the http message
+        :param http_dialogue: the http dialogue
+        """
+        seconds_since_last_transition = None
+        is_tm_unhealthy = None
+
+        round_sequence = cast(SharedState, self.context.state).round_sequence
+
+        if round_sequence._last_round_transition_timestamp:
+            is_tm_unhealthy = cast(
+                SharedState, self.context.state
+            ).round_sequence.block_stall_deadline_expired
+
+            current_time = datetime.now().timestamp()
+            seconds_since_last_transition = current_time - datetime.timestamp(
+                round_sequence._last_round_transition_timestamp
+            )
+
+        data = {
+            "seconds_since_last_transition": seconds_since_last_transition,
+            "tm_healthy": is_tm_unhealthy,
+            "period": self.synchronized_data.period_count,
+        }
+
+        self._send_ok_response(http_msg, http_dialogue, data)
 
     def _send_ok_response(
         self,

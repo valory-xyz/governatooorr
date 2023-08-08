@@ -71,7 +71,6 @@ _sym_db.RegisterMessage(LlmMessage.Request_Performative.PromptValuesEntry)
 _sym_db.RegisterMessage(LlmMessage.Response_Performative)
 
 if _descriptor._USE_C_DESCRIPTORS == False:
-
     DESCRIPTOR._options = None
     _LLMMESSAGE_REQUEST_PERFORMATIVE_PROMPTVALUESENTRY._options = None
     _LLMMESSAGE_REQUEST_PERFORMATIVE_PROMPTVALUESENTRY._serialized_options = b"8\001"

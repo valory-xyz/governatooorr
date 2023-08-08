@@ -76,6 +76,11 @@ class Params(BaseParams):
         self.tally_api_call_sleep_seconds = self._ensure(
             "tally_api_call_sleep_seconds", kwargs, int
         )
+        self.delegations_stream_id = kwargs.get(
+            "default_read_stream_id"  # We use the same stream we read from
+        )
+        self.ceramic_did_str = kwargs.get("ceramic_did_str")
+        self.ceramic_did_seed = kwargs.get("ceramic_did_seed")
         super().__init__(*args, **kwargs)
 
 

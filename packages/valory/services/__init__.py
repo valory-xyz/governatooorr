@@ -19,4 +19,4 @@
 # ------------------------------------------------------------------------------
 
 
-"""This module contains the contract packages authored by Valory AG."""
+"""This module contains the service packages authored by Valory AG."""

@@ -17,6 +17,3 @@
 #   limitations under the License.
 #
 # ------------------------------------------------------------------------------
-
-
-"""This module contains the contract packages authored by Valory AG."""

@@ -16,7 +16,7 @@ fingerprint:
   rounds.py: bafybeicqhte7wstsdampbhhtc2psiynv263qgbqbuhw72j4pk5mt5nsuh4
 fingerprint_ignore_patterns: []
 connections:
-- valory/openai:0.1.0:bafybeifq7khwp42btuiulw2fdnr5wnf5uqimnclswzyk3bneunrimwaamm
+- valory/openai:0.1.0:bafybeic4xpbabuzouaiecphtgnko2vqm55ee4xwopk5ehfx2wsehbcepne
 contracts:
 - valory/solana_governance:0.1.0:bafybeiai6xmkddnu3dmd4aar2om6bqmta6wesdne7wjcsm7q4qhrfnsdia
 protocols:

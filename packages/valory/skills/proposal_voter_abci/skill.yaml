@@ -44,7 +44,7 @@ fingerprint:
   tests/test_rounds.py: bafybeib72w3uiqo2rfsls4dkfm57q4mrzbegqlemca4dby4vwsyn7of57q
 fingerprint_ignore_patterns: []
 connections:
-- valory/openai:0.1.0:bafybeifq7khwp42btuiulw2fdnr5wnf5uqimnclswzyk3bneunrimwaamm
+- valory/openai:0.1.0:bafybeic4xpbabuzouaiecphtgnko2vqm55ee4xwopk5ehfx2wsehbcepne
 contracts:
 - valory/delegate:0.1.0:bafybeieqjhcoyuvyaluqxkuyr7jt6la7lkjjz6ntex6urru4tfa6chkcme
 - valory/gnosis_safe:0.1.0:bafybeibhezhwgi5ustv675gfohsq5l5xjijp36gqueuicyl2ofrtkrortm

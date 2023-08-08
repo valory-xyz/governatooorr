@@ -11,7 +11,7 @@ connections:
 - valory/abci:0.1.0:bafybeic6beo7cpd2qtotntlbmsrs3qfn7fw5eh2vkav6milat6awao46pu
 - valory/http_client:0.23.0:bafybeieoeuy4brzimtnubmokwirhrx27ezls6cdnl5qik4rkykfle3nn2y
 - valory/ledger:0.19.0:bafybeiejc7g7ebv3cleiqb4f4h4pspcu6vtr54332szwlqiabfs3sfdh44
-- valory/openai:0.1.0:bafybeifq7khwp42btuiulw2fdnr5wnf5uqimnclswzyk3bneunrimwaamm
+- valory/openai:0.1.0:bafybeic4xpbabuzouaiecphtgnko2vqm55ee4xwopk5ehfx2wsehbcepne
 - valory/p2p_libp2p_client:0.1.0:bafybeihdnfdth3qgltefgrem7xyi4b3ejzaz67xglm2hbma2rfvpl2annq
 contracts:
 - valory/delegate:0.1.0:bafybeieqjhcoyuvyaluqxkuyr7jt6la7lkjjz6ntex6urru4tfa6chkcme
@@ -31,9 +31,9 @@ protocols:
 skills:
 - valory/abstract_abci:0.1.0:bafybeih3bwx5apteinnoxts7sqmjlskntdbo7vvnmdbs5noo2pv76by7fu
 - valory/abstract_round_abci:0.1.0:bafybeibqpzbklnljvtc67yon4ciijxj75d7vazm7rurcvbbfnk6jtudukm
-- valory/governatooorr_solana_abci:0.1.0:bafybeieobugmqkjt7fekecrbdgeskm4dd6gyat5sujpakewurmloh23sou
+- valory/governatooorr_solana_abci:0.1.0:bafybeiakt2t2egg34sa4n7dib64nj3sw3h6nzrf6bdwy5geyuncsbykmxm
 - valory/proposal_collector_solana_abci:0.1.0:bafybeigsl3ezgoizzaxvjbn5n3ayrc7o3jn3ispo5jag3pntcgcuxuznee
-- valory/proposal_voter_solana_abci:0.1.0:bafybeia2u2qhqm6vwglw2f3qeem6ieh764m7yj2a6nvjj7j25hsbpe7c3e
+- valory/proposal_voter_solana_abci:0.1.0:bafybeihcspsr63bzu75vsob6xm3v4dzskoozxa3c3dzdpfxhvrcew5hctm
 - valory/registration_abci:0.1.0:bafybeia25gpusnkakb2dp4heqkwtuftbc2apppq3i4bds6sphltsovgzvi
 - valory/reset_pause_abci:0.1.0:bafybeigzvwbzktclahjbsyiwqnj6poree4iveon5pric6s5ixb6wrhkdhq
 - valory/termination_abci:0.1.0:bafybeibcdgnarxyyqexncpfewcemraryywtwueuv7qthsjuean5l77lp2e

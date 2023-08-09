@@ -8,7 +8,7 @@ license: Apache-2.0
 fingerprint:
   README.md: bafybeibotqiu2nzbjbkud3dz46ymrzsqtjybndablkzku7hnspnwztcvby
 fingerprint_ignore_patterns: []
-agent: valory/governatooorr_solana:0.1.0:bafybeibd4wy6jvld5oqsyo2xpxxqcy553bli7pye4psf6ncagg2lpir6ey
+agent: valory/governatooorr_solana:0.1.0:bafybeiafg7oh5itaofoljsuwu5sr7vqv7dwqnjg4yhkorhzl62yttwzrd4
 number_of_agents: 4
 deployment:
   agent:
@@ -305,24 +305,28 @@ type: connection
     max_tokens: ${MAX_TOKENS:int:500}
     openai_api_key: ${OPENAI_API_KEY_0:str:null}
     temperature: ${TEMPERATURE:float:0.7}
+    request_timeout: ${OPENAI_REQUEST_TIMEOUT:float:300.0}
 1:
   config:
     engine: ${ENGINE:str:text-davinci-003}
     max_tokens: ${MAX_TOKENS:int:500}
     openai_api_key: ${OPENAI_API_KEY_1:str:null}
     temperature: ${TEMPERATURE:float:0.7}
+    request_timeout: ${OPENAI_REQUEST_TIMEOUT:float:300.0}
 2:
   config:
     engine: ${ENGINE:str:text-davinci-003}
     max_tokens: ${MAX_TOKENS:int:500}
     openai_api_key: ${OPENAI_API_KEY_2:str:null}
     temperature: ${TEMPERATURE:float:0.7}
+    request_timeout: ${OPENAI_REQUEST_TIMEOUT:float:300.0}
 3:
   config:
     engine: ${ENGINE:str:text-davinci-003}
     max_tokens: ${MAX_TOKENS:int:500}
     openai_api_key: ${OPENAI_API_KEY_3:str:null}
     temperature: ${TEMPERATURE:float:0.7}
+    request_timeout: ${OPENAI_REQUEST_TIMEOUT:float:300.0}
 ---
 public_id: valory/p2p_libp2p_client:0.1.0
 type: connection

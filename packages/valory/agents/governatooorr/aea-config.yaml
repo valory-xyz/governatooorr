@@ -18,7 +18,7 @@ connections:
 - valory/abci:0.1.0:bafybeihofnsokowicviac6yz3uhur52l3mf54s2hz4i2je5ie4vlruouga
 - valory/http_client:0.23.0:bafybeidykl4elwbcjkqn32wt5h4h7tlpeqovrcq3c5bcplt6nhpznhgczi
 - valory/ledger:0.19.0:bafybeicgfupeudtmvehbwziqfxiz6ztsxr5rxzvalzvsdsspzz73o5fzfi
-- valory/openai:0.1.0:bafybeignrzrxpr5lfn3ztcqu4di72zusqtip5fq7oyfhisbzqlqbjin7f4
+- valory/openai:0.1.0:bafybeibjj5sfasswxemzp5ykmz4si225c5apcllmdfblursjbwvngasuvi
 - valory/p2p_libp2p_client:0.1.0:bafybeidwcobzb7ut3efegoedad7jfckvt2n6prcmd4g7xnkm6hp6aafrva
 contracts:
 - valory/delegate:0.1.0:bafybeieqjhcoyuvyaluqxkuyr7jt6la7lkjjz6ntex6urru4tfa6chkcme
@@ -38,9 +38,9 @@ protocols:
 skills:
 - valory/abstract_abci:0.1.0:bafybeiff2dqnkeorf343fmb3547fhiznvdw4ewbwl4rqluek2cv6ibl5hi
 - valory/abstract_round_abci:0.1.0:bafybeiac62ennpw54gns2quk4g3yoaili2mb72nj6c52czobz5dcwj4mwi
-- valory/governatooorr_abci:0.1.0:bafybeiahv73ljaedqc7mssqga57enaafxijhzepakwumyiv55uh6denq3m
+- valory/governatooorr_abci:0.1.0:bafybeiam52o2bm2x4vdqh6gq234oanmxsz5ikxo3c6yzibsnnns4bgz2oe
 - valory/proposal_collector_abci:0.1.0:bafybeiauwsu4mtjyxreaciblezytpuk74caupdkktv2zr7lg3e3moyktyq
-- valory/proposal_voter_abci:0.1.0:bafybeibjycoc3kuluajd4cpessfjwkrsjsjixbiyhyghp53tswdyufxku4
+- valory/proposal_voter_abci:0.1.0:bafybeic4xyj64alzqcnf7lnxhw6lnc4lj6m4wcztruwbzatdk3racm5qwi
 - valory/registration_abci:0.1.0:bafybeib6fsfur5jnflcveidnaeylneybwazewufzwa5twnwovdqgwtwsxm
 - valory/reset_pause_abci:0.1.0:bafybeibqz7y3i4aepuprhijwdydkcsbqjtpeea6gdzpp5fgc6abrvjz25a
 - valory/termination_abci:0.1.0:bafybeieb3gnvjxxsh73g67m7rivzknwb63xu4qeagpkv7f4mqz33ecikem
@@ -107,6 +107,7 @@ config:
   max_tokens: ${int:500}
   openai_api_key: ${str:null}
   temperature: ${float:0.7}
+  request_timeout: ${float:300.0}
 ---
 public_id: valory/p2p_libp2p_client:0.1.0
 type: connection

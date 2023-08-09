@@ -99,7 +99,13 @@ class OpenaiConnection(BaseSyncConnection):
         super().__init__(*args, **kwargs)
         self.openai_settings = {
             setting: self.configuration.config.get(setting)
-            for setting in ("openai_api_key", "engine", "max_tokens", "temperature")
+            for setting in (
+                "openai_api_key",
+                "engine",
+                "max_tokens",
+                "temperature",
+                "request_timeout",
+            )
         }
         openai.api_key = self.openai_settings["openai_api_key"]
         self.dialogues = LlmDialogues(connection_id=PUBLIC_ID)
@@ -185,20 +191,23 @@ class OpenaiConnection(BaseSyncConnection):
                 temperature=self.openai_settings["temperature"],
                 max_tokens=self.openai_settings["max_tokens"],
                 n=1,
-                timeout=120,
+                request_timeout=self.openai_settings["request_timeout"],
                 stop=None,
             )
             output = response.choices[0].message.content
-        else:
+        elif engine in ENGINES["completion"]:
             response = openai.Completion.create(
                 engine=engine,
                 prompt=formatted_prompt,
                 temperature=self.openai_settings["temperature"],
                 max_tokens=self.openai_settings["max_tokens"],
                 n=1,
+                request_timeout=self.openai_settings["request_timeout"],
                 stop=None,
             )
             output = response.choices[0].text
+        else:
+            raise AttributeError(f"Unrecognized OpenAI engine: {engine}")
 
         return output
 

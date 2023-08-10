@@ -56,7 +56,6 @@ class Event(Enum):
     CONTRACT_ERROR = "contract_error"
     VOTE = "vote"
     NO_VOTE = "no_vote"
-    CALL_API = "call_api"
     SKIP_CALL = "skip_call"
     RETRIEVAL_ERROR = "retrieval_error"
 
@@ -227,7 +226,7 @@ class SnapshotCallDecisionMakingRound(CollectSameUntilThresholdRound):
             if self.most_voted_payload == SnapshotCallDecisionMakingRound.SKIP_PAYLOAD:
                 return self.synchronized_data, Event.SKIP_CALL
 
-            return self.synchronized_data, Event.CALL_API
+            return self.synchronized_data, Event.DONE
 
         if not self.is_majority_possible(
             self.collection, self.synchronized_data.nb_participants
@@ -325,9 +324,8 @@ class ProposalVoterAbciApp(AbciApp[Event]):
         },
         FinishedTransactionPreparationNoVoteRound: {},
         SnapshotCallDecisionMakingRound: {
-            Event.DONE: PrepareVoteTransactionRound,
-            Event.RETRIEVAL_ERROR: SnapshotCallDecisionMakingRound,
-            Event.CALL_API: SnapshotAPISendRandomnessRound,
+            Event.SKIP_CALL: PrepareVoteTransactionRound,
+            Event.DONE: SnapshotAPISendRandomnessRound,
             Event.NO_MAJORITY: EstablishVoteRound,
             Event.ROUND_TIMEOUT: EstablishVoteRound,
         },

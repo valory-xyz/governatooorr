@@ -1,7 +1,6 @@
 alphabet_in:
 - API_ERROR
 - BLOCK_RETRIEVAL_ERROR
-- CALL_API
 - CHECK_HISTORY
 - CHECK_LATE_ARRIVING_MESSAGE
 - CHECK_TIMEOUT
@@ -22,8 +21,8 @@ alphabet_in:
 - REPEAT
 - RESET_AND_PAUSE_TIMEOUT
 - RESET_TIMEOUT
-- RETRIEVAL_ERROR
 - ROUND_TIMEOUT
+- SKIP_CALL
 - SUSPICIOUS_ACTIVITY
 - VALIDATE_TIMEOUT
 - VERIFICATION_ERROR
@@ -52,7 +51,6 @@ states:
 - RegistrationStartupRound
 - ResetAndPauseRound
 - ResetRound
-- SnapshotCallDecisionMakingRound
 - SelectKeeperRound
 - SelectKeeperTransactionSubmissionARound
 - SelectKeeperTransactionSubmissionBAfterTimeoutRound
@@ -60,6 +58,7 @@ states:
 - SnapshotAPISendRandomnessRound
 - SnapshotAPISendRound
 - SnapshotAPISendSelectKeeperRound
+- SnapshotCallDecisionMakingRound
 - StreamReadRound
 - StreamWriteRound
 - SynchronizeDelegationsRound
@@ -122,11 +121,6 @@ transition_func:
     (ResetRound, DONE): RandomnessTransactionSubmissionRound
     (ResetRound, NO_MAJORITY): PrepareVoteTransactionRound
     (ResetRound, RESET_TIMEOUT): PrepareVoteTransactionRound
-    (SnapshotCallDecisionMakingRound, CALL_API): SnapshotAPISendRandomnessRound
-    (SnapshotCallDecisionMakingRound, DONE): PrepareVoteTransactionRound
-    (SnapshotCallDecisionMakingRound, NO_MAJORITY): EstablishVoteRound
-    (SnapshotCallDecisionMakingRound, RETRIEVAL_ERROR): SnapshotCallDecisionMakingRound
-    (SnapshotCallDecisionMakingRound, ROUND_TIMEOUT): EstablishVoteRound
     (SelectKeeperRound, DONE): StreamWriteRound
     (SelectKeeperRound, NO_MAJORITY): RandomnessRound
     (SelectKeeperRound, ROUND_TIMEOUT): RandomnessRound
@@ -152,6 +146,10 @@ transition_func:
     (SnapshotAPISendSelectKeeperRound, DONE): SnapshotAPISendRound
     (SnapshotAPISendSelectKeeperRound, NO_MAJORITY): SnapshotAPISendRandomnessRound
     (SnapshotAPISendSelectKeeperRound, ROUND_TIMEOUT): SnapshotAPISendRandomnessRound
+    (SnapshotCallDecisionMakingRound, DONE): SnapshotAPISendRandomnessRound
+    (SnapshotCallDecisionMakingRound, NO_MAJORITY): EstablishVoteRound
+    (SnapshotCallDecisionMakingRound, ROUND_TIMEOUT): EstablishVoteRound
+    (SnapshotCallDecisionMakingRound, SKIP_CALL): PrepareVoteTransactionRound
     (StreamReadRound, API_ERROR): StreamReadRound
     (StreamReadRound, DONE): SynchronizeDelegationsRound
     (StreamReadRound, NO_MAJORITY): StreamReadRound

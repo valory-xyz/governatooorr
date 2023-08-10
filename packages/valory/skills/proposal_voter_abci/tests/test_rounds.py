@@ -39,19 +39,19 @@ from packages.valory.skills.abstract_round_abci.test_tools.rounds import (
 from packages.valory.skills.proposal_voter_abci.payloads import (
     EstablishVotePayload,
     PrepareVoteTransactionPayload,
-    RetrieveSignaturePayload,
     SnapshotAPISendPayload,
     SnapshotAPISendRandomnessPayload,
     SnapshotAPISendSelectKeeperPayload,
+    SnapshotCallDecisionMakingPayload,
 )
 from packages.valory.skills.proposal_voter_abci.rounds import (
     EstablishVoteRound,
     Event,
     PrepareVoteTransactionRound,
-    RetrieveSignatureRound,
     SnapshotAPISendRandomnessRound,
     SnapshotAPISendRound,
     SnapshotAPISendSelectKeeperRound,
+    SnapshotCallDecisionMakingRound,
     SynchronizedData,
 )
 
@@ -255,9 +255,9 @@ def get_dummy_retrieve_signature_payload_serialized(error: bool = False):
 
 
 class TestRetrieveSignatureTransactionRoundRound(BaseProposalVoterRoundTest):
-    """Tests for RetrieveSignatureRound."""
+    """Tests for SnapshotCallDecisionMakingRound."""
 
-    round_class = RetrieveSignatureRound
+    round_class = SnapshotCallDecisionMakingRound
 
     @pytest.mark.parametrize(
         "test_case",
@@ -266,7 +266,7 @@ class TestRetrieveSignatureTransactionRoundRound(BaseProposalVoterRoundTest):
                 name="Happy path",
                 initial_data={},
                 payloads=get_payloads(
-                    payload_cls=RetrieveSignaturePayload,
+                    payload_cls=SnapshotCallDecisionMakingPayload,
                     data=get_dummy_retrieve_signature_payload_serialized(),
                 ),
                 final_data={
@@ -282,7 +282,7 @@ class TestRetrieveSignatureTransactionRoundRound(BaseProposalVoterRoundTest):
                 name="Skip payload",
                 initial_data={},
                 payloads=get_payloads(
-                    payload_cls=RetrieveSignaturePayload,
+                    payload_cls=SnapshotCallDecisionMakingPayload,
                     data="skip_payload",
                 ),
                 final_data={},
@@ -294,7 +294,7 @@ class TestRetrieveSignatureTransactionRoundRound(BaseProposalVoterRoundTest):
                 name="No signature",
                 initial_data={},
                 payloads=get_payloads(
-                    payload_cls=RetrieveSignaturePayload,
+                    payload_cls=SnapshotCallDecisionMakingPayload,
                     data=get_dummy_retrieve_signature_payload_serialized(True),
                 ),
                 final_data={},

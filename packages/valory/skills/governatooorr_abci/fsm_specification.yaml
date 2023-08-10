@@ -52,7 +52,7 @@ states:
 - RegistrationStartupRound
 - ResetAndPauseRound
 - ResetRound
-- RetrieveSignatureRound
+- SnapshotCallDecisionMakingRound
 - SelectKeeperRound
 - SelectKeeperTransactionSubmissionARound
 - SelectKeeperTransactionSubmissionBAfterTimeoutRound
@@ -70,13 +70,13 @@ states:
 transition_func:
     (CheckLateTxHashesRound, CHECK_LATE_ARRIVING_MESSAGE): SynchronizeLateMessagesRound
     (CheckLateTxHashesRound, CHECK_TIMEOUT): CheckLateTxHashesRound
-    (CheckLateTxHashesRound, DONE): RetrieveSignatureRound
+    (CheckLateTxHashesRound, DONE): SnapshotCallDecisionMakingRound
     (CheckLateTxHashesRound, NEGATIVE): PrepareVoteTransactionRound
     (CheckLateTxHashesRound, NONE): PrepareVoteTransactionRound
     (CheckLateTxHashesRound, NO_MAJORITY): PrepareVoteTransactionRound
     (CheckTransactionHistoryRound, CHECK_LATE_ARRIVING_MESSAGE): SynchronizeLateMessagesRound
     (CheckTransactionHistoryRound, CHECK_TIMEOUT): CheckTransactionHistoryRound
-    (CheckTransactionHistoryRound, DONE): RetrieveSignatureRound
+    (CheckTransactionHistoryRound, DONE): SnapshotCallDecisionMakingRound
     (CheckTransactionHistoryRound, NEGATIVE): SelectKeeperTransactionSubmissionBRound
     (CheckTransactionHistoryRound, NONE): PrepareVoteTransactionRound
     (CheckTransactionHistoryRound, NO_MAJORITY): CheckTransactionHistoryRound
@@ -122,11 +122,11 @@ transition_func:
     (ResetRound, DONE): RandomnessTransactionSubmissionRound
     (ResetRound, NO_MAJORITY): PrepareVoteTransactionRound
     (ResetRound, RESET_TIMEOUT): PrepareVoteTransactionRound
-    (RetrieveSignatureRound, CALL_API): SnapshotAPISendRandomnessRound
-    (RetrieveSignatureRound, DONE): PrepareVoteTransactionRound
-    (RetrieveSignatureRound, NO_MAJORITY): EstablishVoteRound
-    (RetrieveSignatureRound, RETRIEVAL_ERROR): RetrieveSignatureRound
-    (RetrieveSignatureRound, ROUND_TIMEOUT): EstablishVoteRound
+    (SnapshotCallDecisionMakingRound, CALL_API): SnapshotAPISendRandomnessRound
+    (SnapshotCallDecisionMakingRound, DONE): PrepareVoteTransactionRound
+    (SnapshotCallDecisionMakingRound, NO_MAJORITY): EstablishVoteRound
+    (SnapshotCallDecisionMakingRound, RETRIEVAL_ERROR): SnapshotCallDecisionMakingRound
+    (SnapshotCallDecisionMakingRound, ROUND_TIMEOUT): EstablishVoteRound
     (SelectKeeperRound, DONE): StreamWriteRound
     (SelectKeeperRound, NO_MAJORITY): RandomnessRound
     (SelectKeeperRound, ROUND_TIMEOUT): RandomnessRound
@@ -169,7 +169,7 @@ transition_func:
     (SynchronizeLateMessagesRound, NONE): SelectKeeperTransactionSubmissionBRound
     (SynchronizeLateMessagesRound, ROUND_TIMEOUT): SynchronizeLateMessagesRound
     (SynchronizeLateMessagesRound, SUSPICIOUS_ACTIVITY): PrepareVoteTransactionRound
-    (ValidateTransactionRound, DONE): RetrieveSignatureRound
+    (ValidateTransactionRound, DONE): SnapshotCallDecisionMakingRound
     (ValidateTransactionRound, NEGATIVE): CheckTransactionHistoryRound
     (ValidateTransactionRound, NONE): SelectKeeperTransactionSubmissionBRound
     (ValidateTransactionRound, NO_MAJORITY): ValidateTransactionRound

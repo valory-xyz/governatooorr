@@ -60,19 +60,19 @@ from packages.valory.skills.proposal_voter_abci.models import (
 from packages.valory.skills.proposal_voter_abci.payloads import (
     EstablishVotePayload,
     PrepareVoteTransactionPayload,
-    RetrieveSignaturePayload,
     SnapshotAPISendPayload,
     SnapshotAPISendRandomnessPayload,
     SnapshotAPISendSelectKeeperPayload,
+    SnapshotCallDecisionMakingPayload,
 )
 from packages.valory.skills.proposal_voter_abci.rounds import (
     EstablishVoteRound,
     PrepareVoteTransactionRound,
     ProposalVoterAbciApp,
-    RetrieveSignatureRound,
     SnapshotAPISendRandomnessRound,
     SnapshotAPISendRound,
     SnapshotAPISendSelectKeeperRound,
+    SnapshotCallDecisionMakingRound,
     SynchronizedData,
 )
 from packages.valory.skills.transaction_settlement_abci.payload_tools import (
@@ -665,26 +665,22 @@ class PrepareVoteTransactionBehaviour(ProposalVoterBaseBehaviour):
         return payload_string, snapshot_api_data
 
 
-class RetrieveSignatureBehaviour(ProposalVoterBaseBehaviour):
-    """RetrieveSignatureBehaviour"""
+class SnapshotCallDecisionMakingBehaviour(ProposalVoterBaseBehaviour):
+    """SnapshotCallDecisionMakingBehaviour"""
 
-    matching_round: Type[AbstractRound] = RetrieveSignatureRound
+    matching_round: Type[AbstractRound] = SnapshotCallDecisionMakingRound
 
     def async_act(self) -> Generator:
         """Do the act, supporting asynchronous execution."""
 
         with self.context.benchmark_tool.measure(self.behaviour_id).local():
             if not self.context.state.pending_vote.snapshot:
-                payload_content = RetrieveSignatureRound.SKIP_PAYLOAD
+                payload_content = SnapshotCallDecisionMakingRound.SKIP_PAYLOAD
             else:
-                snapshot_api_data_signature = yield from self._get_safe_signature()
-                payload_content = json.dumps(
-                    {"snapshot_api_data_signature": snapshot_api_data_signature},
-                    sort_keys=True,
-                )
+                payload_content = SnapshotCallDecisionMakingRound.CALL_PAYLOAD
 
             sender = self.context.agent_address
-            payload = RetrieveSignaturePayload(
+            payload = SnapshotCallDecisionMakingPayload(
                 sender=sender,
                 content=payload_content,
             )
@@ -694,32 +690,6 @@ class RetrieveSignatureBehaviour(ProposalVoterBaseBehaviour):
             yield from self.wait_until_round_end()
 
         self.set_done()
-
-    def _get_safe_signature(self):
-        """Get signature from the chain"""
-
-        self.context.logger.info(
-            f"Retrieving signature from event for tx_hash={self.synchronized_data.final_tx_hash}"
-        )
-
-        contract_api_msg = yield from self.get_contract_api_response(
-            performative=ContractApiMessage.Performative.GET_STATE,  # type: ignore
-            contract_address=self.synchronized_data.safe_contract_address,
-            contract_id=str(SignMessageLibContract.contract_id),
-            contract_callable="get_safe_signature",
-            tx_hash=self.synchronized_data.final_tx_hash,
-        )
-        if (
-            contract_api_msg.performative != ContractApiMessage.Performative.STATE
-        ):  # pragma: nocover
-            self.context.logger.warning(
-                f"Could not get the transaction signature: {contract_api_msg}"
-            )
-            return None
-
-        signature = cast(str, contract_api_msg.state.body["signature"])
-        self.context.logger.info(f"Retrieved signature: {signature}")
-        return "0x" + signature
 
 
 class SnapshotAPISendRandomnessBehaviour(RandomnessBehaviour):
@@ -806,7 +776,7 @@ class SnapshotAPISendBehaviour(ProposalVoterBaseBehaviour):
                 envelope = {
                     "address": self.synchronized_data.safe_contract_address,
                     "data": pending_call["data"],
-                    "sig": pending_call["signature"],
+                    "sig": "0x",  # Snapshot retrieves the signature for votes performed by a safe
                 }
 
                 headers = {
@@ -863,7 +833,7 @@ class ProposalVoterRoundBehaviour(AbstractRoundBehaviour):
     behaviours: Set[Type[BaseBehaviour]] = [
         EstablishVoteBehaviour,
         PrepareVoteTransactionBehaviour,
-        RetrieveSignatureBehaviour,
+        SnapshotCallDecisionMakingBehaviour,
         SnapshotAPISendRandomnessBehaviour,
         SnapshotAPISendSelectKeeperBehaviour,
         SnapshotAPISendBehaviour,

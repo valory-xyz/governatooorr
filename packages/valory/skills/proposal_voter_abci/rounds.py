@@ -37,10 +37,10 @@ from packages.valory.skills.abstract_round_abci.base import (
 from packages.valory.skills.proposal_voter_abci.payloads import (
     EstablishVotePayload,
     PrepareVoteTransactionPayload,
-    RetrieveSignaturePayload,
     SnapshotAPISendPayload,
     SnapshotAPISendRandomnessPayload,
     SnapshotAPISendSelectKeeperPayload,
+    SnapshotCallDecisionMakingPayload,
 )
 from packages.valory.skills.transaction_settlement_abci.payload_tools import (
     VerificationStatus,
@@ -57,6 +57,7 @@ class Event(Enum):
     VOTE = "vote"
     NO_VOTE = "no_vote"
     CALL_API = "call_api"
+    SKIP_CALL = "skip_call"
     RETRIEVAL_ERROR = "retrieval_error"
 
 
@@ -208,13 +209,14 @@ class PrepareVoteTransactionRound(CollectSameUntilThresholdRound):
         return None
 
 
-class RetrieveSignatureRound(CollectSameUntilThresholdRound):
-    """RetrieveSignatureRound"""
+class SnapshotCallDecisionMakingRound(CollectSameUntilThresholdRound):
+    """SnapshotCallDecisionMakingRound"""
 
-    payload_class = RetrieveSignaturePayload
+    payload_class = SnapshotCallDecisionMakingPayload
     synchronized_data_class = SynchronizedData
 
     SKIP_PAYLOAD = "skip_payload"
+    CALL_PAYLOAD = "call_payload"
 
     def end_block(self) -> Optional[Tuple[BaseSynchronizedData, Event]]:
         """Process the end of the block."""
@@ -222,30 +224,10 @@ class RetrieveSignatureRound(CollectSameUntilThresholdRound):
             if self.most_voted_payload == self.SKIP_PAYLOAD:
                 return self.synchronized_data, Event.DONE
 
-            payload = json.loads(self.most_voted_payload)
-            snapshot_api_data_signature = payload["snapshot_api_data_signature"]
+            if self.most_voted_payload == SnapshotCallDecisionMakingRound.SKIP_PAYLOAD:
+                return self.synchronized_data, Event.SKIP_CALL
 
-            if not snapshot_api_data_signature:
-                return self.synchronized_data, Event.RETRIEVAL_ERROR
-
-            ceramic_db = cast(SynchronizedData, self.synchronized_data).ceramic_db
-
-            snapshot_api_data = cast(
-                SynchronizedData, self.synchronized_data
-            ).snapshot_api_data
-
-            proposal_id = snapshot_api_data["message"]["proposal"]
-            proposal_info = ceramic_db["vote_info"]["snapshot"][proposal_id]
-            proposal_info["data"] = snapshot_api_data
-            proposal_info["signature"] = snapshot_api_data_signature
-
-            synchronized_data = self.synchronized_data.update(
-                synchronized_data_class=SynchronizedData,
-                **{
-                    get_name(SynchronizedData.ceramic_db): ceramic_db,
-                },
-            )
-            return synchronized_data, Event.CALL_API
+            return self.synchronized_data, Event.CALL_API
 
         if not self.is_majority_possible(
             self.collection, self.synchronized_data.nb_participants
@@ -326,7 +308,7 @@ class ProposalVoterAbciApp(AbciApp[Event]):
     initial_states: Set[AppState] = {
         EstablishVoteRound,
         PrepareVoteTransactionRound,
-        RetrieveSignatureRound,
+        SnapshotCallDecisionMakingRound,
     }
     transition_function: AbciAppTransitionFunction = {
         EstablishVoteRound: {
@@ -342,9 +324,9 @@ class ProposalVoterAbciApp(AbciApp[Event]):
             Event.CONTRACT_ERROR: PrepareVoteTransactionRound,
         },
         FinishedTransactionPreparationNoVoteRound: {},
-        RetrieveSignatureRound: {
+        SnapshotCallDecisionMakingRound: {
             Event.DONE: PrepareVoteTransactionRound,
-            Event.RETRIEVAL_ERROR: RetrieveSignatureRound,
+            Event.RETRIEVAL_ERROR: SnapshotCallDecisionMakingRound,
             Event.CALL_API: SnapshotAPISendRandomnessRound,
             Event.NO_MAJORITY: EstablishVoteRound,
             Event.ROUND_TIMEOUT: EstablishVoteRound,
@@ -382,7 +364,7 @@ class ProposalVoterAbciApp(AbciApp[Event]):
             get_name(SynchronizedData.active_proposals),
             get_name(SynchronizedData.ceramic_db),
         },
-        RetrieveSignatureRound: set(
+        SnapshotCallDecisionMakingRound: set(
             get_name(SynchronizedData.most_voted_tx_hash),
         ),
     }

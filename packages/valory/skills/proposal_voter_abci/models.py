@@ -77,7 +77,9 @@ class Params(BaseParams):
         self.snapshot_vote_endpoint = kwargs.get(
             "snapshot_vote_endpoint", "https://relayer.snapshot.org/"
         )
-        self.tally_api_call_sleep_seconds = kwargs.get("tally_api_call_sleep_seconds", 2)
+        self.tally_api_call_sleep_seconds = kwargs.get(
+            "tally_api_call_sleep_seconds", 2
+        )
         super().__init__(*args, **kwargs)
 
 

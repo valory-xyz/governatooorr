@@ -39,8 +39,8 @@ class PrepareVoteTransactionPayload(BaseTxPayload):
 
 
 @dataclass(frozen=True)
-class RetrieveSignaturePayload(BaseTxPayload):
-    """Represent a transaction payload for the RetrieveSignatureRound."""
+class SnapshotCallDecisionMakingPayload(BaseTxPayload):
+    """Represent a transaction payload for the SnapshotCallDecisionMakingRound."""
 
     content: str
 

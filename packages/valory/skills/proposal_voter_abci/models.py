@@ -74,10 +74,10 @@ class Params(BaseParams):
         self.signmessagelib_address = self._ensure(
             "signmessagelib_address", kwargs, str
         )
-        self.snapshot_api_endpoint = kwargs.get(
-            "snapshot_api_endpoint", "https://hub.snapshot.org/graphql"
+        self.snapshot_vote_endpoint = kwargs.get(
+            "snapshot_vote_endpoint", "https://relayer.snapshot.org/"
         )
-        self.tally_api_call_sleep_seconds = kwargs.get("tally_api_call_sleep_seconds")
+        self.tally_api_call_sleep_seconds = kwargs.get("tally_api_call_sleep_seconds", 2)
         super().__init__(*args, **kwargs)
 
 

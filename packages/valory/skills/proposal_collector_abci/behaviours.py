@@ -401,7 +401,7 @@ class CollectActiveSnapshotProposalsBehaviour(ProposalCollectorBaseBehaviour):
         """Get updated proposal data"""
 
         self.context.logger.info(
-            f"Getting proposals from Snapshot API: {self.params.snapshot_api_endpoint}"
+            f"Getting proposals from Snapshot API: {self.params.snapshot_graphql_endpoint}"
         )
 
         headers = {
@@ -429,7 +429,7 @@ class CollectActiveSnapshotProposalsBehaviour(ProposalCollectorBaseBehaviour):
             # Make the request
             response = yield from self.get_http_response(
                 method="POST",
-                url=self.params.snapshot_api_endpoint,
+                url=self.params.snapshot_graphql_endpoint,
                 headers=headers,
                 content=json.dumps(
                     {"query": snapshot_proposal_query, "variables": variables}
@@ -551,7 +551,7 @@ class CollectActiveSnapshotProposalsBehaviour(ProposalCollectorBaseBehaviour):
         # Make the request
         response = yield from self.get_http_response(
             method="POST",
-            url=self.params.snapshot_api_endpoint,
+            url=self.params.snapshot_graphql_endpoint,
             content=json.dumps(
                 {"query": snapshot_vp_query, "variables": variables}
             ).encode("utf-8"),

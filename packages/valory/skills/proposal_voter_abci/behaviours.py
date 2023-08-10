@@ -821,7 +821,7 @@ class SnapshotAPISendBehaviour(ProposalVoterBaseBehaviour):
                 # Make the request
                 response = yield from self.get_http_response(
                     method="POST",
-                    url=self.params.snapshot_api_endpoint,
+                    url=self.params.snapshot_vote_endpoint,
                     content=json.dumps(envelope).encode("utf-8"),
                     headers=headers,
                 )

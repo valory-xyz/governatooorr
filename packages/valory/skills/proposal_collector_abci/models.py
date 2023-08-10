@@ -79,8 +79,8 @@ class Params(BaseParams):
         self.ceramic_did_str = kwargs.get("ceramic_did_str")
         self.ceramic_did_seed = kwargs.get("ceramic_did_seed")
         self.voting_seconds_threshold = kwargs.get("voting_seconds_threshold")
-        self.snapshot_api_endpoint = kwargs.get(
-            "snapshot_api_endpoint", "https://hub.snapshot.org/graphql"
+        self.snapshot_graphql_endpoint = kwargs.get(
+            "snapshot_graphql_endpoint", "https://hub.snapshot.org/graphql"
         )
         super().__init__(*args, **kwargs)
 

@@ -72,7 +72,7 @@ from packages.valory.skills.transaction_settlement_abci.payload_tools import (
 PACKAGE_DIR = Path(__file__).parent.parent
 
 DUMMY_GOVERNOR_ADDRESS = "0xEC568fffba86c094cf06b22134B23074DFE2252c"
-SNAPSHOT_API_ENDPOINT = "https://hub.snapshot.org/graphql"
+SNAPSHOT_VOTE_ENDPOINT = "https://relayer.snapshot.org/"
 
 NULL_ADDRESS = "0x0000000000000000000000000000000000000000"
 
@@ -407,7 +407,7 @@ class TestEstablishVoteSnapshotBehaviour(BaseProposalVoterTest):
                 method="POST",
                 headers="Content-Type: application/json\r\nAccept: application/json\r\n",
                 version="",
-                url=SNAPSHOT_API_ENDPOINT,
+                url=SNAPSHOT_VOTE_ENDPOINT,
             ),
             response_kwargs=dict(
                 version="",
@@ -931,7 +931,7 @@ class TestSnapshotAPISendBehaviourSender(BaseProposalVoterTest):
                 method="POST",
                 headers=kwargs.get("headers"),
                 version="",
-                url=SNAPSHOT_API_ENDPOINT,
+                url=SNAPSHOT_VOTE_ENDPOINT,
             ),
             response_kwargs=dict(
                 version="",
@@ -981,7 +981,7 @@ class TestSnapshotAPISendBehaviourSenderError(BaseProposalVoterTest):
                 method="POST",
                 headers=kwargs.get("headers"),
                 version="",
-                url=SNAPSHOT_API_ENDPOINT,
+                url=SNAPSHOT_VOTE_ENDPOINT,
             ),
             response_kwargs=dict(
                 version="",

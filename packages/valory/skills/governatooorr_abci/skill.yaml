@@ -136,7 +136,8 @@ models:
       share_tm_config_on_startup: false
       signmessagelib_address: '0xA65387F16B013cf2Af4605Ad8aA5ec25a2cbA3a2'
       sleep_time: 1
-      snapshot_api_endpoint: https://hub.snapshot.org/graphql
+      snapshot_graphql_endpoint: https://hub.snapshot.org/graphql
+      snapshot_vote_endpoint: https://relayer.snapshot.org/
       tally_api_endpoint: https://api.tally.xyz/query
       tally_api_key: <tally_api_key>
       tally_api_call_sleep_seconds: 2

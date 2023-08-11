@@ -212,7 +212,7 @@ class TestSynchronizeDelegationsRoundTest(BaseCollectDifferentUntilAllRoundTest)
                         },
                     ]
                 },
-                event=Event.WRITE_DELEGATIONS,
+                event=Event.WRITE_DB,
                 most_voted_payload=None,
                 synchronized_data_attr_checks=[
                     lambda _synchronized_data: _synchronized_data.delegations,

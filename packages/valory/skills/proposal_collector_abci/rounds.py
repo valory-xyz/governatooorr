@@ -412,5 +412,6 @@ class ProposalCollectorAbciApp(AbciApp[Event]):
         FinishedProposalRound: {
             get_name(SynchronizedData.ceramic_db),
             get_name(SynchronizedData.active_proposals),
+            get_name(SynchronizedData.open_proposals),
         },
     }

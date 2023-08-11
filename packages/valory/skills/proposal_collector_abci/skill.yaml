@@ -8,21 +8,21 @@ license: Apache-2.0
 aea_version: '>=1.0.0, <2.0.0'
 fingerprint:
   __init__.py: bafybeickrxtcqbivmneh54iq7ymaoq6xzwdouvnoon3h234vzp574qouvu
-  behaviours.py: bafybeicnzf6pxhkytsbipa6tr254gj7jx7okbtebhmh6dp2yj5qcowc5h4
+  behaviours.py: bafybeiacvtshb42kzade7wh4ffjrvumeq5yblmltvhfeufy32r5dl522be
   dialogues.py: bafybeighergy2hupd32ozp2ud5j4jujpccfkzk2l46a33xn7yi2ofk32m4
   fsm_specification.yaml: bafybeibnkun2l4kpk376grdtygdeosix2nwtrnwr54ns6lmqdityhcvvjy
-  handlers.py: bafybeibks7a3niy7yp3irzn5pz7qm2tljfycx23pyqi3utpmfett4rvbwy
+  handlers.py: bafybeiezhojhnlwrgskl3efa52sh3xtgh5u5afpzttabr7qptwndxecn6i
   models.py: bafybeiddtxk6tygzpi56yqkwilwfc5pjlms2e5c63vzhsn5ijfg5rbe7uy
   payloads.py: bafybeicixvkiet6ko2cvx5rm4ezp7mez5izezaq6ufdcyxto65khly72fq
-  rounds.py: bafybeig2ljt3xtca2zzandb7tsvfteqk2flg6pts2uyinf6fbylrslm52m
+  rounds.py: bafybeig3l5mk47nlaup6u67yhianj7va5qhnqxvqhisbhrjdnnw5dneisq
   snapshot.py: bafybeidh7xenkjsh5rcqmaany3rpe6mnytr5gcg5cnod6dcxqnlsxeziru
-  tally.py: bafybeih4w2gk6vzthjbw3q2hhckquxgcs7y4kvj3uezclugb6qvo3s35fq
+  tally.py: bafybeiajk6r53cikskzpfexrw5iheqlolb724fedrqgwovojhf4fjgpghu
   tests/__init__.py: bafybeicqptpyrejemtnjmtvarhf4sk3roprka5wedztzeehei42rygpfwy
   tests/test_behaviours.py: bafybeih3kbzqauq4qqunfndidqt6uq47aukay3pbmamhwftiqhoiiycsi4
-  tests/test_handlers.py: bafybeih4m22e2z6lnfmwncibddvag5b534cyzalyhciih3u65rzchv2tam
+  tests/test_handlers.py: bafybeigndzgnvdn4ahlcgyiwm2mi3cqh5zbkhdpw45mvqd56qrfxqxunba
   tests/test_models.py: bafybeia4q5ncu6xxie5e2plugclkccrqnuqw3ujlqu3vus54zacvfkwyxi
   tests/test_payloads.py: bafybeifpggwuftdbammofsvoi4dpouscmjw47rozqea2syyaa27fbxvrlu
-  tests/test_rounds.py: bafybeifszyd22ejwaujbjyjjcohjnyzyu6wk2ais6ai3xim757j3kopsp4
+  tests/test_rounds.py: bafybeicbgppqv5tiuzhdyxnc7ewuewtmkrdr7gabq4lbdvmf3z3dqbewiu
 fingerprint_ignore_patterns: []
 connections:
 - fetchai/http_server:0.22.0:bafybeihp5umafxzx45aad5pj7s3343se2wjkgnbirt4pybrape22swm6de

@@ -421,6 +421,11 @@ class TestHttpHandler(BaseSkillTestCase):
                 "get",
                 "_handle_get_proposal",
             ),
+            (
+                "http://governatooorr.staging.autonolas.tech/active_proposals/",
+                "get",
+                "_handle_get_active_proposals",
+            ),
         ],
     )
     def test_get_handler(self, url, method, expected_handler_name):

@@ -617,7 +617,7 @@ class PrepareVoteTransactionBehaviour(ProposalVoterBaseBehaviour):
             contract_address=signmessagelib_address,
             contract_id=str(SignMessageLibContract.contract_id),
             contract_callable="sign_message",
-            data=encoded_proposal_data,
+            data=encoded_proposal_data.body,
         )
         if (
             contract_api_msg.performative != ContractApiMessage.Performative.STATE

@@ -8,7 +8,7 @@ license: Apache-2.0
 aea_version: '>=1.0.0, <2.0.0'
 fingerprint:
   __init__.py: bafybeifps6e4vfc55iyb5jaab7dxem7y3a2wyflai32pyzf4z75m5ngym4
-  behaviours.py: bafybeibgb72r7refffrodjnc3tkvyanigegfeif2yuqd6wp6ntjzacgzu4
+  behaviours.py: bafybeih5cuaw7o3sr6fasa3im3tf6iu5tizfzommhfyhrymurhlsszswea
   custom_eth_account/__init__.py: bafybeigca3depnxqoqjq4hrxzjtiohya7p7637lwhrfg6a7c2d2ufnz6xm
   custom_eth_account/_utils/legacy_transactions.py: bafybeidno6ltysjvihm7562kdmoixxvhgy7zp5liyg5k7bdqo5wjb6uc6e
   custom_eth_account/_utils/signing.py: bafybeifwpyl2y6ct6jfdoo7r2sngdur2hfs7ks5tafmottv4ehipqg6pje

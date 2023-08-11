@@ -75,10 +75,15 @@ class SynchronizedData(BaseSynchronizedData):
 
     @property
     def active_proposals(self) -> dict:
-        """Get the active proposals."""
+        """Get the active proposals: proposals where the service has voting power"""
         return cast(
             dict, self.db.get("active_proposals", {"tally": {}, "snapshot": {}})
         )
+
+    @property
+    def open_proposals(self) -> dict:
+        """Get the open proposals: all proposals even if the service does not have voting power"""
+        return cast(dict, self.db.get("open_proposals", {}))
 
     @property
     def n_snapshot_retrieved_proposals(self) -> int:
@@ -263,6 +268,9 @@ class CollectActiveTallyProposalsRound(CollectSameUntilThresholdRound):
                 synchronized_data_class=SynchronizedData,
                 **{
                     get_name(SynchronizedData.active_proposals): active_proposals,
+                    get_name(SynchronizedData.open_proposals): payload[
+                        "open_proposals"
+                    ],
                 },
             )
             return synchronized_data, Event.DONE

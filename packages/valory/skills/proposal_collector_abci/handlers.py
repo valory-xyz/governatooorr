@@ -119,6 +119,7 @@ class HttpHandler(BaseHttpHandler):
             rf"{hostname_regex}\/delegations\/{eth_address_regex}\/?$"
         )
         proposals_url_regex = rf"{hostname_regex}\/proposals\/?$"
+        active_proposals_url_regex = rf"{hostname_regex}\/active_proposals\/?$"
         proposal_url_regex = rf"{hostname_regex}\/proposal\/\d+\/?$"
 
         # Routes
@@ -129,6 +130,7 @@ class HttpHandler(BaseHttpHandler):
             (HttpMethod.GET.value, HttpMethod.HEAD.value): [
                 (delegations_url_regex, self._handle_get_delegations),
                 (proposals_url_regex, self._handle_get_proposals),
+                (active_proposals_url_regex, self._handle_get_active_proposals),
                 (proposal_url_regex, self._handle_get_proposal),
                 (health_url_regex, self._handle_get_health),
             ],
@@ -288,6 +290,13 @@ class HttpHandler(BaseHttpHandler):
         self._send_ok_response(http_msg, http_dialogue, response_body_data)
 
     def _handle_get_proposals(
+        self, http_msg: HttpMessage, http_dialogue: HttpDialogue
+    ) -> None:
+        response_body_data = list(self.synchronized_data.open_proposals)
+
+        self._send_ok_response(http_msg, http_dialogue, response_body_data)
+
+    def _handle_get_active_proposals(
         self, http_msg: HttpMessage, http_dialogue: HttpDialogue
     ) -> None:
         response_body_data = list(

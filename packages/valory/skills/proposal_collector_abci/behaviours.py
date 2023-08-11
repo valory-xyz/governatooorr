@@ -21,6 +21,7 @@
 
 import json
 from abc import ABC
+from copy import deepcopy
 from typing import Generator, Optional, Set, Type, cast
 
 from packages.valory.protocols.ledger_api.message import LedgerApiMessage
@@ -316,6 +317,9 @@ class CollectActiveTallyProposalsBehaviour(ProposalCollectorBaseBehaviour):
             lambda ap: ap["end"]["number"] > current_block, active_proposals
         )
 
+        # Keep all proposals for the frontend
+        open_proposals = deepcopy(active_proposals)
+
         # Remove proposals where we don't have voting power
         ceramic_db = self.synchronized_data.ceramic_db
         delegations = ceramic_db["delegations"]
@@ -367,6 +371,7 @@ class CollectActiveTallyProposalsBehaviour(ProposalCollectorBaseBehaviour):
         return json.dumps(
             {
                 "updated_tally_proposals": previous_proposals,
+                "open_proposals": open_proposals,
             },
             sort_keys=True,
         )

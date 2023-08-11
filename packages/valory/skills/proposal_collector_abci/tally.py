@@ -17,7 +17,7 @@
 #
 # ------------------------------------------------------------------------------
 
-"""This package contains the queries of DynamicNFTAbciApp."""
+"""This package contains the queries for Tally."""
 
 
 proposal_query = """

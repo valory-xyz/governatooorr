@@ -318,7 +318,13 @@ class EstablishVoteBehaviour(ProposalVoterBaseBehaviour):
 
         # Get expiring proposals
         expiring_proposals = {
-            ap["id"]: {"vote": None, "sent": False, "expiration": ap["end"]}
+            ap["id"]: {
+                "id": ap["id"],
+                "vote": None,
+                "sent": False,
+                "expiration": ap["end"],
+                "space_id": ap["space"]["id"],
+            }
             for ap in sorted_active_proposals
             if ap["remaining_seconds"] <= self.params.voting_seconds_threshold
         }
@@ -420,7 +426,7 @@ class PrepareVoteTransactionBehaviour(ProposalVoterBaseBehaviour):
             if votable_tally_proposal_ids:
                 # We get the first one, because the votable proposal ids are sorted by their remaining blocks, ascending
                 selected_proposal_id = votable_tally_proposal_ids[0]
-                selected_proposal = active_proposals[selected_proposal_id]
+                selected_proposal = expiring_proposals["tally"][selected_proposal_id]
                 vote_choice = expiring_proposals["tally"][selected_proposal_id]["vote"]
 
                 self.context.logger.info(
@@ -457,7 +463,7 @@ class PrepareVoteTransactionBehaviour(ProposalVoterBaseBehaviour):
             # Only vote on Snapshot after we have finished with the onchain votes
             if not votable_tally_proposal_ids and votable_snapshot_proposal_ids:
                 selected_proposal_id = votable_snapshot_proposal_ids[0]
-                selected_proposal = active_proposals[selected_proposal_id]
+                selected_proposal = expiring_proposals["snapshot"][selected_proposal_id]
                 vote_choice = expiring_proposals["snapshot"][selected_proposal_id][
                     "vote"
                 ]
@@ -467,7 +473,7 @@ class PrepareVoteTransactionBehaviour(ProposalVoterBaseBehaviour):
                 )
 
                 self.context.state.pending_vote = PendingVote(
-                    proposal_id=selected_proposal["id"],
+                    proposal_id=selected_proposal_id,
                     vote_choice=vote_choice,
                     is_snapshot=True,
                 )
@@ -476,7 +482,7 @@ class PrepareVoteTransactionBehaviour(ProposalVoterBaseBehaviour):
                     selected_proposal
                 )
                 self.context.logger.info(
-                    f"Voting for Snapshot proposal {selected_proposal['id']}: {selected_proposal['choice']}"
+                    f"Voting for Snapshot proposal {selected_proposal['id']}: {selected_proposal['vote']}"
                 )
                 self.context.logger.info(f"tx_hash is {tx_hash}")
 
@@ -563,9 +569,9 @@ class PrepareVoteTransactionBehaviour(ProposalVoterBaseBehaviour):
         ).round_sequence.last_round_transition_timestamp.timestamp()
 
         message = {
-            "space": proposal["space"]["id"],
+            "space": proposal["space_id"],
             "proposal": proposal["id"],
-            "choice": proposal["choice"],
+            "choice": proposal["vote"],
             "reason": "",
             "app": "Governatooorr",
             "metadata": "{}",

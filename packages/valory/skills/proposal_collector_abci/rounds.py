@@ -43,7 +43,7 @@ from packages.valory.skills.proposal_collector_abci.payloads import (
 )
 
 
-SNAPSHOT_PROPOSAL_TOTAL_LIMIT = 100
+SNAPSHOT_PROPOSAL_TOTAL_LIMIT = 50
 
 
 class Event(Enum):
@@ -381,14 +381,14 @@ class ProposalCollectorAbciApp(AbciApp[Event]):
             Event.API_ERROR: CollectActiveTallyProposalsRound,
             Event.BLOCK_RETRIEVAL_ERROR: CollectActiveTallyProposalsRound,
             Event.NO_MAJORITY: CollectActiveTallyProposalsRound,
-            Event.ROUND_TIMEOUT: CollectActiveTallyProposalsRound,
+            Event.ROUND_TIMEOUT: CollectActiveSnapshotProposalsRound,
         },
         CollectActiveSnapshotProposalsRound: {
             Event.DONE: FinishedProposalRound,
             Event.REPEAT: CollectActiveSnapshotProposalsRound,
             Event.API_ERROR: CollectActiveSnapshotProposalsRound,
             Event.NO_MAJORITY: CollectActiveSnapshotProposalsRound,
-            Event.ROUND_TIMEOUT: CollectActiveSnapshotProposalsRound,
+            Event.ROUND_TIMEOUT: FinishedProposalRound,
         },
         FinishedWriteDelegationsRound: {},
         FinishedProposalRound: {},

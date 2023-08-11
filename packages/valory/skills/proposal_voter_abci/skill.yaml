@@ -36,11 +36,11 @@ fingerprint:
   payloads.py: bafybeihnbah7xed2upemxbwhesy6idkvfzuepry6csubgdqtrg4r6ea3k4
   rounds.py: bafybeifsuflms52pke2747smshswuzkxez52kw7cpgnbwjdhenezzgkqze
   tests/__init__.py: bafybeicnpfbu2732mdlaputxl4izv5yfievyodmjzy5w64r2e5zyqycigu
-  tests/test_behaviours.py: bafybeiblnqpqevhijspbcl43er3733n5mt6covl5gilypw4ou24qhjdfoy
+  tests/test_behaviours.py: bafybeihkos7hwyxvibfye7e4h4nnrsl7do6qeoh2rtfv7lgn7yehdyflcy
   tests/test_handlers.py: bafybeih47tjdvy6sv52ipxkurjinukqurhs5lwfgyauzpv5skrczwuhmky
   tests/test_models.py: bafybeig7lk4aojnesm22dknzz6z5bvxjahzlsrxubncusdbmxtqy6bokhq
   tests/test_payloads.py: bafybeifyheo2u743zogonqa5ofaanyzuazw4yqm2cxkcwwt3n7my7e4jvm
-  tests/test_rounds.py: bafybeibeoeu2fnpdbahdhdddb4p4uet3ygfp7rywh5we3hahqrua4tzxhm
+  tests/test_rounds.py: bafybeiej5cull7s4v63j6ajfc3ap7p4bwjfgaw5n7dweiq43p2f2qlbtre
 fingerprint_ignore_patterns: []
 connections:
 - valory/openai:0.1.0:bafybeifq7khwp42btuiulw2fdnr5wnf5uqimnclswzyk3bneunrimwaamm

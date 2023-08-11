@@ -318,7 +318,7 @@ class CollectActiveTallyProposalsBehaviour(ProposalCollectorBaseBehaviour):
         )
 
         # Keep all proposals for the frontend
-        open_proposals = deepcopy(active_proposals)
+        open_proposals = list(deepcopy(active_proposals))
 
         # Remove proposals where we don't have voting power
         ceramic_db = self.synchronized_data.ceramic_db

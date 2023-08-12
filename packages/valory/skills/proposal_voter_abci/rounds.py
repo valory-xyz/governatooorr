@@ -57,6 +57,7 @@ class Event(Enum):
     VOTE = "vote"
     NO_VOTE = "no_vote"
     SKIP_CALL = "skip_call"
+    SNAPSHOT_CALL = "snapshot_call"
     RETRIEVAL_ERROR = "retrieval_error"
 
 
@@ -166,6 +167,8 @@ class PrepareVoteTransactionRound(CollectSameUntilThresholdRound):
                 return self.synchronized_data, Event.CONTRACT_ERROR
 
             if payload["tx_hash"] == PrepareVoteTransactionRound.NO_VOTE_PAYLOAD:
+                # Are there pending Snapshot calls?
+
                 synchronized_data = self.synchronized_data.update(
                     synchronized_data_class=SynchronizedData,
                     **{
@@ -181,7 +184,12 @@ class PrepareVoteTransactionRound(CollectSameUntilThresholdRound):
                         ],
                     },
                 )
-                return synchronized_data, Event.NO_VOTE
+                return (
+                    synchronized_data,
+                    Event.SNAPSHOT_CALL
+                    if payload["pending_snapshot_calls"]
+                    else Event.NO_VOTE,
+                )
 
             synchronized_data = self.synchronized_data.update(
                 synchronized_data_class=SynchronizedData,
@@ -318,6 +326,7 @@ class ProposalVoterAbciApp(AbciApp[Event]):
         PrepareVoteTransactionRound: {
             Event.NO_VOTE: FinishedTransactionPreparationNoVoteRound,
             Event.VOTE: FinishedTransactionPreparationVoteRound,
+            Event.SNAPSHOT_CALL: SnapshotAPISendRandomnessRound,
             Event.NO_MAJORITY: PrepareVoteTransactionRound,
             Event.ROUND_TIMEOUT: PrepareVoteTransactionRound,
             Event.CONTRACT_ERROR: PrepareVoteTransactionRound,

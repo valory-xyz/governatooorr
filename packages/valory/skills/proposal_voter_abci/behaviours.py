@@ -377,6 +377,7 @@ class PrepareVoteTransactionBehaviour(ProposalVoterBaseBehaviour):
             self.context.logger.info(f"Just voted? {self.synchronized_data.just_voted}")
 
             # Check submitted votes
+            pending_snapshot_calls = False
             if self.synchronized_data.just_voted:
                 # Pending votes are stored in the shared state and only updated in the proposals list
                 # when the transaction has been verified, and therefore we know that it is a submitted vote.
@@ -391,6 +392,11 @@ class PrepareVoteTransactionBehaviour(ProposalVoterBaseBehaviour):
                 # Move proposal info from expiring proposals to voted_proposals
                 vote_info = expiring_proposals[access_key][submitted_vote_id]
                 ceramic_db["vote_data"][access_key][submitted_vote_id] = vote_info
+                if access_key == "snapshot":
+                    ceramic_db["vote_data"]["snapshot"][submitted_vote_id][
+                        "data"
+                    ] = self.synchronized_data.snapshot_api_data
+                    pending_snapshot_calls = True
                 del expiring_proposals[access_key][submitted_vote_id]
 
                 # Signal that the Ceramic db needs to be updated
@@ -415,6 +421,7 @@ class PrepareVoteTransactionBehaviour(ProposalVoterBaseBehaviour):
                 "expiring_proposals": expiring_proposals,
                 "ceramic_db": ceramic_db,
                 "pending_write": pending_write,
+                "pending_snapshot_calls": pending_snapshot_calls,
             }
 
             # No vote
@@ -680,7 +687,7 @@ class SnapshotCallDecisionMakingBehaviour(ProposalVoterBaseBehaviour):
         """Do the act, supporting asynchronous execution."""
 
         with self.context.benchmark_tool.measure(self.behaviour_id).local():
-            if not self.context.state.pending_vote.snapshot:
+            if not self.context.state.pending_vote.is_snapshot:
                 payload_content = SnapshotCallDecisionMakingRound.SKIP_PAYLOAD
             else:
                 payload_content = SnapshotCallDecisionMakingRound.CALL_PAYLOAD
@@ -766,7 +773,7 @@ class SnapshotAPISendBehaviour(ProposalVoterBaseBehaviour):
 
         pending_snapshot_calls = [
             p
-            for p in ceramic_db["vote_info"]["snapshot"]
+            for p in ceramic_db["vote_data"]["snapshot"].values()
             if not p["sent"] and p["expiration"] > now
         ]
 
@@ -816,7 +823,7 @@ class SnapshotAPISendBehaviour(ProposalVoterBaseBehaviour):
 
                     # Set the vote as sent
                     pending_write = True
-                    ceramic_db["vote_info"]["snapshot"][pending_call["id"]][
+                    ceramic_db["vote_data"]["snapshot"][pending_call["id"]][
                         "sent"
                     ] = True
 

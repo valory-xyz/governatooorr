@@ -17,13 +17,13 @@ connections: []
 contracts: []
 protocols: []
 skills:
-- valory/abstract_round_abci:0.1.0:bafybeibqpzbklnljvtc67yon4ciijxj75d7vazm7rurcvbbfnk6jtudukm
-- valory/proposal_collector_solana_abci:0.1.0:bafybeigsl3ezgoizzaxvjbn5n3ayrc7o3jn3ispo5jag3pntcgcuxuznee
-- valory/proposal_voter_solana_abci:0.1.0:bafybeia2u2qhqm6vwglw2f3qeem6ieh764m7yj2a6nvjj7j25hsbpe7c3e
-- valory/registration_abci:0.1.0:bafybeia25gpusnkakb2dp4heqkwtuftbc2apppq3i4bds6sphltsovgzvi
-- valory/reset_pause_abci:0.1.0:bafybeigzvwbzktclahjbsyiwqnj6poree4iveon5pric6s5ixb6wrhkdhq
-- valory/termination_abci:0.1.0:bafybeibcdgnarxyyqexncpfewcemraryywtwueuv7qthsjuean5l77lp2e
-- valory/solana_transaction_settlement_abci:0.1.0:bafybeiciuuxabhdeq2za4pot7q4vkwae6u2ofsbtla35uijinzilqd6vmu
+- valory/abstract_round_abci:0.1.0:bafybeigxjcci53vwytymzlhr37436yvenh7jup4astrn7dgyixo24aq2pq
+- valory/proposal_collector_solana_abci:0.1.0:bafybeibojyq3n62frqgtbgmef7lw3pmh47rdgr25d6nob2dlbpzktw4xhm
+- valory/proposal_voter_solana_abci:0.1.0:bafybeidgauizsrkapsn726dcnxrlvjgzckps5v22x3myd5ilc6tnw625j4
+- valory/registration_abci:0.1.0:bafybeibc4kczqbh23sc6tufrzn3axmhp3vjav7fa3u6cnpvolrbbc2fd7i
+- valory/reset_pause_abci:0.1.0:bafybeid445uy6wwvugf3byzl7r73c7teu6xr5ezxb4h7cxbenghg3copvy
+- valory/termination_abci:0.1.0:bafybeiguy7pkrcptg6c754ioig4mlkr7truccym3fpv6jwpjx2tmpdbzhi
+- valory/solana_transaction_settlement_abci:0.1.0:bafybeifmnqhlxnd7oyh7izn7lxlcyu5u6eixz5dvbskvxxvuznwrd45oby
 behaviours:
   main:
     args: {}

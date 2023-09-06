@@ -23,6 +23,7 @@ alphabet_in:
 - RESET_TIMEOUT
 - ROUND_TIMEOUT
 - SKIP_CALL
+- SNAPSHOT_CALL
 - SUSPICIOUS_ACTIVITY
 - VALIDATE_TIMEOUT
 - VERIFICATION_ERROR
@@ -83,12 +84,12 @@ transition_func:
     (CollectActiveSnapshotProposalsRound, DONE): EstablishVoteRound
     (CollectActiveSnapshotProposalsRound, NO_MAJORITY): CollectActiveSnapshotProposalsRound
     (CollectActiveSnapshotProposalsRound, REPEAT): CollectActiveSnapshotProposalsRound
-    (CollectActiveSnapshotProposalsRound, ROUND_TIMEOUT): CollectActiveSnapshotProposalsRound
+    (CollectActiveSnapshotProposalsRound, ROUND_TIMEOUT): EstablishVoteRound
     (CollectActiveTallyProposalsRound, API_ERROR): CollectActiveTallyProposalsRound
     (CollectActiveTallyProposalsRound, BLOCK_RETRIEVAL_ERROR): CollectActiveTallyProposalsRound
     (CollectActiveTallyProposalsRound, DONE): CollectActiveSnapshotProposalsRound
     (CollectActiveTallyProposalsRound, NO_MAJORITY): CollectActiveTallyProposalsRound
-    (CollectActiveTallyProposalsRound, ROUND_TIMEOUT): CollectActiveTallyProposalsRound
+    (CollectActiveTallyProposalsRound, ROUND_TIMEOUT): CollectActiveSnapshotProposalsRound
     (CollectSignatureRound, DONE): FinalizationRound
     (CollectSignatureRound, NO_MAJORITY): ResetRound
     (CollectSignatureRound, ROUND_TIMEOUT): CollectSignatureRound
@@ -105,6 +106,7 @@ transition_func:
     (PrepareVoteTransactionRound, NO_MAJORITY): PrepareVoteTransactionRound
     (PrepareVoteTransactionRound, NO_VOTE): ResetAndPauseRound
     (PrepareVoteTransactionRound, ROUND_TIMEOUT): PrepareVoteTransactionRound
+    (PrepareVoteTransactionRound, SNAPSHOT_CALL): SnapshotAPISendRandomnessRound
     (PrepareVoteTransactionRound, VOTE): RandomnessTransactionSubmissionRound
     (RandomnessRound, DONE): SelectKeeperRound
     (RandomnessRound, NO_MAJORITY): RandomnessRound

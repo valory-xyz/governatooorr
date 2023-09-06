@@ -26,12 +26,12 @@ transition_func:
     (CollectActiveSnapshotProposalsRound, DONE): FinishedProposalRound
     (CollectActiveSnapshotProposalsRound, NO_MAJORITY): CollectActiveSnapshotProposalsRound
     (CollectActiveSnapshotProposalsRound, REPEAT): CollectActiveSnapshotProposalsRound
-    (CollectActiveSnapshotProposalsRound, ROUND_TIMEOUT): CollectActiveSnapshotProposalsRound
+    (CollectActiveSnapshotProposalsRound, ROUND_TIMEOUT): FinishedProposalRound
     (CollectActiveTallyProposalsRound, API_ERROR): CollectActiveTallyProposalsRound
     (CollectActiveTallyProposalsRound, BLOCK_RETRIEVAL_ERROR): CollectActiveTallyProposalsRound
     (CollectActiveTallyProposalsRound, DONE): CollectActiveSnapshotProposalsRound
     (CollectActiveTallyProposalsRound, NO_MAJORITY): CollectActiveTallyProposalsRound
-    (CollectActiveTallyProposalsRound, ROUND_TIMEOUT): CollectActiveTallyProposalsRound
+    (CollectActiveTallyProposalsRound, ROUND_TIMEOUT): CollectActiveSnapshotProposalsRound
     (SynchronizeDelegationsRound, DONE): CollectActiveTallyProposalsRound
     (SynchronizeDelegationsRound, NO_MAJORITY): SynchronizeDelegationsRound
     (SynchronizeDelegationsRound, ROUND_TIMEOUT): SynchronizeDelegationsRound

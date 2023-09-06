@@ -5,6 +5,7 @@ alphabet_in:
 - NO_VOTE
 - ROUND_TIMEOUT
 - SKIP_CALL
+- SNAPSHOT_CALL
 - VOTE
 default_start_state: EstablishVoteRound
 final_states:
@@ -32,6 +33,7 @@ transition_func:
     (PrepareVoteTransactionRound, NO_MAJORITY): PrepareVoteTransactionRound
     (PrepareVoteTransactionRound, NO_VOTE): FinishedTransactionPreparationNoVoteRound
     (PrepareVoteTransactionRound, ROUND_TIMEOUT): PrepareVoteTransactionRound
+    (PrepareVoteTransactionRound, SNAPSHOT_CALL): SnapshotAPISendRandomnessRound
     (PrepareVoteTransactionRound, VOTE): FinishedTransactionPreparationVoteRound
     (SnapshotAPISendRandomnessRound, DONE): SnapshotAPISendSelectKeeperRound
     (SnapshotAPISendRandomnessRound, NO_MAJORITY): SnapshotAPISendRandomnessRound

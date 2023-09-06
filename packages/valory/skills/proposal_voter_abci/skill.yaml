@@ -30,7 +30,7 @@ fingerprint:
   custom_eth_account/signers/base.py: bafybeid2uogzamgzjk52r33ndgjzjmzee6ul4xcv3bsazshj7jqq2ha2v4
   custom_eth_account/signers/local.py: bafybeiaozlhajzygxwbdydi25q5ythcj7pdiwheznc3tfjnxjkez75lp5i
   dialogues.py: bafybeihdakfnmps5o7n5rgepn3fl3lzttqsddhiny7mh7ddwhniutri6bq
-  fsm_specification.yaml: bafybeienndesb3zswxonvd3gmdrtayh6bjw23e5726jtfnp6jkm7fd5xee
+  fsm_specification.yaml: bafybeidndzeeazpslfmjqezetkqznkas6qwgedtnas7tcqosalij37klqe
   handlers.py: bafybeihex227foehp7a7wfc6vh25ahk5g65b5itu325hph2xj33mgp6kue
   models.py: bafybeidhyhiao4lzlil7gbns64szijp5zkhsbsxeytkhsp3ujd4m353ihy
   payloads.py: bafybeihnbah7xed2upemxbwhesy6idkvfzuepry6csubgdqtrg4r6ea3k4

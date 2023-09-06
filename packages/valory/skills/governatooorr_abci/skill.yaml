@@ -10,7 +10,7 @@ fingerprint:
   behaviours.py: bafybeifjf4gdptsjmtgvwq6con2nyn42uqzkhgjegzrphf263n3xygdbga
   composition.py: bafybeierxu56kiqdt5p5z34w4jqfgnyqyscglfnnek4jhc75wmens7fzh4
   dialogues.py: bafybeiayva5koyr6upomicnhbfefypjk2sebogk7ew24wxwwnccuqktcki
-  fsm_specification.yaml: bafybeicmjyu2ppv4tjahjkzfja4ulwtd2vgz6mjopb5nozhxxrmxmrpopa
+  fsm_specification.yaml: bafybeibmkooks2zxdpnrfdh4bfom4fr354zr25i4qu2uymqnkxge6iz6zu
   handlers.py: bafybeiefhvk666md6clddjpkv6ccnletnxmekptz2p5qjjnubfokwlofia
   models.py: bafybeigoq2xaulowhod3viikl4rsbdfqvoe2jsgsqpsedqwv4jto2toxuq
 fingerprint_ignore_patterns: []
@@ -21,8 +21,8 @@ skills:
 - valory/abstract_round_abci:0.1.0:bafybeigxjcci53vwytymzlhr37436yvenh7jup4astrn7dgyixo24aq2pq
 - valory/ceramic_read_abci:0.1.0:bafybeidruvxgpbggchuvlnssuswdxuoz2ep6sjvzzqjeyckybb6gpjx3ia
 - valory/ceramic_write_abci:0.1.0:bafybeigtkv57h5suaqqpjfknimfegbidovxna7cok7znsgzrfb4nftqvay
-- valory/proposal_collector_abci:0.1.0:bafybeibtt4bt3p3ecabffwwmc6qcmckr32gk4xtxu67imd7qunil4rkna4
-- valory/proposal_voter_abci:0.1.0:bafybeib7o62nejbmmxkl7pppragmu5okv6kr4erp35t7basjyapmr6dcsm
+- valory/proposal_collector_abci:0.1.0:bafybeifggigrxfzqz6ahe5omnetbhdgked6t43gfoyndkdpbg4aveyh65y
+- valory/proposal_voter_abci:0.1.0:bafybeiberr5qgkznpfqltzdp5nh7nzbjhe64kwgf4753lgl3tqurzqk5pe
 - valory/registration_abci:0.1.0:bafybeibc4kczqbh23sc6tufrzn3axmhp3vjav7fa3u6cnpvolrbbc2fd7i
 - valory/reset_pause_abci:0.1.0:bafybeid445uy6wwvugf3byzl7r73c7teu6xr5ezxb4h7cxbenghg3copvy
 - valory/termination_abci:0.1.0:bafybeiguy7pkrcptg6c754ioig4mlkr7truccym3fpv6jwpjx2tmpdbzhi

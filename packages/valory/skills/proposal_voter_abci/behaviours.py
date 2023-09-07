@@ -45,7 +45,7 @@ from packages.valory.skills.abstract_round_abci.common import (
     SelectKeeperBehaviour,
 )
 from packages.valory.skills.abstract_round_abci.models import Requests
-from packages.valory.skills.proposal_voter_abci.custom_eth_account.messages import (
+from eth_account.messages import (
     encode_structured_data,
 )
 from packages.valory.skills.proposal_voter_abci.dialogues import (

@@ -386,20 +386,22 @@ class PrepareVoteTransactionBehaviour(ProposalVoterBaseBehaviour):
                 access_key = "snapshot" if submitted_vote.is_snapshot else "tally"
 
                 # Remove proposal from active proposals
-                del active_proposals[access_key][submitted_vote_id]
+                if submitted_vote_id in active_proposals[access_key]:
+                    del active_proposals[access_key][submitted_vote_id]
 
                 # Move proposal info from expiring proposals to voted_proposals
-                vote_info = expiring_proposals[access_key][submitted_vote_id]
-                ceramic_db["vote_data"][access_key][submitted_vote_id] = vote_info
-                if access_key == "snapshot":
-                    ceramic_db["vote_data"]["snapshot"][submitted_vote_id][
-                        "data"
-                    ] = self.synchronized_data.snapshot_api_data
-                    pending_snapshot_calls = True
-                del expiring_proposals[access_key][submitted_vote_id]
+                if submitted_vote_id in expiring_proposals[access_key]:
+                    vote_info = expiring_proposals[access_key][submitted_vote_id]
+                    ceramic_db["vote_data"][access_key][submitted_vote_id] = vote_info
+                    if access_key == "snapshot":
+                        ceramic_db["vote_data"]["snapshot"][submitted_vote_id][
+                            "data"
+                        ] = self.synchronized_data.snapshot_api_data
+                        pending_snapshot_calls = True
+                    del expiring_proposals[access_key][submitted_vote_id]
 
-                # Signal that the Ceramic db needs to be updated
-                pending_write = True
+                    # Signal that the Ceramic db needs to be updated
+                    pending_write = True
 
                 self.context.logger.info(
                     f"Vote on {access_key} for proposal {submitted_vote_id} has been verified"

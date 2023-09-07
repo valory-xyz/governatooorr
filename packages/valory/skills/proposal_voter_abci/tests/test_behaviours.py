@@ -549,12 +549,17 @@ class TestPrepareVoteTransactionVoteSnapshotBehaviour(BaseProposalVoterTest):
                         proposals=get_dummy_proposals(1),
                         safe_contract_address=NULL_ADDRESS,
                         votable_snapshot_proposals=get_dummy_snapshot_proposals(True),
-                        expiring_proposals={"tally": {}, "snapshot": {"1": {
-                            "vote": 1,
-                            "id": "1",
-                            "space_id": "dummy_space_id",
-                        }}},
-                        ceramic_db={}
+                        expiring_proposals={
+                            "tally": {},
+                            "snapshot": {
+                                "1": {
+                                    "vote": 1,
+                                    "id": "1",
+                                    "space_id": "dummy_space_id",
+                                }
+                            },
+                        },
+                        ceramic_db={},
                     ),
                     event=Event.VOTE,
                 ),

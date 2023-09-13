@@ -8,7 +8,7 @@ license: Apache-2.0
 fingerprint:
   README.md: bafybeifvddbrix4wlzp5mfaxjg7bargwbcqxjdfvaz5tctxfvzowggkusu
 fingerprint_ignore_patterns: []
-agent: valory/governatooorr:0.1.0:bafybeic42arqnwgxcv6g6y3cu4r7b5qyt2aqjlsa3r3eeamnkhwdrqb6xe
+agent: valory/governatooorr:0.1.0:bafybeid5tpn2hdvirxtrwm4rjhz36b7f53pbitoapvnilpwkmcgtogfqau
 number_of_agents: 1
 deployment:
   agent:
@@ -79,7 +79,7 @@ models:
       tally_api_key: ${TALLY_API_KEY:str:<tally_api_key>}
       tally_api_call_sleep_seconds: ${TALLY_API_CALL_SLEEP_SECONDS:int:2}
       snapshot_api_endpoint: ${SNAPSHOT_API_ENDPOINT:str:https://hub.snapshot.org/graphql}
-      service_endpoint_base: ${SERVICE_ENDPOINT_BASE:str:https://governatooorr.staging.autonolas.tech/}
+      service_endpoint_base: ${SERVICE_ENDPOINT_BASE:str:https://dummy_service.autonolas.tech/}
       validate_timeout: 1205
       voting_block_threshold: ${VOTING_BLOCK_THRESHOLD:int:300}
       voting_seconds_threshold: ${VOTING_SECONDS_THRESHOLD:int:10000}

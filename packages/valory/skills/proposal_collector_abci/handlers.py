@@ -121,6 +121,7 @@ class HttpHandler(BaseHttpHandler):
         proposals_url_regex = rf"{hostname_regex}\/proposals\/?$"
         active_proposals_url_regex = rf"{hostname_regex}\/active_proposals\/?$"
         proposal_url_regex = rf"{hostname_regex}\/proposal\/\d+\/?$"
+        health_url_regex = rf"{hostname_regex}\/healthcheck"
 
         # Routes
         self.routes = {
@@ -392,3 +393,54 @@ class HttpHandler(BaseHttpHandler):
         # Send response
         self.context.logger.info("Responding with: {}".format(http_response))
         self.context.outbox.put_message(message=http_response)
+
+    def _handle_get_health(
+        self, http_msg: HttpMessage, http_dialogue: HttpDialogue
+    ) -> None:
+        """
+        Handle a Http request of verb GET.
+
+        :param http_msg: the http message
+        :param http_dialogue: the http dialogue
+        """
+        seconds_since_last_transition = None
+        is_tm_unhealthy = None
+        is_transitioning_fast = None
+        current_round = None
+        previous_rounds = None
+
+        round_sequence = cast(SharedState, self.context.state).round_sequence
+
+        if round_sequence._last_round_transition_timestamp:
+            is_tm_unhealthy = cast(
+                SharedState, self.context.state
+            ).round_sequence.block_stall_deadline_expired
+
+            current_time = datetime.now().timestamp()
+            seconds_since_last_transition = current_time - datetime.timestamp(
+                round_sequence._last_round_transition_timestamp
+            )
+
+            is_transitioning_fast = (
+                not is_tm_unhealthy
+                and seconds_since_last_transition
+                < 2 * self.context.params.reset_pause_duration
+            )
+
+        if round_sequence._abci_app:
+            current_round = round_sequence._abci_app.current_round.round_id
+            previous_rounds = [
+                r.round_id for r in round_sequence._abci_app._previous_rounds[-10:]
+            ]
+
+        data = {
+            "seconds_since_last_transition": seconds_since_last_transition,
+            "is_tm_healthy": not is_tm_unhealthy,
+            "period": self.synchronized_data.period_count,
+            "reset_pause_duration": self.context.params.reset_pause_duration,
+            "current_round": current_round,
+            "previous_rounds": previous_rounds,
+            "is_transitioning_fast": is_transitioning_fast,
+        }
+
+        self._send_ok_response(http_msg, http_dialogue, data)

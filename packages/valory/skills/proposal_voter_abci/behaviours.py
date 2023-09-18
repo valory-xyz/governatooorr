@@ -617,6 +617,7 @@ class PrepareVoteTransactionBehaviour(ProposalVoterBaseBehaviour):
         encoded_proposal_data = encode_structured_data(
             fix_data_for_signing(snapshot_api_data)
         )
+        self.context.logger.info(f"Encoded data: {encoded_proposal_data.body}")
         signmessagelib_address = self.params.signmessagelib_address
 
         # Get the raw transaction from the SignMessageLib contract

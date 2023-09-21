@@ -324,7 +324,6 @@ class HttpHandler(BaseHttpHandler):
 
         self._send_ok_response(http_msg, http_dialogue, response_body_data)
 
-
     def _send_ok_response(
         self,
         http_msg: HttpMessage,

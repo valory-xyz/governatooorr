@@ -106,6 +106,20 @@ def fix_data_for_signing(data):
     return fixed_data
 
 
+def fix_data_for_api(data):
+    """Add missing required fields before signing"""
+    fixed_data = deepcopy(data)
+
+    fixed_data["types"]["EIP712Domain"] = [
+        {"name": "name", "type": "string"},
+        {"name": "version", "type": "string"},
+    ]
+
+    fixed_data["primaryType"] = "Vote"
+
+    return fixed_data
+
+
 class ProposalVoterBaseBehaviour(BaseBehaviour, ABC):
     """Base behaviour for the proposal_voter_abci skill."""
 
@@ -490,7 +504,7 @@ class PrepareVoteTransactionBehaviour(ProposalVoterBaseBehaviour):
                     selected_proposal
                 )
                 self.context.logger.info(
-                    f"Voting for Snapshot proposal {selected_proposal['id']}: {selected_proposal['vote']}"
+                    f"Voting for Snapshot proposal {selected_proposal['id']}: {selected_proposal['vote']}. Payload: {snapshot_api_data}"
                 )
                 self.context.logger.info(f"tx_hash is {tx_hash}")
 
@@ -634,7 +648,7 @@ class PrepareVoteTransactionBehaviour(ProposalVoterBaseBehaviour):
             self.context.logger.warning(
                 f"sign_message unsuccessful!: {contract_api_msg}"
             )
-            return None, snapshot_api_data
+            return None, fix_data_for_api(snapshot_api_data)
         data = cast(str, contract_api_msg.state.body["signature"])[2:]
         tx_data = bytes.fromhex(data)
 
@@ -661,7 +675,7 @@ class PrepareVoteTransactionBehaviour(ProposalVoterBaseBehaviour):
             self.context.logger.warning(
                 f"get_raw_safe_transaction_hash unsuccessful!: {contract_api_msg}"
             )
-            return None, snapshot_api_data
+            return None, fix_data_for_api(snapshot_api_data)
 
         safe_tx_hash = cast(str, contract_api_msg.state.body["tx_hash"])
         safe_tx_hash = safe_tx_hash[2:]
@@ -677,7 +691,7 @@ class PrepareVoteTransactionBehaviour(ProposalVoterBaseBehaviour):
             SafeOperation.DELEGATE_CALL.value,
         )
 
-        return payload_string, snapshot_api_data
+        return payload_string, fix_data_for_api(snapshot_api_data)
 
 
 class SnapshotCallDecisionMakingBehaviour(ProposalVoterBaseBehaviour):

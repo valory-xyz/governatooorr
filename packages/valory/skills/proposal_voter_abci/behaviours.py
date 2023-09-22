@@ -89,34 +89,10 @@ HTTP_OK = 200
 MAX_RETRIES = 3
 
 
-def fix_data_for_signing(data):
+def fix_data_for_encoding(data):
     """Add missing required fields before signing"""
     fixed_data = deepcopy(data)
-    fixed_data["message"]["proposal"] = bytearray.fromhex(
-        data["message"]["proposal"][2:]
-    )
-
-    fixed_data["types"]["EIP712Domain"] = [
-        {"name": "name", "type": "string"},
-        {"name": "version", "type": "string"},
-    ]
-
-    fixed_data["primaryType"] = "Vote"
-
-    return fixed_data
-
-
-def fix_data_for_api(data):
-    """Add missing required fields before signing"""
-    fixed_data = deepcopy(data)
-
-    fixed_data["types"]["EIP712Domain"] = [
-        {"name": "name", "type": "string"},
-        {"name": "version", "type": "string"},
-    ]
-
-    fixed_data["primaryType"] = "Vote"
-
+    fixed_data["message"]["proposal"] = bytes.fromhex(data["message"]["proposal"][2:])
     return fixed_data
 
 
@@ -605,6 +581,10 @@ class PrepareVoteTransactionBehaviour(ProposalVoterBaseBehaviour):
         data = {
             "domain": {"name": "snapshot", "version": "0.1.4"},
             "types": {
+                "EIP712Domain": [
+                    {"name": "name", "type": "string"},
+                    {"name": "version", "type": "string"},
+                ],
                 "Vote": [
                     {"name": "from", "type": "address"},
                     {"name": "space", "type": "string"},
@@ -616,6 +596,7 @@ class PrepareVoteTransactionBehaviour(ProposalVoterBaseBehaviour):
                     {"name": "metadata", "type": "string"},
                 ],
             },
+            "primaryType": "Vote",
             "message": message,
         }
 
@@ -626,12 +607,14 @@ class PrepareVoteTransactionBehaviour(ProposalVoterBaseBehaviour):
     ) -> Generator[None, None, Tuple[Optional[str], dict]]:
         """Get the safe hash for the EIP-712 signature"""
 
-        snapshot_api_data = self._get_snapshot_vote_data(proposal)
-        self.context.logger.info(f"Encoding snapshot message: {snapshot_api_data}")
-        encoded_proposal_data = encode_structured_data(
-            fix_data_for_signing(snapshot_api_data)
+        snapshot_api_data_for_api = self._get_snapshot_vote_data(proposal)
+        snapshot_data_for_encoding = fix_data_for_encoding(snapshot_api_data_for_api)
+
+        self.context.logger.info(
+            f"Encoding snapshot message: {snapshot_data_for_encoding}"
         )
-        self.context.logger.info(f"Encoded data: {encoded_proposal_data.body}")
+        encoded_proposal_data = encode_structured_data(snapshot_data_for_encoding)
+        self.context.logger.info(f"Encoded data: {encoded_proposal_data.body.hex()}")
         signmessagelib_address = self.params.signmessagelib_address
 
         # Get the raw transaction from the SignMessageLib contract
@@ -640,7 +623,7 @@ class PrepareVoteTransactionBehaviour(ProposalVoterBaseBehaviour):
             contract_address=signmessagelib_address,
             contract_id=str(SignMessageLibContract.contract_id),
             contract_callable="sign_message",
-            data=encoded_proposal_data.body,
+            data=encoded_proposal_data.header + encoded_proposal_data.body,
         )
         if (
             contract_api_msg.performative != ContractApiMessage.Performative.STATE
@@ -648,11 +631,11 @@ class PrepareVoteTransactionBehaviour(ProposalVoterBaseBehaviour):
             self.context.logger.warning(
                 f"sign_message unsuccessful!: {contract_api_msg}"
             )
-            return None, fix_data_for_api(snapshot_api_data)
+            return None, snapshot_api_data_for_api
         data = cast(str, contract_api_msg.state.body["signature"])[2:]
         tx_data = bytes.fromhex(data)
 
-        self.context.logger.info(f"Signature: {tx_data}")
+        self.context.logger.info(f"Sign transaction tx_data: {tx_data}")
 
         # Get the safe transaction hash
         ether_value = ETHER_VALUE
@@ -675,7 +658,7 @@ class PrepareVoteTransactionBehaviour(ProposalVoterBaseBehaviour):
             self.context.logger.warning(
                 f"get_raw_safe_transaction_hash unsuccessful!: {contract_api_msg}"
             )
-            return None, fix_data_for_api(snapshot_api_data)
+            return None, snapshot_api_data_for_api
 
         safe_tx_hash = cast(str, contract_api_msg.state.body["tx_hash"])
         safe_tx_hash = safe_tx_hash[2:]
@@ -691,7 +674,7 @@ class PrepareVoteTransactionBehaviour(ProposalVoterBaseBehaviour):
             SafeOperation.DELEGATE_CALL.value,
         )
 
-        return payload_string, fix_data_for_api(snapshot_api_data)
+        return payload_string, snapshot_api_data_for_api
 
 
 class SnapshotCallDecisionMakingBehaviour(ProposalVoterBaseBehaviour):

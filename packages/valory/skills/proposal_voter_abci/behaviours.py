@@ -616,7 +616,7 @@ class PrepareVoteTransactionBehaviour(ProposalVoterBaseBehaviour):
 
         encoded_proposal_data = encode_structured_data(snapshot_data_for_encoding)
         safe_message = _hash_eip191_message(encoded_proposal_data)
-        self.context.logger.info(f"Safe message: {safe_message}")
+        self.context.logger.info(f"Safe message: {safe_message.hex()}")
         signmessagelib_address = self.params.signmessagelib_address
 
         # Get the raw transaction from the SignMessageLib contract

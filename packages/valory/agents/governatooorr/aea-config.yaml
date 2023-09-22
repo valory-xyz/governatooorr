@@ -164,7 +164,7 @@ models:
       reset_tendermint_after: ${int:2}
       retry_attempts: 400
       retry_timeout: 3
-      reset_pause_duration: 10
+      reset_pause_duration: ${int:300}
       request_retry_delay: 1.0
       request_timeout: 10.0
       round_timeout_seconds: 30.0

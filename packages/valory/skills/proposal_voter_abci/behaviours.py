@@ -611,10 +611,13 @@ class PrepareVoteTransactionBehaviour(ProposalVoterBaseBehaviour):
         snapshot_data_for_encoding = fix_data_for_encoding(snapshot_api_data_for_api)
 
         self.context.logger.info(
-            f"Encoding snapshot message: {snapshot_data_for_encoding}"
+            f"Encoding snapshot message: {snapshot_api_data_for_api}"
         )
+
         encoded_proposal_data = encode_structured_data(snapshot_data_for_encoding)
-        self.context.logger.info(f"Encoded data: {encoded_proposal_data.body.hex()}")
+        self.context.logger.info(
+            f"Encoded data (header + body): {(encoded_proposal_data.header + encoded_proposal_data.body).hex()}"
+        )
         signmessagelib_address = self.params.signmessagelib_address
 
         # Get the raw transaction from the SignMessageLib contract

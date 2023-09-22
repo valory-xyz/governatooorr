@@ -24,7 +24,7 @@ from abc import ABC
 from copy import deepcopy
 from typing import Dict, Generator, Optional, Set, Tuple, Type, cast
 
-from eth_account.messages import encode_structured_data
+from eth_account.messages import _hash_eip191_message, encode_structured_data
 
 from packages.valory.connections.openai.connection import (
     PUBLIC_ID as LLM_CONNECTION_PUBLIC_ID,
@@ -615,9 +615,8 @@ class PrepareVoteTransactionBehaviour(ProposalVoterBaseBehaviour):
         )
 
         encoded_proposal_data = encode_structured_data(snapshot_data_for_encoding)
-        self.context.logger.info(
-            f"Encoded data (header + body): {(encoded_proposal_data.header + encoded_proposal_data.body).hex()}"
-        )
+        safe_message = _hash_eip191_message(encoded_proposal_data)
+        self.context.logger.info(f"Safe message: {safe_message}")
         signmessagelib_address = self.params.signmessagelib_address
 
         # Get the raw transaction from the SignMessageLib contract
@@ -626,7 +625,7 @@ class PrepareVoteTransactionBehaviour(ProposalVoterBaseBehaviour):
             contract_address=signmessagelib_address,
             contract_id=str(SignMessageLibContract.contract_id),
             contract_callable="sign_message",
-            data=encoded_proposal_data.header + encoded_proposal_data.body,
+            data=safe_message,
         )
         if (
             contract_api_msg.performative != ContractApiMessage.Performative.STATE

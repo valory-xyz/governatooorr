@@ -148,6 +148,7 @@ class EstablishVoteBehaviour(ProposalVoterBaseBehaviour):
         """Generate proposal votes"""
 
         target_proposals = self.synchronized_data.target_proposals["tally"]
+        previous_expiring_proposals = self.synchronized_data.expiring_proposals["tally"]
 
         # Sort by expiration block
         sorted_target_proposals = list(
@@ -177,12 +178,18 @@ class EstablishVoteBehaviour(ProposalVoterBaseBehaviour):
                     proposal_token
                 )
             )
-            target_proposals[proposal_id]["vote_intention"] = vote_intention
-
             self.context.logger.info(f"Vote intention: {vote_intention}")
 
-            # Do not call the LLM until we have delegations for this proposal
+            # Do not update the vote if the vote intention has not changed
+            if proposal_id in previous_expiring_proposals and "vote_intention" in previous_expiring_proposals[proposal_id] and previous_expiring_proposals[proposal_id]["vote_intention"] == vote_intention:
+                self.context.logger.info("Vote intention has not changed. Skipping proposal.")
+                continue
+
+            target_proposals[proposal_id]["vote_intention"] = vote_intention
+
+            # Do not call the LLM until we have delegations for this proposal. FIXME: redundant?
             if not vote_intention:
+                self.context.logger.info("No vote intention. Skipping proposal.")
                 continue
 
             # LLM call

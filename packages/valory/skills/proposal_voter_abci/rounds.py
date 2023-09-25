@@ -82,9 +82,9 @@ class SynchronizedData(BaseSynchronizedData):
         return cast(dict, self.db.get_strict("ceramic_db"))
 
     @property
-    def active_proposals(self) -> dict:
+    def target_proposals(self) -> dict:
         """Get the active proposals."""
-        return cast(dict, self.db.get("active_proposals", {}))
+        return cast(dict, self.db.get("target_proposals", {}))
 
     @property
     def expiring_proposals(self) -> dict:
@@ -172,8 +172,8 @@ class PrepareVoteTransactionRound(CollectSameUntilThresholdRound):
                 synchronized_data = self.synchronized_data.update(
                     synchronized_data_class=SynchronizedData,
                     **{
-                        get_name(SynchronizedData.active_proposals): payload[
-                            "active_proposals"
+                        get_name(SynchronizedData.target_proposals): payload[
+                            "target_proposals"
                         ],
                         get_name(SynchronizedData.expiring_proposals): payload[
                             "expiring_proposals"
@@ -194,8 +194,8 @@ class PrepareVoteTransactionRound(CollectSameUntilThresholdRound):
             synchronized_data = self.synchronized_data.update(
                 synchronized_data_class=SynchronizedData,
                 **{
-                    get_name(SynchronizedData.active_proposals): payload[
-                        "active_proposals"
+                    get_name(SynchronizedData.target_proposals): payload[
+                        "target_proposals"
                     ],
                     get_name(SynchronizedData.expiring_proposals): payload[
                         "expiring_proposals"
@@ -368,7 +368,7 @@ class ProposalVoterAbciApp(AbciApp[Event]):
     db_pre_conditions: Dict[AppState, Set[str]] = {
         EstablishVoteRound: set(),
         PrepareVoteTransactionRound: {
-            get_name(SynchronizedData.active_proposals),
+            get_name(SynchronizedData.target_proposals),
             get_name(SynchronizedData.ceramic_db),
         },
         SnapshotCallDecisionMakingRound: set(

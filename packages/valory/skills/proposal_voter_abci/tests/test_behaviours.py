@@ -327,7 +327,7 @@ class TestEstablishVoteSnapshotBehaviour(BaseProposalVoterTest):
                 BehaviourTestCase(
                     "Happy path",
                     initial_data=dict(
-                        active_proposals={
+                        target_proposals={
                             "tally": get_dummy_proposals(),
                             "snapshot": get_dummy_snapshot_proposals(),
                         },
@@ -431,7 +431,7 @@ class TestPrepareVoteTransactionNoVoteBehaviour(BaseProposalVoterTest):
                 BehaviourTestCase(
                     "Happy path",
                     initial_data=dict(
-                        active_proposals=get_dummy_proposals(),
+                        target_proposals=get_dummy_proposals(),
                         expiring_proposals={
                             "tally": {"1": {"vote": "Yes"}},
                             "snapshot": {"1": {"vote": "Yes"}},
@@ -480,7 +480,7 @@ class TestPrepareVoteTransactionVoteTallyBehaviour(BaseProposalVoterTest):
                 BehaviourTestCase(
                     "Happy path",
                     initial_data=dict(
-                        active_proposals=get_dummy_proposals(),
+                        target_proposals=get_dummy_proposals(),
                         expiring_proposals={
                             "tally": {"1": {"vote": "Yes"}},
                             "snapshot": {"1": {"vote": "Yes"}},

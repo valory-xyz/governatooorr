@@ -147,17 +147,17 @@ class EstablishVoteBehaviour(ProposalVoterBaseBehaviour):
     def _get_expiring_tally_proposals(self) -> Generator[None, None, dict]:
         """Generate proposal votes"""
 
-        active_proposals = self.synchronized_data.active_proposals["tally"]
+        target_proposals = self.synchronized_data.target_proposals["tally"]
 
         # Sort by expiration block
-        sorted_active_proposals = list(
-            sorted(active_proposals.values(), key=lambda ap: ap["remaining_blocks"])
+        sorted_target_proposals = list(
+            sorted(target_proposals.values(), key=lambda ap: ap["remaining_blocks"])
         )
 
         # Get expiring proposals
         expiring_proposals = {
             ap["id"]: {"vote": None}
-            for ap in sorted_active_proposals
+            for ap in sorted_target_proposals
             if ap["remaining_blocks"] <= self.params.voting_block_threshold
         }
 
@@ -167,7 +167,7 @@ class EstablishVoteBehaviour(ProposalVoterBaseBehaviour):
                 f"Getting vote intention for proposal {proposal_id}"
             )
 
-            proposal_token = active_proposals[proposal_id]["governor"]["tokens"][0][
+            proposal_token = target_proposals[proposal_id]["governor"]["tokens"][0][
                 "id"
             ].split(":")[-1]
 
@@ -177,7 +177,7 @@ class EstablishVoteBehaviour(ProposalVoterBaseBehaviour):
                     proposal_token
                 )
             )
-            active_proposals[proposal_id]["vote_intention"] = vote_intention
+            target_proposals[proposal_id]["vote_intention"] = vote_intention
 
             self.context.logger.info(f"Vote intention: {vote_intention}")
 
@@ -193,9 +193,9 @@ class EstablishVoteBehaviour(ProposalVoterBaseBehaviour):
                 else "contribute positively to the protocol"
             )
             prompt_values = {
-                "proposal": active_proposals[proposal_id]["title"]
+                "proposal": target_proposals[proposal_id]["title"]
                 + "\n"
-                + active_proposals[proposal_id]["description"],
+                + target_proposals[proposal_id]["description"],
                 "voting_intention_snippet": voting_intention_snippet,
                 "voting_options": VOTING_OPTIONS,
             }
@@ -298,11 +298,11 @@ class EstablishVoteBehaviour(ProposalVoterBaseBehaviour):
 
     def _get_expiring_snapshot_proposals(self) -> Generator[None, None, dict]:
         """Get votable snapshot proposals"""
-        active_proposals = self.synchronized_data.active_proposals["snapshot"]
+        target_proposals = self.synchronized_data.target_proposals["snapshot"]
 
         # Sort by expiration block
-        sorted_active_proposals = list(
-            sorted(active_proposals.values(), key=lambda ap: ap["remaining_seconds"])
+        sorted_target_proposals = list(
+            sorted(target_proposals.values(), key=lambda ap: ap["remaining_seconds"])
         )
 
         # Get expiring proposals
@@ -314,7 +314,7 @@ class EstablishVoteBehaviour(ProposalVoterBaseBehaviour):
                 "expiration": ap["end"],
                 "space_id": ap["space"]["id"],
             }
-            for ap in sorted_active_proposals
+            for ap in sorted_target_proposals
             if ap["remaining_seconds"] <= self.params.voting_seconds_threshold
         }
 
@@ -324,7 +324,7 @@ class EstablishVoteBehaviour(ProposalVoterBaseBehaviour):
 
         # LLM calls
         for proposal_id in expiring_proposals:
-            proposal = active_proposals[proposal_id]
+            proposal = target_proposals[proposal_id]
             prompt_template = "Here is a voting proposal for a protocol: `{proposal}`. How should I vote on the voting proposal if my intent was to contribute positively to the protocol and the voting options are {voting_options}? Please answer with only the voting option."
 
             prompt_values = {
@@ -358,7 +358,7 @@ class PrepareVoteTransactionBehaviour(ProposalVoterBaseBehaviour):
         """Do the act, supporting asynchronous execution."""
 
         with self.context.benchmark_tool.measure(self.behaviour_id).local():
-            active_proposals = self.synchronized_data.active_proposals
+            target_proposals = self.synchronized_data.target_proposals
             expiring_proposals = self.synchronized_data.expiring_proposals
             ceramic_db = self.synchronized_data.ceramic_db
             pending_write = False
@@ -376,8 +376,8 @@ class PrepareVoteTransactionBehaviour(ProposalVoterBaseBehaviour):
                 access_key = "snapshot" if submitted_vote.is_snapshot else "tally"
 
                 # Remove proposal from active proposals
-                if submitted_vote_id in active_proposals[access_key]:
-                    del active_proposals[access_key][submitted_vote_id]
+                if submitted_vote_id in target_proposals[access_key]:
+                    del target_proposals[access_key][submitted_vote_id]
 
                 # Move proposal info from expiring proposals to voted_proposals
                 if submitted_vote_id in expiring_proposals[access_key]:
@@ -408,7 +408,7 @@ class PrepareVoteTransactionBehaviour(ProposalVoterBaseBehaviour):
             )
 
             payload_content = {
-                "active_proposals": active_proposals,
+                "target_proposals": target_proposals,
                 "expiring_proposals": expiring_proposals,
                 "ceramic_db": ceramic_db,
                 "pending_write": pending_write,

@@ -106,7 +106,7 @@ def get_dummy_prepare_vote_tx_payload_serialized(
         tx_hash = "ERROR"
     return json.dumps(
         {
-            "active_proposals": {},
+            "target_proposals": {},
             "expiring_proposals": {},
             "ceramic_db": {},
             "pending_write": True,
@@ -199,15 +199,15 @@ class TestPrepareVoteTransactionRoundRound(BaseProposalVoterRoundTest):
                     "most_voted_tx_hash": json.loads(
                         get_dummy_prepare_vote_tx_payload_serialized()
                     )["tx_hash"],
-                    "active_proposals": json.loads(
+                    "target_proposals": json.loads(
                         get_dummy_prepare_vote_tx_payload_serialized()
-                    )["active_proposals"],
+                    )["target_proposals"],
                 },
                 event=Event.VOTE,
                 most_voted_payload=get_dummy_prepare_vote_tx_payload_serialized(),
                 synchronized_data_attr_checks=[
                     lambda _synchronized_data: _synchronized_data.most_voted_tx_hash,
-                    lambda _synchronized_data: _synchronized_data.active_proposals,
+                    lambda _synchronized_data: _synchronized_data.target_proposals,
                 ],
             ),
             RoundTestCase(

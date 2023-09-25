@@ -422,7 +422,7 @@ class TestHttpHandler(BaseSkillTestCase):
                 "_handle_get_proposal",
             ),
             (
-                "http://governatooorr.staging.autonolas.tech/active_proposals/",
+                "http://governatooorr.staging.autonolas.tech/target_proposals/",
                 "get",
                 "_handle_get_active_proposals",
             ),

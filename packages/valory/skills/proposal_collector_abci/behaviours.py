@@ -308,7 +308,7 @@ class CollectActiveTallyProposalsBehaviour(ProposalCollectorBaseBehaviour):
 
             active_proposals.extend(filtered_proposals)
 
-        # Remove proposals for which the vote end block is in the past
+        # Remove proposals for which the vote end block is in the past. FIXME: is this always redundant?
         current_block = yield from self.get_current_block()
         if current_block is None:
             return CollectActiveTallyProposalsRound.BLOCK_RETRIEVAL_ERROR
@@ -318,7 +318,7 @@ class CollectActiveTallyProposalsBehaviour(ProposalCollectorBaseBehaviour):
         )
 
         # Keep all proposals for the frontend
-        open_proposals = list(deepcopy(active_proposals))
+        target_proposals = list(deepcopy(active_proposals))
 
         # Remove proposals where we don't have voting power
         ceramic_db = self.synchronized_data.ceramic_db
@@ -326,52 +326,52 @@ class CollectActiveTallyProposalsBehaviour(ProposalCollectorBaseBehaviour):
         delegated_tokens = [d["token_address"] for d in delegations]
         delegation_governors = [d["governor_address"] for d in delegations]
 
-        active_proposals = filter(
+        target_proposals = filter(
             lambda ap: ap["governor"]["tokens"][0]["id"] in delegated_tokens
             and ap["governor"]["id"].split(":")[-1] in delegation_governors,
-            active_proposals,
+            target_proposals,
         )
 
         # Remove proposals where we have already voted
-        active_proposals = list(
+        target_proposals = list(
             filter(
                 lambda ap: ap["id"] not in ceramic_db["voted_proposals"]["tally"],
-                active_proposals,
+                target_proposals,
             )
         )
 
         self.context.logger.info(
-            f"Retrieved {len(active_proposals)} new votable proposals from Tally"
+            f"Retrieved {len(target_proposals)} new votable proposals from Tally"
         )
 
         # Process active proposals
-        previous_proposals = self.synchronized_data.active_proposals["tally"]
-        previous_proposals = {
+        previous_target_proposals = self.synchronized_data.target_proposals["tally"]
+        previous_target_proposals = {
             k: v
-            for k, v in previous_proposals.items()
+            for k, v in previous_target_proposals.items()
             if v["end"]["number"] > current_block  # remove previous expired proposals
         }
 
-        for active_proposal in active_proposals:
+        for target_proposal in target_proposals:
             if (
-                active_proposal["id"] not in previous_proposals
+                target_proposal["id"] not in previous_target_proposals
             ):  # This is a new proposal
-                previous_proposals[active_proposal["id"]] = {
-                    **active_proposal,
+                previous_target_proposals[target_proposal["id"]] = {
+                    **target_proposal,
                     "vote_intention": None,
-                    "remaining_blocks": active_proposal["end"]["number"]
+                    "remaining_blocks": target_proposal["end"]["number"]
                     - current_block,
                 }
             else:
-                previous_proposals[active_proposal["id"]]["remaining_blocks"] = (
-                    previous_proposals[active_proposal["id"]]["end"]["number"]
+                previous_target_proposals[target_proposal["id"]]["remaining_blocks"] = (
+                    previous_target_proposals[target_proposal["id"]]["end"]["number"]
                     - current_block
                 )
 
         return json.dumps(
             {
-                "updated_tally_proposals": previous_proposals,
-                "open_proposals": open_proposals,
+                "tally_target_proposals": previous_target_proposals,
+                "tally_active_proposals": active_proposals,
             },
             sort_keys=True,
         )
@@ -475,57 +475,59 @@ class CollectActiveSnapshotProposalsBehaviour(ProposalCollectorBaseBehaviour):
 
         n_retrieved_proposals += len(active_proposals)
         ceramic_db = self.synchronized_data.ceramic_db
-        previous_proposals = self.synchronized_data.active_proposals["snapshot"]
-
-        # Remove previous expired proposals
-        now = cast(
-            SharedState, self.context.state
-        ).round_sequence.last_round_transition_timestamp.timestamp()
-
-        previous_proposals = {
-            k: v for k, v in previous_proposals.items() if v["end"] > now
-        }
 
         # Remove active proposals where we have already voted
-        active_proposals = filter(
+        target_proposals = filter(
             lambda ap: ap["id"] not in ceramic_db["vote_data"]["snapshot"],
             active_proposals,
         )
 
         # Filter out proposals that do not use the erc20-balance-of strategy
-        active_proposals = filter(
+        target_proposals = filter(
             lambda ap: "erc20-balance-of" in [s["name"] for s in ap["strategies"]],
-            active_proposals,
+            target_proposals,
         )
 
         # Remove proposals where we dont have voting power
         votable_proposals = []
-        for ap in active_proposals:
+        for ap in target_proposals:
             has_voting_power = yield from self._has_snapshot_voting_power(ap)
             if has_voting_power:
                 votable_proposals.append(ap)
+
+        target_proposals = votable_proposals
 
         self.context.logger.info(
             f"Retrieved {len(votable_proposals)} new votable proposals from Snapshot"
         )
 
-        for votable_proposal in votable_proposals:
+        # Remove previous expired proposals
+        previous_target_proposals = self.synchronized_data.target_proposals["snapshot"]
+        now = cast(
+            SharedState, self.context.state
+        ).round_sequence.last_round_transition_timestamp.timestamp()
+
+        previous_target_proposals = {
+            k: v for k, v in previous_target_proposals.items() if v["end"] > now
+        }
+
+        for target_proposal in target_proposals:
             if (
-                votable_proposal["id"] not in previous_proposals
+                target_proposal["id"] not in previous_target_proposals
             ):  # This is a new proposal
-                previous_proposals[votable_proposal["id"]] = {
-                    **votable_proposal,
+                previous_target_proposals[target_proposal["id"]] = {
+                    **target_proposal,
                     "vote_intention": None,
-                    "remaining_seconds": votable_proposal["end"] - now,
+                    "remaining_seconds": target_proposal["end"] - now,
                 }
             else:
-                previous_proposals[votable_proposal["id"]]["remaining_seconds"] = (
-                    votable_proposal["end"] - now
+                previous_target_proposals[target_proposal["id"]]["remaining_seconds"] = (
+                    target_proposal["end"] - now
                 )
 
         return json.dumps(
             {
-                "updated_snapshot_proposals": previous_proposals,
+                "snapshot_target_proposals": previous_target_proposals,
                 "n_retrieved_proposals": n_retrieved_proposals,
                 "finished": finished,
             },

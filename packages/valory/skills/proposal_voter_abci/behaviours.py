@@ -53,12 +53,11 @@ from packages.valory.skills.proposal_voter_abci.dialogues import (
 )
 from packages.valory.skills.proposal_voter_abci.models import (
     Params,
-    PendingVote,
     SharedState,
 )
 from packages.valory.skills.proposal_voter_abci.payloads import (
     EstablishVotePayload,
-    PrepareVoteTransactionPayload,
+    PrepareVoteTransactionsPayload,
     SnapshotAPISendPayload,
     SnapshotAPISendRandomnessPayload,
     SnapshotAPISendSelectKeeperPayload,
@@ -66,7 +65,7 @@ from packages.valory.skills.proposal_voter_abci.payloads import (
 )
 from packages.valory.skills.proposal_voter_abci.rounds import (
     EstablishVoteRound,
-    PrepareVoteTransactionRound,
+    PrepareVoteTransactionsRound,
     ProposalVoterAbciApp,
     SnapshotAPISendRandomnessRound,
     SnapshotAPISendRound,
@@ -356,10 +355,249 @@ class EstablishVoteBehaviour(ProposalVoterBaseBehaviour):
         return expiring_proposals
 
 
-class PrepareVoteTransactionBehaviour(ProposalVoterBaseBehaviour):
+class PrepareVoteTransactionsBehaviour(ProposalVoterBaseBehaviour):
     """PrepareVoteTransactionBehaviour"""
 
-    matching_round: Type[AbstractRound] = PrepareVoteTransactionRound
+    matching_round: Type[AbstractRound] = PrepareVoteTransactionsRound
+
+    def _get_tally_tx_hash(
+        self,
+        governor_address: str,
+        proposal_id: str,
+        vote_code: int,
+    ) -> Generator[None, None, Optional[str]]:
+        """Get the transaction hash of the Safe tx."""
+        # Get the raw transaction from the Bravo Delegate contract
+        contract_api_msg = yield from self.get_contract_api_response(
+            performative=ContractApiMessage.Performative.GET_STATE,  # type: ignore
+            contract_address=governor_address,
+            contract_id=str(DelegateContract.contract_id),
+            contract_callable="get_cast_vote_data",
+            proposal_id=int(proposal_id),
+            support=vote_code,
+        )
+        if (
+            contract_api_msg.performative != ContractApiMessage.Performative.STATE
+        ):  # pragma: nocover
+            self.context.logger.warning(
+                f"get_cast_vote_data unsuccessful!: {contract_api_msg}"
+            )
+            return None
+        data = cast(bytes, contract_api_msg.state.body["data"])
+
+        # Get the safe transaction hash
+        ether_value = ETHER_VALUE
+        safe_tx_gas = SAFE_TX_GAS
+
+        contract_api_msg = yield from self.get_contract_api_response(
+            performative=ContractApiMessage.Performative.GET_STATE,  # type: ignore
+            contract_address=self.synchronized_data.safe_contract_address,
+            contract_id=str(GnosisSafeContract.contract_id),
+            contract_callable="get_raw_safe_transaction_hash",
+            to_address=governor_address,
+            value=ether_value,
+            data=data,
+            safe_tx_gas=safe_tx_gas,
+        )
+        if (
+            contract_api_msg.performative != ContractApiMessage.Performative.STATE
+        ):  # pragma: nocover
+            self.context.logger.warning(
+                f"get_raw_safe_transaction_hash unsuccessful!: {contract_api_msg}"
+            )
+            return None
+
+        safe_tx_hash = cast(str, contract_api_msg.state.body["tx_hash"])
+        safe_tx_hash = safe_tx_hash[2:]
+        self.context.logger.info(f"Hash of the Safe transaction: {safe_tx_hash}")
+
+        # temp hack:
+        payload_string = hash_payload_to_hex(
+            safe_tx_hash, ether_value, safe_tx_gas, governor_address, data
+        )
+
+        return payload_string
+
+    def _get_snapshot_vote_data(self, proposal) -> dict:
+        """Get the data for the EIP-712 signature"""
+
+        now_timestamp = cast(
+            SharedState, self.context.state
+        ).round_sequence.last_round_transition_timestamp.timestamp()
+
+        message = {
+            "space": proposal["space_id"],
+            "proposal": proposal["id"],
+            "choice": proposal["vote"],
+            "reason": "",
+            "app": "Governatooorr",
+            "metadata": "{}",
+            "from": self.synchronized_data.safe_contract_address,
+            "timestamp": int(now_timestamp),
+        }
+
+        # Build the data structure for the EIP712 signature
+        data = {
+            "domain": {"name": "snapshot", "version": "0.1.4"},
+            "types": {
+                "EIP712Domain": [
+                    {"name": "name", "type": "string"},
+                    {"name": "version", "type": "string"},
+                ],
+                "Vote": [
+                    {"name": "from", "type": "address"},
+                    {"name": "space", "type": "string"},
+                    {"name": "timestamp", "type": "uint64"},
+                    {"name": "proposal", "type": "bytes32"},
+                    {"name": "choice", "type": "uint32"},
+                    {"name": "reason", "type": "string"},
+                    {"name": "app", "type": "string"},
+                    {"name": "metadata", "type": "string"},
+                ],
+            },
+            "primaryType": "Vote",
+            "message": message,
+        }
+
+        return data
+
+    def _get_snapshot_tx_hash(
+        self, proposal
+    ) -> Generator[None, None, Tuple[Optional[str], dict]]:
+        """Get the safe hash for the EIP-712 signature"""
+
+        vote_data = self._get_snapshot_vote_data(proposal)
+        snapshot_data_for_encoding = fix_data_for_encoding(vote_data)
+
+        snapshot_api_data = {
+            "address": self.synchronized_data.safe_contract_address,
+            "data": vote_data,
+            "sig": "0x",  # Snapshot retrieves the signature for votes performed by a safe
+        }
+
+        self.context.logger.info(
+            f"Encoding snapshot message: {snapshot_api_data}"
+        )
+
+        encoded_proposal_data = encode_structured_data(snapshot_data_for_encoding)
+        safe_message = _hash_eip191_message(encoded_proposal_data)
+        self.context.logger.info(f"Safe message: {safe_message.hex()}")
+        signmessagelib_address = self.params.signmessagelib_address
+
+        # Get the raw transaction from the SignMessageLib contract
+        contract_api_msg = yield from self.get_contract_api_response(
+            performative=ContractApiMessage.Performative.GET_STATE,  # type: ignore
+            contract_address=signmessagelib_address,
+            contract_id=str(SignMessageLibContract.contract_id),
+            contract_callable="sign_message",
+            data=safe_message,
+        )
+        if (
+            contract_api_msg.performative != ContractApiMessage.Performative.STATE
+        ):  # pragma: nocover
+            self.context.logger.warning(
+                f"sign_message unsuccessful!: {contract_api_msg}"
+            )
+            return None, snapshot_api_data
+        data = cast(str, contract_api_msg.state.body["signature"])[2:]
+        tx_data = bytes.fromhex(data)
+
+        self.context.logger.info(f"Sign transaction tx_data: {tx_data}")
+
+        # Get the safe transaction hash
+        ether_value = ETHER_VALUE
+        safe_tx_gas = SAFE_TX_GAS
+
+        contract_api_msg = yield from self.get_contract_api_response(
+            performative=ContractApiMessage.Performative.GET_STATE,  # type: ignore
+            contract_address=self.synchronized_data.safe_contract_address,
+            contract_id=str(GnosisSafeContract.contract_id),
+            contract_callable="get_raw_safe_transaction_hash",
+            to_address=signmessagelib_address,
+            value=ether_value,
+            data=tx_data,
+            safe_tx_gas=safe_tx_gas,
+            operation=SafeOperation.DELEGATE_CALL.value,
+        )
+        if (
+            contract_api_msg.performative != ContractApiMessage.Performative.STATE
+        ):  # pragma: nocover
+            self.context.logger.warning(
+                f"get_raw_safe_transaction_hash unsuccessful!: {contract_api_msg}"
+            )
+            return None, snapshot_api_data
+
+        safe_tx_hash = cast(str, contract_api_msg.state.body["tx_hash"])
+        safe_tx_hash = safe_tx_hash[2:]
+        self.context.logger.info(f"Hash of the Safe transaction: {safe_tx_hash}")
+
+        # temp hack:
+        payload_string = hash_payload_to_hex(
+            safe_tx_hash,
+            ether_value,
+            safe_tx_gas,
+            signmessagelib_address,
+            tx_data,
+            SafeOperation.DELEGATE_CALL.value,
+        )
+
+        return payload_string, snapshot_api_data
+
+
+    def async_act(self) -> Generator:
+        """Do the act, supporting asynchronous execution."""
+
+        with self.context.benchmark_tool.measure(self.behaviour_id).local():
+
+            expiring_proposals = self.synchronized_data.expiring_proposals
+            pending_transactions = self.synchronized_data.pending_transactions
+
+            # Tally
+            for proposal_id, proposal in expiring_proposals["tally"].items():
+                if proposal_id in pending_transactions["tally"]:
+                    continue
+
+                governor_address = proposal["governor"]["id"].split(":")[-1]
+                vote_code = VOTES_TO_CODE[proposal["vote_choice"]]
+
+                tx_hash = yield from self._get_tally_tx_hash(
+                    governor_address, proposal_id, vote_code
+                )
+
+                pending_transactions["tally"][proposal_id] = {
+                    "tx_hash": tx_hash
+                }
+
+            # Snapshot
+            for proposal_id, proposal in expiring_proposals["snapshot"].items():
+                if proposal_id in pending_transactions["snapshot"]:
+                    continue
+
+                tx_hash, api_data = yield from self._get_snapshot_tx_hash(
+                    proposal
+                )
+
+                pending_transactions["tally"][proposal_id] = {
+                    "tx_hash": tx_hash, "api_data": api_data
+                }
+
+
+            payload = PrepareVoteTransactionsPayload(
+                sender=self.context.agent_address,
+                content=json.dumps({"pending_transactions": pending_transactions}, sort_keys=True),
+            )
+
+            with self.context.benchmark_tool.measure(self.behaviour_id).consensus():
+                yield from self.send_a2a_transaction(payload)
+                yield from self.wait_until_round_end()
+
+            self.set_done()
+
+
+class DecisionMakingBehaviour(ProposalVoterBaseBehaviour):
+    """DecisionMakingBehaviour"""
+
+    matching_round: Type[AbstractRound] = DecisionMakingRound
 
     def async_act(self) -> Generator:
         """Do the act, supporting asynchronous execution."""
@@ -508,182 +746,8 @@ class PrepareVoteTransactionBehaviour(ProposalVoterBaseBehaviour):
 
             self.set_done()
 
-    def _get_safe_tx_hash(
-        self,
-        governor_address: str,
-        proposal_id: str,
-        vote_code: int,
-    ) -> Generator[None, None, Optional[str]]:
-        """Get the transaction hash of the Safe tx."""
-        # Get the raw transaction from the Bravo Delegate contract
-        contract_api_msg = yield from self.get_contract_api_response(
-            performative=ContractApiMessage.Performative.GET_STATE,  # type: ignore
-            contract_address=governor_address,
-            contract_id=str(DelegateContract.contract_id),
-            contract_callable="get_cast_vote_data",
-            proposal_id=int(proposal_id),
-            support=vote_code,
-        )
-        if (
-            contract_api_msg.performative != ContractApiMessage.Performative.STATE
-        ):  # pragma: nocover
-            self.context.logger.warning(
-                f"get_cast_vote_data unsuccessful!: {contract_api_msg}"
-            )
-            return None
-        data = cast(bytes, contract_api_msg.state.body["data"])
 
-        # Get the safe transaction hash
-        ether_value = ETHER_VALUE
-        safe_tx_gas = SAFE_TX_GAS
 
-        contract_api_msg = yield from self.get_contract_api_response(
-            performative=ContractApiMessage.Performative.GET_STATE,  # type: ignore
-            contract_address=self.synchronized_data.safe_contract_address,
-            contract_id=str(GnosisSafeContract.contract_id),
-            contract_callable="get_raw_safe_transaction_hash",
-            to_address=governor_address,
-            value=ether_value,
-            data=data,
-            safe_tx_gas=safe_tx_gas,
-        )
-        if (
-            contract_api_msg.performative != ContractApiMessage.Performative.STATE
-        ):  # pragma: nocover
-            self.context.logger.warning(
-                f"get_raw_safe_transaction_hash unsuccessful!: {contract_api_msg}"
-            )
-            return None
-
-        safe_tx_hash = cast(str, contract_api_msg.state.body["tx_hash"])
-        safe_tx_hash = safe_tx_hash[2:]
-        self.context.logger.info(f"Hash of the Safe transaction: {safe_tx_hash}")
-
-        # temp hack:
-        payload_string = hash_payload_to_hex(
-            safe_tx_hash, ether_value, safe_tx_gas, governor_address, data
-        )
-
-        return payload_string
-
-    def _get_snapshot_vote_data(self, proposal) -> dict:
-        """Get the data for the EIP-712 signature"""
-
-        now_timestamp = cast(
-            SharedState, self.context.state
-        ).round_sequence.last_round_transition_timestamp.timestamp()
-
-        message = {
-            "space": proposal["space_id"],
-            "proposal": proposal["id"],
-            "choice": proposal["vote"],
-            "reason": "",
-            "app": "Governatooorr",
-            "metadata": "{}",
-            "from": self.synchronized_data.safe_contract_address,
-            "timestamp": int(now_timestamp),
-        }
-
-        # Build the data structure for the EIP712 signature
-        data = {
-            "domain": {"name": "snapshot", "version": "0.1.4"},
-            "types": {
-                "EIP712Domain": [
-                    {"name": "name", "type": "string"},
-                    {"name": "version", "type": "string"},
-                ],
-                "Vote": [
-                    {"name": "from", "type": "address"},
-                    {"name": "space", "type": "string"},
-                    {"name": "timestamp", "type": "uint64"},
-                    {"name": "proposal", "type": "bytes32"},
-                    {"name": "choice", "type": "uint32"},
-                    {"name": "reason", "type": "string"},
-                    {"name": "app", "type": "string"},
-                    {"name": "metadata", "type": "string"},
-                ],
-            },
-            "primaryType": "Vote",
-            "message": message,
-        }
-
-        return data
-
-    def _get_snapshot_tx_hash(
-        self, proposal
-    ) -> Generator[None, None, Tuple[Optional[str], dict]]:
-        """Get the safe hash for the EIP-712 signature"""
-
-        snapshot_api_data_for_api = self._get_snapshot_vote_data(proposal)
-        snapshot_data_for_encoding = fix_data_for_encoding(snapshot_api_data_for_api)
-
-        self.context.logger.info(
-            f"Encoding snapshot message: {snapshot_api_data_for_api}"
-        )
-
-        encoded_proposal_data = encode_structured_data(snapshot_data_for_encoding)
-        safe_message = _hash_eip191_message(encoded_proposal_data)
-        self.context.logger.info(f"Safe message: {safe_message.hex()}")
-        signmessagelib_address = self.params.signmessagelib_address
-
-        # Get the raw transaction from the SignMessageLib contract
-        contract_api_msg = yield from self.get_contract_api_response(
-            performative=ContractApiMessage.Performative.GET_STATE,  # type: ignore
-            contract_address=signmessagelib_address,
-            contract_id=str(SignMessageLibContract.contract_id),
-            contract_callable="sign_message",
-            data=safe_message,
-        )
-        if (
-            contract_api_msg.performative != ContractApiMessage.Performative.STATE
-        ):  # pragma: nocover
-            self.context.logger.warning(
-                f"sign_message unsuccessful!: {contract_api_msg}"
-            )
-            return None, snapshot_api_data_for_api
-        data = cast(str, contract_api_msg.state.body["signature"])[2:]
-        tx_data = bytes.fromhex(data)
-
-        self.context.logger.info(f"Sign transaction tx_data: {tx_data}")
-
-        # Get the safe transaction hash
-        ether_value = ETHER_VALUE
-        safe_tx_gas = SAFE_TX_GAS
-
-        contract_api_msg = yield from self.get_contract_api_response(
-            performative=ContractApiMessage.Performative.GET_STATE,  # type: ignore
-            contract_address=self.synchronized_data.safe_contract_address,
-            contract_id=str(GnosisSafeContract.contract_id),
-            contract_callable="get_raw_safe_transaction_hash",
-            to_address=signmessagelib_address,
-            value=ether_value,
-            data=tx_data,
-            safe_tx_gas=safe_tx_gas,
-            operation=SafeOperation.DELEGATE_CALL.value,
-        )
-        if (
-            contract_api_msg.performative != ContractApiMessage.Performative.STATE
-        ):  # pragma: nocover
-            self.context.logger.warning(
-                f"get_raw_safe_transaction_hash unsuccessful!: {contract_api_msg}"
-            )
-            return None, snapshot_api_data_for_api
-
-        safe_tx_hash = cast(str, contract_api_msg.state.body["tx_hash"])
-        safe_tx_hash = safe_tx_hash[2:]
-        self.context.logger.info(f"Hash of the Safe transaction: {safe_tx_hash}")
-
-        # temp hack:
-        payload_string = hash_payload_to_hex(
-            safe_tx_hash,
-            ether_value,
-            safe_tx_gas,
-            signmessagelib_address,
-            tx_data,
-            SafeOperation.DELEGATE_CALL.value,
-        )
-
-        return payload_string, snapshot_api_data_for_api
 
 
 class SnapshotCallDecisionMakingBehaviour(ProposalVoterBaseBehaviour):

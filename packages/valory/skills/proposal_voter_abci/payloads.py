@@ -32,7 +32,7 @@ class EstablishVotePayload(BaseTxPayload):
 
 
 @dataclass(frozen=True)
-class PrepareVoteTransactionPayload(BaseTxPayload):
+class PrepareVoteTransactionsPayload(BaseTxPayload):
     """Represent a transaction payload for the PrepareVoteTransactionRound."""
 
     content: str

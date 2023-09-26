@@ -36,7 +36,7 @@ from packages.valory.skills.abstract_round_abci.base import (
 )
 from packages.valory.skills.proposal_voter_abci.payloads import (
     EstablishVotePayload,
-    PrepareVoteTransactionPayload,
+    PrepareVoteTransactionsPayload,
     SnapshotAPISendPayload,
     SnapshotAPISendRandomnessPayload,
     SnapshotAPISendSelectKeeperPayload,
@@ -69,14 +69,6 @@ class SynchronizedData(BaseSynchronizedData):
     """
 
     @property
-    def just_voted(self) -> bool:
-        """Get the final verification status."""
-        status_value = self.db.get(
-            "final_verification_status", VerificationStatus.NOT_VERIFIED.value
-        )
-        return status_value == VerificationStatus.VERIFIED.value
-
-    @property
     def ceramic_db(self) -> dict:
         """Get the delegations and votes."""
         return cast(dict, self.db.get_strict("ceramic_db"))
@@ -90,6 +82,11 @@ class SynchronizedData(BaseSynchronizedData):
     def expiring_proposals(self) -> dict:
         """Get the expiring_proposals."""
         return cast(dict, self.db.get_strict("expiring_proposals"))
+
+    @property
+    def pending_transactions(self) -> dict:
+        """Get the snapshot_api_data."""
+        return cast(dict, self.db.get("pending_transactions", {"tally": {}, "snapshot": {}}))
 
     @property
     def most_voted_tx_hash(self) -> str:
@@ -117,12 +114,6 @@ class SynchronizedData(BaseSynchronizedData):
         """Signal if the DB needs writing."""
         return cast(bool, self.db.get("pending_write", False))
 
-    @property
-    def snapshot_api_data(self) -> dict:
-        """Get the snapshot_api_data."""
-        return cast(dict, self.db.get("snapshot_api_data", False))
-
-
 class EstablishVoteRound(CollectSameUntilThresholdRound):
     """EstablishVoteRound"""
 
@@ -138,6 +129,32 @@ class EstablishVoteRound(CollectSameUntilThresholdRound):
                 **{
                     get_name(SynchronizedData.expiring_proposals): payload[
                         "expiring_proposals"
+                    ],
+                },
+            )
+            return synchronized_data, Event.DONE
+        if not self.is_majority_possible(
+            self.collection, self.synchronized_data.nb_participants
+        ):
+            return self.synchronized_data, Event.NO_MAJORITY
+        return None
+
+
+class PrepareVoteTransactionsRound(CollectSameUntilThresholdRound):
+    """EstablishVoteRound"""
+
+    payload_class = PrepareVoteTransactionsPayload
+    synchronized_data_class = SynchronizedData
+
+    def end_block(self) -> Optional[Tuple[BaseSynchronizedData, Event]]:
+        """Process the end of the block."""
+        if self.threshold_reached:
+            payload = json.loads(self.most_voted_payload)
+            synchronized_data = self.synchronized_data.update(
+                synchronized_data_class=SynchronizedData,
+                **{
+                    get_name(SynchronizedData.pending_transactions): payload[
+                        "pending_transactions"
                     ],
                 },
             )

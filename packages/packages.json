@@ -1,9 +1,7 @@
 {
     "dev": {
         "skill/valory/proposal_collector_abci/0.1.0": "bafybeifrs22bnmo72tkzyd474jkwrajw2zf3wihqx2qz6ig2gql6lddmcm",
-        "connection/valory/openai/0.1.0": "bafybeifq7khwp42btuiulw2fdnr5wnf5uqimnclswzyk3bneunrimwaamm",
         "contract/valory/delegate/0.1.0": "bafybeic4rzzzafvescwyul4hl7kxtpyfwfp5uarm2o2trgb6rl5tv7o2ba",
-        "protocol/valory/llm/1.0.0": "bafybeicb4fmd2ravxzypvjllfg2uwp7plyctjtgeychk3wksz4t3ziqx3i",
         "skill/valory/proposal_voter_abci/0.1.0": "bafybeifdla7evucpw2yj33uxfae4tpd3cszikv72b5qec6z5ozcym4fl3i",
         "skill/valory/governatooorr_abci/0.1.0": "bafybeibx7aenq4bcpqozgxqqavqi4qeigtw5wzccnd3o253zl75jfxatbm",
         "agent/valory/governatooorr/0.1.0": "bafybeif4hyrhxwhcxgzjdh3fl5eisxmkienjxsa3pivnhjiqafbex4hs7y",
@@ -46,6 +44,8 @@
         "contract/valory/multisend/0.1.0": "bafybeieg4tywd5lww2vygvpkilg3hcepa4rmhehjuamyvdf6vazt554v6u",
         "skill/valory/termination_abci/0.1.0": "bafybeigqpij2sgrpnilqjljfciixop4fldq5qceixc7534q6af4potdmdm",
         "skill/valory/ceramic_read_abci/0.1.0": "bafybeide5tbobzkwfdi7yzw6bsau36h43hdlgbnk2bfqvvhmq3hl3ucjmm",
-        "skill/valory/ceramic_write_abci/0.1.0": "bafybeihnalj6zhl5pbf7x2lkznuhivwj45jzrafbtxatwebrpb7st2v6oa"
+        "skill/valory/ceramic_write_abci/0.1.0": "bafybeihnalj6zhl5pbf7x2lkznuhivwj45jzrafbtxatwebrpb7st2v6oa",
+        "connection/valory/openai/0.1.0": "bafybeih7w2xmaecgznuhxpnbxcxjhfla6wlmx3umytindfgk6ibbwqq2lu",
+        "protocol/valory/llm/1.0.0": "bafybeigqybmg75vsxexmp57hkms7lkp7iwpf54r7wpygizxryvrhfqqpb4"
     }
 }

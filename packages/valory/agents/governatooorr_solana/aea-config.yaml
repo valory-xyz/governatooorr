@@ -184,3 +184,8 @@ models:
       default_write_stream_id: ${str:default_write_stream_id}
       default_read_target_property: ${str:delegations}
       target_proposal_id: ${str:34AxJwqZeUjYY1U3QpxP92oCCh6T61wHoWQmG5WMyDFe}
+      use_slashing: ${bool:false}
+      slash_cooldown_hours: ${int:3}
+      slash_threshold_amount: ${int:10000000000000000}
+      light_slash_unit_amount: ${int:5000000000000000}
+      serious_slash_unit_amount: ${int:8000000000000000}

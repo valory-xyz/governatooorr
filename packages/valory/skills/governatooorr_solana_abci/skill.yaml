@@ -143,6 +143,11 @@ models:
       voting_block_threshold: 300
       voting_seconds_threshold: 10000
       target_proposal_id: 34AxJwqZeUjYY1U3QpxP92oCCh6T61wHoWQmG5WMyDFe
+      use_slashing: false
+      slash_cooldown_hours: 3
+      slash_threshold_amount: 10000000000000000
+      light_slash_unit_amount: 5000000000000000
+      serious_slash_unit_amount: 8000000000000000
     class_name: Params
   randomness_api:
     args:

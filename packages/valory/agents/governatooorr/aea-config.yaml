@@ -201,6 +201,11 @@ models:
       default_write_stream_id: ${str:default_write_stream_id}
       default_read_target_property: ${str:delegations}
       signmessagelib_address: ${str:0xA65387F16B013cf2Af4605Ad8aA5ec25a2cbA3a2}
+      use_slashing: ${bool:false}
+      slash_cooldown_hours: ${int:3}
+      slash_threshold_amount: ${int:10000000000000000}
+      light_slash_unit_amount: ${int:5000000000000000}
+      serious_slash_unit_amount: ${int:8000000000000000}
 ---
 public_id: fetchai/http_server:0.22.0:bafybeicblltx7ha3ulthg7bzfccuqqyjmihhrvfeztlgrlcoxhr7kf6nbq
 type: connection

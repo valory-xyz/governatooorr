@@ -22,6 +22,7 @@
 import json
 from dataclasses import dataclass, field
 from typing import Any, Callable, Dict, FrozenSet, Hashable, List, Mapping, Union, cast
+from unittest import mock
 
 import pytest
 
@@ -139,7 +140,7 @@ class TestSynchronizeDelegationsRoundTest(BaseCollectDifferentUntilAllRoundTest)
         self.synchronized_data.update(**test_case.initial_data)
 
         test_round = self.round_class(
-            synchronized_data=self.synchronized_data,
+            synchronized_data=self.synchronized_data, context=mock.MagicMock()
         )
 
         self._complete_run(
@@ -262,7 +263,7 @@ class BaseProposalCollectorRoundTest(BaseCollectSameUntilThresholdRoundTest):
         self.synchronized_data.update(**test_case.initial_data)
 
         test_round = self.round_class(
-            synchronized_data=self.synchronized_data,
+            synchronized_data=self.synchronized_data, context=mock.MagicMock()
         )
 
         self._complete_run(

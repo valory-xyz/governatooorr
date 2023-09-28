@@ -82,6 +82,7 @@ models:
   params:
     args:
       ceramic_api_base: https://ceramic-valory.hirenodes.io/
+      ceramic_api_create_endpoint: api/v0/streams
       ceramic_api_commit_endpoint: api/v0/commits
       ceramic_api_read_endpoint: api/v0/commits/{stream_id}
       ceramic_did_seed: '0101010101010101010101010101010101010101010101010101010101010101'

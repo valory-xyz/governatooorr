@@ -38,7 +38,7 @@ protocols:
 skills:
 - valory/abstract_abci:0.1.0:bafybeigafjci7m7ezwzasav5xqo7v2mbxxn7qb4y7vnuc2wr2irzvn7wsy
 - valory/abstract_round_abci:0.1.0:bafybeih2fyfb6kkf7r45pvdk7pyyebr5xloia4xiqxtb3qsrasnstqmepq
-- valory/governatooorr_abci:0.1.0:bafybeihlbseleaaqr4z4zjqkktlikevrkgj23gn2kuv7drbagfcao3rjpm
+- valory/governatooorr_abci:0.1.0:bafybeidmsrl4opujhfbptd5yve6raghjmz6hi3p2uz33k6yd376auig6iu
 - valory/proposal_collector_abci:0.1.0:bafybeifrs22bnmo72tkzyd474jkwrajw2zf3wihqx2qz6ig2gql6lddmcm
 - valory/proposal_voter_abci:0.1.0:bafybeiekgghknicy7xh3hagfuwivxwtbha55irpeqvpuunntestkzsohxi
 - valory/registration_abci:0.1.0:bafybeibndt6vxiwc2edgtaxpjbhwto3eyu33ujz3zmvtygvo2qz7xme5li
@@ -193,6 +193,7 @@ models:
       voting_block_threshold: ${int:300}
       voting_seconds_threshold: ${int:10000}
       ceramic_api_base: ${str:https://ceramic-valory.hirenodes.io/}
+      ceramic_api_create_endpoint: ${str:api/v0/streams}
       ceramic_api_commit_endpoint: ${str:api/v0/commits}
       ceramic_api_read_endpoint: ${str:api/v0/commits/{stream_id}}
       ceramic_did_seed: ${str:0101010101010101010101010101010101010101010101010101010101010101}

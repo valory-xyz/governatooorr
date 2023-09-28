@@ -15,5 +15,5 @@ contract_interface_paths:
   ethereum: build/Delegate.json
 dependencies:
   open-aea-ledger-ethereum:
-    version: ==1.38.0
+    version: ==1.39.0.post1
 contracts: []

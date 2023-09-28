@@ -66,3 +66,7 @@ governatooorr_solana_local
 !packages/valory/services/governatooorr_solana_local
 
 ethereum_private_key.txt
+
+packages/valory/connections/openai/
+
+packages/valory/protocols/llm/

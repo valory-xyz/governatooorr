@@ -24,6 +24,8 @@ from abc import ABC
 from copy import deepcopy
 from typing import Dict, Generator, Optional, Set, Tuple, Type, cast
 
+from eth_account.messages import encode_structured_data
+
 from packages.valory.connections.openai.connection import (
     PUBLIC_ID as LLM_CONNECTION_PUBLIC_ID,
 )
@@ -45,9 +47,6 @@ from packages.valory.skills.abstract_round_abci.common import (
     SelectKeeperBehaviour,
 )
 from packages.valory.skills.abstract_round_abci.models import Requests
-from packages.valory.skills.proposal_voter_abci.custom_eth_account.messages import (
-    encode_structured_data,
-)
 from packages.valory.skills.proposal_voter_abci.dialogues import (
     LlmDialogue,
     LlmDialogues,

@@ -8,27 +8,7 @@ license: Apache-2.0
 aea_version: '>=1.0.0, <2.0.0'
 fingerprint:
   __init__.py: bafybeifps6e4vfc55iyb5jaab7dxem7y3a2wyflai32pyzf4z75m5ngym4
-  behaviours.py: bafybeigaobqxcrw6yttpjfiomyj6qcu5h7yzwk6xwctt3mxwyht3gohhjq
-  custom_eth_account/__init__.py: bafybeigca3depnxqoqjq4hrxzjtiohya7p7637lwhrfg6a7c2d2ufnz6xm
-  custom_eth_account/_utils/legacy_transactions.py: bafybeidno6ltysjvihm7562kdmoixxvhgy7zp5liyg5k7bdqo5wjb6uc6e
-  custom_eth_account/_utils/signing.py: bafybeifwpyl2y6ct6jfdoo7r2sngdur2hfs7ks5tafmottv4ehipqg6pje
-  custom_eth_account/_utils/structured_data/__init__.py: bafybeihwoea5333d7lbepij63b6du3ekwwkw7znzezyxxqoidp54mzt73i
-  custom_eth_account/_utils/structured_data/hashing.py: bafybeihsui47ltkumafv2uxwsyfdxct5dffetl6gtt5gyiegr2qwzux7tm
-  custom_eth_account/_utils/structured_data/validation.py: bafybeiesfsgg6peckma4jmcsg6bsg2eieeoxuddudggmj33kk4akiqzhfm
-  custom_eth_account/_utils/transaction_utils.py: bafybeic3fqkw7e45se3yri5um2vx4uxr6p5huhv7ia43qmhjojr6gbtr2q
-  custom_eth_account/_utils/typed_transactions.py: bafybeigxfokb3jjkhk3yqe7k42bjnuq77pajmq5eyir5n4j6prm2ltnafq
-  custom_eth_account/_utils/validation.py: bafybeib44yirie2exr3ctjynmvl35aiu55fvypaus4to6rtf2tc2kqg5oq
-  custom_eth_account/account.py: bafybeihwzc7rfpkr2gvmfre7nxtukgohtv5xqcuz3bikl66crotwbhwr3i
-  custom_eth_account/datastructures.py: bafybeiaqm4vo2ndhoubjeusypnej6eurzgadec2zlz2p4au5zoy6er6l7i
-  custom_eth_account/hdaccount/__init__.py: bafybeie264gkz62nest37puabmdhmdz7e7eeki6ywxytom574fmjmpnxtq
-  custom_eth_account/hdaccount/_utils.py: bafybeieunfmw4xaoc2s4tez7ck2e23dkx36slm4ng7pwlbmaxnm5j4w32q
-  custom_eth_account/hdaccount/deterministic.py: bafybeibr5xa4uamhai2sn4io34c5thbsd73s4pimvuq6q25uiummjqjehu
-  custom_eth_account/hdaccount/mnemonic.py: bafybeigdpw2idpz5bv22rsqkut7zvdksemqb6m6sm2ohs6d6jn734af5iu
-  custom_eth_account/messages.py: bafybeichwcel2vmmzruw2ru7innp6kfryqf4c7n3e5qmkw7gh65cfgtcvm
-  custom_eth_account/py.typed: bafybeigmgmwown66u7j5pqancojrc5ry2pwzmnlvqnwg2rfcjfi6irgplu
-  custom_eth_account/signers/__init__.py: bafybeihwoea5333d7lbepij63b6du3ekwwkw7znzezyxxqoidp54mzt73i
-  custom_eth_account/signers/base.py: bafybeid2uogzamgzjk52r33ndgjzjmzee6ul4xcv3bsazshj7jqq2ha2v4
-  custom_eth_account/signers/local.py: bafybeiaozlhajzygxwbdydi25q5ythcj7pdiwheznc3tfjnxjkez75lp5i
+  behaviours.py: bafybeiebqvsfo5frangulqtm4iury3wdeldofbp6yezw4grobalz5zbckq
   dialogues.py: bafybeihdakfnmps5o7n5rgepn3fl3lzttqsddhiny7mh7ddwhniutri6bq
   fsm_specification.yaml: bafybeihrq2j32azeb3p4tkvuvl6r2auturzt6jmxfa74fluwrhekw4lqg4
   handlers.py: bafybeihex227foehp7a7wfc6vh25ahk5g65b5itu325hph2xj33mgp6kue
@@ -41,20 +21,20 @@ fingerprint:
   tests/test_handlers.py: bafybeih47tjdvy6sv52ipxkurjinukqurhs5lwfgyauzpv5skrczwuhmky
   tests/test_models.py: bafybeig7lk4aojnesm22dknzz6z5bvxjahzlsrxubncusdbmxtqy6bokhq
   tests/test_payloads.py: bafybeifyheo2u743zogonqa5ofaanyzuazw4yqm2cxkcwwt3n7my7e4jvm
-  tests/test_rounds.py: bafybeib72w3uiqo2rfsls4dkfm57q4mrzbegqlemca4dby4vwsyn7of57q
+  tests/test_rounds.py: bafybeifujuvr7526w2wzbo55jt573uijauzi4dpsbxk4sonbxeldboy6di
 fingerprint_ignore_patterns: []
 connections:
-- valory/openai:0.1.0:bafybeifq7khwp42btuiulw2fdnr5wnf5uqimnclswzyk3bneunrimwaamm
+- valory/openai:0.1.0:bafybeih7w2xmaecgznuhxpnbxcxjhfla6wlmx3umytindfgk6ibbwqq2lu
 contracts:
-- valory/delegate:0.1.0:bafybeiekhgzrz2qpb7cu6kjpg7ggwavg4nydb7vu33x5taqo525fuicwcy
-- valory/gnosis_safe:0.1.0:bafybeigvqg4lapdaa23dpc3pv67rdptdhey6e435mxqsw2gb2u74yw4yei
-- valory/sign_message_lib:0.1.0:bafybeiee2y2rakintptn5frkkjdo23ozonk3ndlfatp5zolc2wpiaopqqe
+- valory/delegate:0.1.0:bafybeic4rzzzafvescwyul4hl7kxtpyfwfp5uarm2o2trgb6rl5tv7o2ba
+- valory/gnosis_safe:0.1.0:bafybeih6d3vxz3jlgodxm5b2qcwsmansqj4xobuyd6hjnhzremuvd65yrm
+- valory/sign_message_lib:0.1.0:bafybeibctdhgv35m5oprltxgqcd62fcm332mc3t2kyfx33pym3l32qe7pe
 protocols:
 - valory/contract_api:1.0.0:bafybeiasywsvax45qmugus5kxogejj66c5taen27h4voriodz7rgushtqa
-- valory/llm:1.0.0:bafybeicb4fmd2ravxzypvjllfg2uwp7plyctjtgeychk3wksz4t3ziqx3i
+- valory/llm:1.0.0:bafybeigqybmg75vsxexmp57hkms7lkp7iwpf54r7wpygizxryvrhfqqpb4
 skills:
-- valory/abstract_round_abci:0.1.0:bafybeigxjcci53vwytymzlhr37436yvenh7jup4astrn7dgyixo24aq2pq
-- valory/transaction_settlement_abci:0.1.0:bafybeidpsnguxizkpihtkqzojr3em7yy7c6qc7gxpbh5vglmwws5wke7bi
+- valory/abstract_round_abci:0.1.0:bafybeih2fyfb6kkf7r45pvdk7pyyebr5xloia4xiqxtb3qsrasnstqmepq
+- valory/transaction_settlement_abci:0.1.0:bafybeia7rzsbea3ch4gcafyp3z6uvqh4npws2xpdwbkkdbrqqpjops7nui
 behaviours:
   main:
     args: {}
@@ -165,6 +145,11 @@ models:
       validate_timeout: 1205
       voting_block_threshold: 300
       voting_seconds_threshold: 10000
+      use_slashing: false
+      slash_cooldown_hours: 3
+      slash_threshold_amount: 10000000000000000
+      light_slash_unit_amount: 5000000000000000
+      serious_slash_unit_amount: 8000000000000000
     class_name: Params
   randomness_api:
     args:
@@ -190,26 +175,6 @@ models:
     args: {}
     class_name: TendermintDialogues
 dependencies:
-  bitarray:
-    version: '>=1.2.1,<1.3.0'
-  eth-abi:
-    version: '>=2.0.0b7,<3'
-  eth-keyfile:
-    version: '>=0.5.0,<0.6.0'
-  eth-keys:
-    version: '>=0.2.1,<0.4.0,!=0.3.2'
-  eth-rlp:
-    version: '>=0.1.2,<2'
-  eth-utils:
-    version: '>=1.3.0,<2'
-  hexbytes:
-    version: '>=0.1.0,<1'
-  rlp:
-    version: '>=1.0.0,<3'
-  eth_typing:
-    version: ==2.3.0
-  cytoolz:
-    version: ==0.12.1
-  toolz:
-    version: ==0.12.0
+  eth_account:
+    version: '>=0.8.0,<0.9.0'
 is_abstract: true

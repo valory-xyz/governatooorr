@@ -18,7 +18,7 @@ connections:
 - valory/abci:0.1.0:bafybeib3exj2vkz4u76rc2amtwz6veeozipr6zdgzlaqsovu3dorppcina
 - valory/http_client:0.23.0:bafybeieoeuy4brzimtnubmokwirhrx27ezls6cdnl5qik4rkykfle3nn2y
 - valory/ledger:0.19.0:bafybeigfoz7d7si7s4jehvloq2zmiiocpbxcaathl3bxkyarxoerxq7g3a
-- valory/openai:0.1.0:bafybeifq7khwp42btuiulw2fdnr5wnf5uqimnclswzyk3bneunrimwaamm
+- valory/openai:0.1.0:bafybeih7w2xmaecgznuhxpnbxcxjhfla6wlmx3umytindfgk6ibbwqq2lu
 - valory/p2p_libp2p_client:0.1.0:bafybeihdnfdth3qgltefgrem7xyi4b3ejzaz67xglm2hbma2rfvpl2annq
 contracts:
 - valory/delegate:0.1.0:bafybeic4rzzzafvescwyul4hl7kxtpyfwfp5uarm2o2trgb6rl5tv7o2ba
@@ -33,14 +33,14 @@ protocols:
 - valory/http:1.0.0:bafybeia5bxdua2i6chw6pg47bvoljzcpuqxzy4rdrorbdmcbnwmnfdobtu
 - valory/ipfs:0.1.0:bafybeibjzhsengtxfofqpxy6syamplevp35obemwfp4c5lhag3v2bvgysa
 - valory/ledger_api:1.0.0:bafybeigsvceac33asd6ecbqev34meyyjwu3rangenv6xp5rkxyz4krvcby
-- valory/llm:1.0.0:bafybeicb4fmd2ravxzypvjllfg2uwp7plyctjtgeychk3wksz4t3ziqx3i
+- valory/llm:1.0.0:bafybeigqybmg75vsxexmp57hkms7lkp7iwpf54r7wpygizxryvrhfqqpb4
 - valory/tendermint:0.1.0:bafybeidjqmwvgi4rqgp65tbkhmi45fwn2odr5ecezw6q47hwitsgyw4jpa
 skills:
 - valory/abstract_abci:0.1.0:bafybeigafjci7m7ezwzasav5xqo7v2mbxxn7qb4y7vnuc2wr2irzvn7wsy
 - valory/abstract_round_abci:0.1.0:bafybeih2fyfb6kkf7r45pvdk7pyyebr5xloia4xiqxtb3qsrasnstqmepq
-- valory/governatooorr_abci:0.1.0:bafybeibx7aenq4bcpqozgxqqavqi4qeigtw5wzccnd3o253zl75jfxatbm
+- valory/governatooorr_abci:0.1.0:bafybeif76lsidni7owatxbqa6ci2xqscknaw45ialx4tebhm6uyo3ozw74
 - valory/proposal_collector_abci:0.1.0:bafybeifrs22bnmo72tkzyd474jkwrajw2zf3wihqx2qz6ig2gql6lddmcm
-- valory/proposal_voter_abci:0.1.0:bafybeifdla7evucpw2yj33uxfae4tpd3cszikv72b5qec6z5ozcym4fl3i
+- valory/proposal_voter_abci:0.1.0:bafybeiekgghknicy7xh3hagfuwivxwtbha55irpeqvpuunntestkzsohxi
 - valory/registration_abci:0.1.0:bafybeibndt6vxiwc2edgtaxpjbhwto3eyu33ujz3zmvtygvo2qz7xme5li
 - valory/reset_pause_abci:0.1.0:bafybeigeoc363gv3wp2rrmk6p2fdxney33nxd3owtpfugzapgruwe4klyu
 - valory/termination_abci:0.1.0:bafybeigqpij2sgrpnilqjljfciixop4fldq5qceixc7534q6af4potdmdm

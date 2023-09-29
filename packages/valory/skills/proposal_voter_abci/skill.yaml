@@ -8,19 +8,19 @@ license: Apache-2.0
 aea_version: '>=1.0.0, <2.0.0'
 fingerprint:
   __init__.py: bafybeifps6e4vfc55iyb5jaab7dxem7y3a2wyflai32pyzf4z75m5ngym4
-  behaviours.py: bafybeiebqvsfo5frangulqtm4iury3wdeldofbp6yezw4grobalz5zbckq
+  behaviours.py: bafybeifb2f3mpdc5ccdj6oyxnyw3pgdnzbcplhpdyowueqtv3pritooemy
   dialogues.py: bafybeihdakfnmps5o7n5rgepn3fl3lzttqsddhiny7mh7ddwhniutri6bq
-  fsm_specification.yaml: bafybeidndzeeazpslfmjqezetkqznkas6qwgedtnas7tcqosalij37klqe
+  fsm_specification.yaml: bafybeiafysu3uvci4uol3t4lavsf32d6d2q6kqpkjcfwjzbp7jegjtehny
   handlers.py: bafybeihex227foehp7a7wfc6vh25ahk5g65b5itu325hph2xj33mgp6kue
-  models.py: bafybeidhyhiao4lzlil7gbns64szijp5zkhsbsxeytkhsp3ujd4m353ihy
-  payloads.py: bafybeihnbah7xed2upemxbwhesy6idkvfzuepry6csubgdqtrg4r6ea3k4
-  rounds.py: bafybeigduqn7rrth35zz4hlw2nhi62yzgbhztsko7kv2c6fi7n773qkjr4
+  models.py: bafybeihxcmbofbdx2feayuzwnczhxjfc5r4ki6yagpcsl3yqd3gpbngbbi
+  payloads.py: bafybeidsrislkjtdudzuxgtzd22qi3sozaz6z3nibhbkhek2x3ulspdho4
+  rounds.py: bafybeidmnbwfqho23nbudpnev3phfqriimvpkstbtn4iughet2egacsnpa
   tests/__init__.py: bafybeicnpfbu2732mdlaputxl4izv5yfievyodmjzy5w64r2e5zyqycigu
-  tests/test_behaviours.py: bafybeifi633vqs5iopkyn2fub7koclnsl3yyuyzvqegapgjfwll7r6iaxm
+  tests/test_behaviours.py: bafybeieba6ee42zky6xmdsef7maojuyzjopbb5lxfmfmh76ydslglb7jbm
   tests/test_handlers.py: bafybeih47tjdvy6sv52ipxkurjinukqurhs5lwfgyauzpv5skrczwuhmky
   tests/test_models.py: bafybeig7lk4aojnesm22dknzz6z5bvxjahzlsrxubncusdbmxtqy6bokhq
   tests/test_payloads.py: bafybeifyheo2u743zogonqa5ofaanyzuazw4yqm2cxkcwwt3n7my7e4jvm
-  tests/test_rounds.py: bafybeifujuvr7526w2wzbo55jt573uijauzi4dpsbxk4sonbxeldboy6di
+  tests/test_rounds.py: bafybeibcbynhla7vbrkvyc27xipvi42wzk4qu6kszwd25i3srcxmblxdv4
 fingerprint_ignore_patterns: []
 connections:
 - valory/openai:0.1.0:bafybeih7w2xmaecgznuhxpnbxcxjhfla6wlmx3umytindfgk6ibbwqq2lu

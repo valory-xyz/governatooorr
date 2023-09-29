@@ -55,11 +55,11 @@ from packages.valory.skills.proposal_voter_abci.models import Params, SharedStat
 from packages.valory.skills.proposal_voter_abci.payloads import (
     DecisionMakingPayload,
     EstablishVotePayload,
+    PostVoteDecisionMakingPayload,
     PrepareVoteTransactionsPayload,
     SnapshotAPISendPayload,
     SnapshotAPISendRandomnessPayload,
     SnapshotAPISendSelectKeeperPayload,
-    SnapshotCallDecisionMakingPayload,
 )
 from packages.valory.skills.proposal_voter_abci.rounds import (
     DecisionMakingRound,
@@ -678,7 +678,7 @@ class PostVoteDecisionMakingBehaviour(ProposalVoterBaseBehaviour):
                 payload_content = PostVoteDecisionMakingRound.SKIP_PAYLOAD
 
             sender = self.context.agent_address
-            payload = SnapshotCallDecisionMakingPayload(
+            payload = PostVoteDecisionMakingPayload(
                 sender=sender,
                 content=payload_content,
             )

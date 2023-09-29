@@ -8,9 +8,9 @@ aea_version: '>=1.0.0, <2.0.0'
 fingerprint:
   __init__.py: bafybeigk2kb335wy5vmgapbrqmfotvwqm4dqsuqr7gt7qic4v4npx2pqxy
   behaviours.py: bafybeic7hmkd2vz7k7yscjisa2kurg6gjrerlekiz5c7c3gl5y7bilacpa
-  composition.py: bafybeib5uphvsp6cywdie7maiazncc5gqcpq3zzzrftag65pcaqrj7qeee
+  composition.py: bafybeigngxdvavfcjmxrkcdvq52saq5u5gugxseru6xbp7ok4rnep7ewri
   dialogues.py: bafybeiayva5koyr6upomicnhbfefypjk2sebogk7ew24wxwwnccuqktcki
-  fsm_specification.yaml: bafybeientp6ar3d6d3acw6m5ne66mq6nvxzlwcywvqqpdw2rgycgn466tm
+  fsm_specification.yaml: bafybeihwj7a4lg3ziugh55p2f5zih7yfym5ebuh34ecmqqrykmkcfyxxoy
   handlers.py: bafybeiefhvk666md6clddjpkv6ccnletnxmekptz2p5qjjnubfokwlofia
   models.py: bafybeigoq2xaulowhod3viikl4rsbdfqvoe2jsgsqpsedqwv4jto2toxuq
 fingerprint_ignore_patterns: []
@@ -21,8 +21,8 @@ skills:
 - valory/abstract_round_abci:0.1.0:bafybeih2fyfb6kkf7r45pvdk7pyyebr5xloia4xiqxtb3qsrasnstqmepq
 - valory/ceramic_read_abci:0.1.0:bafybeide5tbobzkwfdi7yzw6bsau36h43hdlgbnk2bfqvvhmq3hl3ucjmm
 - valory/ceramic_write_abci:0.1.0:bafybeihnalj6zhl5pbf7x2lkznuhivwj45jzrafbtxatwebrpb7st2v6oa
-- valory/proposal_collector_abci:0.1.0:bafybeifrs22bnmo72tkzyd474jkwrajw2zf3wihqx2qz6ig2gql6lddmcm
-- valory/proposal_voter_abci:0.1.0:bafybeiekgghknicy7xh3hagfuwivxwtbha55irpeqvpuunntestkzsohxi
+- valory/proposal_collector_abci:0.1.0:bafybeie3r34lefebemuyjnpnxo5gms3guarasedrioe6gciemclw7azine
+- valory/proposal_voter_abci:0.1.0:bafybeih72cw4kqpjytiiv3puov4gwwpcfpn4achfwjxmdv3xg37znk7qhi
 - valory/registration_abci:0.1.0:bafybeibndt6vxiwc2edgtaxpjbhwto3eyu33ujz3zmvtygvo2qz7xme5li
 - valory/reset_pause_abci:0.1.0:bafybeigeoc363gv3wp2rrmk6p2fdxney33nxd3owtpfugzapgruwe4klyu
 - valory/termination_abci:0.1.0:bafybeigqpij2sgrpnilqjljfciixop4fldq5qceixc7534q6af4potdmdm

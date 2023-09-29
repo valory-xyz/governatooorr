@@ -37,11 +37,11 @@ from packages.valory.skills.abstract_round_abci.base import (
 from packages.valory.skills.proposal_voter_abci.payloads import (
     DecisionMakingPayload,
     EstablishVotePayload,
+    PostVoteDecisionMakingPayload,
     PrepareVoteTransactionsPayload,
     SnapshotAPISendPayload,
     SnapshotAPISendRandomnessPayload,
     SnapshotAPISendSelectKeeperPayload,
-    SnapshotCallDecisionMakingPayload,
 )
 from packages.valory.skills.transaction_settlement_abci.payload_tools import (
     VerificationStatus,
@@ -239,7 +239,7 @@ class DecisionMakingRound(CollectSameUntilThresholdRound):
 class PostVoteDecisionMakingRound(CollectSameUntilThresholdRound):
     """PostVoteDecisionMakingRound"""
 
-    payload_class = SnapshotCallDecisionMakingPayload
+    payload_class = PostVoteDecisionMakingPayload
     synchronized_data_class = SynchronizedData
 
     SKIP_PAYLOAD = "skip_payload"

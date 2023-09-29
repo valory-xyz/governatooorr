@@ -39,15 +39,15 @@ class PrepareVoteTransactionsPayload(BaseTxPayload):
 
 
 @dataclass(frozen=True)
-class SnapshotCallDecisionMakingPayload(BaseTxPayload):
-    """Represent a transaction payload for the PostVoteDecisionMakingRound."""
+class DecisionMakingPayload(BaseTxPayload):
+    """Represent a transaction payload for the DecisionMakingRound."""
 
     content: str
 
 
 @dataclass(frozen=True)
-class DecisionMakingPayload(BaseTxPayload):
-    """Represent a transaction payload for the DecisionMakingRound."""
+class PostVoteDecisionMakingPayload(BaseTxPayload):
+    """Represent a transaction payload for the PostVoteDecisionMakingRound."""
 
     content: str
 

@@ -521,9 +521,9 @@ class CollectActiveSnapshotProposalsBehaviour(ProposalCollectorBaseBehaviour):
                     "remaining_seconds": target_proposal["end"] - now,
                 }
             else:
-                previous_target_proposals[target_proposal["id"]]["remaining_seconds"] = (
-                    target_proposal["end"] - now
-                )
+                previous_target_proposals[target_proposal["id"]][
+                    "remaining_seconds"
+                ] = (target_proposal["end"] - now)
 
         return json.dumps(
             {

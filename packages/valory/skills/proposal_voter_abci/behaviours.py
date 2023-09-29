@@ -51,10 +51,7 @@ from packages.valory.skills.proposal_voter_abci.dialogues import (
     LlmDialogue,
     LlmDialogues,
 )
-from packages.valory.skills.proposal_voter_abci.models import (
-    Params,
-    SharedState,
-)
+from packages.valory.skills.proposal_voter_abci.models import Params, SharedState
 from packages.valory.skills.proposal_voter_abci.payloads import (
     EstablishVotePayload,
     PrepareVoteTransactionsPayload,
@@ -180,8 +177,15 @@ class EstablishVoteBehaviour(ProposalVoterBaseBehaviour):
             self.context.logger.info(f"Vote intention: {vote_intention}")
 
             # Do not update the vote if the vote intention has not changed
-            if proposal_id in previous_expiring_proposals and "vote_intention" in previous_expiring_proposals[proposal_id] and previous_expiring_proposals[proposal_id]["vote_intention"] == vote_intention:
-                self.context.logger.info("Vote intention has not changed. Skipping proposal.")
+            if (
+                proposal_id in previous_expiring_proposals
+                and "vote_intention" in previous_expiring_proposals[proposal_id]
+                and previous_expiring_proposals[proposal_id]["vote_intention"]
+                == vote_intention
+            ):
+                self.context.logger.info(
+                    "Vote intention has not changed. Skipping proposal."
+                )
                 continue
 
             target_proposals[proposal_id]["vote_intention"] = vote_intention
@@ -475,9 +479,7 @@ class PrepareVoteTransactionsBehaviour(ProposalVoterBaseBehaviour):
             "sig": "0x",  # Snapshot retrieves the signature for votes performed by a safe
         }
 
-        self.context.logger.info(
-            f"Encoding snapshot message: {snapshot_api_data}"
-        )
+        self.context.logger.info(f"Encoding snapshot message: {snapshot_api_data}")
 
         encoded_proposal_data = encode_structured_data(snapshot_data_for_encoding)
         safe_message = _hash_eip191_message(encoded_proposal_data)
@@ -543,12 +545,10 @@ class PrepareVoteTransactionsBehaviour(ProposalVoterBaseBehaviour):
 
         return payload_string, snapshot_api_data
 
-
     def async_act(self) -> Generator:
         """Do the act, supporting asynchronous execution."""
 
         with self.context.benchmark_tool.measure(self.behaviour_id).local():
-
             expiring_proposals = self.synchronized_data.expiring_proposals
             pending_transactions = self.synchronized_data.pending_transactions
 
@@ -564,27 +564,25 @@ class PrepareVoteTransactionsBehaviour(ProposalVoterBaseBehaviour):
                     governor_address, proposal_id, vote_code
                 )
 
-                pending_transactions["tally"][proposal_id] = {
-                    "tx_hash": tx_hash
-                }
+                pending_transactions["tally"][proposal_id] = {"tx_hash": tx_hash}
 
             # Snapshot
             for proposal_id, proposal in expiring_proposals["snapshot"].items():
                 if proposal_id in pending_transactions["snapshot"]:
                     continue
 
-                tx_hash, api_data = yield from self._get_snapshot_tx_hash(
-                    proposal
-                )
+                tx_hash, api_data = yield from self._get_snapshot_tx_hash(proposal)
 
                 pending_transactions["tally"][proposal_id] = {
-                    "tx_hash": tx_hash, "api_data": api_data
+                    "tx_hash": tx_hash,
+                    "api_data": api_data,
                 }
-
 
             payload = PrepareVoteTransactionsPayload(
                 sender=self.context.agent_address,
-                content=json.dumps({"pending_transactions": pending_transactions}, sort_keys=True),
+                content=json.dumps(
+                    {"pending_transactions": pending_transactions}, sort_keys=True
+                ),
             )
 
             with self.context.benchmark_tool.measure(self.behaviour_id).consensus():
@@ -745,9 +743,6 @@ class DecisionMakingBehaviour(ProposalVoterBaseBehaviour):
                 yield from self.wait_until_round_end()
 
             self.set_done()
-
-
-
 
 
 class SnapshotCallDecisionMakingBehaviour(ProposalVoterBaseBehaviour):

@@ -86,7 +86,9 @@ class SynchronizedData(BaseSynchronizedData):
     @property
     def pending_transactions(self) -> dict:
         """Get the snapshot_api_data."""
-        return cast(dict, self.db.get("pending_transactions", {"tally": {}, "snapshot": {}}))
+        return cast(
+            dict, self.db.get("pending_transactions", {"tally": {}, "snapshot": {}})
+        )
 
     @property
     def most_voted_tx_hash(self) -> str:
@@ -113,6 +115,7 @@ class SynchronizedData(BaseSynchronizedData):
     def pending_write(self) -> bool:
         """Signal if the DB needs writing."""
         return cast(bool, self.db.get("pending_write", False))
+
 
 class EstablishVoteRound(CollectSameUntilThresholdRound):
     """EstablishVoteRound"""

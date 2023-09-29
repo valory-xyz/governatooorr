@@ -82,7 +82,9 @@ class Params(BaseParams):
         self.snapshot_graphql_endpoint = kwargs.get(
             "snapshot_graphql_endpoint", "https://hub.snapshot.org/graphql"
         )
-        self.snapshot_space_whitelist = self._ensure("snapshot_space_whitelist", kwargs, list)
+        self.snapshot_space_whitelist = self._ensure(
+            "snapshot_space_whitelist", kwargs, list
+        )
         self.disable_snapshot = self._ensure("disable_snapshot", kwargs, list)
         self.disable_tally = self._ensure("disable_tally", kwargs, list)
         super().__init__(*args, **kwargs)

@@ -353,10 +353,14 @@ class EstablishVoteBehaviour(ProposalVoterBaseBehaviour):
             vote = yield from self._get_vote(prompt_template, prompt_values)
             if vote not in proposal["choices"]:
                 if self.params.default_snapshot_vote_on_error:
-                    self.context.logger.info(f"Invalid vote: {vote}. Using first vote option as fallback.")
+                    self.context.logger.info(
+                        f"Invalid vote: {vote}. Using first vote option as fallback."
+                    )
                     vote = proposal["choices"][0]
                 else:
-                    self.context.logger.error(f"Invalid vote: {vote}. Skipping proposal.")
+                    self.context.logger.error(
+                        f"Invalid vote: {vote}. Skipping proposal."
+                    )
                     continue
 
             self.context.logger.info(f"Vote: {vote}")

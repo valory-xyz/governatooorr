@@ -407,7 +407,7 @@ class ProposalVoterAbciApp(AbciApp[Event]):
         FinishedTransactionPreparationNoVoteRound: {},
         PostVoteDecisionMakingRound: {
             Event.SKIP_CALL: DecisionMakingRound,
-            Event.DONE: SnapshotAPISendRandomnessRound,
+            Event.SNAPSHOT_CALL: SnapshotAPISendRandomnessRound,
             Event.NO_MAJORITY: EstablishVoteRound,
             Event.ROUND_TIMEOUT: EstablishVoteRound,
         },

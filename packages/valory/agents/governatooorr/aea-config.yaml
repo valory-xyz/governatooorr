@@ -211,6 +211,7 @@ models:
       snapshot_space_whitelist: ${list:[]}
       disable_snapshot: ${bool:false}
       disable_tally: ${bool:false}
+      default_snapshot_vote_on_error: ${bool:false}
 ---
 public_id: fetchai/http_server:0.22.0:bafybeicblltx7ha3ulthg7bzfccuqqyjmihhrvfeztlgrlcoxhr7kf6nbq
 type: connection

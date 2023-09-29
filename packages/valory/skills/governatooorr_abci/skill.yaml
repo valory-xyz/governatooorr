@@ -160,6 +160,7 @@ models:
       snapshot_space_whitelist: []
       disable_snapshot: false
       disable_tally: false
+      default_snapshot_vote_on_error: false
     class_name: Params
   randomness_api:
     args:

@@ -100,6 +100,7 @@ models:
       snapshot_space_whitelist: ${SNAPSHOT_SPACE_WHITELIST:list:[]}
       disable_snapshot: ${DISABLE_SNAPSHOT:bool:false}
       disable_tally: ${DISABLE_TALLY:bool:false}
+      default_snapshot_vote_on_error: ${DEFAULT_SNAPSHOT_VOTE_ON_ERROR:bool:false}
 ---
 public_id: valory/ledger:0.19.0
 type: connection

@@ -69,6 +69,9 @@ class Params(BaseParams):
         self.tally_api_call_sleep_seconds = kwargs.get(
             "tally_api_call_sleep_seconds", 2
         )
+        self.default_snapshot_vote_on_error = self._ensure(
+            "default_snapshot_vote_on_error", kwargs, bool
+        )
         super().__init__(*args, **kwargs)
 
 

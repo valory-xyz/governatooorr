@@ -489,7 +489,6 @@ class CollectActiveSnapshotProposalsBehaviour(ProposalCollectorBaseBehaviour):
             active_proposals.extend(new_proposals)
             i += 1
             self.context.logger.info(f"Accumulated proposals: {len(active_proposals)}")
-            self.context.logger.info(f"proposals: {active_proposals}")
 
             if len(active_proposals) >= SNAPSHOT_PROPOSAL_ROUND_LIMIT:
                 self.context.logger.info("Reached proposal payload limit")

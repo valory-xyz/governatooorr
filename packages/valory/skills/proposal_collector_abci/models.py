@@ -85,8 +85,8 @@ class Params(BaseParams):
         self.snapshot_space_whitelist = self._ensure(
             "snapshot_space_whitelist", kwargs, list
         )
-        self.disable_snapshot = self._ensure("disable_snapshot", kwargs, list)
-        self.disable_tally = self._ensure("disable_tally", kwargs, list)
+        self.disable_snapshot = self._ensure("disable_snapshot", kwargs, bool)
+        self.disable_tally = self._ensure("disable_tally", kwargs, bool)
         super().__init__(*args, **kwargs)
 
 

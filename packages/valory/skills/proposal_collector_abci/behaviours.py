@@ -189,7 +189,7 @@ class CollectActiveTallyProposalsBehaviour(ProposalCollectorBaseBehaviour):
         """Get proposals mentions"""
 
         if self.params.disable_tally:
-            self.context.logger.ingo("Ignoring Tally proposals...")
+            self.context.logger.info("Ignoring Tally proposals...")
             return json.dumps(
                 {
                     "tally_target_proposals": {},
@@ -416,7 +416,7 @@ class CollectActiveSnapshotProposalsBehaviour(ProposalCollectorBaseBehaviour):
         """Get updated proposal data"""
 
         if self.params.disable_snapshot:
-            self.context.logger.ingo("Ignoring Snapshot proposals...")
+            self.context.logger.info("Ignoring Snapshot proposals...")
             return json.dumps(
                 {
                     "snapshot_target_proposals": {},
@@ -489,6 +489,7 @@ class CollectActiveSnapshotProposalsBehaviour(ProposalCollectorBaseBehaviour):
             active_proposals.extend(new_proposals)
             i += 1
             self.context.logger.info(f"Accumulated proposals: {len(active_proposals)}")
+            self.context.logger.info(f"proposals: {active_proposals}")
 
             if len(active_proposals) >= SNAPSHOT_PROPOSAL_ROUND_LIMIT:
                 self.context.logger.info("Reached proposal payload limit")
@@ -511,8 +512,11 @@ class CollectActiveSnapshotProposalsBehaviour(ProposalCollectorBaseBehaviour):
 
         # Only allow proposals from the space whitelist if there is one
         if self.params.snapshot_space_whitelist:
+            self.context.logger.info(
+                f"Using snapshot space whitelist: {self.params.snapshot_space_whitelist}"
+            )
             target_proposals = filter(
-                lambda ap: ap["space"]["name"] in self.params.snapshot_space_whitelist,
+                lambda ap: ap["space"]["id"] in self.params.snapshot_space_whitelist,
                 target_proposals,
             )
 

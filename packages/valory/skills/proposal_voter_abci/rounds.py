@@ -85,7 +85,9 @@ class SynchronizedData(BaseSynchronizedData):
     @property
     def expiring_proposals(self) -> dict:
         """Get the expiring_proposals."""
-        return cast(dict, self.db.get_strict("expiring_proposals"))
+        return cast(
+            dict, self.db.get("expiring_proposals", {"tally": {}, "snapshot": {}})
+        )
 
     @property
     def pending_transactions(self) -> dict:

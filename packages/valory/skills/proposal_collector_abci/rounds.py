@@ -228,6 +228,15 @@ class CollectActiveTallyProposalsRound(CollectSameUntilThresholdRound):
     def end_block(self) -> Optional[Tuple[BaseSynchronizedData, Event]]:
         """Process the end of the block."""
         if self.threshold_reached:
+            synchronized_data = self.synchronized_data.update(
+                synchronized_data_class=SynchronizedData,
+                **{
+                    get_name(
+                        SynchronizedData.pending_write
+                    ): False,  #  we reset this after writing
+                },
+            )
+
             if (
                 self.most_voted_payload
                 == CollectActiveTallyProposalsRound.ERROR_PAYLOAD
@@ -235,7 +244,8 @@ class CollectActiveTallyProposalsRound(CollectSameUntilThresholdRound):
                 tally_api_retries = cast(
                     SynchronizedData, self.synchronized_data
                 ).tally_api_retries
-                synchronized_data = self.synchronized_data.update(
+
+                synchronized_data = synchronized_data.update(
                     synchronized_data_class=SynchronizedData,
                     **{
                         get_name(SynchronizedData.tally_api_retries): tally_api_retries
@@ -248,13 +258,13 @@ class CollectActiveTallyProposalsRound(CollectSameUntilThresholdRound):
                 self.most_voted_payload
                 == CollectActiveTallyProposalsRound.MAX_RETRIES_PAYLOAD
             ):
-                return self.synchronized_data, Event.DONE
+                return synchronized_data, Event.DONE
 
             if (
                 self.most_voted_payload
                 == CollectActiveTallyProposalsRound.BLOCK_RETRIEVAL_ERROR
             ):
-                return self.synchronized_data, Event.BLOCK_RETRIEVAL_ERROR
+                return synchronized_data, Event.BLOCK_RETRIEVAL_ERROR
 
             payload = json.loads(self.most_voted_payload)
 
@@ -264,7 +274,7 @@ class CollectActiveTallyProposalsRound(CollectSameUntilThresholdRound):
 
             target_proposals["tally"] = payload["tally_target_proposals"]
 
-            synchronized_data = self.synchronized_data.update(
+            synchronized_data = synchronized_data.update(
                 synchronized_data_class=SynchronizedData,
                 **{
                     get_name(SynchronizedData.target_proposals): target_proposals,

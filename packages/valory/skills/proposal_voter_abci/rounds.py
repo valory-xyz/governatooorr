@@ -288,6 +288,7 @@ class PostVoteDecisionMakingRound(CollectSameUntilThresholdRound):
                         SynchronizedData.pending_transactions
                     ): pending_transactions,
                     get_name(SynchronizedData.ceramic_db): ceramic_db,
+                    get_name(SynchronizedData.pending_write): True,
                 },
             )
 
@@ -344,12 +345,14 @@ class SnapshotAPISendRound(OnlyKeeperSendsRound):
         selected_proposal = synchronized_data.selected_proposal
         pending_transactions = synchronized_data.pending_transactions
         ceramic_db = synchronized_data.ceramic_db
+        pending_write = synchronized_data.pending_write
 
         # We only move the vote into the history if the call succeeded
         if cast(SnapshotAPISendPayload, self.keeper_payload).success:
             ceramic_db["vote_data"][selected_proposal["platform"]].append(
                 selected_proposal["proposal_id"]
             )
+            pending_write = True
 
         # We remove the vote from pending in any case. If the call has failed, we will retry in the future.
         del pending_transactions[selected_proposal["platform"]][
@@ -361,6 +364,7 @@ class SnapshotAPISendRound(OnlyKeeperSendsRound):
             **{
                 get_name(SynchronizedData.pending_transactions): pending_transactions,
                 get_name(SynchronizedData.ceramic_db): ceramic_db,
+                get_name(SynchronizedData.pending_write): pending_write,
             },
         )
         return synchronized_data, Event.DONE

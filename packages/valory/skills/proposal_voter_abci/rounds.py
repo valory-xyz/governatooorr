@@ -420,7 +420,6 @@ class ProposalVoterAbciApp(AbciApp[Event]):
             Event.ROUND_TIMEOUT: SnapshotAPISendRandomnessRound,
         },
         FinishedTransactionPreparationVoteRound: {},
-        FinishedTransactionPreparationNoVoteRound: {},
     }
     final_states: Set[AppState] = {
         FinishedTransactionPreparationVoteRound,

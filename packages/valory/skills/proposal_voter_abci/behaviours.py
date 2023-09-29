@@ -363,7 +363,7 @@ class EstablishVoteBehaviour(ProposalVoterBaseBehaviour):
 
 
 class PrepareVoteTransactionsBehaviour(ProposalVoterBaseBehaviour):
-    """PrepareVoteTransactionBehaviour"""
+    """PrepareVoteTransactionsBehaviour"""
 
     matching_round: Type[AbstractRound] = PrepareVoteTransactionsRound
 
@@ -798,7 +798,7 @@ class ProposalVoterRoundBehaviour(AbstractRoundBehaviour):
     abci_app_cls = ProposalVoterAbciApp  # type: ignore
     behaviours: Set[Type[BaseBehaviour]] = [
         EstablishVoteBehaviour,
-        PrepareVoteTransactionBehaviour,
+        PrepareVoteTransactionsBehaviour,
         DecisionMakingBehaviour,
         PostVoteDecisionMakingBehaviour,
         SnapshotAPISendRandomnessBehaviour,

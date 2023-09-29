@@ -53,24 +53,24 @@ from packages.valory.skills.proposal_voter_abci.dialogues import (
 )
 from packages.valory.skills.proposal_voter_abci.models import Params, SharedState
 from packages.valory.skills.proposal_voter_abci.payloads import (
+    DecisionMakingPayload,
     EstablishVotePayload,
     PrepareVoteTransactionsPayload,
     SnapshotAPISendPayload,
     SnapshotAPISendRandomnessPayload,
     SnapshotAPISendSelectKeeperPayload,
     SnapshotCallDecisionMakingPayload,
-    DecisionMakingPayload
 )
 from packages.valory.skills.proposal_voter_abci.rounds import (
+    DecisionMakingRound,
     EstablishVoteRound,
+    PostVoteDecisionMakingRound,
     PrepareVoteTransactionsRound,
     ProposalVoterAbciApp,
     SnapshotAPISendRandomnessRound,
     SnapshotAPISendRound,
     SnapshotAPISendSelectKeeperRound,
-    PostVoteDecisionMakingRound,
     SynchronizedData,
-    DecisionMakingRound
 )
 from packages.valory.skills.transaction_settlement_abci.payload_tools import (
     hash_payload_to_hex,
@@ -567,7 +567,10 @@ class PrepareVoteTransactionsBehaviour(ProposalVoterBaseBehaviour):
                     governor_address, proposal_id, vote_code
                 )
 
-                pending_transactions["tally"][proposal_id] = {"tx_hash": tx_hash, "retries": 0}
+                pending_transactions["tally"][proposal_id] = {
+                    "tx_hash": tx_hash,
+                    "retries": 0,
+                }
 
             # Snapshot
             for proposal_id, proposal in expiring_proposals["snapshot"].items():
@@ -579,7 +582,7 @@ class PrepareVoteTransactionsBehaviour(ProposalVoterBaseBehaviour):
                 pending_transactions["snapshot"][proposal_id] = {
                     "tx_hash": tx_hash,
                     "api_data": api_data,
-                    "retries": 0
+                    "retries": 0,
                 }
 
             payload = PrepareVoteTransactionsPayload(
@@ -608,24 +611,42 @@ class DecisionMakingBehaviour(ProposalVoterBaseBehaviour):
             pending_transactions = self.synchronized_data.pending_transactions
 
             # Remove proposals with too many retries
-            pending_transactions["snapshot"] = {k: v for k, v in pending_transactions["snapshot"].items() if v["retries"] < MAX_VOTE_RETRIES}
-            pending_transactions["tally"] = {k: v for k, v in pending_transactions["tally"].items() if v["retries"] < MAX_VOTE_RETRIES}
+            pending_transactions["snapshot"] = {
+                k: v
+                for k, v in pending_transactions["snapshot"].items()
+                if v["retries"] < MAX_VOTE_RETRIES
+            }
+            pending_transactions["tally"] = {
+                k: v
+                for k, v in pending_transactions["tally"].items()
+                if v["retries"] < MAX_VOTE_RETRIES
+            }
 
             payload_data = {"pending_transactions": pending_transactions}
 
             # Snapshot proposals
             for proposal_id, vote_data in pending_transactions["snapshot"].items():
                 if vote_data["retries"] < MAX_VOTE_RETRIES:
-                    payload_data["selected_proposal"] = {"proposal_id": proposal_id, "platform": "snapshot"}
-                    self.context.logger.info(f"Selected Snapshot proposal {proposal_id}")
+                    payload_data["selected_proposal"] = {
+                        "proposal_id": proposal_id,
+                        "platform": "snapshot",
+                    }
+                    self.context.logger.info(
+                        f"Selected Snapshot proposal {proposal_id}"
+                    )
                     break
 
             # Tally proposals: processed only after Snapshot transactions
             if not pending_transactions["snapshot"]:
                 for proposal_id, vote_data in pending_transactions["tally"].items():
                     if vote_data["retries"] < MAX_VOTE_RETRIES:
-                        payload_data["selected_proposal"] = {"proposal_id": proposal_id, "platform": "tally"}
-                        self.context.logger.info(f"Selected Tally proposal {proposal_id}")
+                        payload_data["selected_proposal"] = {
+                            "proposal_id": proposal_id,
+                            "platform": "tally",
+                        }
+                        self.context.logger.info(
+                            f"Selected Tally proposal {proposal_id}"
+                        )
                         break
 
             payload = DecisionMakingPayload(
@@ -649,7 +670,6 @@ class PostVoteDecisionMakingBehaviour(ProposalVoterBaseBehaviour):
         """Do the act, supporting asynchronous execution."""
 
         with self.context.benchmark_tool.measure(self.behaviour_id).local():
-
             if not self.synchronized_data.is_vote_verified:
                 payload_content = PostVoteDecisionMakingRound.RETRY_PAYLOAD
             elif self.synchronized_data.selected_proposal["platform"] == "snapshot":
@@ -732,7 +752,9 @@ class SnapshotAPISendBehaviour(ProposalVoterBaseBehaviour):
         """Send the vote to Snapshot's API"""
 
         proposal_id = self.synchronized_data.selected_proposal["proposal_id"]
-        api_data = self.synchronized_data.pending_transactions["snapshot"][proposal_id]["api_data"]
+        api_data = self.synchronized_data.pending_transactions["snapshot"][proposal_id][
+            "api_data"
+        ]
 
         retries = 0
         headers = {
@@ -741,9 +763,7 @@ class SnapshotAPISendBehaviour(ProposalVoterBaseBehaviour):
         }
 
         while retries < MAX_RETRIES:
-            self.context.logger.info(
-                f"Sending vote data to Snapshot API: {api_data}"
-            )
+            self.context.logger.info(f"Sending vote data to Snapshot API: {api_data}")
 
             # Make the request
             response = yield from self.get_http_response(

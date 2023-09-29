@@ -35,18 +35,21 @@ from packages.valory.skills.abstract_round_abci.base import (
     get_name,
 )
 from packages.valory.skills.proposal_voter_abci.payloads import (
+    DecisionMakingPayload,
     EstablishVotePayload,
     PrepareVoteTransactionsPayload,
     SnapshotAPISendPayload,
     SnapshotAPISendRandomnessPayload,
     SnapshotAPISendSelectKeeperPayload,
     SnapshotCallDecisionMakingPayload,
-    DecisionMakingPayload
 )
-from packages.valory.skills.transaction_settlement_abci.payload_tools import VerificationStatus
+from packages.valory.skills.transaction_settlement_abci.payload_tools import (
+    VerificationStatus,
+)
 
 
 MAX_VOTE_RETRIES = 3
+
 
 class Event(Enum):
     """ProposalVoterAbciApp Events"""
@@ -187,7 +190,6 @@ class DecisionMakingRound(CollectSameUntilThresholdRound):
     payload_class = DecisionMakingPayload
     synchronized_data_class = SynchronizedData
 
-
     def end_block(self) -> Optional[Tuple[BaseSynchronizedData, Event]]:
         """Process the end of the block."""
         if self.threshold_reached:
@@ -205,7 +207,13 @@ class DecisionMakingRound(CollectSameUntilThresholdRound):
                 return synchronized_data, Event.NO_VOTE
 
             selected_proposal = payload["selected_proposal"]
-            tx_hash = cast(SynchronizedData, self.synchronized_data).pending_transactions[selected_proposal["platform"]][selected_proposal["proposal_id"]]["tx_hash"]
+            tx_hash = cast(
+                SynchronizedData, self.synchronized_data
+            ).pending_transactions[selected_proposal["platform"]][
+                selected_proposal["proposal_id"]
+            ][
+                "tx_hash"
+            ]
 
             synchronized_data = self.synchronized_data.update(
                 synchronized_data_class=SynchronizedData,
@@ -241,7 +249,6 @@ class PostVoteDecisionMakingRound(CollectSameUntilThresholdRound):
     def end_block(self) -> Optional[Tuple[BaseSynchronizedData, Event]]:
         """Process the end of the block."""
         if self.threshold_reached:
-
             synchronized_data = cast(SynchronizedData, self.synchronized_data)
             selected_proposal = synchronized_data.selected_proposal
             pending_transactions = synchronized_data.pending_transactions
@@ -249,12 +256,16 @@ class PostVoteDecisionMakingRound(CollectSameUntilThresholdRound):
 
             if self.most_voted_payload == self.RETRY_PAYLOAD:
                 # Increase retries
-                pending_transactions[selected_proposal["platform"]][selected_proposal["proposal_id"]]["retries"] += 1
+                pending_transactions[selected_proposal["platform"]][
+                    selected_proposal["proposal_id"]
+                ]["retries"] += 1
 
                 synchronized_data = self.synchronized_data.update(
                     synchronized_data_class=SynchronizedData,
                     **{
-                        get_name(SynchronizedData.pending_transactions): pending_transactions,
+                        get_name(
+                            SynchronizedData.pending_transactions
+                        ): pending_transactions,
                     },
                 )
                 return synchronized_data, Event.SKIP_CALL
@@ -263,13 +274,19 @@ class PostVoteDecisionMakingRound(CollectSameUntilThresholdRound):
                 return synchronized_data, Event.SNAPSHOT_CALL
 
             # The vote has already succeeded, move it into the vote history
-            ceramic_db["vote_data"][selected_proposal["platform"]].append(selected_proposal["proposal_id"])
-            del pending_transactions[selected_proposal["platform"]][selected_proposal["proposal_id"]]
+            ceramic_db["vote_data"][selected_proposal["platform"]].append(
+                selected_proposal["proposal_id"]
+            )
+            del pending_transactions[selected_proposal["platform"]][
+                selected_proposal["proposal_id"]
+            ]
 
             synchronized_data = self.synchronized_data.update(
                 synchronized_data_class=SynchronizedData,
                 **{
-                    get_name(SynchronizedData.pending_transactions): pending_transactions,
+                    get_name(
+                        SynchronizedData.pending_transactions
+                    ): pending_transactions,
                     get_name(SynchronizedData.ceramic_db): ceramic_db,
                 },
             )
@@ -330,10 +347,14 @@ class SnapshotAPISendRound(OnlyKeeperSendsRound):
 
         # We only move the vote into the history if the call succeeded
         if cast(SnapshotAPISendPayload, self.keeper_payload).success:
-            ceramic_db["vote_data"][selected_proposal["platform"]].append(selected_proposal["proposal_id"])
+            ceramic_db["vote_data"][selected_proposal["platform"]].append(
+                selected_proposal["proposal_id"]
+            )
 
         # We remove the vote from pending in any case. If the call has failed, we will retry in the future.
-        del pending_transactions[selected_proposal["platform"]][selected_proposal["proposal_id"]]
+        del pending_transactions[selected_proposal["platform"]][
+            selected_proposal["proposal_id"]
+        ]
 
         synchronized_data = self.synchronized_data.update(
             synchronized_data_class=SynchronizedData,

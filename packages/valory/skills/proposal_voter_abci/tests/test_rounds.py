@@ -47,11 +47,11 @@ from packages.valory.skills.proposal_voter_abci.payloads import (
 from packages.valory.skills.proposal_voter_abci.rounds import (
     EstablishVoteRound,
     Event,
+    PostVoteDecisionMakingRound,
     PrepareVoteTransactionRound,
     SnapshotAPISendRandomnessRound,
     SnapshotAPISendRound,
     SnapshotAPISendSelectKeeperRound,
-    PostVoteDecisionMakingRound,
     SynchronizedData,
 )
 

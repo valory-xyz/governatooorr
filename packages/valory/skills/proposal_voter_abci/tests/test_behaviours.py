@@ -50,12 +50,12 @@ from packages.valory.skills.abstract_round_abci.test_tools.common import (
 )
 from packages.valory.skills.proposal_voter_abci.behaviours import (
     EstablishVoteBehaviour,
+    PostVoteDecisionMakingBehaviour,
     PrepareVoteTransactionBehaviour,
     ProposalVoterBaseBehaviour,
     SnapshotAPISendBehaviour,
     SnapshotAPISendRandomnessBehaviour,
     SnapshotAPISendSelectKeeperBehaviour,
-    PostVoteDecisionMakingBehaviour,
 )
 from packages.valory.skills.proposal_voter_abci.models import PendingVote, SharedState
 from packages.valory.skills.proposal_voter_abci.rounds import (

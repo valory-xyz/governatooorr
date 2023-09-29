@@ -189,3 +189,6 @@ models:
       slash_threshold_amount: ${int:10000000000000000}
       light_slash_unit_amount: ${int:5000000000000000}
       serious_slash_unit_amount: ${int:8000000000000000}
+      snapshot_space_whitelist: ${list:[]}
+      disable_snapshot: ${bool:false}
+      disable_tally: ${bool:false}

@@ -188,6 +188,16 @@ class CollectActiveTallyProposalsBehaviour(ProposalCollectorBaseBehaviour):
     def _get_updated_proposal_data(self) -> Generator[None, None, str]:
         """Get proposals mentions"""
 
+        if self.params.disable_tally:
+            self.context.logger.ingo("Ignoring Tally proposals...")
+            return json.dumps(
+                {
+                    "tally_target_proposals": {},
+                    "tally_active_proposals": {},
+                },
+                sort_keys=True,
+            )
+
         headers = {
             "Content-Type": "application/json",
             "Accept": "application/json",
@@ -405,6 +415,17 @@ class CollectActiveSnapshotProposalsBehaviour(ProposalCollectorBaseBehaviour):
     def _get_updated_proposal_data(self) -> Generator[None, None, str]:
         """Get updated proposal data"""
 
+        if self.params.disable_snapshot:
+            self.context.logger.ingo("Ignoring Snapshot proposals...")
+            return json.dumps(
+                {
+                    "snapshot_target_proposals": {},
+                    "n_retrieved_proposals": 0,
+                    "finished": True,
+                },
+                sort_keys=True,
+            )
+
         self.context.logger.info(
             f"Getting proposals from Snapshot API: {self.params.snapshot_graphql_endpoint}"
         )
@@ -487,6 +508,13 @@ class CollectActiveSnapshotProposalsBehaviour(ProposalCollectorBaseBehaviour):
             lambda ap: "erc20-balance-of" in [s["name"] for s in ap["strategies"]],
             target_proposals,
         )
+
+        # Only allow proposals from the space whitelist if there is one
+        if self.params.snapshot_space_whitelist:
+            target_proposals = filter(
+                lambda ap: ap["space"]["name"] in self.params.snapshot_space_whitelist,
+                target_proposals,
+            )
 
         # Remove proposals where we dont have voting power
         votable_proposals = []

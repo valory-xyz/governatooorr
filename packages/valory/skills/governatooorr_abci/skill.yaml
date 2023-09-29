@@ -121,8 +121,8 @@ models:
       on_chain_service_id: null
       request_retry_delay: 1.0
       request_timeout: 10.0
-      reset_pause_duration: 10
-      reset_tendermint_after: 2
+      reset_pause_duration: 300
+      reset_tendermint_after: 30
       retry_attempts: 400
       retry_timeout: 3
       round_timeout_seconds: 30.0
@@ -157,6 +157,9 @@ models:
       slash_threshold_amount: 10000000000000000
       light_slash_unit_amount: 5000000000000000
       serious_slash_unit_amount: 8000000000000000
+      snapshot_space_whitelist: []
+      disable_snapshot: false
+      disable_tally: false
     class_name: Params
   randomness_api:
     args:

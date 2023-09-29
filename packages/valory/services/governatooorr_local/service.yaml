@@ -55,7 +55,7 @@ models:
       reset_tendermint_after: ${RESET_TENDERMINT_AFTER:int:30}
       retry_attempts: 400
       retry_timeout: 3
-      reset_pause_duration: ${RESET_PAUSE_DURATION:int:10}
+      reset_pause_duration: ${RESET_PAUSE_DURATION:int:300}
       request_retry_delay: 1.0
       request_timeout: 10.0
       round_timeout_seconds: 30.0
@@ -97,6 +97,9 @@ models:
       slash_threshold_amount: ${SLASH_THRESHOLD_AMOUNT:int:10000000000000000}
       light_slash_unit_amount: ${LIGHT_SLASH_UNIT_AMOUNT:int:5000000000000000}
       serious_slash_unit_amount: ${SERIOUS_SLASH_UNIT_AMOUNT:int:8000000000000000}
+      snapshot_space_whitelist: ${SNAPSHOT_SPACE_WHITELIST:list:[]}
+      disable_snapshot: ${DISABLE_SNAPSHOT:bool:false}
+      disable_tally: ${DISABLE_TALLY:bool:false}
 ---
 public_id: valory/ledger:0.19.0
 type: connection

@@ -161,7 +161,7 @@ models:
       max_healthcheck: 120
       multisend_address: ${str:0x0000000000000000000000000000000000000000}
       on_chain_service_id: ${int:null}
-      reset_tendermint_after: ${int:2}
+      reset_tendermint_after: ${int:30}
       retry_attempts: 400
       retry_timeout: 3
       reset_pause_duration: ${int:300}
@@ -208,6 +208,9 @@ models:
       slash_threshold_amount: ${int:10000000000000000}
       light_slash_unit_amount: ${int:5000000000000000}
       serious_slash_unit_amount: ${int:8000000000000000}
+      snapshot_space_whitelist: ${list:[]}
+      disable_snapshot: ${bool:false}
+      disable_tally: ${bool:false}
 ---
 public_id: fetchai/http_server:0.22.0:bafybeicblltx7ha3ulthg7bzfccuqqyjmihhrvfeztlgrlcoxhr7kf6nbq
 type: connection

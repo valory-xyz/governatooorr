@@ -335,7 +335,7 @@ class CollectActiveTallyProposalsBehaviour(ProposalCollectorBaseBehaviour):
         # Remove proposals where we have already voted
         target_proposals = list(
             filter(
-                lambda ap: ap["id"] not in ceramic_db["voted_proposals"]["tally"],
+                lambda ap: ap["id"] not in ceramic_db["vote_data"]["tally"],
                 target_proposals,
             )
         )

@@ -51,7 +51,7 @@ from packages.valory.skills.proposal_voter_abci.rounds import (
     SnapshotAPISendRandomnessRound,
     SnapshotAPISendRound,
     SnapshotAPISendSelectKeeperRound,
-    SnapshotCallDecisionMakingRound,
+    PostVoteDecisionMakingRound,
     SynchronizedData,
 )
 
@@ -253,9 +253,9 @@ def get_dummy_retrieve_signature_payload_serialized(error: bool = False):
 
 
 class TestRetrieveSignatureTransactionRoundRound(BaseProposalVoterRoundTest):
-    """Tests for SnapshotCallDecisionMakingRound."""
+    """Tests for PostVoteDecisionMakingRound."""
 
-    round_class = SnapshotCallDecisionMakingRound
+    round_class = PostVoteDecisionMakingRound
 
     @pytest.mark.parametrize(
         "test_case",

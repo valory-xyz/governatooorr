@@ -59,7 +59,7 @@ states:
 - SnapshotAPISendRandomnessRound
 - SnapshotAPISendRound
 - SnapshotAPISendSelectKeeperRound
-- SnapshotCallDecisionMakingRound
+- PostVoteDecisionMakingRound
 - StreamReadRound
 - StreamWriteRound
 - SynchronizeDelegationsRound
@@ -70,13 +70,13 @@ states:
 transition_func:
     (CheckLateTxHashesRound, CHECK_LATE_ARRIVING_MESSAGE): SynchronizeLateMessagesRound
     (CheckLateTxHashesRound, CHECK_TIMEOUT): CheckLateTxHashesRound
-    (CheckLateTxHashesRound, DONE): SnapshotCallDecisionMakingRound
+    (CheckLateTxHashesRound, DONE): PostVoteDecisionMakingRound
     (CheckLateTxHashesRound, NEGATIVE): PrepareVoteTransactionRound
     (CheckLateTxHashesRound, NONE): PrepareVoteTransactionRound
     (CheckLateTxHashesRound, NO_MAJORITY): PrepareVoteTransactionRound
     (CheckTransactionHistoryRound, CHECK_LATE_ARRIVING_MESSAGE): SynchronizeLateMessagesRound
     (CheckTransactionHistoryRound, CHECK_TIMEOUT): CheckTransactionHistoryRound
-    (CheckTransactionHistoryRound, DONE): SnapshotCallDecisionMakingRound
+    (CheckTransactionHistoryRound, DONE): PostVoteDecisionMakingRound
     (CheckTransactionHistoryRound, NEGATIVE): SelectKeeperTransactionSubmissionBRound
     (CheckTransactionHistoryRound, NONE): PrepareVoteTransactionRound
     (CheckTransactionHistoryRound, NO_MAJORITY): CheckTransactionHistoryRound
@@ -148,10 +148,10 @@ transition_func:
     (SnapshotAPISendSelectKeeperRound, DONE): SnapshotAPISendRound
     (SnapshotAPISendSelectKeeperRound, NO_MAJORITY): SnapshotAPISendRandomnessRound
     (SnapshotAPISendSelectKeeperRound, ROUND_TIMEOUT): SnapshotAPISendRandomnessRound
-    (SnapshotCallDecisionMakingRound, DONE): SnapshotAPISendRandomnessRound
-    (SnapshotCallDecisionMakingRound, NO_MAJORITY): EstablishVoteRound
-    (SnapshotCallDecisionMakingRound, ROUND_TIMEOUT): EstablishVoteRound
-    (SnapshotCallDecisionMakingRound, SKIP_CALL): PrepareVoteTransactionRound
+    (PostVoteDecisionMakingRound, DONE): SnapshotAPISendRandomnessRound
+    (PostVoteDecisionMakingRound, NO_MAJORITY): EstablishVoteRound
+    (PostVoteDecisionMakingRound, ROUND_TIMEOUT): EstablishVoteRound
+    (PostVoteDecisionMakingRound, SKIP_CALL): PrepareVoteTransactionRound
     (StreamReadRound, API_ERROR): StreamReadRound
     (StreamReadRound, DONE): SynchronizeDelegationsRound
     (StreamReadRound, NO_MAJORITY): StreamReadRound
@@ -169,7 +169,7 @@ transition_func:
     (SynchronizeLateMessagesRound, NONE): SelectKeeperTransactionSubmissionBRound
     (SynchronizeLateMessagesRound, ROUND_TIMEOUT): SynchronizeLateMessagesRound
     (SynchronizeLateMessagesRound, SUSPICIOUS_ACTIVITY): PrepareVoteTransactionRound
-    (ValidateTransactionRound, DONE): SnapshotCallDecisionMakingRound
+    (ValidateTransactionRound, DONE): PostVoteDecisionMakingRound
     (ValidateTransactionRound, NEGATIVE): CheckTransactionHistoryRound
     (ValidateTransactionRound, NONE): SelectKeeperTransactionSubmissionBRound
     (ValidateTransactionRound, NO_MAJORITY): ValidateTransactionRound

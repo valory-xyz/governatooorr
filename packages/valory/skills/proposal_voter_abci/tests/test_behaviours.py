@@ -55,7 +55,7 @@ from packages.valory.skills.proposal_voter_abci.behaviours import (
     SnapshotAPISendBehaviour,
     SnapshotAPISendRandomnessBehaviour,
     SnapshotAPISendSelectKeeperBehaviour,
-    SnapshotCallDecisionMakingBehaviour,
+    PostVoteDecisionMakingBehaviour,
 )
 from packages.valory.skills.proposal_voter_abci.models import PendingVote, SharedState
 from packages.valory.skills.proposal_voter_abci.rounds import (
@@ -744,9 +744,9 @@ class TestPrepareVoteTransactionContractErrorBehaviour(BaseProposalVoterTest):
 
 
 class TestRetrieveSignatureNoSnapshotVoteBehaviour(BaseProposalVoterTest):
-    """Tests SnapshotCallDecisionMakingBehaviour"""
+    """Tests PostVoteDecisionMakingBehaviour"""
 
-    behaviour_class = SnapshotCallDecisionMakingBehaviour
+    behaviour_class = PostVoteDecisionMakingBehaviour
     next_behaviour_class = PrepareVoteTransactionBehaviour
 
     @pytest.mark.parametrize(

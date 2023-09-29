@@ -69,4 +69,4 @@ class GovernatooorrConsensusBehaviour(AbstractRoundBehaviour):
         *CeramicReadRoundBehaviour.behaviours,
         *CeramicWriteRoundBehaviour.behaviours,
     }
-    background_behaviour_cls = BackgroundBehaviour
+    background_behaviours_cls = {BackgroundBehaviour}

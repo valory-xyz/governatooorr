@@ -8,7 +8,7 @@ license: Apache-2.0
 fingerprint:
   README.md: bafybeibotqiu2nzbjbkud3dz46ymrzsqtjybndablkzku7hnspnwztcvby
 fingerprint_ignore_patterns: []
-agent: valory/governatooorr_solana:0.1.0:bafybeih6qhdj6t3lq2ewwhja4ypx4lubck2rt3krggqapzuhrhknhxklgq
+agent: valory/governatooorr_solana:0.1.0:bafybeicnxi4wrpffjgijirmmc2icckos5rpq6ja77np2wt4tjdlkfzg7ki
 number_of_agents: 4
 deployment:
   agent:
@@ -100,6 +100,11 @@ type: skill
         default_read_stream_id: ${DEFAULT_READ_STREAM_ID:str:default_read_stream_id}
         default_write_stream_id: ${DEFAULT_WRITE_STREAM_ID:str:default_write_stream_id}
         signmessagelib_address: ${SIGNMESSAGELIB_ADDRESS:str:0xA65387F16B013cf2Af4605Ad8aA5ec25a2cbA3a2}
+        use_slashing: ${USE_SLASHING:bool:false}
+        slash_cooldown_hours: ${SLASH_COOLDOWN_HOURS:int:3}
+        slash_threshold_amount: ${SLASH_THRESHOLD_AMOUNT:int:10000000000000000}
+        light_slash_unit_amount: ${LIGHT_SLASH_UNIT_AMOUNT:int:5000000000000000}
+        serious_slash_unit_amount: ${SERIOUS_SLASH_UNIT_AMOUNT:int:8000000000000000}
 1:
   models:
     benchmark_tool: *id001
@@ -155,6 +160,11 @@ type: skill
         default_read_stream_id: ${DEFAULT_READ_STREAM_ID:str:default_read_stream_id}
         default_write_stream_id: ${DEFAULT_WRITE_STREAM_ID:str:default_write_stream_id}
         signmessagelib_address: ${SIGNMESSAGELIB_ADDRESS:str:0xA65387F16B013cf2Af4605Ad8aA5ec25a2cbA3a2}
+        use_slashing: ${USE_SLASHING:bool:false}
+        slash_cooldown_hours: ${SLASH_COOLDOWN_HOURS:int:3}
+        slash_threshold_amount: ${SLASH_THRESHOLD_AMOUNT:int:10000000000000000}
+        light_slash_unit_amount: ${LIGHT_SLASH_UNIT_AMOUNT:int:5000000000000000}
+        serious_slash_unit_amount: ${SERIOUS_SLASH_UNIT_AMOUNT:int:8000000000000000}
 2:
   models:
     benchmark_tool: *id001
@@ -210,6 +220,11 @@ type: skill
         default_read_stream_id: ${DEFAULT_READ_STREAM_ID:str:default_read_stream_id}
         default_write_stream_id: ${DEFAULT_WRITE_STREAM_ID:str:default_write_stream_id}
         signmessagelib_address: ${SIGNMESSAGELIB_ADDRESS:str:0xA65387F16B013cf2Af4605Ad8aA5ec25a2cbA3a2}
+        use_slashing: ${USE_SLASHING:bool:false}
+        slash_cooldown_hours: ${SLASH_COOLDOWN_HOURS:int:3}
+        slash_threshold_amount: ${SLASH_THRESHOLD_AMOUNT:int:10000000000000000}
+        light_slash_unit_amount: ${LIGHT_SLASH_UNIT_AMOUNT:int:5000000000000000}
+        serious_slash_unit_amount: ${SERIOUS_SLASH_UNIT_AMOUNT:int:8000000000000000}
 3:
   models:
     benchmark_tool: *id001
@@ -265,6 +280,11 @@ type: skill
         default_read_stream_id: ${DEFAULT_READ_STREAM_ID:str:default_read_stream_id}
         default_write_stream_id: ${DEFAULT_WRITE_STREAM_ID:str:default_write_stream_id}
         signmessagelib_address: ${SIGNMESSAGELIB_ADDRESS:str:0xA65387F16B013cf2Af4605Ad8aA5ec25a2cbA3a2}
+        use_slashing: ${USE_SLASHING:bool:false}
+        slash_cooldown_hours: ${SLASH_COOLDOWN_HOURS:int:3}
+        slash_threshold_amount: ${SLASH_THRESHOLD_AMOUNT:int:10000000000000000}
+        light_slash_unit_amount: ${LIGHT_SLASH_UNIT_AMOUNT:int:5000000000000000}
+        serious_slash_unit_amount: ${SERIOUS_SLASH_UNIT_AMOUNT:int:8000000000000000}
 ---
 public_id: valory/ledger:0.19.0
 type: connection

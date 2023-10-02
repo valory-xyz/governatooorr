@@ -394,6 +394,7 @@ class PrepareVoteTransactionsBehaviour(ProposalVoterBaseBehaviour):
         governor_address: str,
         proposal_id: str,
         vote_code: int,
+        safe_nonce: Optional[int],
     ) -> Generator[None, None, Optional[str]]:
         """Get the transaction hash of the Safe tx."""
         # Get the raw transaction from the Bravo Delegate contract
@@ -427,6 +428,7 @@ class PrepareVoteTransactionsBehaviour(ProposalVoterBaseBehaviour):
             value=ether_value,
             data=data,
             safe_tx_gas=safe_tx_gas,
+            safe_nonce=safe_nonce,
         )
         if (
             contract_api_msg.performative != ContractApiMessage.Performative.STATE
@@ -491,7 +493,7 @@ class PrepareVoteTransactionsBehaviour(ProposalVoterBaseBehaviour):
         return data
 
     def _get_snapshot_tx_hash(
-        self, proposal
+        self, proposal, safe_nonce
     ) -> Generator[None, None, Tuple[Optional[str], dict]]:
         """Get the safe hash for the EIP-712 signature"""
 
@@ -545,6 +547,7 @@ class PrepareVoteTransactionsBehaviour(ProposalVoterBaseBehaviour):
             data=tx_data,
             safe_tx_gas=safe_tx_gas,
             operation=SafeOperation.DELEGATE_CALL.value,
+            safe_nonce=safe_nonce,
         )
         if (
             contract_api_msg.performative != ContractApiMessage.Performative.STATE
@@ -570,12 +573,40 @@ class PrepareVoteTransactionsBehaviour(ProposalVoterBaseBehaviour):
 
         return payload_string, snapshot_api_data
 
+    def _get_safe_nonce(
+        self,
+    ) -> Generator[None, None, Optional[int]]:
+        """Get the safe nonce"""
+
+        contract_api_msg = yield from self.get_contract_api_response(
+            performative=ContractApiMessage.Performative.GET_STATE,  # type: ignore
+            contract_address=self.synchronized_data.safe_contract_address,
+            contract_id=str(GnosisSafeContract.contract_id),
+            contract_callable="get_safe_nonce",
+        )
+        if (
+            contract_api_msg.performative != ContractApiMessage.Performative.STATE
+        ):  # pragma: nocover
+            self.context.logger.warning(
+                f"get_raw_safe_transaction_hash unsuccessful!: {contract_api_msg}"
+            )
+            return None
+
+        safe_nonce = cast(str, contract_api_msg.state.body["safe_nonce"])
+        self.context.logger.info(f"Safe nonce: {safe_nonce}")
+
+        return int(safe_nonce)
+
     def async_act(self) -> Generator:
         """Do the act, supporting asynchronous execution."""
 
         with self.context.benchmark_tool.measure(self.behaviour_id).local():
             expiring_proposals = self.synchronized_data.expiring_proposals
             pending_transactions = self.synchronized_data.pending_transactions
+
+            safe_nonce = None
+            if expiring_proposals["tally"] or expiring_proposals["snapshot"]:
+                safe_nonce = yield from self._get_safe_nonce()
 
             # Tally
             for proposal_id, expiring_proposal in expiring_proposals["tally"].items():
@@ -592,8 +623,11 @@ class PrepareVoteTransactionsBehaviour(ProposalVoterBaseBehaviour):
                 )
 
                 tx_hash = yield from self._get_tally_tx_hash(
-                    governor_address, proposal_id, vote_code
+                    governor_address, proposal_id, vote_code, safe_nonce
                 )
+
+                if safe_nonce:
+                    safe_nonce += 1
 
                 pending_transactions["tally"][proposal_id] = {
                     "tx_hash": tx_hash,
@@ -612,8 +646,11 @@ class PrepareVoteTransactionsBehaviour(ProposalVoterBaseBehaviour):
                 )
 
                 tx_hash, api_data = yield from self._get_snapshot_tx_hash(
-                    expiring_proposal
+                    expiring_proposal, safe_nonce
                 )
+
+                if safe_nonce:
+                    safe_nonce += 1
 
                 pending_transactions["snapshot"][proposal_id] = {
                     "tx_hash": tx_hash,

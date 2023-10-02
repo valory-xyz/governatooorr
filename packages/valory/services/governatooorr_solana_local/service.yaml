@@ -8,7 +8,7 @@ license: Apache-2.0
 fingerprint:
   README.md: bafybeifn6lynhda22zzijrl7uqecszmzgfwdg6u5i5ggigkwuh4uy7ozva
 fingerprint_ignore_patterns: []
-agent: valory/governatooorr_solana:0.1.0:bafybeidv56a3wwog7esybwmmozbtea4ao64nancgtwrfmhbqv45iobfwiq
+agent: valory/governatooorr_solana:0.1.0:bafybeie2nj4tjah3iu33mnlhedrmvvsdkqxjo5rti5su5lx6ssycna7ria
 number_of_agents: 1
 deployment:
   agent:
@@ -101,6 +101,7 @@ models:
       disable_snapshot: ${DISABLE_SNAPSHOT:bool:false}
       disable_tally: ${DISABLE_TALLY:bool:false}
       default_snapshot_vote_on_error: ${DEFAULT_SNAPSHOT_VOTE_ON_ERROR:bool:false}
+      default_tally_vote_on_error: ${DEFAULT_TALLY_VOTE_ON_ERROR:bool:false}
 ---
 public_id: valory/ledger:0.19.0
 type: connection

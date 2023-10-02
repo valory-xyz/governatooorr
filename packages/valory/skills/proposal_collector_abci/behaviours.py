@@ -230,7 +230,7 @@ class CollectActiveTallyProposalsBehaviour(ProposalCollectorBaseBehaviour):
         if response.status_code != HTTP_OK:
             self.context.logger.error(
                 f"Could not retrieve data from Tally API. "
-                f"Received status code {response.status_code}."
+                f"Received status code {response.status_code}: {response.json()}."
             )
             retries = self.synchronized_data.tally_api_retries + 1
             if retries >= MAX_RETRIES:
@@ -323,21 +323,48 @@ class CollectActiveTallyProposalsBehaviour(ProposalCollectorBaseBehaviour):
         if current_block is None:
             return CollectActiveTallyProposalsRound.BLOCK_RETRIEVAL_ERROR
 
-        active_proposals = filter(
-            lambda ap: ap["end"]["number"] > current_block, active_proposals
+        active_proposals = list(
+            filter(lambda ap: ap["end"]["number"] > current_block, active_proposals)
+        )
+
+        governor_to_token = {}
+        for p in active_proposals:
+            governor_id = p["governor"]["id"]
+            token = p["governor"]["tokens"][0]["id"]
+            if governor_id not in governor_to_token:
+                governor_to_token[governor_id] = [token]
+            else:
+                governor_to_token[governor_id].append(token)
+
+        self.context.logger.info(
+            f"Governor to token [active proposals only]: {governor_to_token}"
         )
 
         # Keep all proposals for the frontend
-        target_proposals = list(deepcopy(active_proposals))
+        target_proposals = deepcopy(active_proposals)
 
-        # Remove proposals where we don't have voting power
         ceramic_db = self.synchronized_data.ceramic_db
         delegations = ceramic_db["delegations"]
         delegated_tokens = [d["token_address"] for d in delegations]
         delegation_governors = [d["governor_address"] for d in delegations]
 
+        governor_to_token = {}
+        for d in delegations:
+            governor_id = d["governor_address"]
+            token = d["token_address"]
+            if governor_id not in governor_to_token:
+                governor_to_token[governor_id] = [token]
+            else:
+                governor_to_token[governor_id].append(token)
+
+        self.context.logger.info(
+            f"Governor to token [delegations]: {governor_to_token}"
+        )
+
+        # Remove proposals where we don't have voting power
         target_proposals = filter(
-            lambda ap: ap["governor"]["tokens"][0]["id"] in delegated_tokens
+            lambda ap: ap["governor"]["tokens"][0]["id"].split(":")[-1]
+            in delegated_tokens
             and ap["governor"]["id"].split(":")[-1] in delegation_governors,
             target_proposals,
         )

@@ -8,11 +8,11 @@ license: Apache-2.0
 aea_version: '>=1.0.0, <2.0.0'
 fingerprint:
   __init__.py: bafybeifps6e4vfc55iyb5jaab7dxem7y3a2wyflai32pyzf4z75m5ngym4
-  behaviours.py: bafybeigr7qhozhncjnp5dme3dw33tvhryleg4pj3jvjbxy5wo2tu4wp4la
+  behaviours.py: bafybeihndevtqbrc4w5iabb247hkuf326anuspwtbxqrn52qfx7kh33hd4
   dialogues.py: bafybeihdakfnmps5o7n5rgepn3fl3lzttqsddhiny7mh7ddwhniutri6bq
   fsm_specification.yaml: bafybeiafysu3uvci4uol3t4lavsf32d6d2q6kqpkjcfwjzbp7jegjtehny
   handlers.py: bafybeihex227foehp7a7wfc6vh25ahk5g65b5itu325hph2xj33mgp6kue
-  models.py: bafybeihqi7tyouemf3hin753metg2gep4bwa4fb2c7zwmtsqpku4h3qnum
+  models.py: bafybeihi26lreujlxavyyheo5caybxekv35fwmj66p6v4e5zo7zdesmp3u
   payloads.py: bafybeidsrislkjtdudzuxgtzd22qi3sozaz6z3nibhbkhek2x3ulspdho4
   rounds.py: bafybeifdnfxfcr2dhwwnzu6pdnqo4ym5fwpfhme7to6xptsyulcl37ovuu
   tests/__init__.py: bafybeicnpfbu2732mdlaputxl4izv5yfievyodmjzy5w64r2e5zyqycigu
@@ -150,6 +150,7 @@ models:
       light_slash_unit_amount: 5000000000000000
       serious_slash_unit_amount: 8000000000000000
       default_snapshot_vote_on_error: false
+      default_tally_vote_on_error: false
     class_name: Params
   randomness_api:
     args:

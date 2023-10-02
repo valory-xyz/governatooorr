@@ -161,6 +161,10 @@ class EstablishVoteBehaviour(ProposalVoterBaseBehaviour):
             if ap["remaining_blocks"] <= self.params.voting_block_threshold
         }
 
+        self.context.logger.info(
+            f"There are {len(expiring_proposals)} finishing Tally proposals (erc20)"
+        )
+
         # Get the proposals' vote intention
         for proposal_id in expiring_proposals.keys():
             self.context.logger.info(
@@ -219,8 +223,16 @@ class EstablishVoteBehaviour(ProposalVoterBaseBehaviour):
             vote = yield from self._get_vote(prompt_template, prompt_values)
             vote = vote.upper()
             if vote not in VOTES_TO_CODE:
-                self.context.logger.error(f"Invalid vote: {vote}. Skipping proposal.")
-                continue
+                if self.params.default_tally_vote_on_error:
+                    self.context.logger.info(
+                        f"Invalid vote: {vote}. Using first vote option as fallback."
+                    )
+                    vote = list(VOTES_TO_CODE.keys())[0]
+                else:
+                    self.context.logger.error(
+                        f"Invalid vote: {vote}. Skipping proposal."
+                    )
+                    continue
 
             self.context.logger.info(f"Vote: {vote}")
 
@@ -566,12 +578,18 @@ class PrepareVoteTransactionsBehaviour(ProposalVoterBaseBehaviour):
             pending_transactions = self.synchronized_data.pending_transactions
 
             # Tally
-            for proposal_id, proposal in expiring_proposals["tally"].items():
+            for proposal_id, expiring_proposal in expiring_proposals["tally"].items():
                 if proposal_id in pending_transactions["tally"]:
                     continue
 
+                proposal = self.synchronized_data.target_proposals["tally"][proposal_id]
+
                 governor_address = proposal["governor"]["id"].split(":")[-1]
-                vote_code = VOTES_TO_CODE[proposal["vote_choice"]]
+                vote_code = VOTES_TO_CODE[expiring_proposal["vote"]]
+
+                self.context.logger.info(
+                    f"Preparing transaction for Tally proposal {proposal_id} [governor={governor_address}]: vote_code={vote_code}"
+                )
 
                 tx_hash = yield from self._get_tally_tx_hash(
                     governor_address, proposal_id, vote_code
@@ -583,11 +601,19 @@ class PrepareVoteTransactionsBehaviour(ProposalVoterBaseBehaviour):
                 }
 
             # Snapshot
-            for proposal_id, proposal in expiring_proposals["snapshot"].items():
+            for proposal_id, expiring_proposal in expiring_proposals[
+                "snapshot"
+            ].items():
                 if proposal_id in pending_transactions["snapshot"]:
                     continue
 
-                tx_hash, api_data = yield from self._get_snapshot_tx_hash(proposal)
+                self.context.logger.info(
+                    f"Preparing transaction for Snapshot proposal {proposal_id}: {expiring_proposal}"
+                )
+
+                tx_hash, api_data = yield from self._get_snapshot_tx_hash(
+                    expiring_proposal
+                )
 
                 pending_transactions["snapshot"][proposal_id] = {
                     "tx_hash": tx_hash,

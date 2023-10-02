@@ -72,6 +72,9 @@ class Params(BaseParams):
         self.default_snapshot_vote_on_error = self._ensure(
             "default_snapshot_vote_on_error", kwargs, bool
         )
+        self.default_tally_vote_on_error = self._ensure(
+            "default_tally_vote_on_error", kwargs, bool
+        )
         super().__init__(*args, **kwargs)
 
 

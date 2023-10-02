@@ -193,3 +193,4 @@ models:
       disable_snapshot: ${bool:false}
       disable_tally: ${bool:false}
       default_snapshot_vote_on_error: ${bool:false}
+      default_tally_vote_on_error: ${bool:false}

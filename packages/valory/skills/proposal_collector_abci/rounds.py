@@ -233,7 +233,7 @@ class CollectActiveTallyProposalsRound(CollectSameUntilThresholdRound):
                 **{
                     get_name(
                         SynchronizedData.pending_write
-                    ): False,  #  we reset this after writing
+                    ): False,  # we reset this after writing
                 },
             )
 

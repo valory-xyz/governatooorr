@@ -398,18 +398,19 @@ class ProposalVoterAbciApp(AbciApp[Event]):
             Event.DONE: DecisionMakingRound,
             Event.NO_MAJORITY: PrepareVoteTransactionsRound,
             Event.ROUND_TIMEOUT: PrepareVoteTransactionsRound,
-            Event.CONTRACT_ERROR: PrepareVoteTransactionsRound,
         },
         DecisionMakingRound: {
             Event.NO_VOTE: FinishedTransactionPreparationNoVoteRound,
             Event.VOTE: FinishedTransactionPreparationVoteRound,
+            Event.NO_MAJORITY: DecisionMakingRound,
+            Event.ROUND_TIMEOUT: DecisionMakingRound,
         },
         FinishedTransactionPreparationNoVoteRound: {},
         PostVoteDecisionMakingRound: {
             Event.SKIP_CALL: DecisionMakingRound,
             Event.SNAPSHOT_CALL: SnapshotAPISendRandomnessRound,
-            Event.NO_MAJORITY: EstablishVoteRound,
-            Event.ROUND_TIMEOUT: EstablishVoteRound,
+            Event.NO_MAJORITY: PostVoteDecisionMakingRound,
+            Event.ROUND_TIMEOUT: PostVoteDecisionMakingRound,
         },
         SnapshotAPISendRandomnessRound: {
             Event.DONE: SnapshotAPISendSelectKeeperRound,

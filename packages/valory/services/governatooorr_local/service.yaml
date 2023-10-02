@@ -78,7 +78,8 @@ models:
       tally_api_endpoint: ${TALLY_API_ENDPOINT:str:https://api.tally.xyz/query}
       tally_api_key: ${TALLY_API_KEY:str:<tally_api_key>}
       tally_api_call_sleep_seconds: ${TALLY_API_CALL_SLEEP_SECONDS:int:2}
-      snapshot_api_endpoint: ${SNAPSHOT_API_ENDPOINT:str:https://hub.snapshot.org/graphql}
+      snapshot_graphql_endpoint: ${SNAPSHOT_GRAPHQL_ENDPOINT:str:https://hub.snapshot.org/graphql}
+      snapshot_vote_endpoint: ${SNAPSHOT_VOTE_ENDPOINT:str:https://seq.snapshot.org}
       service_endpoint_base: ${SERVICE_ENDPOINT_BASE:str:https://dummy_service.autonolas.tech/}
       validate_timeout: 1205
       voting_block_threshold: ${VOTING_BLOCK_THRESHOLD:int:300}

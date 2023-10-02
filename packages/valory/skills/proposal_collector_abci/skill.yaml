@@ -126,7 +126,6 @@ models:
       share_tm_config_on_startup: false
       sleep_time: 1
       snapshot_graphql_endpoint: https://hub.snapshot.org/graphql
-      snapshot_vote_endpoint: https://relayer.snapshot.org/
       tally_api_call_sleep_seconds: 2
       tally_api_endpoint: https://api.tally.xyz/query
       tally_api_key: <tally_api_key>

@@ -188,7 +188,7 @@ models:
       tally_api_key: ${str:<tally_api_key>}
       tally_api_call_sleep_seconds: ${int:2}
       snapshot_graphql_endpoint: ${str:https://hub.snapshot.org/graphql}
-      snapshot_vote_endpoint: ${str:https://relayer.snapshot.org/}
+      snapshot_vote_endpoint: ${str:https://seq.snapshot.org/}
       service_endpoint_base: ${str:https://governatooorr.staging.autonolas.tech/}
       validate_timeout: 1205
       voting_block_threshold: ${int:300}

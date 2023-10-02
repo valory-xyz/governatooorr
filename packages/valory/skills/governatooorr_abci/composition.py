@@ -30,9 +30,12 @@ from packages.valory.skills.abstract_round_abci.abci_app_chain import (
     AbciAppTransitionMapping,
     chain,
 )
-from packages.valory.skills.termination_abci.rounds import BackgroundRound
-from packages.valory.skills.termination_abci.rounds import Event as TerminationEvent
-from packages.valory.skills.termination_abci.rounds import TerminationAbciApp
+from packages.valory.skills.abstract_round_abci.base import BackgroundAppConfig
+from packages.valory.skills.termination_abci.rounds import (
+    BackgroundRound,
+    Event,
+    TerminationAbciApp,
+)
 
 
 # Here we define how the transition between the FSMs should happen
@@ -45,11 +48,17 @@ abci_app_transition_mapping: AbciAppTransitionMapping = {
     ProposalCollectorAbciApp.FinishedProposalRound: ProposalVoterAbciApp.EstablishVoteRound,
     ProposalVoterAbciApp.FinishedTransactionPreparationNoVoteRound: ResetAndPauseAbci.ResetAndPauseRound,
     ProposalVoterAbciApp.FinishedTransactionPreparationVoteRound: TransactionSubmissionAbciApp.RandomnessTransactionSubmissionRound,
-    TransactionSubmissionAbciApp.FinishedTransactionSubmissionRound: ProposalVoterAbciApp.SnapshotCallDecisionMakingRound,
-    TransactionSubmissionAbciApp.FailedRound: ProposalVoterAbciApp.PrepareVoteTransactionRound,
+    TransactionSubmissionAbciApp.FinishedTransactionSubmissionRound: ProposalVoterAbciApp.PostVoteDecisionMakingRound,
+    TransactionSubmissionAbciApp.FailedRound: ProposalVoterAbciApp.PostVoteDecisionMakingRound,
     ResetAndPauseAbci.FinishedResetAndPauseRound: ProposalCollectorAbciApp.SynchronizeDelegationsRound,
     ResetAndPauseAbci.FinishedResetAndPauseErrorRound: RegistrationAbci.RegistrationRound,
 }
+
+termination_config = BackgroundAppConfig(
+    round_cls=BackgroundRound,
+    start_event=Event.TERMINATE,
+    abci_app=TerminationAbciApp,
+)
 
 GovernatooorrAbciApp = chain(
     (
@@ -62,8 +71,4 @@ GovernatooorrAbciApp = chain(
         CeramicWriteAbci.CeramicWriteAbciApp,
     ),
     abci_app_transition_mapping,
-).add_termination(
-    background_round_cls=BackgroundRound,
-    termination_event=TerminationEvent.TERMINATE,
-    termination_abci_app=TerminationAbciApp,
-)
+).add_background_app(termination_config)

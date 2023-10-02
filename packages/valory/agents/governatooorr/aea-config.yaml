@@ -15,16 +15,16 @@ fingerprint:
 fingerprint_ignore_patterns: []
 connections:
 - fetchai/http_server:0.22.0:bafybeihp5umafxzx45aad5pj7s3343se2wjkgnbirt4pybrape22swm6de
-- valory/abci:0.1.0:bafybeicasheudousm2unmh5qmy5n3qdq5hmkg2j42fxfm2crxmgq3nzjkq
+- valory/abci:0.1.0:bafybeib3exj2vkz4u76rc2amtwz6veeozipr6zdgzlaqsovu3dorppcina
 - valory/http_client:0.23.0:bafybeieoeuy4brzimtnubmokwirhrx27ezls6cdnl5qik4rkykfle3nn2y
 - valory/ledger:0.19.0:bafybeigfoz7d7si7s4jehvloq2zmiiocpbxcaathl3bxkyarxoerxq7g3a
-- valory/openai:0.1.0:bafybeifq7khwp42btuiulw2fdnr5wnf5uqimnclswzyk3bneunrimwaamm
+- valory/openai:0.1.0:bafybeibn42k4zebenmjsumkngfxllxbofkwdno2fm65o6zf5y2uihmo2dq
 - valory/p2p_libp2p_client:0.1.0:bafybeihdnfdth3qgltefgrem7xyi4b3ejzaz67xglm2hbma2rfvpl2annq
 contracts:
-- valory/delegate:0.1.0:bafybeiekhgzrz2qpb7cu6kjpg7ggwavg4nydb7vu33x5taqo525fuicwcy
-- valory/gnosis_safe:0.1.0:bafybeigvqg4lapdaa23dpc3pv67rdptdhey6e435mxqsw2gb2u74yw4yei
-- valory/gnosis_safe_proxy_factory:0.1.0:bafybeie4iivrxcd5dcwzj3y2t66mc5mdvtsuqu426gk2kcdc6fxbki6neu
-- valory/sign_message_lib:0.1.0:bafybeiee2y2rakintptn5frkkjdo23ozonk3ndlfatp5zolc2wpiaopqqe
+- valory/delegate:0.1.0:bafybeic4rzzzafvescwyul4hl7kxtpyfwfp5uarm2o2trgb6rl5tv7o2ba
+- valory/gnosis_safe:0.1.0:bafybeih6d3vxz3jlgodxm5b2qcwsmansqj4xobuyd6hjnhzremuvd65yrm
+- valory/gnosis_safe_proxy_factory:0.1.0:bafybeid6glyjikjxmefwmhn62cxiofophegjmg2z5vqqsvk6tmyunwc274
+- valory/sign_message_lib:0.1.0:bafybeibctdhgv35m5oprltxgqcd62fcm332mc3t2kyfx33pym3l32qe7pe
 protocols:
 - open_aea/signing:1.0.0:bafybeifuxs7gdg2okbn7uofymenjlmnih2wxwkym44lsgwmklgwuckxm2m
 - valory/abci:0.1.0:bafybeigootsvqpk6th5xpdtzanxum3earifrrezfyhylfrit7yvqdrtgpe
@@ -33,20 +33,20 @@ protocols:
 - valory/http:1.0.0:bafybeia5bxdua2i6chw6pg47bvoljzcpuqxzy4rdrorbdmcbnwmnfdobtu
 - valory/ipfs:0.1.0:bafybeibjzhsengtxfofqpxy6syamplevp35obemwfp4c5lhag3v2bvgysa
 - valory/ledger_api:1.0.0:bafybeigsvceac33asd6ecbqev34meyyjwu3rangenv6xp5rkxyz4krvcby
-- valory/llm:1.0.0:bafybeicb4fmd2ravxzypvjllfg2uwp7plyctjtgeychk3wksz4t3ziqx3i
+- valory/llm:1.0.0:bafybeigqybmg75vsxexmp57hkms7lkp7iwpf54r7wpygizxryvrhfqqpb4
 - valory/tendermint:0.1.0:bafybeidjqmwvgi4rqgp65tbkhmi45fwn2odr5ecezw6q47hwitsgyw4jpa
 skills:
-- valory/abstract_abci:0.1.0:bafybeicg7dv7cff34nv2k2z47c4yp4kddsxp3wozonzow6tnvfvwndz3cy
-- valory/abstract_round_abci:0.1.0:bafybeigxjcci53vwytymzlhr37436yvenh7jup4astrn7dgyixo24aq2pq
-- valory/governatooorr_abci:0.1.0:bafybeicmvgjahi5m4kfpeikc2jmgu2gmn2f2zqwlghud75w4gejzszgz4a
-- valory/proposal_collector_abci:0.1.0:bafybeigtdnl6qptlzemcm7yjudgka6cxovn4bfizr3ssm77cld3ip5ehoa
-- valory/proposal_voter_abci:0.1.0:bafybeidrept3xl5epe2tr4kzatvhgrbqwjiirnzoxp7o5hbda7e3o4hodq
-- valory/registration_abci:0.1.0:bafybeibc4kczqbh23sc6tufrzn3axmhp3vjav7fa3u6cnpvolrbbc2fd7i
-- valory/reset_pause_abci:0.1.0:bafybeid445uy6wwvugf3byzl7r73c7teu6xr5ezxb4h7cxbenghg3copvy
-- valory/termination_abci:0.1.0:bafybeiguy7pkrcptg6c754ioig4mlkr7truccym3fpv6jwpjx2tmpdbzhi
-- valory/transaction_settlement_abci:0.1.0:bafybeidpsnguxizkpihtkqzojr3em7yy7c6qc7gxpbh5vglmwws5wke7bi
-- valory/ceramic_read_abci:0.1.0:bafybeidruvxgpbggchuvlnssuswdxuoz2ep6sjvzzqjeyckybb6gpjx3ia
-- valory/ceramic_write_abci:0.1.0:bafybeigtkv57h5suaqqpjfknimfegbidovxna7cok7znsgzrfb4nftqvay
+- valory/abstract_abci:0.1.0:bafybeigafjci7m7ezwzasav5xqo7v2mbxxn7qb4y7vnuc2wr2irzvn7wsy
+- valory/abstract_round_abci:0.1.0:bafybeih2fyfb6kkf7r45pvdk7pyyebr5xloia4xiqxtb3qsrasnstqmepq
+- valory/governatooorr_abci:0.1.0:bafybeiett5iorvyp37syiqsi6m6byarqk3lgvgjqjpzqn55jbojmhca2va
+- valory/proposal_collector_abci:0.1.0:bafybeibpx7yjzttx6iylkcpdwiakvkcwtadow2a3hj4y6v3n5inhpyhw5e
+- valory/proposal_voter_abci:0.1.0:bafybeifov3xo434u2r43vv6zldqu46zfg2na3ltoxny6woqcuxeycjxqxa
+- valory/registration_abci:0.1.0:bafybeibndt6vxiwc2edgtaxpjbhwto3eyu33ujz3zmvtygvo2qz7xme5li
+- valory/reset_pause_abci:0.1.0:bafybeigeoc363gv3wp2rrmk6p2fdxney33nxd3owtpfugzapgruwe4klyu
+- valory/termination_abci:0.1.0:bafybeigqpij2sgrpnilqjljfciixop4fldq5qceixc7534q6af4potdmdm
+- valory/transaction_settlement_abci:0.1.0:bafybeia7rzsbea3ch4gcafyp3z6uvqh4npws2xpdwbkkdbrqqpjops7nui
+- valory/ceramic_read_abci:0.1.0:bafybeide5tbobzkwfdi7yzw6bsau36h43hdlgbnk2bfqvvhmq3hl3ucjmm
+- valory/ceramic_write_abci:0.1.0:bafybeihnalj6zhl5pbf7x2lkznuhivwj45jzrafbtxatwebrpb7st2v6oa
 default_ledger: ethereum
 required_ledgers:
 - ethereum
@@ -79,7 +79,7 @@ logging_config:
 skill_exception_policy: stop_and_exit
 dependencies:
   open-aea-ledger-ethereum:
-    version: ==1.38.0
+    version: ==1.39.0.post1
 default_connection: null
 ---
 public_id: valory/abci:0.1.0
@@ -161,7 +161,7 @@ models:
       max_healthcheck: 120
       multisend_address: ${str:0x0000000000000000000000000000000000000000}
       on_chain_service_id: ${int:null}
-      reset_tendermint_after: ${int:2}
+      reset_tendermint_after: ${int:30}
       retry_attempts: 400
       retry_timeout: 3
       reset_pause_duration: ${int:300}
@@ -188,7 +188,7 @@ models:
       tally_api_key: ${str:<tally_api_key>}
       tally_api_call_sleep_seconds: ${int:2}
       snapshot_graphql_endpoint: ${str:https://hub.snapshot.org/graphql}
-      snapshot_vote_endpoint: ${str:https://relayer.snapshot.org/}
+      snapshot_vote_endpoint: ${str:https://seq.snapshot.org/}
       service_endpoint_base: ${str:https://governatooorr.staging.autonolas.tech/}
       validate_timeout: 1205
       voting_block_threshold: ${int:300}
@@ -203,6 +203,16 @@ models:
       ceramic_stream_id: ${str:kjzl6cwe1jw149erp7y8pg1kwk0103714knt33k66rkdrwn1zmskykj8ho8y15n}
       default_read_target_property: ${str:ceramic_db}
       signmessagelib_address: ${str:0xA65387F16B013cf2Af4605Ad8aA5ec25a2cbA3a2}
+      use_slashing: ${bool:false}
+      slash_cooldown_hours: ${int:3}
+      slash_threshold_amount: ${int:10000000000000000}
+      light_slash_unit_amount: ${int:5000000000000000}
+      serious_slash_unit_amount: ${int:8000000000000000}
+      snapshot_space_whitelist: ${list:[]}
+      disable_snapshot: ${bool:false}
+      disable_tally: ${bool:false}
+      default_snapshot_vote_on_error: ${bool:false}
+      default_tally_vote_on_error: ${bool:false}
 ---
 public_id: fetchai/http_server:0.22.0:bafybeicblltx7ha3ulthg7bzfccuqqyjmihhrvfeztlgrlcoxhr7kf6nbq
 type: connection

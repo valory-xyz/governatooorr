@@ -190,8 +190,8 @@ class EstablishVoteBehaviour(ProposalVoterBaseBehaviour):
         return response
 
 
-class PrepareVoteTransactionBehaviour(ProposalVoterBaseBehaviour):
-    """PrepareVoteTransactionBehaviour"""
+class PrepareVoteTransactionsBehaviour(ProposalVoterBaseBehaviour):
+    """PrepareVoteTransactionsBehaviour"""
 
     matching_round: Type[AbstractRound] = PrepareVoteTransactionRound
 
@@ -247,5 +247,5 @@ class ProposalVoterRoundBehaviour(AbstractRoundBehaviour):
     abci_app_cls = ProposalVoterSolanaAbciApp  # type: ignore
     behaviours: Set[Type[BaseBehaviour]] = [
         EstablishVoteBehaviour,
-        PrepareVoteTransactionBehaviour,
+        PrepareVoteTransactionsBehaviour,
     ]

@@ -74,16 +74,16 @@ class SynchronizedData(BaseSynchronizedData):
         return cast(dict, self.db.get_strict("ceramic_db"))
 
     @property
-    def active_proposals(self) -> dict:
+    def target_proposals(self) -> dict:
         """Get the active proposals: proposals where the service has voting power"""
         return cast(
-            dict, self.db.get("active_proposals", {"tally": {}, "snapshot": {}})
+            dict, self.db.get("target_proposals", {"tally": {}, "snapshot": {}})
         )
 
     @property
-    def open_proposals(self) -> dict:
+    def tally_active_proposals(self) -> dict:
         """Get the open proposals: all proposals even if the service does not have voting power"""
-        return cast(dict, self.db.get("open_proposals", {}))
+        return cast(dict, self.db.get("tally_active_proposals", {}))
 
     @property
     def n_snapshot_retrieved_proposals(self) -> int:
@@ -228,6 +228,15 @@ class CollectActiveTallyProposalsRound(CollectSameUntilThresholdRound):
     def end_block(self) -> Optional[Tuple[BaseSynchronizedData, Event]]:
         """Process the end of the block."""
         if self.threshold_reached:
+            synchronized_data = self.synchronized_data.update(
+                synchronized_data_class=SynchronizedData,
+                **{
+                    get_name(
+                        SynchronizedData.pending_write
+                    ): False,  # we reset this after writing
+                },
+            )
+
             if (
                 self.most_voted_payload
                 == CollectActiveTallyProposalsRound.ERROR_PAYLOAD
@@ -235,7 +244,8 @@ class CollectActiveTallyProposalsRound(CollectSameUntilThresholdRound):
                 tally_api_retries = cast(
                     SynchronizedData, self.synchronized_data
                 ).tally_api_retries
-                synchronized_data = self.synchronized_data.update(
+
+                synchronized_data = synchronized_data.update(
                     synchronized_data_class=SynchronizedData,
                     **{
                         get_name(SynchronizedData.tally_api_retries): tally_api_retries
@@ -248,28 +258,28 @@ class CollectActiveTallyProposalsRound(CollectSameUntilThresholdRound):
                 self.most_voted_payload
                 == CollectActiveTallyProposalsRound.MAX_RETRIES_PAYLOAD
             ):
-                return self.synchronized_data, Event.DONE
+                return synchronized_data, Event.DONE
 
             if (
                 self.most_voted_payload
                 == CollectActiveTallyProposalsRound.BLOCK_RETRIEVAL_ERROR
             ):
-                return self.synchronized_data, Event.BLOCK_RETRIEVAL_ERROR
+                return synchronized_data, Event.BLOCK_RETRIEVAL_ERROR
 
             payload = json.loads(self.most_voted_payload)
 
-            active_proposals = cast(
+            target_proposals = cast(
                 SynchronizedData, self.synchronized_data
-            ).active_proposals
+            ).target_proposals
 
-            active_proposals["tally"] = payload["updated_tally_proposals"]
+            target_proposals["tally"] = payload["tally_target_proposals"]
 
-            synchronized_data = self.synchronized_data.update(
+            synchronized_data = synchronized_data.update(
                 synchronized_data_class=SynchronizedData,
                 **{
-                    get_name(SynchronizedData.active_proposals): active_proposals,
-                    get_name(SynchronizedData.open_proposals): payload[
-                        "open_proposals"
+                    get_name(SynchronizedData.target_proposals): target_proposals,
+                    get_name(SynchronizedData.tally_active_proposals): payload[
+                        "tally_active_proposals"
                     ],
                 },
             )
@@ -316,11 +326,11 @@ class CollectActiveSnapshotProposalsRound(CollectSameUntilThresholdRound):
 
             payload = json.loads(self.most_voted_payload)
 
-            active_proposals = cast(
+            target_proposals = cast(
                 SynchronizedData, self.synchronized_data
-            ).active_proposals
+            ).target_proposals
 
-            active_proposals["snapshot"] = payload["updated_snapshot_proposals"]
+            target_proposals["snapshot"] = payload["snapshot_target_proposals"]
             n_retrieved_proposals = payload["n_retrieved_proposals"]
 
             finished = (
@@ -331,7 +341,7 @@ class CollectActiveSnapshotProposalsRound(CollectSameUntilThresholdRound):
             synchronized_data = self.synchronized_data.update(
                 synchronized_data_class=SynchronizedData,
                 **{
-                    get_name(SynchronizedData.active_proposals): active_proposals,
+                    get_name(SynchronizedData.target_proposals): target_proposals,
                     get_name(
                         SynchronizedData.n_snapshot_retrieved_proposals
                     ): n_retrieved_proposals,
@@ -411,7 +421,7 @@ class ProposalCollectorAbciApp(AbciApp[Event]):
         FinishedWriteDelegationsRound: set(),
         FinishedProposalRound: {
             get_name(SynchronizedData.ceramic_db),
-            get_name(SynchronizedData.active_proposals),
-            get_name(SynchronizedData.open_proposals),
+            get_name(SynchronizedData.target_proposals),
+            get_name(SynchronizedData.tally_active_proposals),
         },
     }

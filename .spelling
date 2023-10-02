@@ -5,6 +5,7 @@
 # where filename is relative to this configuration file
 pkey
 IEKit
+GovKit
 TwitterObservation
 ScoreAdd
 SelectKeeper

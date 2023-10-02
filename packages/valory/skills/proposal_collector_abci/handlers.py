@@ -293,7 +293,7 @@ class HttpHandler(BaseHttpHandler):
     def _handle_get_proposals(
         self, http_msg: HttpMessage, http_dialogue: HttpDialogue
     ) -> None:
-        response_body_data = list(self.synchronized_data.open_proposals)
+        response_body_data = list(self.synchronized_data.tally_active_proposals)
 
         self._send_ok_response(http_msg, http_dialogue, response_body_data)
 
@@ -301,7 +301,7 @@ class HttpHandler(BaseHttpHandler):
         self, http_msg: HttpMessage, http_dialogue: HttpDialogue
     ) -> None:
         response_body_data = list(
-            self.synchronized_data.active_proposals["tally"].values()
+            self.synchronized_data.tally_active_proposals.values()
         )
 
         self._send_ok_response(http_msg, http_dialogue, response_body_data)
@@ -312,8 +312,8 @@ class HttpHandler(BaseHttpHandler):
         proposal_id = http_msg.url.split("/")[-1]
         proposal = (
             None
-            if proposal_id not in self.synchronized_data.active_proposals["tally"]
-            else self.synchronized_data.active_proposals["tally"][proposal_id]
+            if proposal_id not in self.synchronized_data.tally_active_proposals
+            else self.synchronized_data.tally_active_proposals[proposal_id]
         )
 
         if not proposal:

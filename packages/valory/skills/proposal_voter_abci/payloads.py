@@ -32,15 +32,22 @@ class EstablishVotePayload(BaseTxPayload):
 
 
 @dataclass(frozen=True)
-class PrepareVoteTransactionPayload(BaseTxPayload):
+class PrepareVoteTransactionsPayload(BaseTxPayload):
     """Represent a transaction payload for the PrepareVoteTransactionRound."""
 
     content: str
 
 
 @dataclass(frozen=True)
-class SnapshotCallDecisionMakingPayload(BaseTxPayload):
-    """Represent a transaction payload for the SnapshotCallDecisionMakingRound."""
+class DecisionMakingPayload(BaseTxPayload):
+    """Represent a transaction payload for the DecisionMakingRound."""
+
+    content: str
+
+
+@dataclass(frozen=True)
+class PostVoteDecisionMakingPayload(BaseTxPayload):
+    """Represent a transaction payload for the PostVoteDecisionMakingRound."""
 
     content: str
 
@@ -64,4 +71,4 @@ class SnapshotAPISendSelectKeeperPayload(BaseTxPayload):
 class SnapshotAPISendPayload(BaseTxPayload):
     """Represent a transaction payload for the SnapshotAPISendRound."""
 
-    content: str
+    success: bool

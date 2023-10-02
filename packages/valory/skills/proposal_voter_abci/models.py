@@ -19,8 +19,7 @@
 
 """This module contains the shared state for the abci skill of ProposalVoterAbciApp."""
 
-from dataclasses import dataclass
-from typing import Any, Optional, Union
+from typing import Any
 
 from aea.skills.base import SkillContext
 
@@ -33,15 +32,6 @@ from packages.valory.skills.abstract_round_abci.models import (
     SharedState as BaseSharedState,
 )
 from packages.valory.skills.proposal_voter_abci.rounds import ProposalVoterAbciApp
-
-
-@dataclass
-class PendingVote:
-    """Represents a proposal vote that is pending to be submitted and verified."""
-
-    proposal_id: str
-    vote_choice: Union[str, int]
-    is_snapshot: bool  # onchain or snapshot
 
 
 class SharedState(BaseSharedState):
@@ -57,7 +47,6 @@ class SharedState(BaseSharedState):
     ) -> None:
         """Initialize the state."""
         super().__init__(*args, skill_context=skill_context, **kwargs)
-        self.pending_vote: Optional[PendingVote] = None
 
 
 class Params(BaseParams):
@@ -74,11 +63,17 @@ class Params(BaseParams):
         self.signmessagelib_address = self._ensure(
             "signmessagelib_address", kwargs, str
         )
-        self.snapshot_vote_endpoint = kwargs.get(
-            "snapshot_vote_endpoint", "https://relayer.snapshot.org/"
+        self.snapshot_vote_endpoint = self._ensure(
+            "snapshot_vote_endpoint", kwargs, str
         )
         self.tally_api_call_sleep_seconds = kwargs.get(
-            "tally_api_call_sleep_seconds", 2
+            "tally_api_call_sleep_seconds", 15
+        )
+        self.default_snapshot_vote_on_error = self._ensure(
+            "default_snapshot_vote_on_error", kwargs, bool
+        )
+        self.default_tally_vote_on_error = self._ensure(
+            "default_tally_vote_on_error", kwargs, bool
         )
         super().__init__(*args, **kwargs)
 

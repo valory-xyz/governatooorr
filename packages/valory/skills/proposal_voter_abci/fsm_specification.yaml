@@ -1,5 +1,4 @@
 alphabet_in:
-- CONTRACT_ERROR
 - DONE
 - NO_MAJORITY
 - NO_VOTE
@@ -14,36 +13,37 @@ final_states:
 label: ProposalVoterAbciApp
 start_states:
 - EstablishVoteRound
-- PrepareVoteTransactionRound
-- SnapshotCallDecisionMakingRound
+- PostVoteDecisionMakingRound
 states:
+- DecisionMakingRound
 - EstablishVoteRound
 - FinishedTransactionPreparationNoVoteRound
 - FinishedTransactionPreparationVoteRound
-- PrepareVoteTransactionRound
+- PostVoteDecisionMakingRound
+- PrepareVoteTransactionsRound
 - SnapshotAPISendRandomnessRound
 - SnapshotAPISendRound
 - SnapshotAPISendSelectKeeperRound
-- SnapshotCallDecisionMakingRound
 transition_func:
-    (EstablishVoteRound, DONE): PrepareVoteTransactionRound
+    (DecisionMakingRound, NO_MAJORITY): DecisionMakingRound
+    (DecisionMakingRound, NO_VOTE): FinishedTransactionPreparationNoVoteRound
+    (DecisionMakingRound, ROUND_TIMEOUT): DecisionMakingRound
+    (DecisionMakingRound, VOTE): FinishedTransactionPreparationVoteRound
+    (EstablishVoteRound, DONE): PrepareVoteTransactionsRound
     (EstablishVoteRound, NO_MAJORITY): EstablishVoteRound
     (EstablishVoteRound, ROUND_TIMEOUT): EstablishVoteRound
-    (PrepareVoteTransactionRound, CONTRACT_ERROR): PrepareVoteTransactionRound
-    (PrepareVoteTransactionRound, NO_MAJORITY): PrepareVoteTransactionRound
-    (PrepareVoteTransactionRound, NO_VOTE): FinishedTransactionPreparationNoVoteRound
-    (PrepareVoteTransactionRound, ROUND_TIMEOUT): PrepareVoteTransactionRound
-    (PrepareVoteTransactionRound, SNAPSHOT_CALL): SnapshotAPISendRandomnessRound
-    (PrepareVoteTransactionRound, VOTE): FinishedTransactionPreparationVoteRound
+    (PostVoteDecisionMakingRound, NO_MAJORITY): PostVoteDecisionMakingRound
+    (PostVoteDecisionMakingRound, ROUND_TIMEOUT): PostVoteDecisionMakingRound
+    (PostVoteDecisionMakingRound, SKIP_CALL): DecisionMakingRound
+    (PostVoteDecisionMakingRound, SNAPSHOT_CALL): SnapshotAPISendRandomnessRound
+    (PrepareVoteTransactionsRound, DONE): DecisionMakingRound
+    (PrepareVoteTransactionsRound, NO_MAJORITY): PrepareVoteTransactionsRound
+    (PrepareVoteTransactionsRound, ROUND_TIMEOUT): PrepareVoteTransactionsRound
     (SnapshotAPISendRandomnessRound, DONE): SnapshotAPISendSelectKeeperRound
     (SnapshotAPISendRandomnessRound, NO_MAJORITY): SnapshotAPISendRandomnessRound
     (SnapshotAPISendRandomnessRound, ROUND_TIMEOUT): SnapshotAPISendRandomnessRound
-    (SnapshotAPISendRound, DONE): PrepareVoteTransactionRound
+    (SnapshotAPISendRound, DONE): DecisionMakingRound
     (SnapshotAPISendRound, ROUND_TIMEOUT): SnapshotAPISendRandomnessRound
     (SnapshotAPISendSelectKeeperRound, DONE): SnapshotAPISendRound
     (SnapshotAPISendSelectKeeperRound, NO_MAJORITY): SnapshotAPISendRandomnessRound
     (SnapshotAPISendSelectKeeperRound, ROUND_TIMEOUT): SnapshotAPISendRandomnessRound
-    (SnapshotCallDecisionMakingRound, DONE): SnapshotAPISendRandomnessRound
-    (SnapshotCallDecisionMakingRound, NO_MAJORITY): EstablishVoteRound
-    (SnapshotCallDecisionMakingRound, ROUND_TIMEOUT): EstablishVoteRound
-    (SnapshotCallDecisionMakingRound, SKIP_CALL): PrepareVoteTransactionRound

@@ -18,6 +18,7 @@ autonomy push-all
 autonomy fetch --local --service valory/governatooorr && cd governatooorr
 
 # Build the image
+autonomy init --reset --author valory --remote --ipfs --ipfs-node "/dns/registry.autonolas.tech/tcp/443/https"
 autonomy build-image
 
 # Copy keys and build the deployment

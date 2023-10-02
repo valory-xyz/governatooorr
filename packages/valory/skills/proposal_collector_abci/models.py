@@ -79,9 +79,14 @@ class Params(BaseParams):
         self.ceramic_did_str = kwargs.get("ceramic_did_str")
         self.ceramic_did_seed = kwargs.get("ceramic_did_seed")
         self.voting_seconds_threshold = kwargs.get("voting_seconds_threshold")
-        self.snapshot_graphql_endpoint = kwargs.get(
-            "snapshot_graphql_endpoint", "https://hub.snapshot.org/graphql"
+        self.snapshot_graphql_endpoint = self._ensure(
+            "snapshot_graphql_endpoint", kwargs, str
         )
+        self.snapshot_space_whitelist = self._ensure(
+            "snapshot_space_whitelist", kwargs, list
+        )
+        self.disable_snapshot = self._ensure("disable_snapshot", kwargs, bool)
+        self.disable_tally = self._ensure("disable_tally", kwargs, bool)
         super().__init__(*args, **kwargs)
 
 

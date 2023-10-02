@@ -50,12 +50,12 @@ from packages.valory.skills.abstract_round_abci.test_tools.common import (
 )
 from packages.valory.skills.proposal_voter_abci.behaviours import (
     EstablishVoteBehaviour,
-    PrepareVoteTransactionBehaviour,
+    PostVoteDecisionMakingBehaviour,
+    PrepareVoteTransactionsBehaviour,
     ProposalVoterBaseBehaviour,
     SnapshotAPISendBehaviour,
     SnapshotAPISendRandomnessBehaviour,
     SnapshotAPISendSelectKeeperBehaviour,
-    SnapshotCallDecisionMakingBehaviour,
 )
 from packages.valory.skills.proposal_voter_abci.models import PendingVote, SharedState
 from packages.valory.skills.proposal_voter_abci.rounds import (
@@ -249,7 +249,7 @@ class TestEstablishVoteBehaviour(BaseProposalVoterTest):
     """Tests EstablishVoteBehaviour"""
 
     behaviour_class = EstablishVoteBehaviour
-    next_behaviour_class = PrepareVoteTransactionBehaviour
+    next_behaviour_class = PrepareVoteTransactionsBehaviour
 
     @pytest.mark.parametrize(
         "test_case, kwargs",
@@ -318,7 +318,7 @@ class TestEstablishVoteSnapshotBehaviour(BaseProposalVoterTest):
     """Tests EstablishVoteBehaviour"""
 
     behaviour_class = EstablishVoteBehaviour
-    next_behaviour_class = PrepareVoteTransactionBehaviour
+    next_behaviour_class = PrepareVoteTransactionsBehaviour
 
     @pytest.mark.parametrize(
         "test_case, kwargs",
@@ -327,7 +327,7 @@ class TestEstablishVoteSnapshotBehaviour(BaseProposalVoterTest):
                 BehaviourTestCase(
                     "Happy path",
                     initial_data=dict(
-                        active_proposals={
+                        target_proposals={
                             "tally": get_dummy_proposals(),
                             "snapshot": get_dummy_snapshot_proposals(),
                         },
@@ -417,9 +417,9 @@ class TestEstablishVoteSnapshotBehaviour(BaseProposalVoterTest):
 
 
 class TestPrepareVoteTransactionNoVoteBehaviour(BaseProposalVoterTest):
-    """Tests PrepareVoteTransactionBehaviour"""
+    """Tests PrepareVoteTransactionsBehaviour"""
 
-    behaviour_class = PrepareVoteTransactionBehaviour
+    behaviour_class = PrepareVoteTransactionsBehaviour
     next_behaviour_class = make_degenerate_behaviour(  # type: ignore
         FinishedTransactionPreparationNoVoteRound
     )
@@ -431,7 +431,7 @@ class TestPrepareVoteTransactionNoVoteBehaviour(BaseProposalVoterTest):
                 BehaviourTestCase(
                     "Happy path",
                     initial_data=dict(
-                        active_proposals=get_dummy_proposals(),
+                        target_proposals=get_dummy_proposals(),
                         expiring_proposals={
                             "tally": {"1": {"vote": "Yes"}},
                             "snapshot": {"1": {"vote": "Yes"}},
@@ -466,9 +466,9 @@ class TestPrepareVoteTransactionNoVoteBehaviour(BaseProposalVoterTest):
 
 
 class TestPrepareVoteTransactionVoteTallyBehaviour(BaseProposalVoterTest):
-    """Tests PrepareVoteTransactionBehaviour"""
+    """Tests PrepareVoteTransactionsBehaviour"""
 
-    behaviour_class = PrepareVoteTransactionBehaviour
+    behaviour_class = PrepareVoteTransactionsBehaviour
     next_behaviour_class = make_degenerate_behaviour(  # type: ignore
         FinishedTransactionPreparationVoteRound
     )
@@ -480,7 +480,7 @@ class TestPrepareVoteTransactionVoteTallyBehaviour(BaseProposalVoterTest):
                 BehaviourTestCase(
                     "Happy path",
                     initial_data=dict(
-                        active_proposals=get_dummy_proposals(),
+                        target_proposals=get_dummy_proposals(),
                         expiring_proposals={
                             "tally": {"1": {"vote": "Yes"}},
                             "snapshot": {"1": {"vote": "Yes"}},
@@ -531,9 +531,9 @@ class TestPrepareVoteTransactionVoteTallyBehaviour(BaseProposalVoterTest):
 
 
 class TestPrepareVoteTransactionVoteSnapshotBehaviour(BaseProposalVoterTest):
-    """Tests PrepareVoteTransactionBehaviour"""
+    """Tests PrepareVoteTransactionsBehaviour"""
 
-    behaviour_class = PrepareVoteTransactionBehaviour
+    behaviour_class = PrepareVoteTransactionsBehaviour
     next_behaviour_class = make_degenerate_behaviour(  # type: ignore
         FinishedTransactionPreparationVoteRound
     )
@@ -611,10 +611,10 @@ class TestPrepareVoteTransactionVoteSnapshotBehaviour(BaseProposalVoterTest):
 
 
 class TestPrepareVoteTransactionVoteSnapshotErrorBehaviour(BaseProposalVoterTest):
-    """Tests PrepareVoteTransactionBehaviour"""
+    """Tests PrepareVoteTransactionsBehaviour"""
 
-    behaviour_class = PrepareVoteTransactionBehaviour
-    next_behaviour_class = PrepareVoteTransactionBehaviour
+    behaviour_class = PrepareVoteTransactionsBehaviour
+    next_behaviour_class = PrepareVoteTransactionsBehaviour
 
     @pytest.mark.parametrize(
         "test_case, kwargs",
@@ -666,10 +666,10 @@ class TestPrepareVoteTransactionVoteSnapshotErrorBehaviour(BaseProposalVoterTest
 
 
 class TestPrepareVoteTransactionContractErrorBehaviour(BaseProposalVoterTest):
-    """Tests PrepareVoteTransactionBehaviour"""
+    """Tests PrepareVoteTransactionsBehaviour"""
 
-    behaviour_class = PrepareVoteTransactionBehaviour
-    next_behaviour_class = PrepareVoteTransactionBehaviour
+    behaviour_class = PrepareVoteTransactionsBehaviour
+    next_behaviour_class = PrepareVoteTransactionsBehaviour
 
     @pytest.mark.parametrize(
         "test_case, kwargs",
@@ -744,10 +744,10 @@ class TestPrepareVoteTransactionContractErrorBehaviour(BaseProposalVoterTest):
 
 
 class TestRetrieveSignatureNoSnapshotVoteBehaviour(BaseProposalVoterTest):
-    """Tests SnapshotCallDecisionMakingBehaviour"""
+    """Tests PostVoteDecisionMakingBehaviour"""
 
-    behaviour_class = SnapshotCallDecisionMakingBehaviour
-    next_behaviour_class = PrepareVoteTransactionBehaviour
+    behaviour_class = PostVoteDecisionMakingBehaviour
+    next_behaviour_class = PrepareVoteTransactionsBehaviour
 
     @pytest.mark.parametrize(
         "test_case, kwargs",
@@ -833,7 +833,7 @@ class TestSnapshotAPISendBehaviourNonSender(BaseProposalVoterTest):
     """Tests StreamWriteBehaviour"""
 
     behaviour_class = SnapshotAPISendBehaviour
-    next_behaviour_class = PrepareVoteTransactionBehaviour
+    next_behaviour_class = PrepareVoteTransactionsBehaviour
 
     @pytest.mark.parametrize(
         "test_case",
@@ -855,7 +855,7 @@ class TestSnapshotAPISendBehaviourSender(BaseProposalVoterTest):
     """Tests SnapshotAPISendBehaviour"""
 
     behaviour_class = SnapshotAPISendBehaviour
-    next_behaviour_class = PrepareVoteTransactionBehaviour
+    next_behaviour_class = PrepareVoteTransactionsBehaviour
 
     @pytest.mark.parametrize(
         "test_case, kwargs",

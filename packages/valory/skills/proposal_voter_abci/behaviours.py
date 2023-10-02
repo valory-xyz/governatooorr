@@ -836,7 +836,12 @@ class SnapshotAPISendBehaviour(ProposalVoterBaseBehaviour):
         }
 
         while retries < MAX_RETRIES:
-            self.context.logger.info(f"Sending vote data to Snapshot API: {api_data}")
+            self.context.logger.info(
+                f"Sending vote data to Snapshot API [{self.params.snapshot_vote_endpoint}]: {api_data}"
+            )
+
+            # Avoid calling too quicly
+            yield from self.sleep(self.params.tally_api_call_sleep_seconds)
 
             # Make the request
             response = yield from self.get_http_response(
@@ -845,9 +850,6 @@ class SnapshotAPISendBehaviour(ProposalVoterBaseBehaviour):
                 content=json.dumps(api_data).encode("utf-8"),
                 headers=headers,
             )
-
-            # Avoid calling too quicly
-            yield from self.sleep(self.params.tally_api_call_sleep_seconds)
 
             if response.status_code != HTTP_OK:
                 retries += 1

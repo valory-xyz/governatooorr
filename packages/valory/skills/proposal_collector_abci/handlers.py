@@ -111,6 +111,7 @@ class HttpHandler(BaseHttpHandler):
         hostname_regex = rf".*({service_endpoint_base}|{propel_uri_base_hostname}|localhost|127.0.0.1|0.0.0.0)(:\d+)?"
         self.handler_url_regex = rf"{hostname_regex}\/.*"
         eth_address_regex = r"0x[a-fA-F0-9]{40}"
+        health_url_regex = rf"{hostname_regex}\/healthcheck"
 
         # Endpoint regexes
         delegate_url_regex = rf"{hostname_regex}\/delegate\/?$"
@@ -118,6 +119,7 @@ class HttpHandler(BaseHttpHandler):
             rf"{hostname_regex}\/delegations\/{eth_address_regex}\/?$"
         )
         proposals_url_regex = rf"{hostname_regex}\/proposals\/?$"
+        active_proposals_url_regex = rf"{hostname_regex}\/active_proposals\/?$"
         proposal_url_regex = rf"{hostname_regex}\/proposal\/\d+\/?$"
         health_url_regex = rf"{hostname_regex}\/healthcheck"
 
@@ -129,6 +131,7 @@ class HttpHandler(BaseHttpHandler):
             (HttpMethod.GET.value, HttpMethod.HEAD.value): [
                 (delegations_url_regex, self._handle_get_delegations),
                 (proposals_url_regex, self._handle_get_proposals),
+                (active_proposals_url_regex, self._handle_get_active_proposals),
                 (proposal_url_regex, self._handle_get_proposal),
                 (health_url_regex, self._handle_get_health),
             ],
@@ -279,7 +282,7 @@ class HttpHandler(BaseHttpHandler):
 
         delegations = [
             delegation_to_camel_case(d)
-            for d in self.synchronized_data.delegations
+            for d in self.synchronized_data.ceramic_db["delegations"]
             if d["user_address"] == address
         ]
 
@@ -290,7 +293,16 @@ class HttpHandler(BaseHttpHandler):
     def _handle_get_proposals(
         self, http_msg: HttpMessage, http_dialogue: HttpDialogue
     ) -> None:
-        response_body_data = list(self.synchronized_data.proposals.values())
+        response_body_data = list(self.synchronized_data.tally_active_proposals)
+
+        self._send_ok_response(http_msg, http_dialogue, response_body_data)
+
+    def _handle_get_active_proposals(
+        self, http_msg: HttpMessage, http_dialogue: HttpDialogue
+    ) -> None:
+        response_body_data = list(
+            self.synchronized_data.tally_active_proposals.values()
+        )
 
         self._send_ok_response(http_msg, http_dialogue, response_body_data)
 
@@ -300,8 +312,8 @@ class HttpHandler(BaseHttpHandler):
         proposal_id = http_msg.url.split("/")[-1]
         proposal = (
             None
-            if proposal_id not in self.synchronized_data.proposals
-            else self.synchronized_data.proposals[proposal_id]
+            if proposal_id not in self.synchronized_data.tally_active_proposals
+            else self.synchronized_data.tally_active_proposals[proposal_id]
         )
 
         if not proposal:
@@ -390,13 +402,13 @@ class HttpHandler(BaseHttpHandler):
             ]
 
         data = {
+            "is_transitioning_fast": is_transitioning_fast,
             "seconds_since_last_transition": seconds_since_last_transition,
             "is_tm_healthy": not is_tm_unhealthy,
             "period": self.synchronized_data.period_count,
             "reset_pause_duration": self.context.params.reset_pause_duration,
             "current_round": current_round,
             "previous_rounds": previous_rounds,
-            "is_transitioning_fast": is_transitioning_fast,
         }
 
         self._send_ok_response(http_msg, http_dialogue, data)

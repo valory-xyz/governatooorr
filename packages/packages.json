@@ -1,22 +1,22 @@
 {
     "dev": {
-        "skill/valory/proposal_collector_abci/0.1.0": "bafybeifrs22bnmo72tkzyd474jkwrajw2zf3wihqx2qz6ig2gql6lddmcm",
+        "skill/valory/proposal_collector_abci/0.1.0": "bafybeibpx7yjzttx6iylkcpdwiakvkcwtadow2a3hj4y6v3n5inhpyhw5e",
         "contract/valory/delegate/0.1.0": "bafybeic4rzzzafvescwyul4hl7kxtpyfwfp5uarm2o2trgb6rl5tv7o2ba",
-        "skill/valory/proposal_voter_abci/0.1.0": "bafybeiekgghknicy7xh3hagfuwivxwtbha55irpeqvpuunntestkzsohxi",
-        "skill/valory/governatooorr_abci/0.1.0": "bafybeidmsrl4opujhfbptd5yve6raghjmz6hi3p2uz33k6yd376auig6iu",
-        "agent/valory/governatooorr/0.1.0": "bafybeifmhwp4zadiw6xrt4ktchrvlunhmx4zu6d7rpo4arham237rraunu",
-        "service/valory/governatooorr/0.1.0": "bafybeiazbenjjbtmoluwpg44vo3rnkmpixrh6pt3bpbtl5prks3oj5l3vm",
-        "service/valory/governatooorr_local/0.1.0": "bafybeia3e3rusa7fi7unsgqrg7ytv7xmzgjgghzj6pcbuy3gmsot43u7om",
+        "skill/valory/proposal_voter_abci/0.1.0": "bafybeifov3xo434u2r43vv6zldqu46zfg2na3ltoxny6woqcuxeycjxqxa",
+        "skill/valory/governatooorr_abci/0.1.0": "bafybeiett5iorvyp37syiqsi6m6byarqk3lgvgjqjpzqn55jbojmhca2va",
+        "agent/valory/governatooorr/0.1.0": "bafybeihz4zir2n5pzz5f5hdmrsy5zpgh2fxjeysyet3dr2rjidoa3zdni4",
+        "service/valory/governatooorr/0.1.0": "bafybeiac6vdbz22iqesr7h3n2b32vz225tkmxuclpa3crcjhsyizviq23y",
+        "service/valory/governatooorr_local/0.1.0": "bafybeieu43pridpnagrq5mzc3qoymisnkqavvozhv5fv7gbvkrfbsvncei",
         "contract/valory/sign_message_lib/0.1.0": "bafybeibctdhgv35m5oprltxgqcd62fcm332mc3t2kyfx33pym3l32qe7pe",
         "contract/valory/solana_governance/0.1.0": "bafybeiai6xmkddnu3dmd4aar2om6bqmta6wesdne7wjcsm7q4qhrfnsdia",
         "contract/valory/squads_multisig/0.1.0": "bafybeihjv5gwbqsnwjkhljtkamdx2olscvunk7j53jicvd2rgymtgzmbvi",
         "skill/valory/proposal_collector_solana_abci/0.1.0": "bafybeig7wskbqrertddwfbavtpeekzvjqdfwlyijengii5f6dufbnjn6ym",
-        "skill/valory/proposal_voter_solana_abci/0.1.0": "bafybeifd6valhsyec32pfu6ev5jdctwlijf544bsifchyb52xs735ghhfy",
+        "skill/valory/proposal_voter_solana_abci/0.1.0": "bafybeigzq2qibn5swwrrowm7xdsdehzov6c5qurkjjdknwixe6onlie5yy",
         "skill/valory/solana_transaction_settlement_abci/0.1.0": "bafybeichdtoillwee2wcanxje3rwhkqtsbkphk7kagu67xfstwinxrtodm",
-        "skill/valory/governatooorr_solana_abci/0.1.0": "bafybeihsbhio5fe5kgg4crcbc45fnnafh2tdoboage6mpaecr5lujw2dgy",
-        "agent/valory/governatooorr_solana/0.1.0": "bafybeicnxi4wrpffjgijirmmc2icckos5rpq6ja77np2wt4tjdlkfzg7ki",
-        "service/valory/governatooorr_solana/0.1.0": "bafybeicd7u6ihclxawa37md5sksl5z72esdwfke7fyr5cq43xptbtbdaie",
-        "service/valory/governatooorr_solana_local/0.1.0": "bafybeih65qnmdujupqnjyri3z3syz36cjos7hs2e4xvr36pzav324rmt4m"
+        "skill/valory/governatooorr_solana_abci/0.1.0": "bafybeifub5brfcowwlpr42ihubil266t4ljj2bygkndk2wkb5e5hnyvhfi",
+        "agent/valory/governatooorr_solana/0.1.0": "bafybeie2nj4tjah3iu33mnlhedrmvvsdkqxjo5rti5su5lx6ssycna7ria",
+        "service/valory/governatooorr_solana/0.1.0": "bafybeiej4mx5sz6vxgylue26azuze252iecjkzhcusj4it2b5pmzfekdr4",
+        "service/valory/governatooorr_solana_local/0.1.0": "bafybeia3mesjieqv4rnh2ferlsmyt7ahiggp6x47x46fmz6pwzqftzo72q"
     },
     "third_party": {
         "protocol/open_aea/signing/1.0.0": "bafybeifuxs7gdg2okbn7uofymenjlmnih2wxwkym44lsgwmklgwuckxm2m",
@@ -45,7 +45,7 @@
         "skill/valory/termination_abci/0.1.0": "bafybeigqpij2sgrpnilqjljfciixop4fldq5qceixc7534q6af4potdmdm",
         "skill/valory/ceramic_read_abci/0.1.0": "bafybeide5tbobzkwfdi7yzw6bsau36h43hdlgbnk2bfqvvhmq3hl3ucjmm",
         "skill/valory/ceramic_write_abci/0.1.0": "bafybeihnalj6zhl5pbf7x2lkznuhivwj45jzrafbtxatwebrpb7st2v6oa",
-        "connection/valory/openai/0.1.0": "bafybeih7w2xmaecgznuhxpnbxcxjhfla6wlmx3umytindfgk6ibbwqq2lu",
+        "connection/valory/openai/0.1.0": "bafybeibn42k4zebenmjsumkngfxllxbofkwdno2fm65o6zf5y2uihmo2dq",
         "protocol/valory/llm/1.0.0": "bafybeigqybmg75vsxexmp57hkms7lkp7iwpf54r7wpygizxryvrhfqqpb4"
     }
 }

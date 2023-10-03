@@ -113,7 +113,7 @@ def get_dummy_synchronize_delegations_payload_serialized(empty: bool = False):
 def get_dummy_collect_active_proposals_payload_serialized():
     """Dummy payload"""
     return json.dumps(
-        {"proposals": [], "votable_proposal_ids": [], "proposals_to_refresh": []},
+        {"proposals": [], "votable_proposal_ids": [], "tally_proposals_to_refresh": []},
         sort_keys=True,
     )
 
@@ -213,7 +213,7 @@ class TestSynchronizeDelegationsRoundTest(BaseCollectDifferentUntilAllRoundTest)
                         },
                     ]
                 },
-                event=Event.WRITE_DELEGATIONS,
+                event=Event.WRITE_DB,
                 most_voted_payload=None,
                 synchronized_data_attr_checks=[
                     lambda _synchronized_data: _synchronized_data.delegations,

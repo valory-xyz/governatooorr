@@ -72,15 +72,21 @@ class Params(BaseParams):
         self.tally_api_endpoint = self._ensure("tally_api_endpoint", kwargs, str)
         self.tally_api_key = kwargs.pop("tally_api_key", None)
         self.service_endpoint_base = self._ensure("service_endpoint_base", kwargs, str)
-        self.snapshot_api_endpoint = kwargs.get("snapshot_api_endpoint")
-        self.tally_api_call_sleep_seconds = self._ensure(
-            "tally_api_call_sleep_seconds", kwargs, int
+        self.tally_api_call_sleep_seconds = kwargs.get(
+            "tally_api_call_sleep_seconds", 2
         )
-        self.delegations_stream_id = kwargs.get(
-            "default_read_stream_id"  # We use the same stream we read from
-        )
+        self.ceramic_stream_id = kwargs.get("ceramic_stream_id")
         self.ceramic_did_str = kwargs.get("ceramic_did_str")
         self.ceramic_did_seed = kwargs.get("ceramic_did_seed")
+        self.voting_seconds_threshold = kwargs.get("voting_seconds_threshold")
+        self.snapshot_graphql_endpoint = self._ensure(
+            "snapshot_graphql_endpoint", kwargs, str
+        )
+        self.snapshot_space_whitelist = self._ensure(
+            "snapshot_space_whitelist", kwargs, list
+        )
+        self.disable_snapshot = self._ensure("disable_snapshot", kwargs, bool)
+        self.disable_tally = self._ensure("disable_tally", kwargs, bool)
         super().__init__(*args, **kwargs)
 
 

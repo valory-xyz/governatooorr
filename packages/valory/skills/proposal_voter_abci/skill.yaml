@@ -8,23 +8,22 @@ license: Apache-2.0
 aea_version: '>=1.0.0, <2.0.0'
 fingerprint:
   __init__.py: bafybeifps6e4vfc55iyb5jaab7dxem7y3a2wyflai32pyzf4z75m5ngym4
-  behaviours.py: bafybeiebqvsfo5frangulqtm4iury3wdeldofbp6yezw4grobalz5zbckq
+  behaviours.py: bafybeidnv33fs7m6qy5tydfrfhtltikbwffh2opyrobtxlkssy7bet6wh4
   dialogues.py: bafybeihdakfnmps5o7n5rgepn3fl3lzttqsddhiny7mh7ddwhniutri6bq
-  fsm_specification.yaml: bafybeihrq2j32azeb3p4tkvuvl6r2auturzt6jmxfa74fluwrhekw4lqg4
+  fsm_specification.yaml: bafybeibdl4htkpxjpi43ry4esyjaq2ecu2g7y4iljuws5z4wsex42n3tmu
   handlers.py: bafybeihex227foehp7a7wfc6vh25ahk5g65b5itu325hph2xj33mgp6kue
-  models.py: bafybeiezhvva5nlqt7bu37fcuwj73rweomojd4qadn7tx6q2mwkvh46kli
-  payloads.py: bafybeid5phynue7fcvsqwkg2wafm65vasc3m6aeyakqocnxrteiqghb3ia
-  rounds.py: bafybeigzswz6ulbn7oscas4fgalguqlqbs7mtnswvttthl3vdrgm5a2qi4
-  snapshot.py: bafybeiael35k6td5gdw5z552gjkt6r2itsoarmoxisdlj2psu2inpzubne
+  models.py: bafybeiffdfwxrxgqfalxgh7vwednob2u2vuvjmg7irthavk2fxjesmqotq
+  payloads.py: bafybeidsrislkjtdudzuxgtzd22qi3sozaz6z3nibhbkhek2x3ulspdho4
+  rounds.py: bafybeiaf5cx37hvhkmsgwb23rxmtgyei6vyz5qsl6faidi4bwgvotl7tca
   tests/__init__.py: bafybeicnpfbu2732mdlaputxl4izv5yfievyodmjzy5w64r2e5zyqycigu
-  tests/test_behaviours.py: bafybeiefueo4wr5n6lxjvdlheteq65wsff4f32r6cgmjpcy7wnyy5ajaqi
+  tests/test_behaviours.py: bafybeieba6ee42zky6xmdsef7maojuyzjopbb5lxfmfmh76ydslglb7jbm
   tests/test_handlers.py: bafybeih47tjdvy6sv52ipxkurjinukqurhs5lwfgyauzpv5skrczwuhmky
   tests/test_models.py: bafybeig7lk4aojnesm22dknzz6z5bvxjahzlsrxubncusdbmxtqy6bokhq
   tests/test_payloads.py: bafybeifyheo2u743zogonqa5ofaanyzuazw4yqm2cxkcwwt3n7my7e4jvm
-  tests/test_rounds.py: bafybeifujuvr7526w2wzbo55jt573uijauzi4dpsbxk4sonbxeldboy6di
+  tests/test_rounds.py: bafybeibcbynhla7vbrkvyc27xipvi42wzk4qu6kszwd25i3srcxmblxdv4
 fingerprint_ignore_patterns: []
 connections:
-- valory/openai:0.1.0:bafybeih7w2xmaecgznuhxpnbxcxjhfla6wlmx3umytindfgk6ibbwqq2lu
+- valory/openai:0.1.0:bafybeibn42k4zebenmjsumkngfxllxbofkwdno2fm65o6zf5y2uihmo2dq
 contracts:
 - valory/delegate:0.1.0:bafybeic4rzzzafvescwyul4hl7kxtpyfwfp5uarm2o2trgb6rl5tv7o2ba
 - valory/gnosis_safe:0.1.0:bafybeih6d3vxz3jlgodxm5b2qcwsmansqj4xobuyd6hjnhzremuvd65yrm
@@ -150,6 +149,9 @@ models:
       slash_threshold_amount: 10000000000000000
       light_slash_unit_amount: 5000000000000000
       serious_slash_unit_amount: 8000000000000000
+      default_snapshot_vote_on_error: false
+      default_tally_vote_on_error: false
+      snapshot_vote_endpoint: ${str:https://seq.snapshot.org/}
     class_name: Params
   randomness_api:
     args:

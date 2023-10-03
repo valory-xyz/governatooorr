@@ -8,7 +8,7 @@ license: Apache-2.0
 fingerprint:
   README.md: bafybeid6vqhnovhpsrjwws2wcb67i7fwr4dq54rpowqgrf3njt2anp5nc4
 fingerprint_ignore_patterns: []
-agent: valory/governatooorr:0.1.0:bafybeifmhwp4zadiw6xrt4ktchrvlunhmx4zu6d7rpo4arham237rraunu
+agent: valory/governatooorr:0.1.0:bafybeihz4zir2n5pzz5f5hdmrsy5zpgh2fxjeysyet3dr2rjidoa3zdni4
 number_of_agents: 4
 deployment:
   agent:
@@ -63,7 +63,7 @@ type: skill
         reset_tendermint_after: ${RESET_TENDERMINT_AFTER:int:30}
         retry_attempts: 400
         retry_timeout: 3
-        reset_pause_duration: ${RESET_PAUSE_DURATION:int:10}
+        reset_pause_duration: ${RESET_PAUSE_DURATION:int:300}
         request_retry_delay: 1.0
         request_timeout: 10.0
         round_timeout_seconds: 30.0
@@ -86,7 +86,8 @@ type: skill
         tally_api_endpoint: ${TALLY_API_ENDPOINT:str:https://api.tally.xyz/query}
         tally_api_key: ${TALLY_API_KEY_0:str:<tally_api_key>}
         tally_api_call_sleep_seconds: ${TALLY_API_CALL_SLEEP_SECONDS:int:2}
-        snapshot_api_endpoint: ${SNAPSHOT_API_ENDPOINT:str:https://hub.snapshot.org/graphql}
+        snapshot_graphql_endpoint: ${SNAPSHOT_GRAPHQL_ENDPOINT:str:https://hub.snapshot.org/graphql}
+        snapshot_vote_endpoint: ${SNAPSHOT_VOTE_ENDPOINT:str:https://seq.snapshot.org}
         service_endpoint_base: ${SERVICE_ENDPOINT_BASE:str:https://dummy_service.autonolas.tech/}
         validate_timeout: 1205
         voting_block_threshold: ${VOTING_BLOCK_THRESHOLD:int:300}
@@ -97,14 +98,19 @@ type: skill
         ceramic_api_read_endpoint: ${CERAMIC_API_READ_ENDPOINT:str:api/v0/commits/{stream_id}}
         ceramic_did_seed: ${CERAMIC_DID_SEED:str:dummy_did_seed}
         ceramic_did_str: ${CERAMIC_DID_STR:str:dummy_did_str}
-        default_read_stream_id: ${DEFAULT_READ_STREAM_ID:str:default_read_stream_id}
-        default_write_stream_id: ${DEFAULT_WRITE_STREAM_ID:str:default_write_stream_id}
+        default_read_stream_id: ${DEFAULT_READ_STREAM_ID:str:kjzl6cwe1jw149erp7y8pg1kwk0103714knt33k66rkdrwn1zmskykj8ho8y15n}
+        ceramic_stream_id: ${CERAMIC_STREAM_ID:str:kjzl6cwe1jw149erp7y8pg1kwk0103714knt33k66rkdrwn1zmskykj8ho8y15n}
         signmessagelib_address: ${SIGNMESSAGELIB_ADDRESS:str:0xA65387F16B013cf2Af4605Ad8aA5ec25a2cbA3a2}
         use_slashing: ${USE_SLASHING:bool:false}
         slash_cooldown_hours: ${SLASH_COOLDOWN_HOURS:int:3}
         slash_threshold_amount: ${SLASH_THRESHOLD_AMOUNT:int:10000000000000000}
         light_slash_unit_amount: ${LIGHT_SLASH_UNIT_AMOUNT:int:5000000000000000}
         serious_slash_unit_amount: ${SERIOUS_SLASH_UNIT_AMOUNT:int:8000000000000000}
+        snapshot_space_whitelist: ${SNAPSHOT_SPACE_WHITELIST:list:[]}
+        disable_snapshot: ${DISABLE_SNAPSHOT:bool:false}
+        disable_tally: ${DISABLE_TALLY:bool:false}
+        default_snapshot_vote_on_error: ${DEFAULT_SNAPSHOT_VOTE_ON_ERROR:bool:false}
+        default_tally_vote_on_error: ${DEFAULT_TALLY_VOTE_ON_ERROR:bool:false}
 1:
   models:
     benchmark_tool: *id001
@@ -126,7 +132,7 @@ type: skill
         reset_tendermint_after: ${RESET_TENDERMINT_AFTER:int:30}
         retry_attempts: 400
         retry_timeout: 3
-        reset_pause_duration: ${RESET_PAUSE_DURATION:int:10}
+        reset_pause_duration: ${RESET_PAUSE_DURATION:int:300}
         request_retry_delay: 1.0
         request_timeout: 10.0
         round_timeout_seconds: 30.0
@@ -146,7 +152,8 @@ type: skill
         tally_api_endpoint: ${TALLY_API_ENDPOINT:str:https://api.tally.xyz/query}
         tally_api_key: ${TALLY_API_KEY_1:str:<tally_api_key>}
         tally_api_call_sleep_seconds: ${TALLY_API_CALL_SLEEP_SECONDS:int:2}
-        snapshot_api_endpoint: ${SNAPSHOT_API_ENDPOINT:str:https://hub.snapshot.org/graphql}
+        snapshot_graphql_endpoint: ${SNAPSHOT_GRAPHQL_ENDPOINT:str:https://hub.snapshot.org/graphql}
+        snapshot_vote_endpoint: ${SNAPSHOT_VOTE_ENDPOINT:str:https://seq.snapshot.org}
         service_endpoint_base: ${SERVICE_ENDPOINT_BASE:str:https://dummy_service.autonolas.tech/}
         validate_timeout: 1205
         voting_block_threshold: ${VOTING_BLOCK_THRESHOLD:int:300}
@@ -157,14 +164,19 @@ type: skill
         ceramic_api_read_endpoint: ${CERAMIC_API_READ_ENDPOINT:str:api/v0/commits/{stream_id}}
         ceramic_did_seed: ${CERAMIC_DID_SEED:str:dummy_did_seed}
         ceramic_did_str: ${CERAMIC_DID_STR:str:dummy_did_str}
-        default_read_stream_id: ${DEFAULT_READ_STREAM_ID:str:default_read_stream_id}
-        default_write_stream_id: ${DEFAULT_WRITE_STREAM_ID:str:default_write_stream_id}
+        default_read_stream_id: ${DEFAULT_READ_STREAM_ID:str:kjzl6cwe1jw149erp7y8pg1kwk0103714knt33k66rkdrwn1zmskykj8ho8y15n}
+        ceramic_stream_id: ${CERAMIC_STREAM_ID:str:kjzl6cwe1jw149erp7y8pg1kwk0103714knt33k66rkdrwn1zmskykj8ho8y15n}
         signmessagelib_address: ${SIGNMESSAGELIB_ADDRESS:str:0xA65387F16B013cf2Af4605Ad8aA5ec25a2cbA3a2}
         use_slashing: ${USE_SLASHING:bool:false}
         slash_cooldown_hours: ${SLASH_COOLDOWN_HOURS:int:3}
         slash_threshold_amount: ${SLASH_THRESHOLD_AMOUNT:int:10000000000000000}
         light_slash_unit_amount: ${LIGHT_SLASH_UNIT_AMOUNT:int:5000000000000000}
         serious_slash_unit_amount: ${SERIOUS_SLASH_UNIT_AMOUNT:int:8000000000000000}
+        snapshot_space_whitelist: ${SNAPSHOT_SPACE_WHITELIST:list:[]}
+        disable_snapshot: ${DISABLE_SNAPSHOT:bool:false}
+        disable_tally: ${DISABLE_TALLY:bool:false}
+        default_snapshot_vote_on_error: ${DEFAULT_SNAPSHOT_VOTE_ON_ERROR:bool:false}
+        default_tally_vote_on_error: ${DEFAULT_TALLY_VOTE_ON_ERROR:bool:false}
 2:
   models:
     benchmark_tool: *id001
@@ -186,7 +198,7 @@ type: skill
         reset_tendermint_after: ${RESET_TENDERMINT_AFTER:int:30}
         retry_attempts: 400
         retry_timeout: 3
-        reset_pause_duration: ${RESET_PAUSE_DURATION:int:10}
+        reset_pause_duration: ${RESET_PAUSE_DURATION:int:300}
         request_retry_delay: 1.0
         request_timeout: 10.0
         round_timeout_seconds: 30.0
@@ -206,7 +218,8 @@ type: skill
         tally_api_endpoint: ${TALLY_API_ENDPOINT:str:https://api.tally.xyz/query}
         tally_api_key: ${TALLY_API_KEY_2:str:<tally_api_key>}
         tally_api_call_sleep_seconds: ${TALLY_API_CALL_SLEEP_SECONDS:int:2}
-        snapshot_api_endpoint: ${SNAPSHOT_API_ENDPOINT:str:https://hub.snapshot.org/graphql}
+        snapshot_graphql_endpoint: ${SNAPSHOT_GRAPHQL_ENDPOINT:str:https://hub.snapshot.org/graphql}
+        snapshot_vote_endpoint: ${SNAPSHOT_VOTE_ENDPOINT:str:https://seq.snapshot.org}
         service_endpoint_base: ${SERVICE_ENDPOINT_BASE:str:https://dummy_service.autonolas.tech/}
         validate_timeout: 1205
         voting_block_threshold: ${VOTING_BLOCK_THRESHOLD:int:300}
@@ -217,14 +230,19 @@ type: skill
         ceramic_api_read_endpoint: ${CERAMIC_API_READ_ENDPOINT:str:api/v0/commits/{stream_id}}
         ceramic_did_seed: ${CERAMIC_DID_SEED:str:dummy_did_seed}
         ceramic_did_str: ${CERAMIC_DID_STR:str:dummy_did_str}
-        default_read_stream_id: ${DEFAULT_READ_STREAM_ID:str:default_read_stream_id}
-        default_write_stream_id: ${DEFAULT_WRITE_STREAM_ID:str:default_write_stream_id}
+        default_read_stream_id: ${DEFAULT_READ_STREAM_ID:str:kjzl6cwe1jw149erp7y8pg1kwk0103714knt33k66rkdrwn1zmskykj8ho8y15n}
+        ceramic_stream_id: ${CERAMIC_STREAM_ID:str:kjzl6cwe1jw149erp7y8pg1kwk0103714knt33k66rkdrwn1zmskykj8ho8y15n}
         signmessagelib_address: ${SIGNMESSAGELIB_ADDRESS:str:0xA65387F16B013cf2Af4605Ad8aA5ec25a2cbA3a2}
         use_slashing: ${USE_SLASHING:bool:false}
         slash_cooldown_hours: ${SLASH_COOLDOWN_HOURS:int:3}
         slash_threshold_amount: ${SLASH_THRESHOLD_AMOUNT:int:10000000000000000}
         light_slash_unit_amount: ${LIGHT_SLASH_UNIT_AMOUNT:int:5000000000000000}
         serious_slash_unit_amount: ${SERIOUS_SLASH_UNIT_AMOUNT:int:8000000000000000}
+        snapshot_space_whitelist: ${SNAPSHOT_SPACE_WHITELIST:list:[]}
+        disable_snapshot: ${DISABLE_SNAPSHOT:bool:false}
+        disable_tally: ${DISABLE_TALLY:bool:false}
+        default_snapshot_vote_on_error: ${DEFAULT_SNAPSHOT_VOTE_ON_ERROR:bool:false}
+        default_tally_vote_on_error: ${DEFAULT_TALLY_VOTE_ON_ERROR:bool:false}
 3:
   models:
     benchmark_tool: *id001
@@ -246,7 +264,7 @@ type: skill
         reset_tendermint_after: ${RESET_TENDERMINT_AFTER:int:30}
         retry_attempts: 400
         retry_timeout: 3
-        reset_pause_duration: ${RESET_PAUSE_DURATION:int:10}
+        reset_pause_duration: ${RESET_PAUSE_DURATION:int:300}
         request_retry_delay: 1.0
         request_timeout: 10.0
         round_timeout_seconds: 30.0
@@ -266,7 +284,8 @@ type: skill
         tally_api_endpoint: ${TALLY_API_ENDPOINT:str:https://api.tally.xyz/query}
         tally_api_key: ${TALLY_API_KEY_3:str:<tally_api_key>}
         tally_api_call_sleep_seconds: ${TALLY_API_CALL_SLEEP_SECONDS:int:2}
-        snapshot_api_endpoint: ${SNAPSHOT_API_ENDPOINT:str:https://hub.snapshot.org/graphql}
+        snapshot_graphql_endpoint: ${SNAPSHOT_GRAPHQL_ENDPOINT:str:https://hub.snapshot.org/graphql}
+        snapshot_vote_endpoint: ${SNAPSHOT_VOTE_ENDPOINT:str:https://seq.snapshot.org}
         service_endpoint_base: ${SERVICE_ENDPOINT_BASE:str:https://dummy_service.autonolas.tech/}
         validate_timeout: 1205
         voting_block_threshold: ${VOTING_BLOCK_THRESHOLD:int:300}
@@ -277,14 +296,19 @@ type: skill
         ceramic_api_read_endpoint: ${CERAMIC_API_READ_ENDPOINT:str:api/v0/commits/{stream_id}}
         ceramic_did_seed: ${CERAMIC_DID_SEED:str:dummy_did_seed}
         ceramic_did_str: ${CERAMIC_DID_STR:str:dummy_did_str}
-        default_read_stream_id: ${DEFAULT_READ_STREAM_ID:str:default_read_stream_id}
-        default_write_stream_id: ${DEFAULT_WRITE_STREAM_ID:str:default_write_stream_id}
+        default_read_stream_id: ${DEFAULT_READ_STREAM_ID:str:kjzl6cwe1jw149erp7y8pg1kwk0103714knt33k66rkdrwn1zmskykj8ho8y15n}
+        ceramic_stream_id: ${CERAMIC_STREAM_ID:str:kjzl6cwe1jw149erp7y8pg1kwk0103714knt33k66rkdrwn1zmskykj8ho8y15n}
         signmessagelib_address: ${SIGNMESSAGELIB_ADDRESS:str:0xA65387F16B013cf2Af4605Ad8aA5ec25a2cbA3a2}
         use_slashing: ${USE_SLASHING:bool:false}
         slash_cooldown_hours: ${SLASH_COOLDOWN_HOURS:int:3}
         slash_threshold_amount: ${SLASH_THRESHOLD_AMOUNT:int:10000000000000000}
         light_slash_unit_amount: ${LIGHT_SLASH_UNIT_AMOUNT:int:5000000000000000}
         serious_slash_unit_amount: ${SERIOUS_SLASH_UNIT_AMOUNT:int:8000000000000000}
+        snapshot_space_whitelist: ${SNAPSHOT_SPACE_WHITELIST:list:[]}
+        disable_snapshot: ${DISABLE_SNAPSHOT:bool:false}
+        disable_tally: ${DISABLE_TALLY:bool:false}
+        default_snapshot_vote_on_error: ${DEFAULT_SNAPSHOT_VOTE_ON_ERROR:bool:false}
+        default_tally_vote_on_error: ${DEFAULT_TALLY_VOTE_ON_ERROR:bool:false}
 ---
 public_id: valory/ledger:0.19.0
 type: connection

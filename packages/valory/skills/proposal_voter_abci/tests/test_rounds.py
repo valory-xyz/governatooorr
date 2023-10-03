@@ -38,8 +38,8 @@ from packages.valory.skills.abstract_round_abci.test_tools.rounds import (
 )
 from packages.valory.skills.proposal_voter_abci.payloads import (
     EstablishVotePayload,
+    PostVoteDecisionMakingPayload,
     PrepareVoteTransactionPayload,
-    RetrieveSignaturePayload,
     SnapshotAPISendPayload,
     SnapshotAPISendRandomnessPayload,
     SnapshotAPISendSelectKeeperPayload,
@@ -47,8 +47,8 @@ from packages.valory.skills.proposal_voter_abci.payloads import (
 from packages.valory.skills.proposal_voter_abci.rounds import (
     EstablishVoteRound,
     Event,
+    PostVoteDecisionMakingRound,
     PrepareVoteTransactionRound,
-    RetrieveSignatureRound,
     SnapshotAPISendRandomnessRound,
     SnapshotAPISendRound,
     SnapshotAPISendSelectKeeperRound,
@@ -106,9 +106,11 @@ def get_dummy_prepare_vote_tx_payload_serialized(
         tx_hash = "ERROR"
     return json.dumps(
         {
+            "target_proposals": {},
+            "expiring_proposals": {},
+            "ceramic_db": {},
+            "pending_write": True,
             "tx_hash": tx_hash,
-            "proposals": [],
-            "votable_proposal_ids": [],
             "snapshot_api_data": {},
         },
         sort_keys=True,
@@ -197,19 +199,15 @@ class TestPrepareVoteTransactionRoundRound(BaseProposalVoterRoundTest):
                     "most_voted_tx_hash": json.loads(
                         get_dummy_prepare_vote_tx_payload_serialized()
                     )["tx_hash"],
-                    "proposals": json.loads(
+                    "target_proposals": json.loads(
                         get_dummy_prepare_vote_tx_payload_serialized()
-                    )["proposals"],
-                    "votable_proposal_ids": json.loads(
-                        get_dummy_prepare_vote_tx_payload_serialized()
-                    )["votable_proposal_ids"],
+                    )["target_proposals"],
                 },
                 event=Event.VOTE,
                 most_voted_payload=get_dummy_prepare_vote_tx_payload_serialized(),
                 synchronized_data_attr_checks=[
                     lambda _synchronized_data: _synchronized_data.most_voted_tx_hash,
-                    lambda _synchronized_data: _synchronized_data.proposals,
-                    lambda _synchronized_data: _synchronized_data.votable_proposal_ids,
+                    lambda _synchronized_data: _synchronized_data.target_proposals,
                 ],
             ),
             RoundTestCase(
@@ -255,9 +253,9 @@ def get_dummy_retrieve_signature_payload_serialized(error: bool = False):
 
 
 class TestRetrieveSignatureTransactionRoundRound(BaseProposalVoterRoundTest):
-    """Tests for RetrieveSignatureRound."""
+    """Tests for PostVoteDecisionMakingRound."""
 
-    round_class = RetrieveSignatureRound
+    round_class = PostVoteDecisionMakingRound
 
     @pytest.mark.parametrize(
         "test_case",
@@ -266,13 +264,13 @@ class TestRetrieveSignatureTransactionRoundRound(BaseProposalVoterRoundTest):
                 name="Happy path",
                 initial_data={},
                 payloads=get_payloads(
-                    payload_cls=RetrieveSignaturePayload,
+                    payload_cls=PostVoteDecisionMakingPayload,
                     data=get_dummy_retrieve_signature_payload_serialized(),
                 ),
                 final_data={
                     "snapshot_api_data_signature": "dummy_signature",
                 },
-                event=Event.CALL_API,
+                event=Event.DONE,
                 most_voted_payload=get_dummy_retrieve_signature_payload_serialized(),
                 synchronized_data_attr_checks=[
                     lambda _synchronized_data: _synchronized_data.snapshot_api_data_signature
@@ -282,7 +280,7 @@ class TestRetrieveSignatureTransactionRoundRound(BaseProposalVoterRoundTest):
                 name="Skip payload",
                 initial_data={},
                 payloads=get_payloads(
-                    payload_cls=RetrieveSignaturePayload,
+                    payload_cls=PostVoteDecisionMakingPayload,
                     data="skip_payload",
                 ),
                 final_data={},
@@ -294,7 +292,7 @@ class TestRetrieveSignatureTransactionRoundRound(BaseProposalVoterRoundTest):
                 name="No signature",
                 initial_data={},
                 payloads=get_payloads(
-                    payload_cls=RetrieveSignaturePayload,
+                    payload_cls=PostVoteDecisionMakingPayload,
                     data=get_dummy_retrieve_signature_payload_serialized(True),
                 ),
                 final_data={},
@@ -454,12 +452,13 @@ class TestSnapshotAPISendRound(BaseOnlyKeeperSendsRoundTest):
         "payload_str, exit_event",
         (
             (
-                SnapshotAPISendRound.SUCCCESS_PAYLOAD,
+                json.dumps(
+                    {
+                        "ceramic_db": {},
+                        "pending_write": [],
+                    }
+                ),
                 Event.DONE,
-            ),
-            (
-                SnapshotAPISendRound.ERROR_PAYLOAD,
-                Event.API_ERROR,
             ),
         ),
     )

@@ -50,9 +50,9 @@ from packages.valory.skills.abstract_round_abci.test_tools.common import (
 )
 from packages.valory.skills.proposal_voter_abci.behaviours import (
     EstablishVoteBehaviour,
-    PrepareVoteTransactionBehaviour,
+    PostVoteDecisionMakingBehaviour,
+    PrepareVoteTransactionsBehaviour,
     ProposalVoterBaseBehaviour,
-    RetrieveSignatureBehaviour,
     SnapshotAPISendBehaviour,
     SnapshotAPISendRandomnessBehaviour,
     SnapshotAPISendSelectKeeperBehaviour,
@@ -72,7 +72,7 @@ from packages.valory.skills.transaction_settlement_abci.payload_tools import (
 PACKAGE_DIR = Path(__file__).parent.parent
 
 DUMMY_GOVERNOR_ADDRESS = "0xEC568fffba86c094cf06b22134B23074DFE2252c"
-SNAPSHOT_API_ENDPOINT = "https://hub.snapshot.org/graphql"
+SNAPSHOT_VOTE_ENDPOINT = "https://relayer.snapshot.org/"
 
 NULL_ADDRESS = "0x0000000000000000000000000000000000000000"
 
@@ -80,7 +80,10 @@ NULL_ADDRESS = "0x0000000000000000000000000000000000000000"
 def get_dummy_proposals(remaining_blocks: int = 1000) -> dict:
     """get_dummy_proposals"""
     return {
-        "0": {"votable": False},
+        "0": {
+            "votable": False,
+            "remaining_blocks": remaining_blocks,
+        },
         "1": {
             "votable": True,
             "title": "dummy title",
@@ -102,6 +105,7 @@ def get_dummy_proposals(remaining_blocks: int = 1000) -> dict:
         },
         "2": {
             "votable": True,
+            "remaining_blocks": remaining_blocks,
             "governor": {
                 "id": f"eip155:1:{DUMMY_GOVERNOR_ADDRESS}",
                 "type": "AAVE",
@@ -116,10 +120,10 @@ def get_dummy_proposals(remaining_blocks: int = 1000) -> dict:
     }
 
 
-def get_dummy_snapshot_proposals(include_voted=False) -> list:
+def get_dummy_snapshot_proposals(include_voted=False) -> dict:
     """get_dummy_proposals"""
-    proposals = [
-        {
+    proposals = {
+        "0x108a9e597560c4f249cd8be23acd409059fcd17bb2290d69a550ac2232676e7d": {
             "id": "0x108a9e597560c4f249cd8be23acd409059fcd17bb2290d69a550ac2232676e7d",
             "title": "dummy_title",
             "body": "dummy_body",
@@ -131,10 +135,9 @@ def get_dummy_snapshot_proposals(include_voted=False) -> list:
             "strategies": [{"name": "erc20-balance-of"}],
             "end": 1000,
             "choices": ["0", "1", "2"],
+            "remaining_seconds": 100,
         },
-    ]
-    if include_voted:
-        proposals.append({"id": "1"})
+    }
 
     return proposals
 
@@ -246,7 +249,7 @@ class TestEstablishVoteBehaviour(BaseProposalVoterTest):
     """Tests EstablishVoteBehaviour"""
 
     behaviour_class = EstablishVoteBehaviour
-    next_behaviour_class = PrepareVoteTransactionBehaviour
+    next_behaviour_class = PrepareVoteTransactionsBehaviour
 
     @pytest.mark.parametrize(
         "test_case, kwargs",
@@ -258,7 +261,7 @@ class TestEstablishVoteBehaviour(BaseProposalVoterTest):
                         proposals=get_dummy_proposals(),
                         snapshot_proposals=[],
                         delegations=get_dummy_delegations(),
-                        proposals_to_refresh=["0", "1", "2"],
+                        tally_proposals_to_refresh=["0", "1", "2"],
                     ),
                     event=Event.DONE,
                 ),
@@ -290,7 +293,7 @@ class TestEstablishVoteBehaviour(BaseProposalVoterTest):
                     initial_data=dict(
                         proposals=get_dummy_proposals(),
                         delegations=get_dummy_delegations(),
-                        proposals_to_refresh=["1"],
+                        tally_proposals_to_refresh=["1"],
                     ),
                     event=Event.DONE,
                 ),
@@ -315,7 +318,7 @@ class TestEstablishVoteSnapshotBehaviour(BaseProposalVoterTest):
     """Tests EstablishVoteBehaviour"""
 
     behaviour_class = EstablishVoteBehaviour
-    next_behaviour_class = PrepareVoteTransactionBehaviour
+    next_behaviour_class = PrepareVoteTransactionsBehaviour
 
     @pytest.mark.parametrize(
         "test_case, kwargs",
@@ -324,10 +327,11 @@ class TestEstablishVoteSnapshotBehaviour(BaseProposalVoterTest):
                 BehaviourTestCase(
                     "Happy path",
                     initial_data=dict(
-                        proposals=get_dummy_proposals(),
-                        snapshot_proposals=get_dummy_snapshot_proposals(),
+                        target_proposals={
+                            "tally": get_dummy_proposals(),
+                            "snapshot": get_dummy_snapshot_proposals(),
+                        },
                         delegations=get_dummy_delegations(),
-                        proposals_to_refresh=[],
                         safe_contract_address=NULL_ADDRESS,
                     ),
                     event=Event.DONE,
@@ -345,7 +349,7 @@ class TestEstablishVoteSnapshotBehaviour(BaseProposalVoterTest):
                         proposals=get_dummy_proposals(),
                         snapshot_proposals=get_dummy_snapshot_proposals(),
                         delegations=get_dummy_delegations(),
-                        proposals_to_refresh=[],
+                        tally_proposals_to_refresh=[],
                         safe_contract_address=NULL_ADDRESS,
                     ),
                     event=Event.DONE,
@@ -363,7 +367,7 @@ class TestEstablishVoteSnapshotBehaviour(BaseProposalVoterTest):
                         proposals=get_dummy_proposals(),
                         snapshot_proposals=get_dummy_snapshot_proposals(),
                         delegations=get_dummy_delegations(),
-                        proposals_to_refresh=[],
+                        tally_proposals_to_refresh=[],
                         safe_contract_address=NULL_ADDRESS,
                     ),
                     event=Event.DONE,
@@ -381,7 +385,7 @@ class TestEstablishVoteSnapshotBehaviour(BaseProposalVoterTest):
                         proposals=get_dummy_proposals(),
                         snapshot_proposals=get_dummy_snapshot_proposals(),
                         delegations=get_dummy_delegations(),
-                        proposals_to_refresh=[],
+                        tally_proposals_to_refresh=[],
                         safe_contract_address=NULL_ADDRESS,
                     ),
                     event=Event.DONE,
@@ -402,38 +406,20 @@ class TestEstablishVoteSnapshotBehaviour(BaseProposalVoterTest):
         self.fast_forward(test_case.initial_data)
         self.behaviour.act_wrapper()
 
-        self.mock_http_request(
-            request_kwargs=dict(
-                method="POST",
-                headers="Content-Type: application/json\r\nAccept: application/json\r\n",
-                version="",
-                url=SNAPSHOT_API_ENDPOINT,
-            ),
+        self.mock_llm_request(
+            request_kwargs=dict(performative=LlmMessage.Performative.REQUEST),
             response_kwargs=dict(
-                version="",
-                status_code=kwargs.get("http_code"),
-                status_text="",
-                body=json.dumps(kwargs.get("response_body")).encode(),
+                performative=LlmMessage.Performative.RESPONSE,
+                value=kwargs.get("vote"),
             ),
         )
-
-        if kwargs.get("http_code") == 200 and "errors" not in kwargs.get(
-            "response_body"
-        ):
-            self.mock_llm_request(
-                request_kwargs=dict(performative=LlmMessage.Performative.REQUEST),
-                response_kwargs=dict(
-                    performative=LlmMessage.Performative.RESPONSE,
-                    value=kwargs.get("vote"),
-                ),
-            )
         self.complete(test_case.event)
 
 
 class TestPrepareVoteTransactionNoVoteBehaviour(BaseProposalVoterTest):
-    """Tests PrepareVoteTransactionBehaviour"""
+    """Tests PrepareVoteTransactionsBehaviour"""
 
-    behaviour_class = PrepareVoteTransactionBehaviour
+    behaviour_class = PrepareVoteTransactionsBehaviour
     next_behaviour_class = make_degenerate_behaviour(  # type: ignore
         FinishedTransactionPreparationNoVoteRound
     )
@@ -445,8 +431,12 @@ class TestPrepareVoteTransactionNoVoteBehaviour(BaseProposalVoterTest):
                 BehaviourTestCase(
                     "Happy path",
                     initial_data=dict(
-                        votable_proposal_ids=["1"],
-                        proposals=get_dummy_proposals(),
+                        target_proposals=get_dummy_proposals(),
+                        expiring_proposals={
+                            "tally": {"1": {"vote": "Yes"}},
+                            "snapshot": {"1": {"vote": "Yes"}},
+                        },
+                        ceramic_db={"vote_data": {"tally": {}}},
                     ),
                     event=Event.NO_VOTE,
                 ),
@@ -457,8 +447,8 @@ class TestPrepareVoteTransactionNoVoteBehaviour(BaseProposalVoterTest):
                     "Just voted",
                     initial_data=dict(
                         final_verification_status=1,
-                        votable_proposal_ids=["1"],
                         proposals=get_dummy_proposals(1),
+                        expiring_proposals={"1": {"vote": "Yes"}},
                         safe_contract_address="dummy_safe_contract_address",
                     ),
                     event=Event.NO_VOTE,
@@ -476,9 +466,9 @@ class TestPrepareVoteTransactionNoVoteBehaviour(BaseProposalVoterTest):
 
 
 class TestPrepareVoteTransactionVoteTallyBehaviour(BaseProposalVoterTest):
-    """Tests PrepareVoteTransactionBehaviour"""
+    """Tests PrepareVoteTransactionsBehaviour"""
 
-    behaviour_class = PrepareVoteTransactionBehaviour
+    behaviour_class = PrepareVoteTransactionsBehaviour
     next_behaviour_class = make_degenerate_behaviour(  # type: ignore
         FinishedTransactionPreparationVoteRound
     )
@@ -490,8 +480,12 @@ class TestPrepareVoteTransactionVoteTallyBehaviour(BaseProposalVoterTest):
                 BehaviourTestCase(
                     "Happy path",
                     initial_data=dict(
-                        votable_proposal_ids=["1"],
-                        proposals=get_dummy_proposals(1),
+                        target_proposals=get_dummy_proposals(),
+                        expiring_proposals={
+                            "tally": {"1": {"vote": "Yes"}},
+                            "snapshot": {"1": {"vote": "Yes"}},
+                        },
+                        ceramic_db={"vote_data": {"tally": {}}},
                         safe_contract_address="dummy_safe_contract_address",
                     ),
                     event=Event.VOTE,
@@ -537,9 +531,9 @@ class TestPrepareVoteTransactionVoteTallyBehaviour(BaseProposalVoterTest):
 
 
 class TestPrepareVoteTransactionVoteSnapshotBehaviour(BaseProposalVoterTest):
-    """Tests PrepareVoteTransactionBehaviour"""
+    """Tests PrepareVoteTransactionsBehaviour"""
 
-    behaviour_class = PrepareVoteTransactionBehaviour
+    behaviour_class = PrepareVoteTransactionsBehaviour
     next_behaviour_class = make_degenerate_behaviour(  # type: ignore
         FinishedTransactionPreparationVoteRound
     )
@@ -555,7 +549,17 @@ class TestPrepareVoteTransactionVoteSnapshotBehaviour(BaseProposalVoterTest):
                         proposals=get_dummy_proposals(1),
                         safe_contract_address=NULL_ADDRESS,
                         votable_snapshot_proposals=get_dummy_snapshot_proposals(True),
-                        final_verification_status=VerificationStatus.VERIFIED.value,
+                        expiring_proposals={
+                            "tally": {},
+                            "snapshot": {
+                                "1": {
+                                    "vote": 1,
+                                    "id": "1",
+                                    "space_id": "dummy_space_id",
+                                }
+                            },
+                        },
+                        ceramic_db={},
                     ),
                     event=Event.VOTE,
                 ),
@@ -607,10 +611,10 @@ class TestPrepareVoteTransactionVoteSnapshotBehaviour(BaseProposalVoterTest):
 
 
 class TestPrepareVoteTransactionVoteSnapshotErrorBehaviour(BaseProposalVoterTest):
-    """Tests PrepareVoteTransactionBehaviour"""
+    """Tests PrepareVoteTransactionsBehaviour"""
 
-    behaviour_class = PrepareVoteTransactionBehaviour
-    next_behaviour_class = PrepareVoteTransactionBehaviour
+    behaviour_class = PrepareVoteTransactionsBehaviour
+    next_behaviour_class = PrepareVoteTransactionsBehaviour
 
     @pytest.mark.parametrize(
         "test_case, kwargs",
@@ -662,10 +666,10 @@ class TestPrepareVoteTransactionVoteSnapshotErrorBehaviour(BaseProposalVoterTest
 
 
 class TestPrepareVoteTransactionContractErrorBehaviour(BaseProposalVoterTest):
-    """Tests PrepareVoteTransactionBehaviour"""
+    """Tests PrepareVoteTransactionsBehaviour"""
 
-    behaviour_class = PrepareVoteTransactionBehaviour
-    next_behaviour_class = PrepareVoteTransactionBehaviour
+    behaviour_class = PrepareVoteTransactionsBehaviour
+    next_behaviour_class = PrepareVoteTransactionsBehaviour
 
     @pytest.mark.parametrize(
         "test_case, kwargs",
@@ -740,10 +744,10 @@ class TestPrepareVoteTransactionContractErrorBehaviour(BaseProposalVoterTest):
 
 
 class TestRetrieveSignatureNoSnapshotVoteBehaviour(BaseProposalVoterTest):
-    """Tests RetrieveSignatureBehaviour"""
+    """Tests PostVoteDecisionMakingBehaviour"""
 
-    behaviour_class = RetrieveSignatureBehaviour
-    next_behaviour_class = PrepareVoteTransactionBehaviour
+    behaviour_class = PostVoteDecisionMakingBehaviour
+    next_behaviour_class = PrepareVoteTransactionsBehaviour
 
     @pytest.mark.parametrize(
         "test_case, kwargs",
@@ -764,53 +768,6 @@ class TestRetrieveSignatureNoSnapshotVoteBehaviour(BaseProposalVoterTest):
         self.behaviour.context.state.pending_vote = pending_vote
         self.fast_forward(test_case.initial_data)
         self.behaviour.act_wrapper()
-        self.complete(test_case.event)
-
-
-class TestRetrieveSignatureSnapshotVoteBehaviour(BaseProposalVoterTest):
-    """Tests RetrieveSignatureBehaviour"""
-
-    behaviour_class = RetrieveSignatureBehaviour
-    next_behaviour_class = SnapshotAPISendRandomnessBehaviour
-
-    @pytest.mark.parametrize(
-        "test_case, kwargs",
-        [
-            (
-                BehaviourTestCase(
-                    "Happy path: snapshot vote",
-                    initial_data=dict(
-                        safe_contract_address="dummy_safe_contract_address",
-                        final_tx_hash="dummy_hash",
-                    ),
-                    event=Event.CALL_API,
-                ),
-                {"pending_vote": PendingVote("1", "FOR", True)},
-            ),
-        ],
-    )
-    def test_run(self, test_case: BehaviourTestCase, kwargs: Any) -> None:
-        """Run tests."""
-        pending_vote = kwargs.get("pending_vote")
-        self.behaviour.context.state.pending_vote = pending_vote
-        self.fast_forward(test_case.initial_data)
-        self.behaviour.act_wrapper()
-
-        if pending_vote.snapshot:
-            self.mock_contract_api_request(
-                request_kwargs=dict(
-                    performative=ContractApiMessage.Performative.GET_STATE,
-                ),
-                contract_id=str(SignMessageLibContract.contract_id),
-                response_kwargs=dict(
-                    performative=ContractApiMessage.Performative.STATE,
-                    callable="get_safe_signature",
-                    state=State(
-                        ledger_id="ethereum", body={"signature": "dummy_signature"}
-                    ),
-                ),
-            )
-
         self.complete(test_case.event)
 
 
@@ -876,7 +833,7 @@ class TestSnapshotAPISendBehaviourNonSender(BaseProposalVoterTest):
     """Tests StreamWriteBehaviour"""
 
     behaviour_class = SnapshotAPISendBehaviour
-    next_behaviour_class = PrepareVoteTransactionBehaviour
+    next_behaviour_class = PrepareVoteTransactionsBehaviour
 
     @pytest.mark.parametrize(
         "test_case",
@@ -898,7 +855,7 @@ class TestSnapshotAPISendBehaviourSender(BaseProposalVoterTest):
     """Tests SnapshotAPISendBehaviour"""
 
     behaviour_class = SnapshotAPISendBehaviour
-    next_behaviour_class = PrepareVoteTransactionBehaviour
+    next_behaviour_class = PrepareVoteTransactionsBehaviour
 
     @pytest.mark.parametrize(
         "test_case, kwargs",
@@ -931,7 +888,7 @@ class TestSnapshotAPISendBehaviourSender(BaseProposalVoterTest):
                 method="POST",
                 headers=kwargs.get("headers"),
                 version="",
-                url=SNAPSHOT_API_ENDPOINT,
+                url=SNAPSHOT_VOTE_ENDPOINT,
             ),
             response_kwargs=dict(
                 version="",
@@ -960,7 +917,7 @@ class TestSnapshotAPISendBehaviourSenderError(BaseProposalVoterTest):
                         most_voted_keeper_address="test_agent_address",
                         safe_contract_address="dummy_safe_contract_address",
                     ),
-                    event=Event.API_ERROR,
+                    event=Event.DONE,
                 ),
                 {
                     "body": json.dumps(
@@ -981,7 +938,7 @@ class TestSnapshotAPISendBehaviourSenderError(BaseProposalVoterTest):
                 method="POST",
                 headers=kwargs.get("headers"),
                 version="",
-                url=SNAPSHOT_API_ENDPOINT,
+                url=SNAPSHOT_VOTE_ENDPOINT,
             ),
             response_kwargs=dict(
                 version="",

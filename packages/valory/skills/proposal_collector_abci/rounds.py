@@ -39,10 +39,11 @@ from packages.valory.skills.proposal_collector_abci.payloads import (
     CollectActiveSnapshotProposalsPayload,
     CollectActiveTallyProposalsPayload,
     SynchronizeDelegationsPayload,
+    WriteDBPayload,
 )
 
 
-SNAPSHOT_PROPOSAL_TOTAL_LIMIT = 200  # we focus on the first expiring proposals only
+SNAPSHOT_PROPOSAL_TOTAL_LIMIT = 50
 
 
 class Event(Enum):
@@ -56,7 +57,7 @@ class Event(Enum):
     NO_PROPOSAL = "no_proposal"
     CONTRACT_ERROR = "contract_error"
     BLOCK_RETRIEVAL_ERROR = "block_retrieval_error"
-    WRITE_DELEGATIONS = "write_delegations"
+    WRITE_DB = "write_db"
     REPEAT = "repeat"
 
 
@@ -68,29 +69,26 @@ class SynchronizedData(BaseSynchronizedData):
     """
 
     @property
-    def delegations(self) -> list:
-        """Get the delegations."""
-        return cast(list, self.db.get("delegations", []))
+    def ceramic_db(self) -> dict:
+        """Get the delegations and votes."""
+        return cast(dict, self.db.get_strict("ceramic_db"))
 
     @property
-    def proposals(self) -> dict:
-        """Get the proposals from Tally."""
-        return cast(dict, self.db.get("proposals", {}))
+    def target_proposals(self) -> dict:
+        """Get the active proposals: proposals where the service has voting power"""
+        return cast(
+            dict, self.db.get("target_proposals", {"tally": {}, "snapshot": {}})
+        )
 
     @property
-    def snapshot_proposals(self) -> list:
-        """Get the proposals from Snapshot."""
-        return cast(list, self.db.get("snapshot_proposals", []))
+    def tally_active_proposals(self) -> dict:
+        """Get the open proposals: all proposals even if the service does not have voting power"""
+        return cast(dict, self.db.get("tally_active_proposals", {}))
 
     @property
-    def votable_proposal_ids(self) -> set:
-        """Get the votable proposal ids, sorted by their remaining blocks until expiration, in ascending order."""
-        return cast(set, self.db.get("votable_proposal_ids", {}))
-
-    @property
-    def proposals_to_refresh(self) -> list:
-        """Get the proposals that need to be refreshed: vote intention."""
-        return cast(list, self.db.get("proposals_to_refresh", []))
+    def n_snapshot_retrieved_proposals(self) -> int:
+        """Get the amount of retrieved proposals."""
+        return cast(int, self.db.get("n_snapshot_retrieved_proposals", 0))
 
     @property
     def tally_api_retries(self) -> int:
@@ -106,6 +104,11 @@ class SynchronizedData(BaseSynchronizedData):
     def write_data(self) -> list:
         """Get the write_data."""
         return cast(list, self.db.get_strict("write_data"))
+
+    @property
+    def pending_write(self) -> bool:
+        """Signal if the DB needs writing."""
+        return cast(bool, self.db.get("pending_write", False))
 
 
 class SynchronizeDelegationsRound(CollectDifferentUntilAllRound):
@@ -144,25 +147,13 @@ class SynchronizeDelegationsRound(CollectDifferentUntilAllRound):
         """Process the end of the block."""
 
         if self.collection_threshold_reached:
-            delegations = cast(SynchronizedData, self.synchronized_data).delegations
-            proposals = cast(SynchronizedData, self.synchronized_data).proposals
-            proposals_to_refresh = set()
+            ceramic_db = cast(SynchronizedData, self.synchronized_data).ceramic_db
+            delegations = ceramic_db["delegations"]
 
             new_delegations = []
             for payload in self.collection.values():
                 # Add this agent's new delegations
                 new_delegations.extend(json.loads(payload.json["new_delegations"]))
-
-            if not new_delegations:
-                synchronized_data = self.synchronized_data.update(
-                    synchronized_data_class=SynchronizedData,
-                    **{
-                        get_name(SynchronizedData.proposals_to_refresh): list(
-                            proposals_to_refresh
-                        ),
-                    },
-                )
-                return synchronized_data, Event.DONE
 
             for nd in new_delegations:
                 # Check if new delegation needs to replace a previous one
@@ -178,21 +169,21 @@ class SynchronizeDelegationsRound(CollectDifferentUntilAllRound):
                 if not existing:
                     delegations.append(nd)
 
-                # Do we need to refresh any proposal?
-                for p in proposals.values():
-                    if nd["token_address"] in p["governor"]["tokens"][0]["id"]:
-                        proposals_to_refresh.add(p["id"])
+            event = (
+                Event.DONE
+                if not new_delegations
+                and not cast(SynchronizedData, self.synchronized_data).pending_write
+                else Event.WRITE_DB
+            )
 
             synchronized_data = self.synchronized_data.update(
                 synchronized_data_class=SynchronizedData,
                 **{
-                    get_name(SynchronizedData.delegations): delegations,
-                    get_name(SynchronizedData.proposals_to_refresh): list(
-                        proposals_to_refresh
-                    ),
+                    get_name(SynchronizedData.ceramic_db): ceramic_db,
                 },
             )
-            return synchronized_data, Event.WRITE_DELEGATIONS
+            return synchronized_data, event
+
         if not self.is_majority_possible(
             self.collection, self.synchronized_data.nb_participants
         ):
@@ -200,10 +191,10 @@ class SynchronizeDelegationsRound(CollectDifferentUntilAllRound):
         return None
 
 
-class WriteDelegationsRound(CollectSameUntilThresholdRound):
-    """WriteDelegationsRound"""
+class WriteDBRound(CollectSameUntilThresholdRound):
+    """WriteDBRound"""
 
-    payload_class = CollectActiveSnapshotProposalsPayload
+    payload_class = WriteDBPayload
     synchronized_data_class = SynchronizedData
 
     def end_block(self) -> Optional[Tuple[BaseSynchronizedData, Event]]:
@@ -237,6 +228,15 @@ class CollectActiveTallyProposalsRound(CollectSameUntilThresholdRound):
     def end_block(self) -> Optional[Tuple[BaseSynchronizedData, Event]]:
         """Process the end of the block."""
         if self.threshold_reached:
+            synchronized_data = self.synchronized_data.update(
+                synchronized_data_class=SynchronizedData,
+                **{
+                    get_name(
+                        SynchronizedData.pending_write
+                    ): False,  # we reset this after writing
+                },
+            )
+
             if (
                 self.most_voted_payload
                 == CollectActiveTallyProposalsRound.ERROR_PAYLOAD
@@ -244,7 +244,8 @@ class CollectActiveTallyProposalsRound(CollectSameUntilThresholdRound):
                 tally_api_retries = cast(
                     SynchronizedData, self.synchronized_data
                 ).tally_api_retries
-                synchronized_data = self.synchronized_data.update(
+
+                synchronized_data = synchronized_data.update(
                     synchronized_data_class=SynchronizedData,
                     **{
                         get_name(SynchronizedData.tally_api_retries): tally_api_retries
@@ -257,44 +258,29 @@ class CollectActiveTallyProposalsRound(CollectSameUntilThresholdRound):
                 self.most_voted_payload
                 == CollectActiveTallyProposalsRound.MAX_RETRIES_PAYLOAD
             ):
-                synchronized_data = self.synchronized_data.update(
-                    synchronized_data_class=SynchronizedData,
-                    **{
-                        get_name(SynchronizedData.votable_proposal_ids): [],
-                        get_name(
-                            SynchronizedData.snapshot_proposals
-                        ): [],  # clean snapshot proposals
-                    },
-                )
                 return synchronized_data, Event.DONE
 
             if (
                 self.most_voted_payload
                 == CollectActiveTallyProposalsRound.BLOCK_RETRIEVAL_ERROR
             ):
-                return self.synchronized_data, Event.BLOCK_RETRIEVAL_ERROR
+                return synchronized_data, Event.BLOCK_RETRIEVAL_ERROR
 
             payload = json.loads(self.most_voted_payload)
-            proposals_to_refresh = cast(
-                SynchronizedData, self.synchronized_data
-            ).proposals_to_refresh
-            proposals_to_refresh = set(proposals_to_refresh).union(
-                payload["proposals_to_refresh"]
-            )
 
-            synchronized_data = self.synchronized_data.update(
+            target_proposals = cast(
+                SynchronizedData, self.synchronized_data
+            ).target_proposals
+
+            target_proposals["tally"] = payload["tally_target_proposals"]
+
+            synchronized_data = synchronized_data.update(
                 synchronized_data_class=SynchronizedData,
                 **{
-                    get_name(SynchronizedData.proposals): payload["proposals"],
-                    get_name(SynchronizedData.votable_proposal_ids): payload[
-                        "votable_proposal_ids"
+                    get_name(SynchronizedData.target_proposals): target_proposals,
+                    get_name(SynchronizedData.tally_active_proposals): payload[
+                        "tally_active_proposals"
                     ],
-                    get_name(SynchronizedData.proposals_to_refresh): list(
-                        proposals_to_refresh
-                    ),
-                    get_name(
-                        SynchronizedData.snapshot_proposals
-                    ): [],  # clean snapshot proposals
                 },
             )
             return synchronized_data, Event.DONE
@@ -340,19 +326,25 @@ class CollectActiveSnapshotProposalsRound(CollectSameUntilThresholdRound):
 
             payload = json.loads(self.most_voted_payload)
 
-            snapshot_proposals = cast(
+            target_proposals = cast(
                 SynchronizedData, self.synchronized_data
-            ).snapshot_proposals
-            snapshot_proposals.extend(payload["snapshot_proposals"])
+            ).target_proposals
+
+            target_proposals["snapshot"] = payload["snapshot_target_proposals"]
+            n_retrieved_proposals = payload["n_retrieved_proposals"]
+
             finished = (
                 payload["finished"]
-                or len(snapshot_proposals) >= SNAPSHOT_PROPOSAL_TOTAL_LIMIT
+                or n_retrieved_proposals >= SNAPSHOT_PROPOSAL_TOTAL_LIMIT
             )
 
             synchronized_data = self.synchronized_data.update(
                 synchronized_data_class=SynchronizedData,
                 **{
-                    get_name(SynchronizedData.snapshot_proposals): snapshot_proposals,
+                    get_name(SynchronizedData.target_proposals): target_proposals,
+                    get_name(
+                        SynchronizedData.n_snapshot_retrieved_proposals
+                    ): n_retrieved_proposals,
                 },
             )
             return (
@@ -385,11 +377,11 @@ class ProposalCollectorAbciApp(AbciApp[Event]):
     transition_function: AbciAppTransitionFunction = {
         SynchronizeDelegationsRound: {
             Event.DONE: CollectActiveTallyProposalsRound,
-            Event.WRITE_DELEGATIONS: WriteDelegationsRound,
+            Event.WRITE_DB: WriteDBRound,
             Event.NO_MAJORITY: SynchronizeDelegationsRound,
             Event.ROUND_TIMEOUT: SynchronizeDelegationsRound,
         },
-        WriteDelegationsRound: {
+        WriteDBRound: {
             Event.DONE: FinishedWriteDelegationsRound,
             Event.NO_MAJORITY: SynchronizeDelegationsRound,
             Event.ROUND_TIMEOUT: SynchronizeDelegationsRound,
@@ -399,14 +391,14 @@ class ProposalCollectorAbciApp(AbciApp[Event]):
             Event.API_ERROR: CollectActiveTallyProposalsRound,
             Event.BLOCK_RETRIEVAL_ERROR: CollectActiveTallyProposalsRound,
             Event.NO_MAJORITY: CollectActiveTallyProposalsRound,
-            Event.ROUND_TIMEOUT: CollectActiveTallyProposalsRound,
+            Event.ROUND_TIMEOUT: CollectActiveSnapshotProposalsRound,
         },
         CollectActiveSnapshotProposalsRound: {
             Event.DONE: FinishedProposalRound,
             Event.REPEAT: CollectActiveSnapshotProposalsRound,
             Event.API_ERROR: CollectActiveSnapshotProposalsRound,
             Event.NO_MAJORITY: CollectActiveSnapshotProposalsRound,
-            Event.ROUND_TIMEOUT: CollectActiveSnapshotProposalsRound,
+            Event.ROUND_TIMEOUT: FinishedProposalRound,
         },
         FinishedWriteDelegationsRound: {},
         FinishedProposalRound: {},
@@ -419,9 +411,7 @@ class ProposalCollectorAbciApp(AbciApp[Event]):
         Event.ROUND_TIMEOUT: 30.0,
     }
     cross_period_persisted_keys: Set[str] = {
-        get_name(SynchronizedData.delegations),
-        get_name(SynchronizedData.proposals),
-        get_name(SynchronizedData.votable_proposal_ids),
+        get_name(SynchronizedData.ceramic_db),
     }
     db_pre_conditions: Dict[AppState, Set[str]] = {
         SynchronizeDelegationsRound: set(),
@@ -430,8 +420,8 @@ class ProposalCollectorAbciApp(AbciApp[Event]):
     db_post_conditions: Dict[AppState, Set[str]] = {
         FinishedWriteDelegationsRound: set(),
         FinishedProposalRound: {
-            get_name(SynchronizedData.delegations),
-            get_name(SynchronizedData.proposals),
-            get_name(SynchronizedData.votable_proposal_ids),
+            get_name(SynchronizedData.ceramic_db),
+            get_name(SynchronizedData.target_proposals),
+            get_name(SynchronizedData.tally_active_proposals),
         },
     }

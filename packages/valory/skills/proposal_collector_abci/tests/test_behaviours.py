@@ -50,7 +50,7 @@ from packages.valory.skills.proposal_collector_abci.rounds import (
 
 
 TALLY_API_ENDPOINT = "https://api.tally.xyz/query"
-SNAPSHOT_API_ENDPOINT = "https://hub.snapshot.org/graphql"
+SNAPSHOT_GRAPHQL_ENDPOINT = "https://hub.snapshot.org/graphql"
 
 DUMMY_GOVERNOR_ADDRESS = "0xEC568fffba86c094cf06b22134B23074DFE2252c"
 
@@ -550,7 +550,7 @@ class TestCollectSnapshotProposalsBehaviour(BaseProposalCollectorTest):
                     event=Event.DONE,
                 ),
                 {
-                    "urls": [SNAPSHOT_API_ENDPOINT],
+                    "urls": [SNAPSHOT_GRAPHQL_ENDPOINT],
                     "bodies": [
                         json.dumps(
                             DUMMY_SNAPSHOT_RESPONSE,
@@ -569,7 +569,7 @@ class TestCollectSnapshotProposalsBehaviour(BaseProposalCollectorTest):
                     event=Event.DONE,
                 ),
                 {
-                    "urls": [SNAPSHOT_API_ENDPOINT],
+                    "urls": [SNAPSHOT_GRAPHQL_ENDPOINT],
                     "bodies": [
                         json.dumps(
                             DUMMY_SNAPSHOT_RESPONSE_EMPTY,
@@ -590,7 +590,7 @@ class TestCollectSnapshotProposalsBehaviour(BaseProposalCollectorTest):
                     event=Event.DONE,
                 ),
                 {
-                    "urls": [SNAPSHOT_API_ENDPOINT],
+                    "urls": [SNAPSHOT_GRAPHQL_ENDPOINT],
                     "bodies": [
                         json.dumps(
                             DUMMY_SNAPSHOT_RESPONSE_EMPTY,
@@ -644,7 +644,7 @@ class TestCollectSnapshotProposalsErrorBehaviour(BaseProposalCollectorTest):
                     event=Event.API_ERROR,
                 ),
                 {
-                    "urls": [SNAPSHOT_API_ENDPOINT],
+                    "urls": [SNAPSHOT_GRAPHQL_ENDPOINT],
                     "bodies": [
                         json.dumps(
                             DUMMY_SNAPSHOT_RESPONSE,
@@ -663,7 +663,7 @@ class TestCollectSnapshotProposalsErrorBehaviour(BaseProposalCollectorTest):
                     event=Event.API_ERROR,
                 ),
                 {
-                    "urls": [SNAPSHOT_API_ENDPOINT],
+                    "urls": [SNAPSHOT_GRAPHQL_ENDPOINT],
                     "bodies": [
                         json.dumps(
                             DUMMY_SNAPSHOT_RESPONSE_ERRORS,

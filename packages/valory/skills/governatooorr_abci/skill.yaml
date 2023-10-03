@@ -8,9 +8,9 @@ aea_version: '>=1.0.0, <2.0.0'
 fingerprint:
   __init__.py: bafybeigk2kb335wy5vmgapbrqmfotvwqm4dqsuqr7gt7qic4v4npx2pqxy
   behaviours.py: bafybeic7hmkd2vz7k7yscjisa2kurg6gjrerlekiz5c7c3gl5y7bilacpa
-  composition.py: bafybeib5uphvsp6cywdie7maiazncc5gqcpq3zzzrftag65pcaqrj7qeee
+  composition.py: bafybeigngxdvavfcjmxrkcdvq52saq5u5gugxseru6xbp7ok4rnep7ewri
   dialogues.py: bafybeiayva5koyr6upomicnhbfefypjk2sebogk7ew24wxwwnccuqktcki
-  fsm_specification.yaml: bafybeientp6ar3d6d3acw6m5ne66mq6nvxzlwcywvqqpdw2rgycgn466tm
+  fsm_specification.yaml: bafybeibcxi3b73lgazahdkhs2cdzinw3r64yipontnjhf5dfts5pasqum4
   handlers.py: bafybeiefhvk666md6clddjpkv6ccnletnxmekptz2p5qjjnubfokwlofia
   models.py: bafybeigoq2xaulowhod3viikl4rsbdfqvoe2jsgsqpsedqwv4jto2toxuq
 fingerprint_ignore_patterns: []
@@ -21,8 +21,8 @@ skills:
 - valory/abstract_round_abci:0.1.0:bafybeih2fyfb6kkf7r45pvdk7pyyebr5xloia4xiqxtb3qsrasnstqmepq
 - valory/ceramic_read_abci:0.1.0:bafybeide5tbobzkwfdi7yzw6bsau36h43hdlgbnk2bfqvvhmq3hl3ucjmm
 - valory/ceramic_write_abci:0.1.0:bafybeihnalj6zhl5pbf7x2lkznuhivwj45jzrafbtxatwebrpb7st2v6oa
-- valory/proposal_collector_abci:0.1.0:bafybeifrs22bnmo72tkzyd474jkwrajw2zf3wihqx2qz6ig2gql6lddmcm
-- valory/proposal_voter_abci:0.1.0:bafybeiekgghknicy7xh3hagfuwivxwtbha55irpeqvpuunntestkzsohxi
+- valory/proposal_collector_abci:0.1.0:bafybeibpx7yjzttx6iylkcpdwiakvkcwtadow2a3hj4y6v3n5inhpyhw5e
+- valory/proposal_voter_abci:0.1.0:bafybeifov3xo434u2r43vv6zldqu46zfg2na3ltoxny6woqcuxeycjxqxa
 - valory/registration_abci:0.1.0:bafybeibndt6vxiwc2edgtaxpjbhwto3eyu33ujz3zmvtygvo2qz7xme5li
 - valory/reset_pause_abci:0.1.0:bafybeigeoc363gv3wp2rrmk6p2fdxney33nxd3owtpfugzapgruwe4klyu
 - valory/termination_abci:0.1.0:bafybeigqpij2sgrpnilqjljfciixop4fldq5qceixc7534q6af4potdmdm
@@ -91,7 +91,7 @@ models:
       cleanup_history_depth_current: null
       default_read_stream_id: default_read_stream_id
       default_read_target_property: default_read_target_property
-      default_write_stream_id: default_write_stream_id
+      ceramic_stream_id: ceramic_stream_id
       drand_public_key: 868f005eb8e6e4ca0a47c8a77ceaa5309a47978a7c71bc5cce96366b5d7a569937c529eeda66c7293784a9402801af31
       finalize_timeout: 60.0
       genesis_config:
@@ -121,8 +121,8 @@ models:
       on_chain_service_id: null
       request_retry_delay: 1.0
       request_timeout: 10.0
-      reset_pause_duration: 10
-      reset_tendermint_after: 2
+      reset_pause_duration: 300
+      reset_tendermint_after: 30
       retry_attempts: 400
       retry_timeout: 3
       round_timeout_seconds: 30.0
@@ -136,7 +136,8 @@ models:
       share_tm_config_on_startup: false
       signmessagelib_address: '0xA65387F16B013cf2Af4605Ad8aA5ec25a2cbA3a2'
       sleep_time: 1
-      snapshot_api_endpoint: https://hub.snapshot.org/graphql
+      snapshot_graphql_endpoint: https://hub.snapshot.org/graphql
+      snapshot_vote_endpoint: https://seq.snapshot.org/
       tally_api_endpoint: https://api.tally.xyz/query
       tally_api_key: <tally_api_key>
       tally_api_call_sleep_seconds: 2
@@ -156,6 +157,11 @@ models:
       slash_threshold_amount: 10000000000000000
       light_slash_unit_amount: 5000000000000000
       serious_slash_unit_amount: 8000000000000000
+      snapshot_space_whitelist: []
+      disable_snapshot: false
+      disable_tally: false
+      default_snapshot_vote_on_error: false
+      default_tally_vote_on_error: false
     class_name: Params
   randomness_api:
     args:

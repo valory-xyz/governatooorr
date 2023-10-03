@@ -5,7 +5,7 @@ alphabet_in:
 - NO_MAJORITY
 - REPEAT
 - ROUND_TIMEOUT
-- WRITE_DELEGATIONS
+- WRITE_DB
 default_start_state: SynchronizeDelegationsRound
 final_states:
 - FinishedProposalRound
@@ -20,22 +20,22 @@ states:
 - FinishedProposalRound
 - FinishedWriteDelegationsRound
 - SynchronizeDelegationsRound
-- WriteDelegationsRound
+- WriteDBRound
 transition_func:
     (CollectActiveSnapshotProposalsRound, API_ERROR): CollectActiveSnapshotProposalsRound
     (CollectActiveSnapshotProposalsRound, DONE): FinishedProposalRound
     (CollectActiveSnapshotProposalsRound, NO_MAJORITY): CollectActiveSnapshotProposalsRound
     (CollectActiveSnapshotProposalsRound, REPEAT): CollectActiveSnapshotProposalsRound
-    (CollectActiveSnapshotProposalsRound, ROUND_TIMEOUT): CollectActiveSnapshotProposalsRound
+    (CollectActiveSnapshotProposalsRound, ROUND_TIMEOUT): FinishedProposalRound
     (CollectActiveTallyProposalsRound, API_ERROR): CollectActiveTallyProposalsRound
     (CollectActiveTallyProposalsRound, BLOCK_RETRIEVAL_ERROR): CollectActiveTallyProposalsRound
     (CollectActiveTallyProposalsRound, DONE): CollectActiveSnapshotProposalsRound
     (CollectActiveTallyProposalsRound, NO_MAJORITY): CollectActiveTallyProposalsRound
-    (CollectActiveTallyProposalsRound, ROUND_TIMEOUT): CollectActiveTallyProposalsRound
+    (CollectActiveTallyProposalsRound, ROUND_TIMEOUT): CollectActiveSnapshotProposalsRound
     (SynchronizeDelegationsRound, DONE): CollectActiveTallyProposalsRound
     (SynchronizeDelegationsRound, NO_MAJORITY): SynchronizeDelegationsRound
     (SynchronizeDelegationsRound, ROUND_TIMEOUT): SynchronizeDelegationsRound
-    (SynchronizeDelegationsRound, WRITE_DELEGATIONS): WriteDelegationsRound
-    (WriteDelegationsRound, DONE): FinishedWriteDelegationsRound
-    (WriteDelegationsRound, NO_MAJORITY): SynchronizeDelegationsRound
-    (WriteDelegationsRound, ROUND_TIMEOUT): SynchronizeDelegationsRound
+    (SynchronizeDelegationsRound, WRITE_DB): WriteDBRound
+    (WriteDBRound, DONE): FinishedWriteDelegationsRound
+    (WriteDBRound, NO_MAJORITY): SynchronizeDelegationsRound
+    (WriteDBRound, ROUND_TIMEOUT): SynchronizeDelegationsRound

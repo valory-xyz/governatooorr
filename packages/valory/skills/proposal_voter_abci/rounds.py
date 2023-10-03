@@ -35,9 +35,10 @@ from packages.valory.skills.abstract_round_abci.base import (
     get_name,
 )
 from packages.valory.skills.proposal_voter_abci.payloads import (
+    DecisionMakingPayload,
     EstablishVotePayload,
-    PrepareVoteTransactionPayload,
-    RetrieveSignaturePayload,
+    PostVoteDecisionMakingPayload,
+    PrepareVoteTransactionsPayload,
     SnapshotAPISendPayload,
     SnapshotAPISendRandomnessPayload,
     SnapshotAPISendSelectKeeperPayload,
@@ -45,6 +46,9 @@ from packages.valory.skills.proposal_voter_abci.payloads import (
 from packages.valory.skills.transaction_settlement_abci.payload_tools import (
     VerificationStatus,
 )
+
+
+MAX_VOTE_RETRIES = 3
 
 
 class Event(Enum):
@@ -56,11 +60,9 @@ class Event(Enum):
     CONTRACT_ERROR = "contract_error"
     VOTE = "vote"
     NO_VOTE = "no_vote"
-    DID_NOT_SEND = "did_not_send"
-    API_ERROR = "api_error"
-    CALL_API = "call_api"
+    SKIP_CALL = "skip_call"
+    SNAPSHOT_CALL = "snapshot_call"
     RETRIEVAL_ERROR = "retrieval_error"
-    MAX_RETRIES = "max_retries"
 
 
 class SynchronizedData(BaseSynchronizedData):
@@ -71,42 +73,28 @@ class SynchronizedData(BaseSynchronizedData):
     """
 
     @property
-    def just_voted(self) -> bool:
-        """Get the final verification status."""
-        status_value = self.db.get(
-            "final_verification_status", VerificationStatus.NOT_VERIFIED.value
+    def ceramic_db(self) -> dict:
+        """Get the delegations and votes."""
+        return cast(dict, self.db.get_strict("ceramic_db"))
+
+    @property
+    def target_proposals(self) -> dict:
+        """Get the active proposals."""
+        return cast(dict, self.db.get("target_proposals", {}))
+
+    @property
+    def expiring_proposals(self) -> dict:
+        """Get the expiring_proposals."""
+        return cast(
+            dict, self.db.get("expiring_proposals", {"tally": {}, "snapshot": {}})
         )
-        return status_value == VerificationStatus.VERIFIED.value
 
     @property
-    def delegations(self) -> list:
-        """Get the delegations."""
-        return cast(list, self.db.get("delegations", []))
-
-    @property
-    def proposals(self) -> dict:
-        """Get the proposals."""
-        return cast(dict, self.db.get("proposals", {}))
-
-    @property
-    def snapshot_proposals(self) -> list:
-        """Get the proposals from Snapshot."""
-        return cast(list, self.db.get("snapshot_proposals", []))
-
-    @property
-    def votable_proposal_ids(self) -> set:
-        """Get the votable proposal ids, sorted by their remaining blocks until expiration, in ascending order."""
-        return cast(set, self.db.get("votable_proposal_ids", {}))
-
-    @property
-    def proposals_to_refresh(self) -> list:
-        """Get the proposals that need to be refreshed: vote intention."""
-        return cast(list, self.db.get("proposals_to_refresh", []))
-
-    @property
-    def votable_snapshot_proposals(self) -> list:
-        """Get the proposals from Snapshot."""
-        return cast(list, self.db.get("votable_snapshot_proposals", []))
+    def pending_transactions(self) -> dict:
+        """Get the snapshot_api_data."""
+        return cast(
+            dict, self.db.get("pending_transactions", {"tally": {}, "snapshot": {}})
+        )
 
     @property
     def most_voted_tx_hash(self) -> str:
@@ -120,16 +108,6 @@ class SynchronizedData(BaseSynchronizedData):
         return cast(int, round_)
 
     @property
-    def snapshot_api_data(self) -> dict:
-        """Get the snapshot_data."""
-        return cast(dict, self.db.get("snapshot_api_data", {}))
-
-    @property
-    def snapshot_api_data_signature(self) -> dict:
-        """Get the snapshot_api_data_signature."""
-        return cast(dict, self.db.get("snapshot_api_data_signature", {}))
-
-    @property
     def final_tx_hash(self) -> str:
         """Get the verified tx hash."""
         return cast(str, self.db.get_strict("final_tx_hash"))
@@ -138,6 +116,22 @@ class SynchronizedData(BaseSynchronizedData):
     def snapshot_api_retries(self) -> int:
         """Get the amount of API call retries."""
         return cast(int, self.db.get("snapshot_api_retries", 0))
+
+    @property
+    def selected_proposal(self) -> dict:
+        """Get the selected proposal."""
+        return cast(dict, self.db.get_strict("selected_proposal"))
+
+    @property
+    def pending_write(self) -> bool:
+        """Signal if the DB needs writing."""
+        return cast(bool, self.db.get("pending_write", False))
+
+    @property
+    def is_vote_verified(self) -> bool:
+        """Check if the vote has been verified."""
+        status = self.db.get("final_verification_status", None)
+        return status == VerificationStatus.VERIFIED.value
 
 
 class EstablishVoteRound(CollectSameUntilThresholdRound):
@@ -153,9 +147,8 @@ class EstablishVoteRound(CollectSameUntilThresholdRound):
             synchronized_data = self.synchronized_data.update(
                 synchronized_data_class=SynchronizedData,
                 **{
-                    get_name(SynchronizedData.proposals): payload["proposals"],
-                    get_name(SynchronizedData.votable_snapshot_proposals): payload[
-                        "votable_snapshot_proposals"
+                    get_name(SynchronizedData.expiring_proposals): payload[
+                        "expiring_proposals"
                     ],
                 },
             )
@@ -167,49 +160,25 @@ class EstablishVoteRound(CollectSameUntilThresholdRound):
         return None
 
 
-class PrepareVoteTransactionRound(CollectSameUntilThresholdRound):
-    """PrepareVoteTransactionRound"""
+class PrepareVoteTransactionsRound(CollectSameUntilThresholdRound):
+    """EstablishVoteRound"""
 
-    payload_class = PrepareVoteTransactionPayload
+    payload_class = PrepareVoteTransactionsPayload
     synchronized_data_class = SynchronizedData
-
-    NO_VOTE_PAYLOAD = "NO_VOTE"
-    ERROR_PAYLOAD = "ERROR"
 
     def end_block(self) -> Optional[Tuple[BaseSynchronizedData, Event]]:
         """Process the end of the block."""
         if self.threshold_reached:
             payload = json.loads(self.most_voted_payload)
-
-            if payload["tx_hash"] == PrepareVoteTransactionRound.ERROR_PAYLOAD:
-                return self.synchronized_data, Event.CONTRACT_ERROR
-
-            if payload["tx_hash"] == PrepareVoteTransactionRound.NO_VOTE_PAYLOAD:
-                synchronized_data = self.synchronized_data.update(
-                    synchronized_data_class=SynchronizedData,
-                    **{
-                        get_name(SynchronizedData.proposals): payload["proposals"],
-                        get_name(
-                            SynchronizedData.snapshot_proposals
-                        ): [],  # clear snapshot proposals to avoid too big registration payloads
-                    },
-                )
-                return synchronized_data, Event.NO_VOTE
-
             synchronized_data = self.synchronized_data.update(
                 synchronized_data_class=SynchronizedData,
                 **{
-                    get_name(SynchronizedData.most_voted_tx_hash): payload["tx_hash"],
-                    get_name(SynchronizedData.proposals): payload["proposals"],
-                    get_name(SynchronizedData.votable_proposal_ids): payload[
-                        "votable_proposal_ids"
-                    ],
-                    get_name(SynchronizedData.snapshot_api_data): payload[
-                        "snapshot_api_data"
+                    get_name(SynchronizedData.pending_transactions): payload[
+                        "pending_transactions"
                     ],
                 },
             )
-            return synchronized_data, Event.VOTE
+            return synchronized_data, Event.DONE
         if not self.is_majority_possible(
             self.collection, self.synchronized_data.nb_participants
         ):
@@ -217,35 +186,115 @@ class PrepareVoteTransactionRound(CollectSameUntilThresholdRound):
         return None
 
 
-class RetrieveSignatureRound(CollectSameUntilThresholdRound):
-    """RetrieveSignatureRound"""
+class DecisionMakingRound(CollectSameUntilThresholdRound):
+    """DecisionMakingRound"""
 
-    payload_class = RetrieveSignaturePayload
+    payload_class = DecisionMakingPayload
     synchronized_data_class = SynchronizedData
-
-    SKIP_PAYLOAD = "skip_payload"
 
     def end_block(self) -> Optional[Tuple[BaseSynchronizedData, Event]]:
         """Process the end of the block."""
         if self.threshold_reached:
-            if self.most_voted_payload == self.SKIP_PAYLOAD:
-                return self.synchronized_data, Event.DONE
-
             payload = json.loads(self.most_voted_payload)
-            snapshot_api_data_signature = payload["snapshot_api_data_signature"]
 
-            if not snapshot_api_data_signature:
-                return self.synchronized_data, Event.RETRIEVAL_ERROR
+            if "selected_proposal" not in payload:
+                synchronized_data = self.synchronized_data.update(
+                    synchronized_data_class=SynchronizedData,
+                    **{
+                        get_name(SynchronizedData.pending_transactions): payload[
+                            "pending_transactions"
+                        ],
+                    },
+                )
+                return synchronized_data, Event.NO_VOTE
+
+            selected_proposal = payload["selected_proposal"]
+            tx_hash = cast(
+                SynchronizedData, self.synchronized_data
+            ).pending_transactions[selected_proposal["platform"]][
+                selected_proposal["proposal_id"]
+            ][
+                "tx_hash"
+            ]
+
+            synchronized_data = self.synchronized_data.update(
+                synchronized_data_class=SynchronizedData,
+                **{
+                    get_name(SynchronizedData.most_voted_tx_hash): tx_hash,
+                    get_name(SynchronizedData.selected_proposal): payload[
+                        "selected_proposal"
+                    ],
+                    get_name(SynchronizedData.pending_transactions): payload[
+                        "pending_transactions"
+                    ],
+                },
+            )
+            return synchronized_data, Event.VOTE
+
+        if not self.is_majority_possible(
+            self.collection, self.synchronized_data.nb_participants
+        ):
+            return self.synchronized_data, Event.NO_MAJORITY
+        return None
+
+
+class PostVoteDecisionMakingRound(CollectSameUntilThresholdRound):
+    """PostVoteDecisionMakingRound"""
+
+    payload_class = PostVoteDecisionMakingPayload
+    synchronized_data_class = SynchronizedData
+
+    SKIP_PAYLOAD = "skip_payload"
+    CALL_PAYLOAD = "call_payload"
+    RETRY_PAYLOAD = "retry_payload"
+
+    def end_block(self) -> Optional[Tuple[BaseSynchronizedData, Event]]:
+        """Process the end of the block."""
+        if self.threshold_reached:
+            synchronized_data = cast(SynchronizedData, self.synchronized_data)
+            selected_proposal = synchronized_data.selected_proposal
+            pending_transactions = synchronized_data.pending_transactions
+            ceramic_db = synchronized_data.ceramic_db
+
+            if self.most_voted_payload == self.RETRY_PAYLOAD:
+                # Increase retries
+                pending_transactions[selected_proposal["platform"]][
+                    selected_proposal["proposal_id"]
+                ]["retries"] += 1
+
+                synchronized_data = self.synchronized_data.update(
+                    synchronized_data_class=SynchronizedData,
+                    **{
+                        get_name(
+                            SynchronizedData.pending_transactions
+                        ): pending_transactions,
+                    },
+                )
+                return synchronized_data, Event.SKIP_CALL
+
+            if self.most_voted_payload == self.CALL_PAYLOAD:
+                return synchronized_data, Event.SNAPSHOT_CALL
+
+            # The vote has already succeeded, move it into the vote history
+            ceramic_db["vote_data"][selected_proposal["platform"]].append(
+                selected_proposal["proposal_id"]
+            )
+            del pending_transactions[selected_proposal["platform"]][
+                selected_proposal["proposal_id"]
+            ]
 
             synchronized_data = self.synchronized_data.update(
                 synchronized_data_class=SynchronizedData,
                 **{
                     get_name(
-                        SynchronizedData.snapshot_api_data_signature
-                    ): snapshot_api_data_signature,
+                        SynchronizedData.pending_transactions
+                    ): pending_transactions,
+                    get_name(SynchronizedData.ceramic_db): ceramic_db,
+                    get_name(SynchronizedData.pending_write): True,
                 },
             )
-            return synchronized_data, Event.CALL_API
+
+            return synchronized_data, Event.SKIP_CALL
 
         if not self.is_majority_possible(
             self.collection, self.synchronized_data.nb_participants
@@ -285,10 +334,6 @@ class SnapshotAPISendRound(OnlyKeeperSendsRound):
     payload_class = SnapshotAPISendPayload
     synchronized_data_class = SynchronizedData
 
-    SUCCCESS_PAYLOAD = "success"
-    ERROR_PAYLOAD = "error"
-    MAX_RETRIES_PAYLOAD = "max_retries_payload"
-
     def end_block(
         self,
     ) -> Optional[
@@ -298,40 +343,33 @@ class SnapshotAPISendRound(OnlyKeeperSendsRound):
         if self.keeper_payload is None:
             return None
 
-        if (
-            cast(SnapshotAPISendPayload, self.keeper_payload).content
-            == self.ERROR_PAYLOAD
-        ):
-            snapshot_api_retries = cast(
-                SynchronizedData, self.synchronized_data
-            ).snapshot_api_retries
-            synchronized_data = self.synchronized_data.update(
-                synchronized_data_class=SynchronizedData,
-                **{
-                    get_name(
-                        SynchronizedData.snapshot_api_retries
-                    ): snapshot_api_retries
-                    + 1,
-                },
+        synchronized_data = cast(SynchronizedData, self.synchronized_data)
+        selected_proposal = synchronized_data.selected_proposal
+        pending_transactions = synchronized_data.pending_transactions
+        ceramic_db = synchronized_data.ceramic_db
+        pending_write = synchronized_data.pending_write
+
+        # We only move the vote into the history if the call succeeded
+        if cast(SnapshotAPISendPayload, self.keeper_payload).success:
+            ceramic_db["vote_data"][selected_proposal["platform"]].append(
+                selected_proposal["proposal_id"]
             )
-            return synchronized_data, Event.API_ERROR
+            pending_write = True
 
-        if self.keeper_payload == SnapshotAPISendRound.MAX_RETRIES_PAYLOAD:
-            synchronized_data = self.synchronized_data.update(
-                synchronized_data_class=SynchronizedData,
-                **{
-                    get_name(SynchronizedData.snapshot_api_retries): 0,
-                },
-            )
-            return synchronized_data, Event.MAX_RETRIES
+        # We remove the vote from pending in any case. If the call has failed, we will retry in the future.
+        del pending_transactions[selected_proposal["platform"]][
+            selected_proposal["proposal_id"]
+        ]
 
-        if (
-            cast(SnapshotAPISendPayload, self.keeper_payload).content
-            == self.SUCCCESS_PAYLOAD
-        ):
-            return self.synchronized_data, Event.DONE
-
-        return self.synchronized_data, Event.DID_NOT_SEND
+        synchronized_data = self.synchronized_data.update(
+            synchronized_data_class=SynchronizedData,
+            **{
+                get_name(SynchronizedData.pending_transactions): pending_transactions,
+                get_name(SynchronizedData.ceramic_db): ceramic_db,
+                get_name(SynchronizedData.pending_write): pending_write,
+            },
+        )
+        return synchronized_data, Event.DONE
 
 
 class FinishedTransactionPreparationVoteRound(DegenerateRound):
@@ -348,29 +386,31 @@ class ProposalVoterAbciApp(AbciApp[Event]):
     initial_round_cls: AppState = EstablishVoteRound
     initial_states: Set[AppState] = {
         EstablishVoteRound,
-        PrepareVoteTransactionRound,
-        RetrieveSignatureRound,
+        PostVoteDecisionMakingRound,
     }
     transition_function: AbciAppTransitionFunction = {
         EstablishVoteRound: {
-            Event.DONE: PrepareVoteTransactionRound,
+            Event.DONE: PrepareVoteTransactionsRound,
             Event.NO_MAJORITY: EstablishVoteRound,
             Event.ROUND_TIMEOUT: EstablishVoteRound,
         },
-        PrepareVoteTransactionRound: {
+        PrepareVoteTransactionsRound: {
+            Event.DONE: DecisionMakingRound,
+            Event.NO_MAJORITY: PrepareVoteTransactionsRound,
+            Event.ROUND_TIMEOUT: PrepareVoteTransactionsRound,
+        },
+        DecisionMakingRound: {
             Event.NO_VOTE: FinishedTransactionPreparationNoVoteRound,
             Event.VOTE: FinishedTransactionPreparationVoteRound,
-            Event.NO_MAJORITY: PrepareVoteTransactionRound,
-            Event.ROUND_TIMEOUT: PrepareVoteTransactionRound,
-            Event.CONTRACT_ERROR: PrepareVoteTransactionRound,
+            Event.NO_MAJORITY: DecisionMakingRound,
+            Event.ROUND_TIMEOUT: DecisionMakingRound,
         },
         FinishedTransactionPreparationNoVoteRound: {},
-        RetrieveSignatureRound: {
-            Event.DONE: PrepareVoteTransactionRound,
-            Event.RETRIEVAL_ERROR: RetrieveSignatureRound,
-            Event.CALL_API: SnapshotAPISendRandomnessRound,
-            Event.NO_MAJORITY: EstablishVoteRound,
-            Event.ROUND_TIMEOUT: EstablishVoteRound,
+        PostVoteDecisionMakingRound: {
+            Event.SKIP_CALL: DecisionMakingRound,
+            Event.SNAPSHOT_CALL: SnapshotAPISendRandomnessRound,
+            Event.NO_MAJORITY: PostVoteDecisionMakingRound,
+            Event.ROUND_TIMEOUT: PostVoteDecisionMakingRound,
         },
         SnapshotAPISendRandomnessRound: {
             Event.DONE: SnapshotAPISendSelectKeeperRound,
@@ -383,11 +423,8 @@ class ProposalVoterAbciApp(AbciApp[Event]):
             Event.ROUND_TIMEOUT: SnapshotAPISendRandomnessRound,
         },
         SnapshotAPISendRound: {
-            Event.API_ERROR: SnapshotAPISendRandomnessRound,
-            Event.DID_NOT_SEND: SnapshotAPISendRandomnessRound,
-            Event.DONE: PrepareVoteTransactionRound,
+            Event.DONE: DecisionMakingRound,
             Event.ROUND_TIMEOUT: SnapshotAPISendRandomnessRound,
-            Event.MAX_RETRIES: PrepareVoteTransactionRound,
         },
         FinishedTransactionPreparationVoteRound: {},
     }
@@ -399,18 +436,16 @@ class ProposalVoterAbciApp(AbciApp[Event]):
         Event.ROUND_TIMEOUT: 30.0,
     }
     cross_period_persisted_keys: Set[str] = {
-        get_name(SynchronizedData.delegations),
-        get_name(SynchronizedData.proposals),
-        get_name(SynchronizedData.votable_proposal_ids),
+        get_name(SynchronizedData.ceramic_db),
+        get_name(SynchronizedData.pending_write),
     }
     db_pre_conditions: Dict[AppState, Set[str]] = {
         EstablishVoteRound: set(),
-        PrepareVoteTransactionRound: {
-            get_name(SynchronizedData.proposals),
-            get_name(SynchronizedData.delegations),
-            get_name(SynchronizedData.votable_proposal_ids),
+        PrepareVoteTransactionsRound: {
+            get_name(SynchronizedData.target_proposals),
+            get_name(SynchronizedData.ceramic_db),
         },
-        RetrieveSignatureRound: set(
+        PostVoteDecisionMakingRound: set(
             get_name(SynchronizedData.most_voted_tx_hash),
         ),
     }

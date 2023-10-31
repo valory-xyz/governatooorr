@@ -12,11 +12,11 @@
         "contract/valory/squads_multisig/0.1.0": "bafybeihjv5gwbqsnwjkhljtkamdx2olscvunk7j53jicvd2rgymtgzmbvi",
         "skill/valory/proposal_collector_solana_abci/0.1.0": "bafybeibldgdg37l2bwu4urjoafai4qzcyok24l7upwfif5bjrroklcl2ay",
         "skill/valory/proposal_voter_solana_abci/0.1.0": "bafybeib2bcxppta2ozmujicyhtnwumywbnkef6my4qunaljeddn7tszhai",
-        "skill/valory/solana_transaction_settlement_abci/0.1.0": "bafybeievwdlks5wq265xxfou6ny6mqkop3zrf5lbz5hh4ewlbx4heryedi",
-        "skill/valory/governatooorr_solana_abci/0.1.0": "bafybeibbl45rrru5hw45m3d46n5b7ll3iz3plh3kqvqxfgah6iutwyoxjq",
-        "agent/valory/governatooorr_solana/0.1.0": "bafybeiaze37lvcoxmxajna7mnds36yrwkfvpffi6n6yrxsnfnhuqmfrcse",
-        "service/valory/governatooorr_solana/0.1.0": "bafybeifme5zjhmldcq7xzto7yqlyrrmygrybyyxacqnagwkodysjcnxtp4",
-        "service/valory/governatooorr_solana_local/0.1.0": "bafybeie3lmcquywsg7z55prur5fpot6xbcddh46hvc6pijozxs3moc6r74"
+        "skill/valory/solana_transaction_settlement_abci/0.1.0": "bafybeifjtdhy4salagye7l7el7ycinmza5wgfrt5k5wmn226a436dwtcbq",
+        "skill/valory/governatooorr_solana_abci/0.1.0": "bafybeifwceksd3amds5dcjdkyhccpnnl6iehrve5oti6gs3pehqlu4n2xm",
+        "agent/valory/governatooorr_solana/0.1.0": "bafybeigaeqxsoonb5s35fffaxkchzgc22ybfnfpqozznl5cymx5ji5sjm4",
+        "service/valory/governatooorr_solana/0.1.0": "bafybeiedztr7743glrn5chpvp2dpodwriv6yc2natqw3ed7fqtb6dhw75e",
+        "service/valory/governatooorr_solana_local/0.1.0": "bafybeichws2tsyxlbciyymn6molrqgwh6i7gu4doxgifd4v66wigfqqtw4"
     },
     "third_party": {
         "protocol/open_aea/signing/1.0.0": "bafybeie7xyems76v5b4wc2lmaidcujizpxfzjnnwdeokmhje53g7ym25ii",

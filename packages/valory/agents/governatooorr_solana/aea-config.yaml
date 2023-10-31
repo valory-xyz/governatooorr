@@ -31,14 +31,14 @@ protocols:
 skills:
 - valory/abstract_abci:0.1.0:bafybeiaxs5tgjhq5n2k4kmi2ekrfy3n2ohrentmxfft6nnv4xmec7emz3i
 - valory/abstract_round_abci:0.1.0:bafybeigafcnpou65s44g2ccdcgtrjttip6josgabilecyrddrvx43sk46u
-- valory/governatooorr_solana_abci:0.1.0:bafybeibbl45rrru5hw45m3d46n5b7ll3iz3plh3kqvqxfgah6iutwyoxjq
+- valory/governatooorr_solana_abci:0.1.0:bafybeifwceksd3amds5dcjdkyhccpnnl6iehrve5oti6gs3pehqlu4n2xm
 - valory/proposal_collector_solana_abci:0.1.0:bafybeibldgdg37l2bwu4urjoafai4qzcyok24l7upwfif5bjrroklcl2ay
 - valory/proposal_voter_solana_abci:0.1.0:bafybeib2bcxppta2ozmujicyhtnwumywbnkef6my4qunaljeddn7tszhai
 - valory/registration_abci:0.1.0:bafybeicttpxr2qj5w4btl3vvld5o6z7myp62yjt54dsqif62zg4afvtomq
 - valory/reset_pause_abci:0.1.0:bafybeihhwrx44clc34fnm4y6zzjgi6pk4oixwlqwqza3ip6ivgejz46tci
 - valory/termination_abci:0.1.0:bafybeigaoktjihggwxforhj6r3u6dycdzsfwwet7kmxkdpvtmenu7pjmsa
 - valory/transaction_settlement_abci:0.1.0:bafybeicuac4iapwxxpshh22dra3z3kfxxv7idb55hmtaoegoh3irufbode
-- valory/solana_transaction_settlement_abci:0.1.0:bafybeievwdlks5wq265xxfou6ny6mqkop3zrf5lbz5hh4ewlbx4heryedi
+- valory/solana_transaction_settlement_abci:0.1.0:bafybeifjtdhy4salagye7l7el7ycinmza5wgfrt5k5wmn226a436dwtcbq
 default_ledger: ethereum
 required_ledgers:
 - ethereum

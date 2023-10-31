@@ -16,14 +16,14 @@ fingerprint:
   rounds.py: bafybeicqhte7wstsdampbhhtc2psiynv263qgbqbuhw72j4pk5mt5nsuh4
 fingerprint_ignore_patterns: []
 connections:
-- valory/openai:0.1.0:bafybeibn42k4zebenmjsumkngfxllxbofkwdno2fm65o6zf5y2uihmo2dq
+- valory/openai:0.1.0:bafybeigiib2l2vji4ehr7jm43bwpzhxe4u2ih4ybwy5zwmkpyjmj3k7u3e
 contracts:
 - valory/solana_governance:0.1.0:bafybeiai6xmkddnu3dmd4aar2om6bqmta6wesdne7wjcsm7q4qhrfnsdia
 protocols:
-- valory/contract_api:1.0.0:bafybeiasywsvax45qmugus5kxogejj66c5taen27h4voriodz7rgushtqa
-- valory/llm:1.0.0:bafybeigqybmg75vsxexmp57hkms7lkp7iwpf54r7wpygizxryvrhfqqpb4
+- valory/contract_api:1.0.0:bafybeialhbjvwiwcnqq3ysxcyemobcbie7xza66gaofcvla5njezkvhcka
+- valory/llm:1.0.0:bafybeihj2orqapokafg7co3wlogwgf6cckaaj2bz3nuv4rm3opkoyhrlp4
 skills:
-- valory/abstract_round_abci:0.1.0:bafybeih2fyfb6kkf7r45pvdk7pyyebr5xloia4xiqxtb3qsrasnstqmepq
+- valory/abstract_round_abci:0.1.0:bafybeigafcnpou65s44g2ccdcgtrjttip6josgabilecyrddrvx43sk46u
 behaviours:
   main:
     args: {}

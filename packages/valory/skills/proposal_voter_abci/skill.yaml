@@ -26,14 +26,14 @@ connections:
 - valory/openai:0.1.0:bafybeigiib2l2vji4ehr7jm43bwpzhxe4u2ih4ybwy5zwmkpyjmj3k7u3e
 contracts:
 - valory/delegate:0.1.0:bafybeihh53xxxzwwt2aijrtka5tsktxyfvoskelvsbpz2a5m6hwp2cvcny
-- valory/gnosis_safe:0.1.0:bafybeifyempvhciy6evbf2epqhry3qgqj3rh4x3ovuru6jtuibuyttjd5e
+- valory/gnosis_safe:0.1.0:bafybeifmsjpgbifvk7y462rhfczvjvpigkdniavghhg5utza3hbnffioq4
 - valory/sign_message_lib:0.1.0:bafybeibt4ffua46dx6cnlttq5h5swub2f4q4lbq2fhhsbzhnwxzelsyoiy
 protocols:
 - valory/contract_api:1.0.0:bafybeialhbjvwiwcnqq3ysxcyemobcbie7xza66gaofcvla5njezkvhcka
 - valory/llm:1.0.0:bafybeihj2orqapokafg7co3wlogwgf6cckaaj2bz3nuv4rm3opkoyhrlp4
 skills:
-- valory/abstract_round_abci:0.1.0:bafybeigafcnpou65s44g2ccdcgtrjttip6josgabilecyrddrvx43sk46u
-- valory/transaction_settlement_abci:0.1.0:bafybeicuac4iapwxxpshh22dra3z3kfxxv7idb55hmtaoegoh3irufbode
+- valory/abstract_round_abci:0.1.0:bafybeigrqhygo2hl2owisj5rqyh3acdvee773ajije64snlzalcgtaac7q
+- valory/transaction_settlement_abci:0.1.0:bafybeigxkdujugzvve2dszkwr5kgfx4uhz2epofo4lorbcnthmzfjegwzi
 behaviours:
   main:
     args: {}

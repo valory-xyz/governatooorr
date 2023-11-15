@@ -206,7 +206,7 @@ class CollectActiveTallyProposalsBehaviour(ProposalCollectorBaseBehaviour):
 
         # Get all the governors, sorted by number of active proposals
         variables = {
-            "chainIds": "eip155:1",
+            "chainIds": ["eip155:1"],
             "addresses": [],
             "includeInactive": False,
             "sort": {"field": "ACTIVE_PROPOSALS", "order": "DESC"},
@@ -240,7 +240,12 @@ class CollectActiveTallyProposalsBehaviour(ProposalCollectorBaseBehaviour):
         response_json = json.loads(response.body)
 
         if "errors" in response_json:
-            self.context.logger.error("Got errors while retrieving the data from Tally")
+            self.context.logger.error(
+                f"Got errors while retrieving the data from Tally: {response_json}"
+            )
+            retries = self.synchronized_data.tally_api_retries + 1
+            if retries >= MAX_RETRIES:
+                return CollectActiveTallyProposalsRound.MAX_RETRIES_PAYLOAD
             return CollectActiveTallyProposalsRound.ERROR_PAYLOAD
 
         # Filter out governors with no active proposals
@@ -296,8 +301,11 @@ class CollectActiveTallyProposalsBehaviour(ProposalCollectorBaseBehaviour):
 
             if "errors" in response_json:
                 self.context.logger.error(
-                    "Got errors while retrieving the data from Tally"
+                    f"Got errors while retrieving the data from Tally: {response_json}"
                 )
+                retries = self.synchronized_data.tally_api_retries + 1
+                if retries >= MAX_RETRIES:
+                    return CollectActiveTallyProposalsRound.MAX_RETRIES_PAYLOAD
                 return CollectActiveTallyProposalsRound.ERROR_PAYLOAD
 
             # Filter out non-active proposals and those which use non-erc20 tokens, as well as those which use more than 1 token
@@ -505,6 +513,9 @@ class CollectActiveSnapshotProposalsBehaviour(ProposalCollectorBaseBehaviour):
                 self.context.logger.error(
                     f"Got errors while retrieving the data from Snapshot: {response_json}"
                 )
+                retries = self.synchronized_data.snapshot_api_retries + 1
+                if retries >= MAX_RETRIES:
+                    return CollectActiveSnapshotProposalsRound.MAX_RETRIES_PAYLOAD
                 return CollectActiveTallyProposalsRound.ERROR_PAYLOAD
 
             new_proposals = response_json["data"]["proposals"]

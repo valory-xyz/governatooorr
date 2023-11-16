@@ -20,8 +20,16 @@
 """This module contains the transaction payloads of the ProposalVoterAbciApp."""
 
 from dataclasses import dataclass
+from typing import Optional
 
 from packages.valory.skills.abstract_round_abci.base import BaseTxPayload
+
+
+@dataclass(frozen=True)
+class OpenAICallCheckPayload(BaseTxPayload):
+    """Represent a transaction payload for the OpenAICallCheckRound."""
+
+    content: Optional[str]
 
 
 @dataclass(frozen=True)

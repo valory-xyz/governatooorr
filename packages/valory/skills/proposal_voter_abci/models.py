@@ -19,6 +19,7 @@
 
 """This module contains the shared state for the abci skill of ProposalVoterAbciApp."""
 
+from datetime import datetime
 from typing import Any
 
 from aea.skills.base import SkillContext
@@ -32,6 +33,40 @@ from packages.valory.skills.abstract_round_abci.models import (
     SharedState as BaseSharedState,
 )
 from packages.valory.skills.proposal_voter_abci.rounds import ProposalVoterAbciApp
+
+
+class OpenAICalls:
+    """OpenAI call window."""
+
+    def __init__(
+        self,
+        openai_call_window_size: float,
+        openai_calls_allowed_in_window: int,
+    ) -> None:
+        """Initialize object."""
+        self._calls_made_in_window = 0
+        self._calls_allowed_in_window = openai_calls_allowed_in_window
+        self._call_window_size = openai_call_window_size
+        self._call_window_start = datetime.now().timestamp()
+
+    def increase_call_count(self) -> None:
+        """Increase call count."""
+        self._calls_made_in_window += 1
+
+    def has_window_expired(self, current_time: float) -> bool:
+        """Increase tweet count."""
+        return current_time > (self._call_window_start + self._call_window_size)
+
+    def max_calls_reached(self) -> bool:
+        """Increase tweet count."""
+        return self._calls_made_in_window >= self._calls_allowed_in_window
+
+    def reset(self, current_time: float) -> None:
+        """Reset the window if required.."""
+        if not self.has_window_expired(current_time=current_time):
+            return
+        self._calls_made_in_window = 0
+        self._call_window_start = current_time
 
 
 class SharedState(BaseSharedState):
@@ -74,6 +109,14 @@ class Params(BaseParams):
         )
         self.default_tally_vote_on_error = self._ensure(
             "default_tally_vote_on_error", kwargs, bool
+        )
+        self.openai_call_window_size = kwargs.get("openai_call_window_size")
+        self.openai_calls_allowed_in_window = kwargs.get(
+            "openai_calls_allowed_in_window"
+        )
+        self.openai_calls = OpenAICalls(
+            openai_call_window_size=self.openai_call_window_size,
+            openai_calls_allowed_in_window=self.openai_calls_allowed_in_window,
         )
         super().__init__(*args, **kwargs)
 

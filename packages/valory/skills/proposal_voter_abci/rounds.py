@@ -37,6 +37,7 @@ from packages.valory.skills.abstract_round_abci.base import (
 from packages.valory.skills.proposal_voter_abci.payloads import (
     DecisionMakingPayload,
     EstablishVotePayload,
+    OpenAICallCheckPayload,
     PostVoteDecisionMakingPayload,
     PrepareVoteTransactionsPayload,
     SnapshotAPISendPayload,
@@ -63,6 +64,7 @@ class Event(Enum):
     SKIP_CALL = "skip_call"
     SNAPSHOT_CALL = "snapshot_call"
     RETRIEVAL_ERROR = "retrieval_error"
+    NO_ALLOWANCE = "no_allowance"
 
 
 class SynchronizedData(BaseSynchronizedData):
@@ -132,6 +134,30 @@ class SynchronizedData(BaseSynchronizedData):
         """Check if the vote has been verified."""
         status = self.db.get("final_verification_status", None)
         return status == VerificationStatus.VERIFIED.value
+
+
+class OpenAICallCheckRound(CollectSameUntilThresholdRound):
+    """OpenAICallCheckRound"""
+
+    payload_class = OpenAICallCheckPayload
+    synchronized_data_class = SynchronizedData
+
+    CALLS_REMAINING = "CALLS_REMAINING"
+
+    def end_block(self) -> Optional[Tuple[BaseSynchronizedData, Event]]:
+        """Process the end of the block."""
+        if self.threshold_reached:
+            # Happy path
+            if self.most_voted_payload == self.CALLS_REMAINING:
+                return self.synchronized_data, Event.DONE
+
+            # No allowance
+            return self.synchronized_data, Event.NO_ALLOWANCE
+        if not self.is_majority_possible(
+            self.collection, self.synchronized_data.nb_participants
+        ):
+            return self.synchronized_data, Event.NO_MAJORITY
+        return None
 
 
 class EstablishVoteRound(CollectSameUntilThresholdRound):
@@ -383,12 +409,17 @@ class FinishedTransactionPreparationNoVoteRound(DegenerateRound):
 class ProposalVoterAbciApp(AbciApp[Event]):
     """ProposalVoterAbciApp"""
 
-    initial_round_cls: AppState = EstablishVoteRound
+    initial_round_cls: AppState = OpenAICallCheckRound
     initial_states: Set[AppState] = {
-        EstablishVoteRound,
+        OpenAICallCheckRound,
         PostVoteDecisionMakingRound,
     }
     transition_function: AbciAppTransitionFunction = {
+        OpenAICallCheckRound: {
+            Event.DONE: EstablishVoteRound,
+            Event.NO_ALLOWANCE: FinishedTransactionPreparationNoVoteRound,
+            Event.ROUND_TIMEOUT: OpenAICallCheckRound,
+        },
         EstablishVoteRound: {
             Event.DONE: PrepareVoteTransactionsRound,
             Event.NO_MAJORITY: EstablishVoteRound,
@@ -440,7 +471,7 @@ class ProposalVoterAbciApp(AbciApp[Event]):
         get_name(SynchronizedData.pending_write),
     }
     db_pre_conditions: Dict[AppState, Set[str]] = {
-        EstablishVoteRound: set(),
+        OpenAICallCheckRound: set(),
         PrepareVoteTransactionsRound: {
             get_name(SynchronizedData.target_proposals),
             get_name(SynchronizedData.ceramic_db),

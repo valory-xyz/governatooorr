@@ -162,6 +162,8 @@ models:
       disable_tally: false
       default_snapshot_vote_on_error: false
       default_tally_vote_on_error: false
+      openai_call_window_size: 3600.0
+      openai_calls_allowed_in_window: 100
     class_name: Params
   randomness_api:
     args:

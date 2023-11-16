@@ -8,7 +8,7 @@ license: Apache-2.0
 fingerprint:
   README.md: bafybeid6vqhnovhpsrjwws2wcb67i7fwr4dq54rpowqgrf3njt2anp5nc4
 fingerprint_ignore_patterns: []
-agent: valory/governatooorr:0.1.0:bafybeig5xw2yr7yu2kk2numlbnyjwnqwudzgqybai27ef5avj522an7dnq
+agent: valory/governatooorr:0.1.0:bafybeidteqfz2rr5eniudqs3d5ijqlzkfxs5f7l2udahaysx6volfkttua
 number_of_agents: 4
 deployment:
   agent:
@@ -111,6 +111,8 @@ type: skill
         disable_tally: ${DISABLE_TALLY:bool:false}
         default_snapshot_vote_on_error: ${DEFAULT_SNAPSHOT_VOTE_ON_ERROR:bool:false}
         default_tally_vote_on_error: ${DEFAULT_TALLY_VOTE_ON_ERROR:bool:false}
+        openai_call_window_size: ${OPENAI_CALL_WINDOW_SIZE:float:3600.0}
+        openai_calls_allowed_in_window: ${OPENAI_CALLS_ALLOWED_IN_WINDOW:int:3}
 1:
   models:
     benchmark_tool: *id001
@@ -177,6 +179,8 @@ type: skill
         disable_tally: ${DISABLE_TALLY:bool:false}
         default_snapshot_vote_on_error: ${DEFAULT_SNAPSHOT_VOTE_ON_ERROR:bool:false}
         default_tally_vote_on_error: ${DEFAULT_TALLY_VOTE_ON_ERROR:bool:false}
+        openai_call_window_size: ${OPENAI_CALL_WINDOW_SIZE:float:3600.0}
+        openai_calls_allowed_in_window: ${OPENAI_CALLS_ALLOWED_IN_WINDOW:int:3}
 2:
   models:
     benchmark_tool: *id001
@@ -243,6 +247,8 @@ type: skill
         disable_tally: ${DISABLE_TALLY:bool:false}
         default_snapshot_vote_on_error: ${DEFAULT_SNAPSHOT_VOTE_ON_ERROR:bool:false}
         default_tally_vote_on_error: ${DEFAULT_TALLY_VOTE_ON_ERROR:bool:false}
+        openai_call_window_size: ${OPENAI_CALL_WINDOW_SIZE:float:3600.0}
+        openai_calls_allowed_in_window: ${OPENAI_CALLS_ALLOWED_IN_WINDOW:int:3}
 3:
   models:
     benchmark_tool: *id001
@@ -309,6 +315,8 @@ type: skill
         disable_tally: ${DISABLE_TALLY:bool:false}
         default_snapshot_vote_on_error: ${DEFAULT_SNAPSHOT_VOTE_ON_ERROR:bool:false}
         default_tally_vote_on_error: ${DEFAULT_TALLY_VOTE_ON_ERROR:bool:false}
+        openai_call_window_size: ${OPENAI_CALL_WINDOW_SIZE:float:3600.0}
+        openai_calls_allowed_in_window: ${OPENAI_CALLS_ALLOWED_IN_WINDOW:int:3}
 ---
 public_id: valory/ledger:0.19.0
 type: connection

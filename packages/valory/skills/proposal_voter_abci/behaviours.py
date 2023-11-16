@@ -51,10 +51,15 @@ from packages.valory.skills.proposal_voter_abci.dialogues import (
     LlmDialogue,
     LlmDialogues,
 )
-from packages.valory.skills.proposal_voter_abci.models import Params, SharedState
+from packages.valory.skills.proposal_voter_abci.models import (
+    OpenAICalls,
+    Params,
+    SharedState,
+)
 from packages.valory.skills.proposal_voter_abci.payloads import (
     DecisionMakingPayload,
     EstablishVotePayload,
+    OpenAICallCheckPayload,
     PostVoteDecisionMakingPayload,
     PrepareVoteTransactionsPayload,
     SnapshotAPISendPayload,
@@ -64,6 +69,7 @@ from packages.valory.skills.proposal_voter_abci.payloads import (
 from packages.valory.skills.proposal_voter_abci.rounds import (
     DecisionMakingRound,
     EstablishVoteRound,
+    OpenAICallCheckRound,
     PostVoteDecisionMakingRound,
     PrepareVoteTransactionsRound,
     ProposalVoterAbciApp,
@@ -107,6 +113,39 @@ class ProposalVoterBaseBehaviour(BaseBehaviour, ABC):
     def params(self) -> Params:
         """Return the params."""
         return cast(Params, super().params)
+
+    @property
+    def openai_calls(self) -> OpenAICalls:
+        """Return the params."""
+        return self.params.openai_calls
+
+
+class OpenAICallCheckBehaviour(ProposalVoterBaseBehaviour):
+    """TwitterMentionsCollectionBehaviour"""
+
+    matching_round: Type[AbstractRound] = OpenAICallCheckRound
+
+    def async_act(self) -> Generator:
+        """Do the act, supporting asynchronous execution."""
+        with self.context.benchmark_tool.measure(self.behaviour_id).local():
+            current_time = cast(
+                SharedState, self.context.state
+            ).round_sequence.last_round_transition_timestamp.timestamp()
+            # Reset the window if the window expired before checking
+            self.openai_calls.reset(current_time=current_time)
+            if self.openai_calls.max_calls_reached():
+                content = None
+            else:
+                content = OpenAICallCheckRound.CALLS_REMAINING
+        with self.context.benchmark_tool.measure(self.behaviour_id).consensus():
+            yield from self.send_a2a_transaction(
+                payload=OpenAICallCheckPayload(
+                    sender=self.context.agent_address,
+                    content=content,
+                )
+            )
+            yield from self.wait_until_round_end()
+        self.set_done()
 
 
 class EstablishVoteBehaviour(ProposalVoterBaseBehaviour):
@@ -258,6 +297,7 @@ class EstablishVoteBehaviour(ProposalVoterBaseBehaviour):
         llm_response_message = yield from self._do_request(
             request_llm_message, llm_dialogue
         )
+        self.openai_calls.increase_call_count()
         vote = llm_response_message.value
         vote = vote.strip()
         return vote
@@ -615,6 +655,9 @@ class PrepareVoteTransactionsBehaviour(ProposalVoterBaseBehaviour):
 
                 proposal = self.synchronized_data.target_proposals["tally"][proposal_id]
 
+                if expiring_proposal["vote"] is None:
+                    continue
+
                 governor_address = proposal["governor"]["id"].split(":")[-1]
                 vote_code = VOTES_TO_CODE[expiring_proposal["vote"]]
 
@@ -639,6 +682,9 @@ class PrepareVoteTransactionsBehaviour(ProposalVoterBaseBehaviour):
                 "snapshot"
             ].items():
                 if proposal_id in pending_transactions["snapshot"]:
+                    continue
+
+                if expiring_proposal["vote"] is None:
                     continue
 
                 self.context.logger.info(
@@ -872,6 +918,7 @@ class ProposalVoterRoundBehaviour(AbstractRoundBehaviour):
     initial_behaviour_cls = EstablishVoteBehaviour
     abci_app_cls = ProposalVoterAbciApp  # type: ignore
     behaviours: Set[Type[BaseBehaviour]] = [
+        OpenAICallCheckBehaviour,
         EstablishVoteBehaviour,
         PrepareVoteTransactionsBehaviour,
         DecisionMakingBehaviour,

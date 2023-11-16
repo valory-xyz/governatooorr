@@ -31,7 +31,7 @@ protocols:
 skills:
 - valory/abstract_abci:0.1.0:bafybeifmfv4bgt5vzvgawlocksacqeadzg72zs4usvgjaf245hbbptpiki
 - valory/abstract_round_abci:0.1.0:bafybeigrqhygo2hl2owisj5rqyh3acdvee773ajije64snlzalcgtaac7q
-- valory/governatooorr_solana_abci:0.1.0:bafybeiarvu2o5ts4pqnj5kxfackgfyxuugntlex6vx4yw2nugesaw6r2fq
+- valory/governatooorr_solana_abci:0.1.0:bafybeicv7bwgsrxsujprchfoxruihkmitu3dy5kas5j7hjgmd4plhezu6i
 - valory/proposal_collector_solana_abci:0.1.0:bafybeieahp7d4zkbanccetab5o4a2ix6h6jkwswuf3yyyq4o2dvrvn5mau
 - valory/proposal_voter_solana_abci:0.1.0:bafybeif4yzxssq2ksbdhd2rfc7kgq5slylvus6lcei3w27qr7cilnirueq
 - valory/registration_abci:0.1.0:bafybeib2whqixp5265d53sa6szkz7woet4awuqr4dekb2hokpgps5codme
@@ -194,3 +194,5 @@ models:
       disable_tally: ${bool:false}
       default_snapshot_vote_on_error: ${bool:false}
       default_tally_vote_on_error: ${bool:false}
+      openai_call_window_size: ${float:3600.0}
+      openai_calls_allowed_in_window: ${int:100}

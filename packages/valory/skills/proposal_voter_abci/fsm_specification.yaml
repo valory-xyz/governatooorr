@@ -1,24 +1,26 @@
 alphabet_in:
 - DONE
+- NO_ALLOWANCE
 - NO_MAJORITY
 - NO_VOTE
 - ROUND_TIMEOUT
 - SKIP_CALL
 - SNAPSHOT_CALL
 - VOTE
-default_start_state: EstablishVoteRound
+default_start_state: OpenAICallCheckRound
 final_states:
 - FinishedTransactionPreparationNoVoteRound
 - FinishedTransactionPreparationVoteRound
 label: ProposalVoterAbciApp
 start_states:
-- EstablishVoteRound
+- OpenAICallCheckRound
 - PostVoteDecisionMakingRound
 states:
 - DecisionMakingRound
 - EstablishVoteRound
 - FinishedTransactionPreparationNoVoteRound
 - FinishedTransactionPreparationVoteRound
+- OpenAICallCheckRound
 - PostVoteDecisionMakingRound
 - PrepareVoteTransactionsRound
 - SnapshotAPISendRandomnessRound
@@ -32,6 +34,10 @@ transition_func:
     (EstablishVoteRound, DONE): PrepareVoteTransactionsRound
     (EstablishVoteRound, NO_MAJORITY): EstablishVoteRound
     (EstablishVoteRound, ROUND_TIMEOUT): EstablishVoteRound
+    (OpenAICallCheckRound, DONE): EstablishVoteRound
+    (OpenAICallCheckRound, NO_ALLOWANCE): FinishedTransactionPreparationNoVoteRound
+    (OpenAICallCheckRound, NO_MAJORITY): OpenAICallCheckRound
+    (OpenAICallCheckRound, ROUND_TIMEOUT): OpenAICallCheckRound
     (PostVoteDecisionMakingRound, NO_MAJORITY): PostVoteDecisionMakingRound
     (PostVoteDecisionMakingRound, ROUND_TIMEOUT): PostVoteDecisionMakingRound
     (PostVoteDecisionMakingRound, SKIP_CALL): DecisionMakingRound

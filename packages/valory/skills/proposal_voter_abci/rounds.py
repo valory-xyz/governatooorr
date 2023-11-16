@@ -418,6 +418,7 @@ class ProposalVoterAbciApp(AbciApp[Event]):
         OpenAICallCheckRound: {
             Event.DONE: EstablishVoteRound,
             Event.NO_ALLOWANCE: FinishedTransactionPreparationNoVoteRound,
+            Event.NO_MAJORITY: OpenAICallCheckRound,
             Event.ROUND_TIMEOUT: OpenAICallCheckRound,
         },
         EstablishVoteRound: {

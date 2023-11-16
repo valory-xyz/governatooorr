@@ -15,6 +15,7 @@ alphabet_in:
 - MAX_RETRIES_ERROR
 - NEGATIVE
 - NONE
+- NO_ALLOWANCE
 - NO_MAJORITY
 - NO_VOTE
 - REPEAT
@@ -45,6 +46,7 @@ states:
 - EstablishVoteRound
 - FinalizationRound
 - FinishedMaxRetriesRound
+- OpenAICallCheckRound
 - PostVoteDecisionMakingRound
 - PrepareVoteTransactionsRound
 - RandomnessRound
@@ -81,10 +83,10 @@ transition_func:
     (CheckTransactionHistoryRound, NONE): PostVoteDecisionMakingRound
     (CheckTransactionHistoryRound, NO_MAJORITY): CheckTransactionHistoryRound
     (CollectActiveSnapshotProposalsRound, API_ERROR): CollectActiveSnapshotProposalsRound
-    (CollectActiveSnapshotProposalsRound, DONE): EstablishVoteRound
+    (CollectActiveSnapshotProposalsRound, DONE): OpenAICallCheckRound
     (CollectActiveSnapshotProposalsRound, NO_MAJORITY): CollectActiveSnapshotProposalsRound
     (CollectActiveSnapshotProposalsRound, REPEAT): CollectActiveSnapshotProposalsRound
-    (CollectActiveSnapshotProposalsRound, ROUND_TIMEOUT): EstablishVoteRound
+    (CollectActiveSnapshotProposalsRound, ROUND_TIMEOUT): OpenAICallCheckRound
     (CollectActiveTallyProposalsRound, API_ERROR): CollectActiveTallyProposalsRound
     (CollectActiveTallyProposalsRound, BLOCK_RETRIEVAL_ERROR): CollectActiveTallyProposalsRound
     (CollectActiveTallyProposalsRound, DONE): CollectActiveSnapshotProposalsRound
@@ -106,6 +108,10 @@ transition_func:
     (FinalizationRound, FINALIZATION_FAILED): SelectKeeperTransactionSubmissionBRound
     (FinalizationRound, FINALIZE_TIMEOUT): SelectKeeperTransactionSubmissionBAfterTimeoutRound
     (FinalizationRound, INSUFFICIENT_FUNDS): SelectKeeperTransactionSubmissionBRound
+    (OpenAICallCheckRound, DONE): EstablishVoteRound
+    (OpenAICallCheckRound, NO_ALLOWANCE): ResetAndPauseRound
+    (OpenAICallCheckRound, NO_MAJORITY): OpenAICallCheckRound
+    (OpenAICallCheckRound, ROUND_TIMEOUT): OpenAICallCheckRound
     (PostVoteDecisionMakingRound, NO_MAJORITY): PostVoteDecisionMakingRound
     (PostVoteDecisionMakingRound, ROUND_TIMEOUT): PostVoteDecisionMakingRound
     (PostVoteDecisionMakingRound, SKIP_CALL): DecisionMakingRound

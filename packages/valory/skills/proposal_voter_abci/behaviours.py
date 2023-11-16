@@ -655,7 +655,7 @@ class PrepareVoteTransactionsBehaviour(ProposalVoterBaseBehaviour):
 
                 proposal = self.synchronized_data.target_proposals["tally"][proposal_id]
 
-                if expiring_proposal["vote"] == None:
+                if expiring_proposal["vote"] is None:
                     continue
 
                 governor_address = proposal["governor"]["id"].split(":")[-1]
@@ -684,7 +684,7 @@ class PrepareVoteTransactionsBehaviour(ProposalVoterBaseBehaviour):
                 if proposal_id in pending_transactions["snapshot"]:
                     continue
 
-                if expiring_proposal["vote"] == None:
+                if expiring_proposal["vote"] is None:
                     continue
 
                 self.context.logger.info(
@@ -918,6 +918,7 @@ class ProposalVoterRoundBehaviour(AbstractRoundBehaviour):
     initial_behaviour_cls = EstablishVoteBehaviour
     abci_app_cls = ProposalVoterAbciApp  # type: ignore
     behaviours: Set[Type[BaseBehaviour]] = [
+        OpenAICallCheckBehaviour,
         EstablishVoteBehaviour,
         PrepareVoteTransactionsBehaviour,
         DecisionMakingBehaviour,

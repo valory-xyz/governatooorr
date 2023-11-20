@@ -24,12 +24,14 @@ snapshot_proposal_query = """
 query Proposals(
   $first: Int
   $skip: Int
+  $space_in: [String]
 ) {
   proposals (
     first: $first,
     skip: $skip,
     where: {
-      state: "active"
+      state: "active",
+      space_in: $space_in
     },
     orderBy: "end",
     orderDirection: asc

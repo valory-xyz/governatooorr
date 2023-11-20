@@ -486,6 +486,7 @@ class CollectActiveSnapshotProposalsBehaviour(ProposalCollectorBaseBehaviour):
             variables = {
                 "first": SNAPSHOT_REQUEST_STEP,
                 "skip": skip,
+                "space_in": self.params.snapshot_space_whitelist,
             }
 
             # Make the request

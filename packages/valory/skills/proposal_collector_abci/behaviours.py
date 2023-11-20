@@ -537,6 +537,10 @@ class CollectActiveSnapshotProposalsBehaviour(ProposalCollectorBaseBehaviour):
         n_retrieved_proposals += len(active_proposals)
         ceramic_db = self.synchronized_data.ceramic_db
 
+        self.context.logger.info(
+            f"Active proposals: {[ap['space']['id'] + ':' + ap['id'] for ap in active_proposals]}"
+        )
+
         # Remove active proposals where we have already voted
         target_proposals = filter(
             lambda ap: ap["id"] not in ceramic_db["vote_data"]["snapshot"],
@@ -544,8 +548,11 @@ class CollectActiveSnapshotProposalsBehaviour(ProposalCollectorBaseBehaviour):
         )
 
         # Filter out proposals that do not use the erc20-balance-of strategy
+        valid_strategies = set(["erc20-balance-of", "erc20-votes"])
         target_proposals = filter(
-            lambda ap: "erc20-balance-of" in [s["name"] for s in ap["strategies"]],
+            lambda ap: valid_strategies.intersection(
+                set([s["name"] for s in ap["strategies"]])
+            ),
             target_proposals,
         )
 
@@ -570,6 +577,10 @@ class CollectActiveSnapshotProposalsBehaviour(ProposalCollectorBaseBehaviour):
 
         self.context.logger.info(
             f"Retrieved {len(votable_proposals)} new votable proposals from Snapshot"
+        )
+
+        self.context.logger.info(
+            f"Votable proposals: {[vp['space']['id'] + ':' + vp['id'] for vp in votable_proposals]}"
         )
 
         # Remove previous expired proposals

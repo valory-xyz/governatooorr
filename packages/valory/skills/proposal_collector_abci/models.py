@@ -87,6 +87,10 @@ class Params(BaseParams):
         )
         self.disable_snapshot = self._ensure("disable_snapshot", kwargs, bool)
         self.disable_tally = self._ensure("disable_tally", kwargs, bool)
+        self.snapshot_request_step = self._ensure("snapshot_request_step", kwargs, int)
+        self.snapshot_proposal_round_limit = self._ensure(
+            "snapshot_proposal_round_limit", kwargs, int
+        )
         super().__init__(*args, **kwargs)
 
 

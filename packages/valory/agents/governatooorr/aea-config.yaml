@@ -38,8 +38,8 @@ protocols:
 skills:
 - valory/abstract_abci:0.1.0:bafybeifmfv4bgt5vzvgawlocksacqeadzg72zs4usvgjaf245hbbptpiki
 - valory/abstract_round_abci:0.1.0:bafybeigrqhygo2hl2owisj5rqyh3acdvee773ajije64snlzalcgtaac7q
-- valory/governatooorr_abci:0.1.0:bafybeifoghsh2cbh4vgj7yd7xvwyuobbzt7gt4mffouwprxepeg456uciu
-- valory/proposal_collector_abci:0.1.0:bafybeicqs6w2gwggzuajiydewjcp7u5ll44kx4zb2jftzeqxdn434phmii
+- valory/governatooorr_abci:0.1.0:bafybeiha5gaefo7qztsckd4wchi6ar3pq43o7hymlfk27exu77c336jr54
+- valory/proposal_collector_abci:0.1.0:bafybeigyijgnt3fb6qxjlwxyrq6d6xtylhwejzcrsjqozguo7niilrfdku
 - valory/proposal_voter_abci:0.1.0:bafybeia7rbrtayibigutllt4biqzwa2nw7ic3qp2yuadiqlwvryhlsafde
 - valory/registration_abci:0.1.0:bafybeib2whqixp5265d53sa6szkz7woet4awuqr4dekb2hokpgps5codme
 - valory/reset_pause_abci:0.1.0:bafybeiflxcl2dtzayyzzddc4f2astzxunyp66meutornanrgeemicdea5q
@@ -215,6 +215,8 @@ models:
       default_tally_vote_on_error: ${bool:false}
       openai_call_window_size: ${float:3600.0}
       openai_calls_allowed_in_window: ${int:100}
+      snapshot_request_step: ${int:50}
+      snapshot_proposal_round_limit: ${int:50}
 ---
 public_id: fetchai/http_server:0.22.0:bafybeicblltx7ha3ulthg7bzfccuqqyjmihhrvfeztlgrlcoxhr7kf6nbq
 type: connection

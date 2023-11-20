@@ -56,8 +56,6 @@ from packages.valory.skills.proposal_collector_abci.tally import (
 
 
 HTTP_OK = 200
-SNAPSHOT_REQUEST_STEP = 50
-SNAPSHOT_PROPOSAL_ROUND_LIMIT = 50  # avoids too big payloads
 MAX_RETRIES = 3
 
 
@@ -469,6 +467,9 @@ class CollectActiveSnapshotProposalsBehaviour(ProposalCollectorBaseBehaviour):
             "Content-Type": "application/json",
             "Accept": "application/json",
         }
+
+        SNAPSHOT_REQUEST_STEP = self.params.snapshot_request_step
+        SNAPSHOT_PROPOSAL_ROUND_LIMIT = self.params.snapshot_proposal_round_limit
 
         finished = False
         i = 0

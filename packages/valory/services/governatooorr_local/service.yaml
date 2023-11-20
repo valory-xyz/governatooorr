@@ -8,7 +8,7 @@ license: Apache-2.0
 fingerprint:
   README.md: bafybeifvddbrix4wlzp5mfaxjg7bargwbcqxjdfvaz5tctxfvzowggkusu
 fingerprint_ignore_patterns: []
-agent: valory/governatooorr:0.1.0:bafybeidteqfz2rr5eniudqs3d5ijqlzkfxs5f7l2udahaysx6volfkttua
+agent: valory/governatooorr:0.1.0:bafybeih4xkk7f3j3y265342xdkmukfw2nihjd2jjqmatc36q6zshl4weva
 number_of_agents: 1
 deployment:
   agent:
@@ -105,6 +105,8 @@ models:
       default_tally_vote_on_error: ${DEFAULT_TALLY_VOTE_ON_ERROR:bool:false}
       openai_call_window_size: ${OPENAI_CALL_WINDOW_SIZE:float:3600.0}
       openai_calls_allowed_in_window: ${OPENAI_CALLS_ALLOWED_IN_WINDOW:int:3}
+      snapshot_request_step: ${SNAPSHOT_REQUEST_STEP:int:50}
+      snapshot_proposal_round_limit: ${SNAPSHOT_PROPOSAL_ROUND_LIMIT:int:50}
 ---
 public_id: valory/ledger:0.19.0
 type: connection

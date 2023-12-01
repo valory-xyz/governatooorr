@@ -46,6 +46,8 @@
         "skill/valory/ceramic_read_abci/0.1.0": "bafybeiall2unkqofaq7khuphm7aekbp7r42ett5hu5zv3pkbedhyzmathu",
         "skill/valory/ceramic_write_abci/0.1.0": "bafybeif73tpmbaslwpijsqmrdzb3e5veegaan46tei2fiknnrn2eilhggy",
         "connection/valory/openai/0.1.0": "bafybeigiib2l2vji4ehr7jm43bwpzhxe4u2ih4ybwy5zwmkpyjmj3k7u3e",
-        "protocol/valory/llm/1.0.0": "bafybeihj2orqapokafg7co3wlogwgf6cckaaj2bz3nuv4rm3opkoyhrlp4"
+        "protocol/valory/llm/1.0.0": "bafybeihj2orqapokafg7co3wlogwgf6cckaaj2bz3nuv4rm3opkoyhrlp4",
+        "skill/valory/mech_interact_abci/0.1.0": "bafybeifodymmh33fxpulj3mundj33gxq3psbgt3ndkyvyvs5xtaveoiuwa",
+        "contract/valory/mech/0.1.0": "bafybeiaofbjmqtd725dkowk6x5zbnczdlmyqttdxxzkdyqnjuvrdveb2qu"
     }
 }

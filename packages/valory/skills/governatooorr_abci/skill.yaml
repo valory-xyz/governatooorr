@@ -18,15 +18,15 @@ connections: []
 contracts: []
 protocols: []
 skills:
-- valory/abstract_round_abci:0.1.0:bafybeigrqhygo2hl2owisj5rqyh3acdvee773ajije64snlzalcgtaac7q
-- valory/ceramic_read_abci:0.1.0:bafybeiall2unkqofaq7khuphm7aekbp7r42ett5hu5zv3pkbedhyzmathu
-- valory/ceramic_write_abci:0.1.0:bafybeif73tpmbaslwpijsqmrdzb3e5veegaan46tei2fiknnrn2eilhggy
-- valory/proposal_collector_abci:0.1.0:bafybeicqs6w2gwggzuajiydewjcp7u5ll44kx4zb2jftzeqxdn434phmii
-- valory/proposal_voter_abci:0.1.0:bafybeia7rbrtayibigutllt4biqzwa2nw7ic3qp2yuadiqlwvryhlsafde
-- valory/registration_abci:0.1.0:bafybeib2whqixp5265d53sa6szkz7woet4awuqr4dekb2hokpgps5codme
-- valory/reset_pause_abci:0.1.0:bafybeiflxcl2dtzayyzzddc4f2astzxunyp66meutornanrgeemicdea5q
-- valory/termination_abci:0.1.0:bafybeifazwrksp756h7z42qqfcgi6lya6wmhbx46l7ghlaooe45gqnju7q
-- valory/transaction_settlement_abci:0.1.0:bafybeigxkdujugzvve2dszkwr5kgfx4uhz2epofo4lorbcnthmzfjegwzi
+- valory/abstract_round_abci:0.1.0:bafybeiaqcl7h2famylusiffigwem7tevkcsyocdu5xd42jkmgq6kvowzgq
+- valory/ceramic_read_abci:0.1.0:bafybeigqpkvsxfhz5jt3yuipmkl6eyfgqcw36226sgfhdgud7mphsjmopa
+- valory/ceramic_write_abci:0.1.0:bafybeighmakx2u2okkvokdimxyzrnfn5qb2cib3qzvzdh4tnkfr6hkx32a
+- valory/proposal_collector_abci:0.1.0:bafybeig46l6ad3eybd4dg7rdkdtdu3ooaydwger53qxboh2td3lo3u3qhy
+- valory/proposal_voter_abci:0.1.0:bafybeibidllvbmwh35a22hdcceerk7xvkb3xbtvygcl4mqitne2jh4jm6q
+- valory/registration_abci:0.1.0:bafybeic2ynseiak7jpta7jfwuqwyp453b4p7lolr4wihxmpn633uekv5am
+- valory/reset_pause_abci:0.1.0:bafybeidzajbe3erygeh2xbd6lrjv7nsptznjuzrt24ykgvhgotdeyhfnba
+- valory/termination_abci:0.1.0:bafybeie4zvjfxvdu7qrulmur3chpjz3kpj5m4bjsxvpk4gvj5zbyyayfaa
+- valory/transaction_settlement_abci:0.1.0:bafybeiaefgqbs7zsn5xe5kdwrujj7ivygkn3ujpw6crnvi3knvxw75qmja
 behaviours:
   main:
     args: {}
@@ -190,5 +190,5 @@ models:
     class_name: TendermintDialogues
 dependencies:
   open-aea-cli-ipfs:
-    version: <2.0.0,>=1.27.0
+    version: ==1.42.0
 is_abstract: false

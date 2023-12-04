@@ -213,8 +213,8 @@ models:
       disable_tally: ${bool:false}
       default_snapshot_vote_on_error: ${bool:false}
       default_tally_vote_on_error: ${bool:false}
-      openai_call_window_size: ${float:3600.0}
-      openai_calls_allowed_in_window: ${int:100}
+      mech_call_window_size: ${float:3600.0}
+      mech_calls_allowed_in_window: ${int:100}
       snapshot_request_step: ${int:50}
       snapshot_proposal_round_limit: ${int:50}
 ---

@@ -7,48 +7,48 @@ alphabet_in:
 - SKIP_CALL
 - SNAPSHOT_CALL
 - VOTE
-default_start_state: OpenAICallCheckRound
+default_start_state: MechCallCheckRound
 final_states:
 - FinishedTransactionPreparationNoVoteRound
 - FinishedTransactionPreparationVoteRound
 label: ProposalVoterAbciApp
 start_states:
-- OpenAICallCheckRound
+- MechCallCheckRound
 - PostVoteDecisionMakingRound
 states:
-- DecisionMakingRound
+- PostTxDecisionMakingRound
 - EstablishVoteRound
 - FinishedTransactionPreparationNoVoteRound
 - FinishedTransactionPreparationVoteRound
-- OpenAICallCheckRound
+- MechCallCheckRound
 - PostVoteDecisionMakingRound
 - PrepareVoteTransactionsRound
 - SnapshotAPISendRandomnessRound
 - SnapshotAPISendRound
 - SnapshotAPISendSelectKeeperRound
 transition_func:
-    (DecisionMakingRound, NO_MAJORITY): DecisionMakingRound
-    (DecisionMakingRound, NO_VOTE): FinishedTransactionPreparationNoVoteRound
-    (DecisionMakingRound, ROUND_TIMEOUT): DecisionMakingRound
-    (DecisionMakingRound, VOTE): FinishedTransactionPreparationVoteRound
+    (PostTxDecisionMakingRound, NO_MAJORITY): PostTxDecisionMakingRound
+    (PostTxDecisionMakingRound, NO_VOTE): FinishedTransactionPreparationNoVoteRound
+    (PostTxDecisionMakingRound, ROUND_TIMEOUT): PostTxDecisionMakingRound
+    (PostTxDecisionMakingRound, VOTE): FinishedTransactionPreparationVoteRound
     (EstablishVoteRound, DONE): PrepareVoteTransactionsRound
     (EstablishVoteRound, NO_MAJORITY): EstablishVoteRound
     (EstablishVoteRound, ROUND_TIMEOUT): EstablishVoteRound
-    (OpenAICallCheckRound, DONE): EstablishVoteRound
-    (OpenAICallCheckRound, NO_ALLOWANCE): FinishedTransactionPreparationNoVoteRound
-    (OpenAICallCheckRound, NO_MAJORITY): OpenAICallCheckRound
-    (OpenAICallCheckRound, ROUND_TIMEOUT): OpenAICallCheckRound
+    (MechCallCheckRound, DONE): EstablishVoteRound
+    (MechCallCheckRound, NO_ALLOWANCE): FinishedTransactionPreparationNoVoteRound
+    (MechCallCheckRound, NO_MAJORITY): MechCallCheckRound
+    (MechCallCheckRound, ROUND_TIMEOUT): MechCallCheckRound
     (PostVoteDecisionMakingRound, NO_MAJORITY): PostVoteDecisionMakingRound
     (PostVoteDecisionMakingRound, ROUND_TIMEOUT): PostVoteDecisionMakingRound
-    (PostVoteDecisionMakingRound, SKIP_CALL): DecisionMakingRound
+    (PostVoteDecisionMakingRound, SKIP_CALL): PostTxDecisionMakingRound
     (PostVoteDecisionMakingRound, SNAPSHOT_CALL): SnapshotAPISendRandomnessRound
-    (PrepareVoteTransactionsRound, DONE): DecisionMakingRound
+    (PrepareVoteTransactionsRound, DONE): PostTxDecisionMakingRound
     (PrepareVoteTransactionsRound, NO_MAJORITY): PrepareVoteTransactionsRound
     (PrepareVoteTransactionsRound, ROUND_TIMEOUT): PrepareVoteTransactionsRound
     (SnapshotAPISendRandomnessRound, DONE): SnapshotAPISendSelectKeeperRound
     (SnapshotAPISendRandomnessRound, NO_MAJORITY): SnapshotAPISendRandomnessRound
     (SnapshotAPISendRandomnessRound, ROUND_TIMEOUT): SnapshotAPISendRandomnessRound
-    (SnapshotAPISendRound, DONE): DecisionMakingRound
+    (SnapshotAPISendRound, DONE): PostTxDecisionMakingRound
     (SnapshotAPISendRound, ROUND_TIMEOUT): SnapshotAPISendRandomnessRound
     (SnapshotAPISendSelectKeeperRound, DONE): SnapshotAPISendRound
     (SnapshotAPISendSelectKeeperRound, NO_MAJORITY): SnapshotAPISendRandomnessRound

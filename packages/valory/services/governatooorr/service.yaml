@@ -111,8 +111,8 @@ type: skill
         disable_tally: ${DISABLE_TALLY:bool:false}
         default_snapshot_vote_on_error: ${DEFAULT_SNAPSHOT_VOTE_ON_ERROR:bool:false}
         default_tally_vote_on_error: ${DEFAULT_TALLY_VOTE_ON_ERROR:bool:false}
-        openai_call_window_size: ${OPENAI_CALL_WINDOW_SIZE:float:3600.0}
-        openai_calls_allowed_in_window: ${OPENAI_CALLS_ALLOWED_IN_WINDOW:int:3}
+        mech_call_window_size: ${mech_call_window_size:float:3600.0}
+        mech_calls_allowed_in_window: ${mech_calls_allowed_in_window:int:3}
         snapshot_request_step: ${SNAPSHOT_REQUEST_STEP:int:50}
         snapshot_proposal_round_limit: ${SNAPSHOT_PROPOSAL_ROUND_LIMIT:int:50}
 1:
@@ -181,8 +181,8 @@ type: skill
         disable_tally: ${DISABLE_TALLY:bool:false}
         default_snapshot_vote_on_error: ${DEFAULT_SNAPSHOT_VOTE_ON_ERROR:bool:false}
         default_tally_vote_on_error: ${DEFAULT_TALLY_VOTE_ON_ERROR:bool:false}
-        openai_call_window_size: ${OPENAI_CALL_WINDOW_SIZE:float:3600.0}
-        openai_calls_allowed_in_window: ${OPENAI_CALLS_ALLOWED_IN_WINDOW:int:3}
+        mech_call_window_size: ${mech_call_window_size:float:3600.0}
+        mech_calls_allowed_in_window: ${mech_calls_allowed_in_window:int:3}
         snapshot_request_step: ${SNAPSHOT_REQUEST_STEP:int:50}
         snapshot_proposal_round_limit: ${SNAPSHOT_PROPOSAL_ROUND_LIMIT:int:50}
 2:
@@ -251,8 +251,8 @@ type: skill
         disable_tally: ${DISABLE_TALLY:bool:false}
         default_snapshot_vote_on_error: ${DEFAULT_SNAPSHOT_VOTE_ON_ERROR:bool:false}
         default_tally_vote_on_error: ${DEFAULT_TALLY_VOTE_ON_ERROR:bool:false}
-        openai_call_window_size: ${OPENAI_CALL_WINDOW_SIZE:float:3600.0}
-        openai_calls_allowed_in_window: ${OPENAI_CALLS_ALLOWED_IN_WINDOW:int:3}
+        mech_call_window_size: ${mech_call_window_size:float:3600.0}
+        mech_calls_allowed_in_window: ${mech_calls_allowed_in_window:int:3}
         snapshot_request_step: ${SNAPSHOT_REQUEST_STEP:int:50}
         snapshot_proposal_round_limit: ${SNAPSHOT_PROPOSAL_ROUND_LIMIT:int:50}
 3:
@@ -321,8 +321,8 @@ type: skill
         disable_tally: ${DISABLE_TALLY:bool:false}
         default_snapshot_vote_on_error: ${DEFAULT_SNAPSHOT_VOTE_ON_ERROR:bool:false}
         default_tally_vote_on_error: ${DEFAULT_TALLY_VOTE_ON_ERROR:bool:false}
-        openai_call_window_size: ${OPENAI_CALL_WINDOW_SIZE:float:3600.0}
-        openai_calls_allowed_in_window: ${OPENAI_CALLS_ALLOWED_IN_WINDOW:int:3}
+        mech_call_window_size: ${mech_call_window_size:float:3600.0}
+        mech_calls_allowed_in_window: ${mech_calls_allowed_in_window:int:3}
         snapshot_request_step: ${SNAPSHOT_REQUEST_STEP:int:50}
         snapshot_proposal_round_limit: ${SNAPSHOT_PROPOSAL_ROUND_LIMIT:int:50}
 ---

@@ -20,8 +20,9 @@
 """This package contains the rounds of ProposalVoterAbciApp."""
 
 import json
+from dataclasses import asdict, dataclass, is_dataclass
 from enum import Enum
-from typing import Dict, Optional, Set, Tuple, cast
+from typing import Any, Dict, List, Optional, Set, Tuple, cast
 
 from packages.valory.skills.abstract_round_abci.base import (
     AbciApp,
@@ -37,8 +38,10 @@ from packages.valory.skills.abstract_round_abci.base import (
 from packages.valory.skills.proposal_voter_abci.payloads import (
     DecisionMakingPayload,
     EstablishVotePayload,
-    OpenAICallCheckPayload,
+    MechCallCheckPayload,
+    PostTxDecisionMakingPayload,
     PostVoteDecisionMakingPayload,
+    PrepareMechRequestPayload,
     PrepareVoteTransactionsPayload,
     SnapshotAPISendPayload,
     SnapshotAPISendRandomnessPayload,
@@ -50,6 +53,40 @@ from packages.valory.skills.transaction_settlement_abci.payload_tools import (
 
 
 MAX_VOTE_RETRIES = 3
+
+
+@dataclass
+class MechMetadata:
+    """A Mech's metadata."""
+
+    prompt: str
+    tool: str
+    nonce: str
+
+
+@dataclass
+class MechRequest:
+    """A Mech's request."""
+
+    data: str = ""
+    requestId: int = 0
+
+
+@dataclass
+class MechInteractionResponse(MechRequest):
+    """A structure for the response of a mech interaction task."""
+
+    nonce: str = ""
+    result: Optional[str] = None
+    error: str = "Unknown"
+
+    def retries_exceeded(self) -> None:
+        """Set an incorrect format response."""
+        self.error = "Retries were exceeded while trying to get the mech's response."
+
+    def incorrect_format(self, res: Any) -> None:
+        """Set an incorrect format response."""
+        self.error = f"The response's format was unexpected: {res}"
 
 
 class Event(Enum):
@@ -65,6 +102,9 @@ class Event(Enum):
     SNAPSHOT_CALL = "snapshot_call"
     RETRIEVAL_ERROR = "retrieval_error"
     NO_ALLOWANCE = "no_allowance"
+    POST_VOTE_TX = "post_vote_tx"
+    POST_REQUEST_TX = "post_request_tx"
+    MECH_REQUEST = "mech_request"
 
 
 class SynchronizedData(BaseSynchronizedData):
@@ -135,11 +175,30 @@ class SynchronizedData(BaseSynchronizedData):
         status = self.db.get("final_verification_status", None)
         return status == VerificationStatus.VERIFIED.value
 
+    @property
+    def current_path(self) -> str:
+        """Get the current execution path."""
+        return cast(str, self.db.get_strict("current_path"))
 
-class OpenAICallCheckRound(CollectSameUntilThresholdRound):
+    @property
+    def mech_requests(self) -> List[MechMetadata]:
+        """Get the mech requests."""
+        serialized = self.db.get("mech_requests", "[]")
+        requests = json.loads(serialized)
+        return [MechMetadata(**metadata_item) for metadata_item in requests]
+
+    @property
+    def mech_responses(self) -> List[MechInteractionResponse]:
+        """Get the mech responses."""
+        serialized = self.db.get("mech_responses", "[]")
+        responses = json.loads(serialized)
+        return [MechInteractionResponse(**response_item) for response_item in responses]
+
+
+class MechCallCheckRound(CollectSameUntilThresholdRound):
     """OpenAICallCheckRound"""
 
-    payload_class = OpenAICallCheckPayload
+    payload_class = MechCallCheckPayload
     synchronized_data_class = SynchronizedData
 
     CALLS_REMAINING = "CALLS_REMAINING"
@@ -153,6 +212,36 @@ class OpenAICallCheckRound(CollectSameUntilThresholdRound):
 
             # No allowance
             return self.synchronized_data, Event.NO_ALLOWANCE
+        if not self.is_majority_possible(
+            self.collection, self.synchronized_data.nb_participants
+        ):
+            return self.synchronized_data, Event.NO_MAJORITY
+        return None
+
+
+class PrepareMechRequestRound(CollectSameUntilThresholdRound):
+    """PrepareMechRequestRound"""
+
+    payload_class = PrepareMechRequestPayload
+    synchronized_data_class = SynchronizedData
+
+    def end_block(self) -> Optional[Tuple[BaseSynchronizedData, Event]]:
+        """Process the end of the block."""
+        if self.threshold_reached:
+            payload = json.loads(self.most_voted_payload)
+
+            synchronized_data = self.synchronized_data.update(
+                synchronized_data_class=SynchronizedData,
+                **{
+                    get_name(SynchronizedData.expiring_proposals): payload[
+                        "expiring_proposals"
+                    ],
+                    get_name(SynchronizedData.mech_requests): payload["mech_requests"],
+                },
+            )
+
+            event = Event.DONE if not payload["mech_requests"] else Event.MECH_REQUEST
+            return synchronized_data, event
         if not self.is_majority_possible(
             self.collection, self.synchronized_data.nb_participants
         ):
@@ -398,6 +487,25 @@ class SnapshotAPISendRound(OnlyKeeperSendsRound):
         return synchronized_data, Event.DONE
 
 
+class PostTxDecisionMakingRound(CollectSameUntilThresholdRound):
+    """PostTxDecisionMakingRound"""
+
+    payload_class = PostTxDecisionMakingPayload
+    synchronized_data_class = SynchronizedData
+
+    def end_block(self) -> Optional[Tuple[BaseSynchronizedData, Event]]:
+        """Process the end of the block."""
+        if self.threshold_reached:
+            event = Event(self.most_voted_payload)
+            return self.synchronized_data, event
+
+        if not self.is_majority_possible(
+            self.collection, self.synchronized_data.nb_participants
+        ):
+            return self.synchronized_data, Event.NO_MAJORITY
+        return None
+
+
 class FinishedTransactionPreparationVoteRound(DegenerateRound):
     """FinishedTransactionPreparationRound"""
 
@@ -406,20 +514,31 @@ class FinishedTransactionPreparationNoVoteRound(DegenerateRound):
     """FinishedTransactionPreparationRound"""
 
 
+class FinishedMechRequestPreparationRound(DegenerateRound):
+    """FinishedMechRequestPreparationRound"""
+
+
 class ProposalVoterAbciApp(AbciApp[Event]):
     """ProposalVoterAbciApp"""
 
-    initial_round_cls: AppState = OpenAICallCheckRound
+    initial_round_cls: AppState = MechCallCheckRound
     initial_states: Set[AppState] = {
-        OpenAICallCheckRound,
+        MechCallCheckRound,
         PostVoteDecisionMakingRound,
+        PostTxDecisionMakingRound,
     }
     transition_function: AbciAppTransitionFunction = {
-        OpenAICallCheckRound: {
-            Event.DONE: EstablishVoteRound,
+        MechCallCheckRound: {
+            Event.DONE: PrepareMechRequestRound,
             Event.NO_ALLOWANCE: FinishedTransactionPreparationNoVoteRound,
-            Event.NO_MAJORITY: OpenAICallCheckRound,
-            Event.ROUND_TIMEOUT: OpenAICallCheckRound,
+            Event.NO_MAJORITY: MechCallCheckRound,
+            Event.ROUND_TIMEOUT: MechCallCheckRound,
+        },
+        PrepareMechRequestRound: {
+            Event.DONE: EstablishVoteRound,
+            Event.MECH_REQUEST: FinishedMechRequestPreparationRound,
+            Event.NO_MAJORITY: PrepareMechRequestRound,
+            Event.ROUND_TIMEOUT: PrepareMechRequestRound,
         },
         EstablishVoteRound: {
             Event.DONE: PrepareVoteTransactionsRound,
@@ -437,7 +556,6 @@ class ProposalVoterAbciApp(AbciApp[Event]):
             Event.NO_MAJORITY: DecisionMakingRound,
             Event.ROUND_TIMEOUT: DecisionMakingRound,
         },
-        FinishedTransactionPreparationNoVoteRound: {},
         PostVoteDecisionMakingRound: {
             Event.SKIP_CALL: DecisionMakingRound,
             Event.SNAPSHOT_CALL: SnapshotAPISendRandomnessRound,
@@ -458,11 +576,14 @@ class ProposalVoterAbciApp(AbciApp[Event]):
             Event.DONE: DecisionMakingRound,
             Event.ROUND_TIMEOUT: SnapshotAPISendRandomnessRound,
         },
+        FinishedTransactionPreparationNoVoteRound: {},
         FinishedTransactionPreparationVoteRound: {},
+        FinishedMechRequestPreparationRound: {},
     }
     final_states: Set[AppState] = {
         FinishedTransactionPreparationVoteRound,
         FinishedTransactionPreparationNoVoteRound,
+        FinishedMechRequestPreparationRound,
     }
     event_to_timeout: EventToTimeout = {
         Event.ROUND_TIMEOUT: 30.0,
@@ -472,7 +593,7 @@ class ProposalVoterAbciApp(AbciApp[Event]):
         get_name(SynchronizedData.pending_write),
     }
     db_pre_conditions: Dict[AppState, Set[str]] = {
-        OpenAICallCheckRound: set(),
+        MechCallCheckRound: set(),
         PrepareVoteTransactionsRound: {
             get_name(SynchronizedData.target_proposals),
             get_name(SynchronizedData.ceramic_db),
@@ -486,4 +607,5 @@ class ProposalVoterAbciApp(AbciApp[Event]):
             get_name(SynchronizedData.most_voted_tx_hash)
         },
         FinishedTransactionPreparationNoVoteRound: set(),
+        FinishedMechRequestPreparationRound: set(),
     }

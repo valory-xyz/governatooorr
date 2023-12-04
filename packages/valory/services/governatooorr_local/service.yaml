@@ -8,7 +8,7 @@ license: Apache-2.0
 fingerprint:
   README.md: bafybeifvddbrix4wlzp5mfaxjg7bargwbcqxjdfvaz5tctxfvzowggkusu
 fingerprint_ignore_patterns: []
-agent: valory/governatooorr:0.1.0:bafybeibvdnx4oweachwasb7qzta73ogo5ixshpr3pcv3ehdozya3pcodiq
+agent: valory/governatooorr:0.1.0:bafybeidn7rft7w7pxnbwt3mpeummdgy7yiuxjl4qzhjrtm4clxnxjrl3n4
 number_of_agents: 1
 deployment:
   agent:
@@ -117,14 +117,6 @@ config:
       chain_id: ${ETHEREUM_LEDGER_CHAIN_ID:int:1}
       poa_chain: ${ETHEREUM_LEDGER_IS_POA_CHAIN:bool:false}
       default_gas_price_strategy: ${ETHEREUM_LEDGER_PRICING:str:eip1559}
----
-public_id: valory/openai:0.1.0
-type: connection
-config:
-  engine: ${ENGINE:str:text-davinci-003}
-  max_tokens: ${MAX_TOKENS:int:500}
-  openai_api_key: ${OPENAI_API_KEY:str:null}
-  temperature: ${TEMPERATURE:float:0.7}
 ---
 public_id: valory/p2p_libp2p_client:0.1.0
 type: connection

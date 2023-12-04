@@ -14,7 +14,7 @@ fingerprint:
   tests/helpers/fixtures.py: bafybeiarm4ezp54po7nv5m4e2w3eghetma5xymnzgoovvdwh7hp2lcitqu
 fingerprint_ignore_patterns: []
 connections:
-- valory/http_server:0.22.0:bafybeiesafy2af2wakqvsal4hz6ldycb73j5w62szhwy25iyhlf2wgyg44
+- valory/http_server:0.22.0:bafybeib6axuzanyktdidtygeibsm426fw4a2dcpc5ppdwsjblaboeepmry
 - valory/abci:0.1.0:bafybeiejo5uyurbmafretedivyci2ktastxclbmgrkwcwc2yt36jftyqgm
 - valory/http_client:0.23.0:bafybeiddrfvomrmgvh5yuv2coq7ci72wcdf663stayi3m5aawnj4srggce
 - valory/ledger:0.19.0:bafybeia47rr37ianvwsh77tjjpv3nwif5sywhhy2fbdshnz4a2icwln76a
@@ -38,9 +38,9 @@ protocols:
 skills:
 - valory/abstract_abci:0.1.0:bafybeiflcfufixmsrhobf56bn5745m2iipcfqyulwk2qegtnagb3kvaaxi
 - valory/abstract_round_abci:0.1.0:bafybeiaqcl7h2famylusiffigwem7tevkcsyocdu5xd42jkmgq6kvowzgq
-- valory/governatooorr_abci:0.1.0:bafybeicdnla57kngltblacez47c36cegxejiksne6rdifatt4erjuy6xlq
-- valory/proposal_collector_abci:0.1.0:bafybeig46l6ad3eybd4dg7rdkdtdu3ooaydwger53qxboh2td3lo3u3qhy
-- valory/proposal_voter_abci:0.1.0:bafybeibidllvbmwh35a22hdcceerk7xvkb3xbtvygcl4mqitne2jh4jm6q
+- valory/governatooorr_abci:0.1.0:bafybeifnt4opfphvbmclc5nn5j5lm372fxm4yw6fwmp7ja6k3a4c76khuq
+- valory/proposal_collector_abci:0.1.0:bafybeifhkoqqh6fcds2ke3c6ha6h4n5jdaw4z5bjhmtyrzvsxbre5fratq
+- valory/proposal_voter_abci:0.1.0:bafybeigjkhn2qc7qgg6enx6ofnqil7bqmg7qwmhef7wckojrxi7gawqi5e
 - valory/registration_abci:0.1.0:bafybeic2ynseiak7jpta7jfwuqwyp453b4p7lolr4wihxmpn633uekv5am
 - valory/reset_pause_abci:0.1.0:bafybeidzajbe3erygeh2xbd6lrjv7nsptznjuzrt24ykgvhgotdeyhfnba
 - valory/termination_abci:0.1.0:bafybeie4zvjfxvdu7qrulmur3chpjz3kpj5m4bjsxvpk4gvj5zbyyayfaa

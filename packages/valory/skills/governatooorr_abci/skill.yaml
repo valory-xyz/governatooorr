@@ -21,8 +21,8 @@ skills:
 - valory/abstract_round_abci:0.1.0:bafybeiaqcl7h2famylusiffigwem7tevkcsyocdu5xd42jkmgq6kvowzgq
 - valory/ceramic_read_abci:0.1.0:bafybeigqpkvsxfhz5jt3yuipmkl6eyfgqcw36226sgfhdgud7mphsjmopa
 - valory/ceramic_write_abci:0.1.0:bafybeighmakx2u2okkvokdimxyzrnfn5qb2cib3qzvzdh4tnkfr6hkx32a
-- valory/proposal_collector_abci:0.1.0:bafybeig46l6ad3eybd4dg7rdkdtdu3ooaydwger53qxboh2td3lo3u3qhy
-- valory/proposal_voter_abci:0.1.0:bafybeibidllvbmwh35a22hdcceerk7xvkb3xbtvygcl4mqitne2jh4jm6q
+- valory/proposal_collector_abci:0.1.0:bafybeifhkoqqh6fcds2ke3c6ha6h4n5jdaw4z5bjhmtyrzvsxbre5fratq
+- valory/proposal_voter_abci:0.1.0:bafybeigjkhn2qc7qgg6enx6ofnqil7bqmg7qwmhef7wckojrxi7gawqi5e
 - valory/registration_abci:0.1.0:bafybeic2ynseiak7jpta7jfwuqwyp453b4p7lolr4wihxmpn633uekv5am
 - valory/reset_pause_abci:0.1.0:bafybeidzajbe3erygeh2xbd6lrjv7nsptznjuzrt24ykgvhgotdeyhfnba
 - valory/termination_abci:0.1.0:bafybeie4zvjfxvdu7qrulmur3chpjz3kpj5m4bjsxvpk4gvj5zbyyayfaa

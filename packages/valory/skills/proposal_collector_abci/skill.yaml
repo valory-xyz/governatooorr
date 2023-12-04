@@ -12,7 +12,7 @@ fingerprint:
   dialogues.py: bafybeighergy2hupd32ozp2ud5j4jujpccfkzk2l46a33xn7yi2ofk32m4
   fsm_specification.yaml: bafybeiaj6tni7lmwus6jj3aso5ykaqwkfslamxogxkyarwlt7dg643lp2m
   handlers.py: bafybeifqky5gt3h5qmg5e3qtdrcj6gkhh455rcy45lta46c6qf3nxjqple
-  models.py: bafybeich7f6ze6a3diuvjp3puia4vsxnakx6zikwkkszd7qqq34mquux7a
+  models.py: bafybeih7g2bo2jbeetjszlrklnpsjaa64tv7awl6hm4tdv3my3uujfwuze
   payloads.py: bafybeicixvkiet6ko2cvx5rm4ezp7mez5izezaq6ufdcyxto65khly72fq
   rounds.py: bafybeiezg3ip63bmeduzzyxbiu5jslzcv6vhp4c6eeysl2k467wezy4z5q
   snapshot.py: bafybeih2pksy5cthlunmtuuaeepdobh7y3bnp43u7uiptknrjea6fpdvaa
@@ -25,7 +25,7 @@ fingerprint:
   tests/test_rounds.py: bafybeigbmcmng34xvwlhnboopyoc4vrhvf2lmvtpokh6qhced7o2slenky
 fingerprint_ignore_patterns: []
 connections:
-- valory/http_server:0.22.0:bafybeiesafy2af2wakqvsal4hz6ldycb73j5w62szhwy25iyhlf2wgyg44
+- valory/http_server:0.22.0:bafybeib6axuzanyktdidtygeibsm426fw4a2dcpc5ppdwsjblaboeepmry
 contracts: []
 protocols:
 - valory/http:1.0.0:bafybeiejoqgv7finfxo3rcvvovrlj5ccrbgxodjq43uo26ylpowsa3llfe

@@ -985,6 +985,7 @@ class ProposalVoterRoundBehaviour(AbstractRoundBehaviour):
     abci_app_cls = ProposalVoterAbciApp  # type: ignore
     behaviours: Set[Type[BaseBehaviour]] = [
         MechCallCheckBehaviour,
+        DecisionMakingBehaviour,
         PrepareMechRequestBehaviour,
         EstablishVoteBehaviour,
         PrepareVoteTransactionsBehaviour,

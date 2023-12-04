@@ -7,23 +7,22 @@ license: Apache-2.0
 aea_version: '>=1.0.0, <2.0.0'
 fingerprint:
   __init__.py: bafybeigk2kb335wy5vmgapbrqmfotvwqm4dqsuqr7gt7qic4v4npx2pqxy
-  behaviours.py: bafybeic7hmkd2vz7k7yscjisa2kurg6gjrerlekiz5c7c3gl5y7bilacpa
+  behaviours.py: bafybeifybqekpk7m6xuzsy2bbgxnjymtfip4artnvcvwdbibdnyi2jblei
   composition.py: bafybeig7ugttmld733eihaqyuappuqdopozvv6tetxzx66uzccmcldgdy4
   dialogues.py: bafybeigpwuzku3we7axmxeamg7vn656maww6emuztau5pg3ebsoquyfdqm
   fsm_specification.yaml: bafybeid344d7khwbylcvjr2mo4q5oyhyvnzhqs4hjg3oygf2xuwifs4dgu
-  handlers.py: bafybeiefhvk666md6clddjpkv6ccnletnxmekptz2p5qjjnubfokwlofia
-  models.py: bafybeiczdwte6dnvlnkba3m22zy4ra6urblysgimlnmruixwe6o6ehbjia
+  handlers.py: bafybeigpasztma6nn4txojmsvvt3zvbbrad2hptn7emzeeif7cyvddbsca
+  models.py: bafybeiecavpbrie3ev6dhio67oy3kvbajcr3s6jhc5un7womv2icjycmgu
 fingerprint_ignore_patterns: []
 connections: []
-contracts:
-- valory/mech:0.1.0:bafybeibv6ydk326zkny4pphze64zgzzv2sc5qkt2iyymoi6pt3ci2gtxne
+contracts: []
 protocols: []
 skills:
 - valory/abstract_round_abci:0.1.0:bafybeiaqcl7h2famylusiffigwem7tevkcsyocdu5xd42jkmgq6kvowzgq
 - valory/ceramic_read_abci:0.1.0:bafybeigqpkvsxfhz5jt3yuipmkl6eyfgqcw36226sgfhdgud7mphsjmopa
 - valory/ceramic_write_abci:0.1.0:bafybeighmakx2u2okkvokdimxyzrnfn5qb2cib3qzvzdh4tnkfr6hkx32a
 - valory/proposal_collector_abci:0.1.0:bafybeich3hzm476yh6jxxshhaa7hq7uxtitjeidjgsih7huzwogmaib4au
-- valory/proposal_voter_abci:0.1.0:bafybeieamqe6mayje5ev42spmc3ybtrqxfaxabcoxxek3thcbtvfhbbega
+- valory/proposal_voter_abci:0.1.0:bafybeie4jp36nnipej3wwlxnr7t66nxpyzoqqysa2jjs3yjdgubzi6sdua
 - valory/registration_abci:0.1.0:bafybeic2ynseiak7jpta7jfwuqwyp453b4p7lolr4wihxmpn633uekv5am
 - valory/reset_pause_abci:0.1.0:bafybeidzajbe3erygeh2xbd6lrjv7nsptznjuzrt24ykgvhgotdeyhfnba
 - valory/termination_abci:0.1.0:bafybeie4zvjfxvdu7qrulmur3chpjz3kpj5m4bjsxvpk4gvj5zbyyayfaa
@@ -162,6 +161,10 @@ models:
       mech_calls_allowed_in_window: 100
       snapshot_request_step: 50
       snapshot_proposal_round_limit: 50
+      multisend_batch_size: 50
+      mech_contract_address: '0x77af31de935740567cf4ff1986d04b2c964a786a'
+      ipfs_address: https://gateway.autonolas.tech/ipfs/
+      default_chain_id: ethereum
     class_name: Params
   randomness_api:
     args:

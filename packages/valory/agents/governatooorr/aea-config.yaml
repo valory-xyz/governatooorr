@@ -25,6 +25,7 @@ contracts:
 - valory/gnosis_safe_proxy_factory:0.1.0:bafybeidvcgnbbmjtha6tl7st2ysna2l3iiqfhnzjfasyvml5unecozeeka
 - valory/sign_message_lib:0.1.0:bafybeibzgzy4bhjevf2smkgxgyowus76xgrrz25az7hrlpmiopdy6hpzbq
 - valory/mech:0.1.0:bafybeibv6ydk326zkny4pphze64zgzzv2sc5qkt2iyymoi6pt3ci2gtxne
+- valory/multisend:0.1.0:bafybeig5byt5urg2d2bsecufxe5ql7f4mezg3mekfleeh32nmuusx66p4y
 protocols:
 - open_aea/signing:1.0.0:bafybeie7xyems76v5b4wc2lmaidcujizpxfzjnnwdeokmhje53g7ym25ii
 - valory/abci:0.1.0:bafybeihmzlmmb4pdo3zkhg6ehuyaa4lhw7bfpclln2o2z7v3o6fcep26iu
@@ -37,9 +38,9 @@ protocols:
 skills:
 - valory/abstract_abci:0.1.0:bafybeiflcfufixmsrhobf56bn5745m2iipcfqyulwk2qegtnagb3kvaaxi
 - valory/abstract_round_abci:0.1.0:bafybeiaqcl7h2famylusiffigwem7tevkcsyocdu5xd42jkmgq6kvowzgq
-- valory/governatooorr_abci:0.1.0:bafybeicimzxvqlcjgq7yadvhre46ru3nhwuhomqpttgdf64xjc756s344q
+- valory/governatooorr_abci:0.1.0:bafybeieqmgz6zlpnuhwvatmmp2xdevcrmyfgjx7jzhyyxl76ascshtowra
 - valory/proposal_collector_abci:0.1.0:bafybeich3hzm476yh6jxxshhaa7hq7uxtitjeidjgsih7huzwogmaib4au
-- valory/proposal_voter_abci:0.1.0:bafybeieamqe6mayje5ev42spmc3ybtrqxfaxabcoxxek3thcbtvfhbbega
+- valory/proposal_voter_abci:0.1.0:bafybeie4jp36nnipej3wwlxnr7t66nxpyzoqqysa2jjs3yjdgubzi6sdua
 - valory/registration_abci:0.1.0:bafybeic2ynseiak7jpta7jfwuqwyp453b4p7lolr4wihxmpn633uekv5am
 - valory/reset_pause_abci:0.1.0:bafybeidzajbe3erygeh2xbd6lrjv7nsptznjuzrt24ykgvhgotdeyhfnba
 - valory/termination_abci:0.1.0:bafybeie4zvjfxvdu7qrulmur3chpjz3kpj5m4bjsxvpk4gvj5zbyyayfaa
@@ -209,6 +210,10 @@ models:
       mech_calls_allowed_in_window: ${int:100}
       snapshot_request_step: ${int:50}
       snapshot_proposal_round_limit: ${int:50}
+      multisend_batch_size: ${int:50}
+      mech_contract_address: ${str:0x77af31de935740567cf4ff1986d04b2c964a786a}
+      ipfs_address: ${str:https://gateway.autonolas.tech/ipfs/}
+      default_chain_id: ${str:ethereum}
 ---
 public_id: valory/http_server:0.22.0:bafybeicblltx7ha3ulthg7bzfccuqqyjmihhrvfeztlgrlcoxhr7kf6nbq
 type: connection

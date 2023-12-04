@@ -114,7 +114,7 @@ class Params(
     ProposalCollectorParams,
     CeramicWriteParams,
     ProposalVoterParams,
-    TerminationParams,
     MechInteractParams,
+    TerminationParams,
 ):
     """A model to represent params for multiple abci apps."""

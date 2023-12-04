@@ -8,7 +8,7 @@ license: Apache-2.0
 fingerprint:
   README.md: bafybeid6vqhnovhpsrjwws2wcb67i7fwr4dq54rpowqgrf3njt2anp5nc4
 fingerprint_ignore_patterns: []
-agent: valory/governatooorr:0.1.0:bafybeic7jtmhbwlvikqztlfk4r3dd7u5rgmqfl6wuwug3tqcqc6k3p626u
+agent: valory/governatooorr:0.1.0:bafybeiffjmiwh6lj3ifmsdhdonlf2f266e7tliugh4lhapotnkkwaelsda
 number_of_agents: 4
 deployment:
   agent:
@@ -115,6 +115,10 @@ type: skill
         mech_calls_allowed_in_window: ${mech_calls_allowed_in_window:int:3}
         snapshot_request_step: ${SNAPSHOT_REQUEST_STEP:int:50}
         snapshot_proposal_round_limit: ${SNAPSHOT_PROPOSAL_ROUND_LIMIT:int:50}
+        multisend_batch_size: ${MULTISEND_BATCH_SIZE:int:50}
+        mech_contract_address: ${MECH_CONTRACT_ADDRESS:str:0x77af31de935740567cf4ff1986d04b2c964a786a}
+        ipfs_address: ${IPFS_ADDRESS:str:https://gateway.autonolas.tech/ipfs/}
+        default_chain_id: ${DEFAULT_CHAIN_ID:str:ethereum}
 1:
   models:
     benchmark_tool: *id001
@@ -185,6 +189,10 @@ type: skill
         mech_calls_allowed_in_window: ${mech_calls_allowed_in_window:int:3}
         snapshot_request_step: ${SNAPSHOT_REQUEST_STEP:int:50}
         snapshot_proposal_round_limit: ${SNAPSHOT_PROPOSAL_ROUND_LIMIT:int:50}
+        multisend_batch_size: ${MULTISEND_BATCH_SIZE:int:50}
+        mech_contract_address: ${MECH_CONTRACT_ADDRESS:str:0x77af31de935740567cf4ff1986d04b2c964a786a}
+        ipfs_address: ${IPFS_ADDRESS:str:https://gateway.autonolas.tech/ipfs/}
+        default_chain_id: ${DEFAULT_CHAIN_ID:str:ethereum}
 2:
   models:
     benchmark_tool: *id001
@@ -255,6 +263,10 @@ type: skill
         mech_calls_allowed_in_window: ${mech_calls_allowed_in_window:int:3}
         snapshot_request_step: ${SNAPSHOT_REQUEST_STEP:int:50}
         snapshot_proposal_round_limit: ${SNAPSHOT_PROPOSAL_ROUND_LIMIT:int:50}
+        multisend_batch_size: ${MULTISEND_BATCH_SIZE:int:50}
+        mech_contract_address: ${MECH_CONTRACT_ADDRESS:str:0x77af31de935740567cf4ff1986d04b2c964a786a}
+        ipfs_address: ${IPFS_ADDRESS:str:https://gateway.autonolas.tech/ipfs/}
+        default_chain_id: ${DEFAULT_CHAIN_ID:str:ethereum}
 3:
   models:
     benchmark_tool: *id001
@@ -325,6 +337,10 @@ type: skill
         mech_calls_allowed_in_window: ${mech_calls_allowed_in_window:int:3}
         snapshot_request_step: ${SNAPSHOT_REQUEST_STEP:int:50}
         snapshot_proposal_round_limit: ${SNAPSHOT_PROPOSAL_ROUND_LIMIT:int:50}
+        multisend_batch_size: ${MULTISEND_BATCH_SIZE:int:50}
+        mech_contract_address: ${MECH_CONTRACT_ADDRESS:str:0x77af31de935740567cf4ff1986d04b2c964a786a}
+        ipfs_address: ${IPFS_ADDRESS:str:https://gateway.autonolas.tech/ipfs/}
+        default_chain_id: ${DEFAULT_CHAIN_ID:str:ethereum}
 ---
 public_id: valory/ledger:0.19.0
 type: connection

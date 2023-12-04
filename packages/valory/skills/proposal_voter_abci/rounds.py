@@ -105,6 +105,8 @@ class Event(Enum):
     POST_VOTE_TX = "post_vote_tx"
     POST_REQUEST_TX = "post_request_tx"
     MECH_REQUEST = "mech_request"
+    POST_VOTE = "post_vote"
+    ESTABLISH_VOTE = "establish_vote"
 
 
 class SynchronizedData(BaseSynchronizedData):
@@ -524,7 +526,6 @@ class ProposalVoterAbciApp(AbciApp[Event]):
     initial_round_cls: AppState = MechCallCheckRound
     initial_states: Set[AppState] = {
         MechCallCheckRound,
-        PostVoteDecisionMakingRound,
         PostTxDecisionMakingRound,
     }
     transition_function: AbciAppTransitionFunction = {
@@ -540,21 +541,27 @@ class ProposalVoterAbciApp(AbciApp[Event]):
             Event.NO_MAJORITY: PrepareMechRequestRound,
             Event.ROUND_TIMEOUT: PrepareMechRequestRound,
         },
+        PostTxDecisionMakingRound: {
+            Event.POST_VOTE: PostVoteDecisionMakingRound,
+            Event.ESTABLISH_VOTE: EstablishVoteRound,
+            Event.NO_MAJORITY: PostTxDecisionMakingRound,
+            Event.ROUND_TIMEOUT: PostTxDecisionMakingRound,
+        },
         EstablishVoteRound: {
             Event.DONE: PrepareVoteTransactionsRound,
             Event.NO_MAJORITY: EstablishVoteRound,
             Event.ROUND_TIMEOUT: EstablishVoteRound,
-        },
-        PrepareVoteTransactionsRound: {
-            Event.DONE: DecisionMakingRound,
-            Event.NO_MAJORITY: PrepareVoteTransactionsRound,
-            Event.ROUND_TIMEOUT: PrepareVoteTransactionsRound,
         },
         DecisionMakingRound: {
             Event.NO_VOTE: FinishedTransactionPreparationNoVoteRound,
             Event.VOTE: FinishedTransactionPreparationVoteRound,
             Event.NO_MAJORITY: DecisionMakingRound,
             Event.ROUND_TIMEOUT: DecisionMakingRound,
+        },
+        PrepareVoteTransactionsRound: {
+            Event.DONE: DecisionMakingRound,
+            Event.NO_MAJORITY: PrepareVoteTransactionsRound,
+            Event.ROUND_TIMEOUT: PrepareVoteTransactionsRound,
         },
         PostVoteDecisionMakingRound: {
             Event.SKIP_CALL: DecisionMakingRound,
@@ -594,13 +601,7 @@ class ProposalVoterAbciApp(AbciApp[Event]):
     }
     db_pre_conditions: Dict[AppState, Set[str]] = {
         MechCallCheckRound: set(),
-        PrepareVoteTransactionsRound: {
-            get_name(SynchronizedData.target_proposals),
-            get_name(SynchronizedData.ceramic_db),
-        },
-        PostVoteDecisionMakingRound: set(
-            get_name(SynchronizedData.most_voted_tx_hash),
-        ),
+        PostTxDecisionMakingRound: set(),
     }
     db_post_conditions: Dict[AppState, Set[str]] = {
         FinishedTransactionPreparationVoteRound: {

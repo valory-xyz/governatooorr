@@ -18,7 +18,7 @@ packages/valory/connections/http_client
 packages/valory/connections/ipfs
 packages/valory/connections/ledger
 packages/valory/connections/p2p_libp2p_client
-packages/fetchai/connections/http_server
+packages/valory/connections/http_server
 packages/valory/contracts/gnosis_safe
 packages/valory/contracts/gnosis_safe_proxy_factory
 packages/valory/contracts/service_registry

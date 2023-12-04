@@ -33,6 +33,13 @@ from packages.valory.skills.ceramic_write_abci.models import (
 )
 from packages.valory.skills.ceramic_write_abci.rounds import Event as CeramicWriteEvent
 from packages.valory.skills.governatooorr_abci.composition import GovernatooorrAbciApp
+from packages.valory.skills.mech_interact_abci.models import (
+    MechResponseSpecs as BaseMechResponseSpecs,
+)
+from packages.valory.skills.mech_interact_abci.models import (
+    Params as MechInteractAbciParams,
+)
+from packages.valory.skills.mech_interact_abci.rounds import Event as MechInteractEvent
 from packages.valory.skills.proposal_collector_abci.models import (
     Params as ProposalCollectorAbciParams,
 )
@@ -56,9 +63,11 @@ ProposalCollectorParams = ProposalCollectorAbciParams
 ProposalVoterParams = ProposalVoterAbciParams
 CeramicReadParams = CeramicReadAbciParams
 CeramicWriteParams = CeramicWriteAbciParams
+MechInteractParams = MechInteractAbciParams
 
 Requests = BaseRequests
 BenchmarkTool = BaseBenchmarkTool
+MechResponseSpecs = BaseMechResponseSpecs
 
 
 class RandomnessApi(ApiSpecs):
@@ -95,6 +104,9 @@ class SharedState(BaseSharedState):
         GovernatooorrAbciApp.event_to_timeout[
             ResetPauseEvent.RESET_AND_PAUSE_TIMEOUT
         ] = (self.context.params.reset_pause_duration + MARGIN)
+        GovernatooorrAbciApp.event_to_timeout[
+            MechInteractEvent.ROUND_TIMEOUT
+        ] = self.context.params.round_timeout_seconds
 
 
 class Params(
@@ -103,5 +115,6 @@ class Params(
     CeramicWriteParams,
     ProposalVoterParams,
     TerminationParams,
+    MechInteractParams,
 ):
     """A model to represent params for multiple abci apps."""

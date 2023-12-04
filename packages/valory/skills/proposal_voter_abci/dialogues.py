@@ -18,11 +18,6 @@
 # ------------------------------------------------------------------------------
 
 """This module contains the dialogues of the ProposalVoterAbciApp."""
-from typing import Any
-
-from aea.protocols.base import Address, Message
-from aea.protocols.dialogue.base import Dialogue as BaseDialogue
-from aea.skills.base import Model
 
 from packages.valory.skills.abstract_round_abci.dialogues import (
     AbciDialogue as BaseAbciDialogue,

@@ -20,7 +20,7 @@
 """This package contains the rounds of ProposalVoterAbciApp."""
 
 import json
-from dataclasses import asdict, dataclass, is_dataclass
+from dataclasses import dataclass
 from enum import Enum
 from typing import Any, Dict, List, Optional, Set, Tuple, cast
 
@@ -95,14 +95,11 @@ class Event(Enum):
     NO_MAJORITY = "no_majority"
     ROUND_TIMEOUT = "round_timeout"
     DONE = "done"
-    CONTRACT_ERROR = "contract_error"
     VOTE = "vote"
     NO_VOTE = "no_vote"
     SKIP_CALL = "skip_call"
     SNAPSHOT_CALL = "snapshot_call"
-    RETRIEVAL_ERROR = "retrieval_error"
     NO_ALLOWANCE = "no_allowance"
-    POST_VOTE_TX = "post_vote_tx"
     POST_REQUEST_TX = "post_request_tx"
     MECH_REQUEST = "mech_request"
     POST_VOTE = "post_vote"
@@ -239,6 +236,7 @@ class PrepareMechRequestRound(CollectSameUntilThresholdRound):
                         "expiring_proposals"
                     ],
                     get_name(SynchronizedData.mech_requests): payload["mech_requests"],
+                    get_name(SynchronizedData.current_path): "establish_vote",
                 },
             )
 
@@ -344,6 +342,7 @@ class DecisionMakingRound(CollectSameUntilThresholdRound):
                     get_name(SynchronizedData.pending_transactions): payload[
                         "pending_transactions"
                     ],
+                    get_name(SynchronizedData.current_path): "post_vote",
                 },
             )
             return synchronized_data, Event.VOTE
@@ -498,6 +497,7 @@ class PostTxDecisionMakingRound(CollectSameUntilThresholdRound):
     def end_block(self) -> Optional[Tuple[BaseSynchronizedData, Event]]:
         """Process the end of the block."""
         if self.threshold_reached:
+            # Event.ESTABLISH_VOTE, Event.POST_VOTE
             event = Event(self.most_voted_payload)
             return self.synchronized_data, event
 
@@ -520,6 +520,10 @@ class FinishedMechRequestPreparationRound(DegenerateRound):
     """FinishedMechRequestPreparationRound"""
 
 
+class FinishedToMechResponseRound(DegenerateRound):
+    """FinishedToMechResponseRound"""
+
+
 class ProposalVoterAbciApp(AbciApp[Event]):
     """ProposalVoterAbciApp"""
 
@@ -527,6 +531,7 @@ class ProposalVoterAbciApp(AbciApp[Event]):
     initial_states: Set[AppState] = {
         MechCallCheckRound,
         PostTxDecisionMakingRound,
+        EstablishVoteRound,
     }
     transition_function: AbciAppTransitionFunction = {
         MechCallCheckRound: {
@@ -543,7 +548,7 @@ class ProposalVoterAbciApp(AbciApp[Event]):
         },
         PostTxDecisionMakingRound: {
             Event.POST_VOTE: PostVoteDecisionMakingRound,
-            Event.ESTABLISH_VOTE: EstablishVoteRound,
+            Event.ESTABLISH_VOTE: FinishedToMechResponseRound,
             Event.NO_MAJORITY: PostTxDecisionMakingRound,
             Event.ROUND_TIMEOUT: PostTxDecisionMakingRound,
         },
@@ -586,11 +591,13 @@ class ProposalVoterAbciApp(AbciApp[Event]):
         FinishedTransactionPreparationNoVoteRound: {},
         FinishedTransactionPreparationVoteRound: {},
         FinishedMechRequestPreparationRound: {},
+        FinishedToMechResponseRound: {},
     }
     final_states: Set[AppState] = {
         FinishedTransactionPreparationVoteRound,
         FinishedTransactionPreparationNoVoteRound,
         FinishedMechRequestPreparationRound,
+        FinishedToMechResponseRound,
     }
     event_to_timeout: EventToTimeout = {
         Event.ROUND_TIMEOUT: 30.0,
@@ -602,6 +609,7 @@ class ProposalVoterAbciApp(AbciApp[Event]):
     db_pre_conditions: Dict[AppState, Set[str]] = {
         MechCallCheckRound: set(),
         PostTxDecisionMakingRound: set(),
+        EstablishVoteRound: set(),
     }
     db_post_conditions: Dict[AppState, Set[str]] = {
         FinishedTransactionPreparationVoteRound: {
@@ -609,4 +617,5 @@ class ProposalVoterAbciApp(AbciApp[Event]):
         },
         FinishedTransactionPreparationNoVoteRound: set(),
         FinishedMechRequestPreparationRound: set(),
+        FinishedToMechResponseRound: set(),
     }

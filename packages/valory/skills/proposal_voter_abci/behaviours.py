@@ -23,7 +23,7 @@ import json
 from abc import ABC
 from copy import deepcopy
 from dataclasses import asdict
-from typing import Dict, Generator, Optional, Set, Tuple, Type, cast
+from typing import Generator, Optional, Set, Tuple, Type, cast
 
 from eth_account.messages import _hash_eip191_message, encode_structured_data
 
@@ -61,6 +61,7 @@ from packages.valory.skills.proposal_voter_abci.payloads import (
     SnapshotAPISendSelectKeeperPayload,
 )
 from packages.valory.skills.proposal_voter_abci.rounds import (
+    DecisionMakingRound,
     EstablishVoteRound,
     MechCallCheckRound,
     MechMetadata,
@@ -984,6 +985,7 @@ class ProposalVoterRoundBehaviour(AbstractRoundBehaviour):
     abci_app_cls = ProposalVoterAbciApp  # type: ignore
     behaviours: Set[Type[BaseBehaviour]] = [
         MechCallCheckBehaviour,
+        PrepareMechRequestBehaviour,
         EstablishVoteBehaviour,
         PrepareVoteTransactionsBehaviour,
         PostTxDecisionMakingBehaviour,

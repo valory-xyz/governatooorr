@@ -29,14 +29,10 @@ import pytest
 from aea.exceptions import AEAActException
 from aea.helpers.transaction.base import State
 
-from packages.valory.connections.openai.connection import (
-    PUBLIC_ID as LLM_CONNECTION_PUBLIC_ID,
-)
 from packages.valory.contracts.delegate.contract import DelegateContract
 from packages.valory.contracts.gnosis_safe.contract import GnosisSafeContract
 from packages.valory.contracts.sign_message_lib.contract import SignMessageLibContract
 from packages.valory.protocols.contract_api import ContractApiMessage
-from packages.valory.protocols.llm.message import LlmMessage
 from packages.valory.skills.abstract_round_abci.base import AbciAppDB
 from packages.valory.skills.abstract_round_abci.behaviour_utils import BaseBehaviour
 from packages.valory.skills.abstract_round_abci.behaviours import (
@@ -176,12 +172,6 @@ class BaseProposalVoterTest(FSMBehaviourBaseCase):
     synchronized_data: SynchronizedData
     done_event = Event.DONE
 
-    @classmethod
-    def setup_class(cls, **kwargs: Any) -> None:
-        """setup_class"""
-        super().setup_class(**kwargs)
-        cls.llm_handler = cls._skill.skill_context.handlers.llm
-
     def fast_forward(self, data: Optional[Dict[str, Any]] = None) -> None:
         """Fast-forward on initialization"""
 
@@ -208,41 +198,6 @@ class BaseProposalVoterTest(FSMBehaviourBaseCase):
             self.behaviour.current_behaviour.auto_behaviour_id()  # type: ignore
             == self.next_behaviour_class.auto_behaviour_id()
         )
-
-    def mock_llm_request(self, request_kwargs: Dict, response_kwargs: Dict) -> None:
-        """
-        Mock LLM request.
-
-        :param request_kwargs: keyword arguments for request check.
-        :param response_kwargs: keyword arguments for mock response.
-        """
-
-        self.assert_quantity_in_outbox(1)
-        actual_llm_message = self.get_message_from_outbox()
-        assert actual_llm_message is not None, "No message in outbox."  # nosec
-        has_attributes, error_str = self.message_has_attributes(
-            actual_message=actual_llm_message,
-            message_type=LlmMessage,
-            to=str(LLM_CONNECTION_PUBLIC_ID),
-            sender=str(self.skill.skill_context.skill_id),
-            **request_kwargs,
-        )
-
-        assert has_attributes, error_str  # nosec
-        incoming_message = self.build_incoming_message(
-            message_type=LlmMessage,
-            dialogue_reference=(
-                actual_llm_message.dialogue_reference[0],
-                "stub",
-            ),
-            target=actual_llm_message.message_id,
-            message_id=-1,
-            to=str(self.skill.skill_context.skill_id),
-            sender=str(LLM_CONNECTION_PUBLIC_ID),
-            **response_kwargs,
-        )
-        self.llm_handler.handle(incoming_message)
-        self.behaviour.act_wrapper()
 
 
 class TestEstablishVoteBehaviour(BaseProposalVoterTest):
@@ -276,12 +231,6 @@ class TestEstablishVoteBehaviour(BaseProposalVoterTest):
         state.round_sequence._last_round_transition_timestamp = time_in_future
         self.fast_forward(test_case.initial_data)
         self.behaviour.act_wrapper()
-        self.mock_llm_request(
-            request_kwargs=dict(performative=LlmMessage.Performative.REQUEST),
-            response_kwargs=dict(
-                performative=LlmMessage.Performative.RESPONSE, value="FOR"
-            ),
-        )
         self.complete(test_case.event)
 
     @pytest.mark.parametrize(
@@ -306,12 +255,6 @@ class TestEstablishVoteBehaviour(BaseProposalVoterTest):
         with pytest.raises(AEAActException):
             self.fast_forward(test_case.initial_data)
             self.behaviour.act_wrapper()
-            self.mock_llm_request(
-                request_kwargs=dict(performative=LlmMessage.Performative.REQUEST),
-                response_kwargs=dict(
-                    performative=LlmMessage.Performative.RESPONSE, value="INVALID"
-                ),
-            )
 
 
 class TestEstablishVoteSnapshotBehaviour(BaseProposalVoterTest):
@@ -405,14 +348,6 @@ class TestEstablishVoteSnapshotBehaviour(BaseProposalVoterTest):
         state.round_sequence._last_round_transition_timestamp = time_in_future
         self.fast_forward(test_case.initial_data)
         self.behaviour.act_wrapper()
-
-        self.mock_llm_request(
-            request_kwargs=dict(performative=LlmMessage.Performative.REQUEST),
-            response_kwargs=dict(
-                performative=LlmMessage.Performative.RESPONSE,
-                value=kwargs.get("vote"),
-            ),
-        )
         self.complete(test_case.event)
 
 

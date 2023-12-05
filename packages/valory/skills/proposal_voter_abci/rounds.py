@@ -235,7 +235,7 @@ class PrepareMechRequestRound(CollectSameUntilThresholdRound):
                     get_name(SynchronizedData.expiring_proposals): payload[
                         "expiring_proposals"
                     ],
-                    get_name(SynchronizedData.mech_requests): payload["mech_requests"],
+                    get_name(SynchronizedData.mech_requests): json.dumps(payload["mech_requests"]),
                     get_name(SynchronizedData.current_path): "establish_vote",
                 },
             )

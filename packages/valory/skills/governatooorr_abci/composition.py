@@ -56,6 +56,7 @@ abci_app_transition_mapping: AbciAppTransitionMapping = {
     ProposalVoterAbciApp.FinishedToMechResponseRound: MechResponseStates.MechResponseRound,
     MechFinalStates.FinishedMechRequestRound: TransactionSubmissionAbciApp.RandomnessTransactionSubmissionRound,
     MechFinalStates.FinishedMechRequestSkipRound: ProposalVoterAbciApp.EstablishVoteRound,
+    MechFinalStates.FinishedMechResponseRound: ProposalVoterAbciApp.EstablishVoteRound,
     TransactionSubmissionAbciApp.FinishedTransactionSubmissionRound: ProposalVoterAbciApp.PostTxDecisionMakingRound,
     TransactionSubmissionAbciApp.FailedRound: ProposalVoterAbciApp.PostTxDecisionMakingRound,
     ResetAndPauseAbci.FinishedResetAndPauseRound: ProposalCollectorAbciApp.SynchronizeDelegationsRound,

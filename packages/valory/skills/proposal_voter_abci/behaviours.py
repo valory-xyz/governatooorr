@@ -78,6 +78,7 @@ from packages.valory.skills.proposal_voter_abci.rounds import (
 from packages.valory.skills.transaction_settlement_abci.payload_tools import (
     hash_payload_to_hex,
 )
+from packages.valory.skills.proposal_voter_abci.prompt import vote_evaluation_prompt
 
 
 SAFE_TX_GAS = 0
@@ -101,7 +102,13 @@ def fix_data_for_encoding(data):
 def parse_mech_response(data: str) -> str:
     """Parse the data from the Mech response"""
     print(f"Parsing the mech response: {data}")
-    return data
+    start = data.find("{")
+    end = data.find("}")
+    sub_string = data[start : end + 1]
+    try:
+        return json.loads(sub_string)["vote"]
+    except Exception:
+        return "error"
 
 
 class ProposalVoterBaseBehaviour(BaseBehaviour, ABC):
@@ -163,11 +170,11 @@ class PrepareMechRequestBehaviour(ProposalVoterBaseBehaviour):
             (
                 expiring_tally_proposals,
                 mech_requests_tally,
-            ) = yield from self._get_expiring_tally_proposals()
+            ) = self._get_expiring_tally_proposals()
             (
                 expiring_snapshot_proposals,
                 mech_requests_snapshot,
-            ) = yield from self._get_expiring_snapshot_proposals()
+            ) = self._get_expiring_snapshot_proposals()
 
             expiring_proposals = {
                 "tally": expiring_tally_proposals,
@@ -195,7 +202,7 @@ class PrepareMechRequestBehaviour(ProposalVoterBaseBehaviour):
 
         self.set_done()
 
-    def _get_expiring_tally_proposals(self) -> Generator[None, None, Tuple[dict, list]]:
+    def _get_expiring_tally_proposals(self) -> Tuple[dict, list]:
         """Generate proposal votes"""
 
         target_proposals = self.synchronized_data.target_proposals["tally"]
@@ -256,7 +263,6 @@ class PrepareMechRequestBehaviour(ProposalVoterBaseBehaviour):
                 continue
 
             # Mech call preparation
-            prompt_template = "Here is a voting proposal for a protocol: `{proposal}`. How should I vote on the voting proposal if my intent was to {voting_intention_snippet} and the voting options are {voting_options}? Please answer with only the voting option."
             voting_intention_snippet = (
                 "cause chaos to the protocol"
                 if vote_intention == "evil"
@@ -270,7 +276,7 @@ class PrepareMechRequestBehaviour(ProposalVoterBaseBehaviour):
                 "voting_options": VOTING_OPTIONS,
             }
 
-            prompt = prompt_template.format(**prompt_values)
+            prompt = vote_evaluation_prompt.format(**prompt_values)
 
             self.context.logger.info(f"Sending LLM request...\n{prompt}")
 
@@ -283,7 +289,6 @@ class PrepareMechRequestBehaviour(ProposalVoterBaseBehaviour):
                     )
                 )
             )
-
         return expiring_proposals, mech_requests
 
     def _get_service_vote_intention(self, token_address) -> Optional[str]:
@@ -324,7 +329,7 @@ class PrepareMechRequestBehaviour(ProposalVoterBaseBehaviour):
 
     def _get_expiring_snapshot_proposals(
         self,
-    ) -> Generator[None, None, Tuple[dict, list]]:
+    ) -> Tuple[dict, list]:
         """Get votable snapshot proposals"""
         target_proposals = self.synchronized_data.target_proposals["snapshot"]
 
@@ -354,14 +359,20 @@ class PrepareMechRequestBehaviour(ProposalVoterBaseBehaviour):
         mech_requests = []
         for proposal_id in expiring_proposals:
             proposal = target_proposals[proposal_id]
-            prompt_template = "Here is a voting proposal for a protocol: `{proposal}`. How should I vote on the voting proposal if my intent was to contribute positively to the protocol and the voting options are {voting_options}? Please answer with only the voting option."
-
             prompt_values = {
                 "proposal": proposal["title"] + "\n" + proposal["body"],
                 "voting_options": ", ".join(proposal["choices"]),
+                "voting_intention_snippet": "contribute positively to the protocol"
             }
 
-            prompt = prompt_template.format(**prompt_values)
+            # Can't use .format() here because the prompt contains a json object
+            prompt = vote_evaluation_prompt.replace(
+                "{proposal}", prompt_values["proposal"]
+            ).replace(
+                "{voting_options}", prompt_values["voting_options"]
+            ).replace(
+                "{voting_intention_snippet}", prompt_values["voting_intention_snippet"]
+            )
 
             self.context.logger.info(f"Sending LLM request: {prompt}")
 
@@ -437,7 +448,7 @@ class EstablishVoteBehaviour(ProposalVoterBaseBehaviour):
 
                 # Snapshot
                 else:
-                    proposal = expiring_proposals["snapshot"][response.nonce]
+                    proposal = self.synchronized_data.target_proposals["snapshot"][response.nonce]
                     if vote not in proposal["choices"]:
                         if self.params.default_snapshot_vote_on_error:
                             self.context.logger.info(
@@ -490,6 +501,7 @@ class PrepareVoteTransactionsBehaviour(ProposalVoterBaseBehaviour):
             contract_callable="get_cast_vote_data",
             proposal_id=int(proposal_id),
             support=vote_code,
+            chain_id="ethereum"
         )
         if (
             contract_api_msg.performative != ContractApiMessage.Performative.STATE
@@ -514,6 +526,7 @@ class PrepareVoteTransactionsBehaviour(ProposalVoterBaseBehaviour):
             data=data,
             safe_tx_gas=safe_tx_gas,
             safe_nonce=safe_nonce,
+            chain_id="ethereum"
         )
         if (
             contract_api_msg.performative != ContractApiMessage.Performative.STATE
@@ -605,6 +618,7 @@ class PrepareVoteTransactionsBehaviour(ProposalVoterBaseBehaviour):
             contract_id=str(SignMessageLibContract.contract_id),
             contract_callable="sign_message",
             data=safe_message,
+            chain_id="ethereum"
         )
         if (
             contract_api_msg.performative != ContractApiMessage.Performative.STATE
@@ -633,6 +647,7 @@ class PrepareVoteTransactionsBehaviour(ProposalVoterBaseBehaviour):
             safe_tx_gas=safe_tx_gas,
             operation=SafeOperation.DELEGATE_CALL.value,
             safe_nonce=safe_nonce,
+            chain_id="ethereum"
         )
         if (
             contract_api_msg.performative != ContractApiMessage.Performative.STATE
@@ -668,6 +683,7 @@ class PrepareVoteTransactionsBehaviour(ProposalVoterBaseBehaviour):
             contract_address=self.synchronized_data.safe_contract_address,
             contract_id=str(GnosisSafeContract.contract_id),
             contract_callable="get_safe_nonce",
+            chain_id="ethereum"
         )
         if (
             contract_api_msg.performative != ContractApiMessage.Performative.STATE

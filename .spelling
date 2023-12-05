@@ -11,6 +11,7 @@ ScoreAdd
 SelectKeeper
 CeramicWrite
 WalletRead
+Mech
 NewTokens
 HttpHandler
 Infura

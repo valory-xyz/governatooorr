@@ -116,7 +116,7 @@ class Params(BaseParams):
             mech_call_window_size=self.mech_call_window_size,
             mech_calls_allowed_in_window=self.mech_calls_allowed_in_window,
         )
-        self.voter_safe_address = self._ensure("voter_safe_address", kwargs, str)
+        self.voter_safe_address = kwargs.get("voter_safe_address", "0x0000000000000000000000000000000000000000")
         super().__init__(*args, **kwargs)
 
 

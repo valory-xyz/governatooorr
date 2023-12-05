@@ -60,6 +60,7 @@ from packages.valory.skills.proposal_voter_abci.payloads import (
     SnapshotAPISendRandomnessPayload,
     SnapshotAPISendSelectKeeperPayload,
 )
+from packages.valory.skills.proposal_voter_abci.prompt import vote_evaluation_prompt
 from packages.valory.skills.proposal_voter_abci.rounds import (
     DecisionMakingRound,
     EstablishVoteRound,
@@ -78,7 +79,6 @@ from packages.valory.skills.proposal_voter_abci.rounds import (
 from packages.valory.skills.transaction_settlement_abci.payload_tools import (
     hash_payload_to_hex,
 )
-from packages.valory.skills.proposal_voter_abci.prompt import vote_evaluation_prompt
 
 
 SAFE_TX_GAS = 0
@@ -362,16 +362,17 @@ class PrepareMechRequestBehaviour(ProposalVoterBaseBehaviour):
             prompt_values = {
                 "proposal": proposal["title"] + "\n" + proposal["body"],
                 "voting_options": ", ".join(proposal["choices"]),
-                "voting_intention_snippet": "contribute positively to the protocol"
+                "voting_intention_snippet": "contribute positively to the protocol",
             }
 
             # Can't use .format() here because the prompt contains a json object
-            prompt = vote_evaluation_prompt.replace(
-                "{proposal}", prompt_values["proposal"]
-            ).replace(
-                "{voting_options}", prompt_values["voting_options"]
-            ).replace(
-                "{voting_intention_snippet}", prompt_values["voting_intention_snippet"]
+            prompt = (
+                vote_evaluation_prompt.replace("{proposal}", prompt_values["proposal"])
+                .replace("{voting_options}", prompt_values["voting_options"])
+                .replace(
+                    "{voting_intention_snippet}",
+                    prompt_values["voting_intention_snippet"],
+                )
             )
 
             self.context.logger.info(f"Sending LLM request: {prompt}")
@@ -448,7 +449,9 @@ class EstablishVoteBehaviour(ProposalVoterBaseBehaviour):
 
                 # Snapshot
                 else:
-                    proposal = self.synchronized_data.target_proposals["snapshot"][response.nonce]
+                    proposal = self.synchronized_data.target_proposals["snapshot"][
+                        response.nonce
+                    ]
                     if vote not in proposal["choices"]:
                         if self.params.default_snapshot_vote_on_error:
                             self.context.logger.info(
@@ -501,7 +504,7 @@ class PrepareVoteTransactionsBehaviour(ProposalVoterBaseBehaviour):
             contract_callable="get_cast_vote_data",
             proposal_id=int(proposal_id),
             support=vote_code,
-            chain_id="ethereum"
+            chain_id="ethereum",
         )
         if (
             contract_api_msg.performative != ContractApiMessage.Performative.STATE
@@ -526,7 +529,7 @@ class PrepareVoteTransactionsBehaviour(ProposalVoterBaseBehaviour):
             data=data,
             safe_tx_gas=safe_tx_gas,
             safe_nonce=safe_nonce,
-            chain_id="ethereum"
+            chain_id="ethereum",
         )
         if (
             contract_api_msg.performative != ContractApiMessage.Performative.STATE
@@ -618,7 +621,7 @@ class PrepareVoteTransactionsBehaviour(ProposalVoterBaseBehaviour):
             contract_id=str(SignMessageLibContract.contract_id),
             contract_callable="sign_message",
             data=safe_message,
-            chain_id="ethereum"
+            chain_id="ethereum",
         )
         if (
             contract_api_msg.performative != ContractApiMessage.Performative.STATE
@@ -647,7 +650,7 @@ class PrepareVoteTransactionsBehaviour(ProposalVoterBaseBehaviour):
             safe_tx_gas=safe_tx_gas,
             operation=SafeOperation.DELEGATE_CALL.value,
             safe_nonce=safe_nonce,
-            chain_id="ethereum"
+            chain_id="ethereum",
         )
         if (
             contract_api_msg.performative != ContractApiMessage.Performative.STATE
@@ -683,7 +686,7 @@ class PrepareVoteTransactionsBehaviour(ProposalVoterBaseBehaviour):
             contract_address=self.synchronized_data.safe_contract_address,
             contract_id=str(GnosisSafeContract.contract_id),
             contract_callable="get_safe_nonce",
-            chain_id="ethereum"
+            chain_id="ethereum",
         )
         if (
             contract_api_msg.performative != ContractApiMessage.Performative.STATE

@@ -165,6 +165,7 @@ models:
       mech_contract_address: '0x77af31de935740567cf4ff1986d04b2c964a786a'
       ipfs_address: https://gateway.autonolas.tech/ipfs/
       default_chain_id: ethereum
+      voter_safe_address: '0x0000000000000000000000000000000000000000'
     class_name: Params
   randomness_api:
     args:

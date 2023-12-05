@@ -521,7 +521,7 @@ class PrepareVoteTransactionsBehaviour(ProposalVoterBaseBehaviour):
 
         contract_api_msg = yield from self.get_contract_api_response(
             performative=ContractApiMessage.Performative.GET_STATE,  # type: ignore
-            contract_address=self.synchronized_data.safe_contract_address,
+            contract_address=self.params.voter_safe_address,
             contract_id=str(GnosisSafeContract.contract_id),
             contract_callable="get_raw_safe_transaction_hash",
             to_address=governor_address,
@@ -564,7 +564,7 @@ class PrepareVoteTransactionsBehaviour(ProposalVoterBaseBehaviour):
             "reason": "",
             "app": "Governatooorr",
             "metadata": "{}",
-            "from": self.synchronized_data.safe_contract_address,
+            "from": self.params.voter_safe_address,
             "timestamp": int(now_timestamp),
         }
 
@@ -602,7 +602,7 @@ class PrepareVoteTransactionsBehaviour(ProposalVoterBaseBehaviour):
         snapshot_data_for_encoding = fix_data_for_encoding(vote_data)
 
         snapshot_api_data = {
-            "address": self.synchronized_data.safe_contract_address,
+            "address": self.params.voter_safe_address,
             "data": vote_data,
             "sig": "0x",  # Snapshot retrieves the signature for votes performed by a safe
         }
@@ -641,7 +641,7 @@ class PrepareVoteTransactionsBehaviour(ProposalVoterBaseBehaviour):
 
         contract_api_msg = yield from self.get_contract_api_response(
             performative=ContractApiMessage.Performative.GET_STATE,  # type: ignore
-            contract_address=self.synchronized_data.safe_contract_address,
+            contract_address=self.params.voter_safe_address,
             contract_id=str(GnosisSafeContract.contract_id),
             contract_callable="get_raw_safe_transaction_hash",
             to_address=signmessagelib_address,
@@ -683,7 +683,7 @@ class PrepareVoteTransactionsBehaviour(ProposalVoterBaseBehaviour):
 
         contract_api_msg = yield from self.get_contract_api_response(
             performative=ContractApiMessage.Performative.GET_STATE,  # type: ignore
-            contract_address=self.synchronized_data.safe_contract_address,
+            contract_address=self.params.voter_safe_address,
             contract_id=str(GnosisSafeContract.contract_id),
             contract_callable="get_safe_nonce",
             chain_id="ethereum",

@@ -119,6 +119,7 @@ type: skill
         mech_contract_address: ${MECH_CONTRACT_ADDRESS:str:0x77af31de935740567cf4ff1986d04b2c964a786a}
         ipfs_address: ${IPFS_ADDRESS:str:https://gateway.autonolas.tech/ipfs/}
         default_chain_id: ${DEFAULT_CHAIN_ID:str:ethereum}
+        voter_safe_address: ${VOTER_SAFE_ADDRESS:str:0x0000000000000000000000000000000000000000}
 1:
   models:
     benchmark_tool: *id001
@@ -193,6 +194,7 @@ type: skill
         mech_contract_address: ${MECH_CONTRACT_ADDRESS:str:0x77af31de935740567cf4ff1986d04b2c964a786a}
         ipfs_address: ${IPFS_ADDRESS:str:https://gateway.autonolas.tech/ipfs/}
         default_chain_id: ${DEFAULT_CHAIN_ID:str:ethereum}
+        voter_safe_address: ${VOTER_SAFE_ADDRESS:str:0x0000000000000000000000000000000000000000}
 2:
   models:
     benchmark_tool: *id001
@@ -267,6 +269,7 @@ type: skill
         mech_contract_address: ${MECH_CONTRACT_ADDRESS:str:0x77af31de935740567cf4ff1986d04b2c964a786a}
         ipfs_address: ${IPFS_ADDRESS:str:https://gateway.autonolas.tech/ipfs/}
         default_chain_id: ${DEFAULT_CHAIN_ID:str:ethereum}
+        voter_safe_address: ${VOTER_SAFE_ADDRESS:str:0x0000000000000000000000000000000000000000}
 3:
   models:
     benchmark_tool: *id001
@@ -341,6 +344,7 @@ type: skill
         mech_contract_address: ${MECH_CONTRACT_ADDRESS:str:0x77af31de935740567cf4ff1986d04b2c964a786a}
         ipfs_address: ${IPFS_ADDRESS:str:https://gateway.autonolas.tech/ipfs/}
         default_chain_id: ${DEFAULT_CHAIN_ID:str:ethereum}
+        voter_safe_address: ${VOTER_SAFE_ADDRESS:str:0x0000000000000000000000000000000000000000}
 ---
 public_id: valory/ledger:0.19.0
 type: connection

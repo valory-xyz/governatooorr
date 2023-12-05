@@ -147,6 +147,7 @@ models:
       snapshot_vote_endpoint: ${str:https://seq.snapshot.org/}
       mech_call_window_size: 3600.0
       mech_calls_allowed_in_window: 100
+      voter_safe_address: '0x0000000000000000000000000000000000000000'
     class_name: Params
   randomness_api:
     args:

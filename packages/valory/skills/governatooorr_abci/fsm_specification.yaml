@@ -36,7 +36,6 @@ alphabet_in:
 default_start_state: RegistrationStartupRound
 final_states:
 - FinishedMaxRetriesRound
-- FinishedMechResponseRound
 label: GovernatooorrAbciApp
 start_states:
 - RegistrationRound
@@ -51,7 +50,6 @@ states:
 - EstablishVoteRound
 - FinalizationRound
 - FinishedMaxRetriesRound
-- FinishedMechResponseRound
 - MechCallCheckRound
 - MechRequestRound
 - MechResponseRound
@@ -126,7 +124,7 @@ transition_func:
     (MechRequestRound, NO_MAJORITY): MechRequestRound
     (MechRequestRound, ROUND_TIMEOUT): MechRequestRound
     (MechRequestRound, SKIP_REQUEST): EstablishVoteRound
-    (MechResponseRound, DONE): FinishedMechResponseRound
+    (MechResponseRound, DONE): EstablishVoteRound
     (MechResponseRound, NO_MAJORITY): MechResponseRound
     (MechResponseRound, ROUND_TIMEOUT): MechResponseRound
     (PostTxDecisionMakingRound, ESTABLISH_VOTE): MechResponseRound

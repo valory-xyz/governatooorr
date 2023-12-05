@@ -91,7 +91,9 @@ class Params(BaseParams):
         self.snapshot_proposal_round_limit = self._ensure(
             "snapshot_proposal_round_limit", kwargs, int
         )
-        self.voter_safe_address = kwargs.get("voter_safe_address", "0x0000000000000000000000000000000000000000")
+        self.voter_safe_address = kwargs.get(
+            "voter_safe_address", "0x0000000000000000000000000000000000000000"
+        )
         super().__init__(*args, **kwargs)
 
 

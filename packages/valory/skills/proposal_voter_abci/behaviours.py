@@ -221,7 +221,7 @@ class PrepareMechRequestBehaviour(ProposalVoterBaseBehaviour):
         }
 
         self.context.logger.info(
-            f"There are {len(expiring_proposals)} finishing Tally proposals (erc20)"
+            f"There are {len(expiring_proposals)} finishing Tally proposals (erc20) [Threshold set to {self.params.voting_block_threshold} blocks]"
         )
 
         # Get the proposals' vote intention
@@ -352,7 +352,7 @@ class PrepareMechRequestBehaviour(ProposalVoterBaseBehaviour):
         }
 
         self.context.logger.info(
-            f"There are {len(expiring_proposals)} finishing snapshot proposals (erc20)"
+            f"There are {len(expiring_proposals)} finishing snapshot proposals (erc20) [Threshold set to {self.params.voting_seconds_threshold} seconds]"
         )
 
         # Mech call preparation

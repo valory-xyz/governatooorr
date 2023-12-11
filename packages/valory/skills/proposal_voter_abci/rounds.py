@@ -262,6 +262,12 @@ class PrepareMechRequestRound(CollectSameUntilThresholdRound):
                     ),
                     get_name(SynchronizedData.current_path): "establish_vote",
                     get_name(SynchronizedData.mech_responses): serialized_responses,
+                    get_name(
+                        SynchronizedData.chain_id
+                    ): "gnosis",  # we send mech requests to gnosis
+                    get_name(
+                        SynchronizedData.safe_contract_address
+                    ): self.params.safe_contract_address,  # we send mech requests to gnosis
                 },
             )
 
@@ -371,6 +377,9 @@ class DecisionMakingRound(CollectSameUntilThresholdRound):
                     get_name(
                         SynchronizedData.chain_id
                     ): "ethereum",  # we vote on Ethereum
+                    get_name(
+                        SynchronizedData.safe_contract_address
+                    ): self.params.voter_safe_address,  # we vote on Ethereum
                 },
             )
             return synchronized_data, Event.VOTE

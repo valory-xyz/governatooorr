@@ -64,7 +64,7 @@ models:
       service_registry_address: null
       setup:
         all_participants: ${ALL_PARTICIPANTS:list:[]}
-        safe_contract_address: '0x7b2a08Fae878E88efE0aa82599C167E9B0e9BdC4'
+        safe_contract_address: ${SAFE_CONTRACT_ADDRESS:str:0x0000000000000000000000000000000000000000}
         consensus_threshold: null
       share_tm_config_on_startup: ${USE_ACN:bool:false}
       sleep_time: 1

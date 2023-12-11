@@ -20,7 +20,7 @@
 """This package contains the rounds of ProposalVoterAbciApp."""
 
 import json
-from dataclasses import dataclass
+from dataclasses import dataclass, is_dataclass, asdict
 from enum import Enum
 from typing import Any, Dict, List, Optional, Set, Tuple, cast
 
@@ -87,6 +87,15 @@ class MechInteractionResponse(MechRequest):
     def incorrect_format(self, res: Any) -> None:
         """Set an incorrect format response."""
         self.error = f"The response's format was unexpected: {res}"
+
+class DataclassEncoder(json.JSONEncoder):
+    """A custom JSON encoder for dataclasses."""
+
+    def default(self, o: Any) -> Any:
+        """The default JSON encoder."""
+        if is_dataclass(o):
+            return asdict(o)
+        return super().default(o)
 
 
 class Event(Enum):
@@ -234,6 +243,11 @@ class PrepareMechRequestRound(CollectSameUntilThresholdRound):
         if self.threshold_reached:
             payload = json.loads(self.most_voted_payload)
 
+            # Initialize mech responses, as it is a cross_period_persistent_key
+            # If there are no responses, we write an empty list
+            mech_responses = cast(SynchronizedData, self.synchronized_data).mech_responses
+            serialized_responses = json.dumps(self._mech_responses, cls=DataclassEncoder)
+
             synchronized_data = self.synchronized_data.update(
                 synchronized_data_class=SynchronizedData,
                 **{
@@ -244,6 +258,7 @@ class PrepareMechRequestRound(CollectSameUntilThresholdRound):
                         payload["mech_requests"]
                     ),
                     get_name(SynchronizedData.current_path): "establish_vote",
+                    get_name(SynchronizedData.mech_responses): serialized_responses
                 },
             )
 

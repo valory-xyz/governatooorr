@@ -193,6 +193,11 @@ class SynchronizedData(BaseSynchronizedData):
         responses = json.loads(serialized)
         return [MechInteractionResponse(**response_item) for response_item in responses]
 
+    @property
+    def chain_id(self) -> str:
+        """Get the chain_id."""
+        return cast(str, self.db.get_strict("chain_id"))
+
 
 class MechCallCheckRound(CollectSameUntilThresholdRound):
     """OpenAICallCheckRound"""
@@ -345,6 +350,9 @@ class DecisionMakingRound(CollectSameUntilThresholdRound):
                         "pending_transactions"
                     ],
                     get_name(SynchronizedData.current_path): "post_vote",
+                    get_name(
+                        SynchronizedData.chain_id
+                    ): "ethereum",  # we vote on Ethereum
                 },
             )
             return synchronized_data, Event.VOTE

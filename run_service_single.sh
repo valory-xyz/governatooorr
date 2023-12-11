@@ -21,7 +21,7 @@ autonomy fetch --local --service valory/governatooorr_local && cd governatooorr_
 autonomy build-image
 
 # Copy keys and build the deployment
-cp $KEY_DIR/governatooorr_1_key.json ./keys.json
+cp $KEY_DIR/keys1_gnosis.json ./keys.json
 
 autonomy deploy build -ltm
 

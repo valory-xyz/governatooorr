@@ -249,9 +249,7 @@ class PrepareMechRequestRound(CollectSameUntilThresholdRound):
             mech_responses = cast(
                 SynchronizedData, self.synchronized_data
             ).mech_responses
-            serialized_responses = json.dumps(
-                self._mech_responses, cls=DataclassEncoder
-            )
+            serialized_responses = json.dumps(mech_responses, cls=DataclassEncoder)
 
             synchronized_data = self.synchronized_data.update(
                 synchronized_data_class=SynchronizedData,

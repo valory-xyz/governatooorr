@@ -63,8 +63,7 @@ models:
       service_id: governatooorr
       service_registry_address: null
       setup:
-        all_participants:
-        - '0xBfE475AF374AB552ff22F995b8732DFee25694ea'
+        all_participants: ${ALL_PARTICIPANTS:list:[]}
         safe_contract_address: '0x7b2a08Fae878E88efE0aa82599C167E9B0e9BdC4'
         consensus_threshold: null
       share_tm_config_on_startup: ${USE_ACN:bool:false}

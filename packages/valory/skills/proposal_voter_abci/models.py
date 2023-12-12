@@ -119,8 +119,8 @@ class Params(BaseParams):
         self.voter_safe_address = kwargs.get(
             "voter_safe_address", "0x0000000000000000000000000000000000000000"
         )
-        self.safe_contract_address = kwargs.get(
-            "safe_contract_address", "0x0000000000000000000000000000000000000000"
+        self.safe_contract_address_copy = kwargs.get(
+            "safe_contract_address_copy", "0x0000000000000000000000000000000000000000"
         )
         super().__init__(*args, **kwargs)
 

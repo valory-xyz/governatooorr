@@ -267,9 +267,11 @@ class PrepareMechRequestRound(CollectSameUntilThresholdRound):
                     ): "gnosis",  # we send mech requests to gnosis
                     get_name(
                         SynchronizedData.safe_contract_address
-                    ): self.context.params.safe_contract_address,  # we send mech requests to gnosis
+                    ): self.context.params.safe_contract_address_copy,  # we send mech requests to gnosis
                 },
             )
+
+            print(f"Safe set to {self.context.params.safe_contract_address_copy}")
 
             event = Event.DONE if not payload["mech_requests"] else Event.MECH_REQUEST
             return synchronized_data, event

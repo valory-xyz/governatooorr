@@ -18,10 +18,11 @@ autonomy push-all
 autonomy fetch --local --service valory/governatooorr_local && cd governatooorr_local
 
 # Build the image
+autonomy init --reset --author valory --remote --ipfs --ipfs-node "/dns/registry.autonolas.tech/tcp/443/https"
 autonomy build-image
 
 # Copy keys and build the deployment
-cp $KEY_DIR/governatooorr_1_key.json ./keys.json
+cp $KEY_DIR/keys1_gnosis.json ./keys.json
 
 autonomy deploy build -ltm
 

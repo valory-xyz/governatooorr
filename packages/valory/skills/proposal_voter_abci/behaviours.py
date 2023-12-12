@@ -22,13 +22,11 @@
 import json
 from abc import ABC
 from copy import deepcopy
-from typing import Dict, Generator, Optional, Set, Tuple, Type, cast
+from dataclasses import asdict
+from typing import Generator, Optional, Set, Tuple, Type, cast
 
 from eth_account.messages import _hash_eip191_message, encode_structured_data
 
-from packages.valory.connections.openai.connection import (
-    PUBLIC_ID as LLM_CONNECTION_PUBLIC_ID,
-)
 from packages.valory.contracts.delegate.contract import DelegateContract
 from packages.valory.contracts.gnosis_safe.contract import (
     GnosisSafeContract,
@@ -36,7 +34,6 @@ from packages.valory.contracts.gnosis_safe.contract import (
 )
 from packages.valory.contracts.sign_message_lib.contract import SignMessageLibContract
 from packages.valory.protocols.contract_api import ContractApiMessage
-from packages.valory.protocols.llm.message import LlmMessage
 from packages.valory.skills.abstract_round_abci.base import AbstractRound
 from packages.valory.skills.abstract_round_abci.behaviours import (
     AbstractRoundBehaviour,
@@ -46,31 +43,32 @@ from packages.valory.skills.abstract_round_abci.common import (
     RandomnessBehaviour,
     SelectKeeperBehaviour,
 )
-from packages.valory.skills.abstract_round_abci.models import Requests
-from packages.valory.skills.proposal_voter_abci.dialogues import (
-    LlmDialogue,
-    LlmDialogues,
-)
 from packages.valory.skills.proposal_voter_abci.models import (
-    OpenAICalls,
+    MechCalls,
     Params,
     SharedState,
 )
 from packages.valory.skills.proposal_voter_abci.payloads import (
     DecisionMakingPayload,
     EstablishVotePayload,
-    OpenAICallCheckPayload,
+    MechCallCheckPayload,
+    PostTxDecisionMakingPayload,
     PostVoteDecisionMakingPayload,
+    PrepareMechRequestPayload,
     PrepareVoteTransactionsPayload,
     SnapshotAPISendPayload,
     SnapshotAPISendRandomnessPayload,
     SnapshotAPISendSelectKeeperPayload,
 )
+from packages.valory.skills.proposal_voter_abci.prompt import vote_evaluation_prompt
 from packages.valory.skills.proposal_voter_abci.rounds import (
     DecisionMakingRound,
     EstablishVoteRound,
-    OpenAICallCheckRound,
+    MechCallCheckRound,
+    MechMetadata,
+    PostTxDecisionMakingRound,
     PostVoteDecisionMakingRound,
+    PrepareMechRequestRound,
     PrepareVoteTransactionsRound,
     ProposalVoterAbciApp,
     SnapshotAPISendRandomnessRound,
@@ -101,6 +99,18 @@ def fix_data_for_encoding(data):
     return fixed_data
 
 
+def parse_mech_response(data: str) -> str:
+    """Parse the data from the Mech response"""
+    print(f"Parsing the mech response: {data}")
+    start = data.find("{")
+    end = data.find("}")
+    sub_string = data[start : end + 1]
+    try:
+        return json.loads(sub_string)["vote"]
+    except Exception:
+        return "error"
+
+
 class ProposalVoterBaseBehaviour(BaseBehaviour, ABC):
     """Base behaviour for the proposal_voter_abci skill."""
 
@@ -115,15 +125,15 @@ class ProposalVoterBaseBehaviour(BaseBehaviour, ABC):
         return cast(Params, super().params)
 
     @property
-    def openai_calls(self) -> OpenAICalls:
+    def mech_calls(self) -> MechCalls:
         """Return the params."""
-        return self.params.openai_calls
+        return self.params.mech_calls
 
 
-class OpenAICallCheckBehaviour(ProposalVoterBaseBehaviour):
+class MechCallCheckBehaviour(ProposalVoterBaseBehaviour):
     """TwitterMentionsCollectionBehaviour"""
 
-    matching_round: Type[AbstractRound] = OpenAICallCheckRound
+    matching_round: Type[AbstractRound] = MechCallCheckRound
 
     def async_act(self) -> Generator:
         """Do the act, supporting asynchronous execution."""
@@ -132,14 +142,14 @@ class OpenAICallCheckBehaviour(ProposalVoterBaseBehaviour):
                 SharedState, self.context.state
             ).round_sequence.last_round_transition_timestamp.timestamp()
             # Reset the window if the window expired before checking
-            self.openai_calls.reset(current_time=current_time)
-            if self.openai_calls.max_calls_reached():
+            self.mech_calls.reset(current_time=current_time)
+            if self.mech_calls.max_calls_reached():
                 content = None
             else:
-                content = OpenAICallCheckRound.CALLS_REMAINING
+                content = MechCallCheckRound.CALLS_REMAINING
         with self.context.benchmark_tool.measure(self.behaviour_id).consensus():
             yield from self.send_a2a_transaction(
-                payload=OpenAICallCheckPayload(
+                payload=MechCallCheckPayload(
                     sender=self.context.agent_address,
                     content=content,
                 )
@@ -148,30 +158,40 @@ class OpenAICallCheckBehaviour(ProposalVoterBaseBehaviour):
         self.set_done()
 
 
-class EstablishVoteBehaviour(ProposalVoterBaseBehaviour):
-    """EstablishVoteBehaviour"""
+class PrepareMechRequestBehaviour(ProposalVoterBaseBehaviour):
+    """PrepareMechRequestBehaviour"""
 
-    matching_round: Type[AbstractRound] = EstablishVoteRound
+    matching_round: Type[AbstractRound] = PrepareMechRequestRound
 
     def async_act(self) -> Generator:
         """Do the act, supporting asynchronous execution."""
 
         with self.context.benchmark_tool.measure(self.behaviour_id).local():
-            expiring_tally_proposals = yield from self._get_expiring_tally_proposals()
-            expiring_snapshot_proposals = (
-                yield from self._get_expiring_snapshot_proposals()
-            )
+            (
+                expiring_tally_proposals,
+                mech_requests_tally,
+            ) = self._get_expiring_tally_proposals()
+            (
+                expiring_snapshot_proposals,
+                mech_requests_snapshot,
+            ) = self._get_expiring_snapshot_proposals()
 
             expiring_proposals = {
                 "tally": expiring_tally_proposals,
                 "snapshot": expiring_snapshot_proposals,
             }
 
+            mech_requests = mech_requests_tally
+            mech_requests.extend(mech_requests_snapshot)
+
             sender = self.context.agent_address
-            payload = EstablishVotePayload(
+            payload = PrepareMechRequestPayload(
                 sender=sender,
-                proposals=json.dumps(
-                    {"expiring_proposals": expiring_proposals},
+                content=json.dumps(
+                    {
+                        "expiring_proposals": expiring_proposals,
+                        "mech_requests": mech_requests,
+                    },
                     sort_keys=True,
                 ),
             )
@@ -182,7 +202,7 @@ class EstablishVoteBehaviour(ProposalVoterBaseBehaviour):
 
         self.set_done()
 
-    def _get_expiring_tally_proposals(self) -> Generator[None, None, dict]:
+    def _get_expiring_tally_proposals(self) -> Tuple[dict, list]:
         """Generate proposal votes"""
 
         target_proposals = self.synchronized_data.target_proposals["tally"]
@@ -201,10 +221,11 @@ class EstablishVoteBehaviour(ProposalVoterBaseBehaviour):
         }
 
         self.context.logger.info(
-            f"There are {len(expiring_proposals)} finishing Tally proposals (erc20)"
+            f"There are {len(expiring_proposals)} finishing Tally proposals (erc20) [Threshold set to {self.params.voting_block_threshold} blocks]"
         )
 
         # Get the proposals' vote intention
+        mech_requests = []
         for proposal_id in expiring_proposals.keys():
             self.context.logger.info(
                 f"Getting vote intention for proposal {proposal_id}"
@@ -241,8 +262,7 @@ class EstablishVoteBehaviour(ProposalVoterBaseBehaviour):
                 self.context.logger.info("No vote intention. Skipping proposal.")
                 continue
 
-            # LLM call
-            prompt_template = "Here is a voting proposal for a protocol: `{proposal}`. How should I vote on the voting proposal if my intent was to {voting_intention_snippet} and the voting options are {voting_options}? Please answer with only the voting option."
+            # Mech call preparation
             voting_intention_snippet = (
                 "cause chaos to the protocol"
                 if vote_intention == "evil"
@@ -256,75 +276,20 @@ class EstablishVoteBehaviour(ProposalVoterBaseBehaviour):
                 "voting_options": VOTING_OPTIONS,
             }
 
-            self.context.logger.info(
-                f"Sending LLM request...\n{prompt_template.format(**prompt_values)}"
+            prompt = vote_evaluation_prompt.format(**prompt_values)
+
+            self.context.logger.info(f"Sending LLM request...\n{prompt}")
+
+            mech_requests.append(
+                asdict(
+                    MechMetadata(
+                        nonce=proposal_id,
+                        tool="openai-gpt-3.5-turbo",
+                        prompt=prompt,
+                    )
+                )
             )
-            vote = yield from self._get_vote(prompt_template, prompt_values)
-            vote = vote.upper()
-            if vote not in VOTES_TO_CODE:
-                if self.params.default_tally_vote_on_error:
-                    self.context.logger.info(
-                        f"Invalid vote: {vote}. Using first vote option as fallback."
-                    )
-                    vote = list(VOTES_TO_CODE.keys())[0]
-                else:
-                    self.context.logger.error(
-                        f"Invalid vote: {vote}. Skipping proposal."
-                    )
-                    continue
-
-            self.context.logger.info(f"Vote: {vote}")
-
-            expiring_proposals[proposal_id]["vote"] = vote
-
-        return expiring_proposals
-
-    def _get_vote(
-        self, prompt_template: str, prompt_values: Dict[str, str]
-    ) -> Generator[None, None, str]:
-        """Get the vote from LLM."""
-        llm_dialogues = cast(LlmDialogues, self.context.llm_dialogues)
-
-        # llm request message
-        request_llm_message, llm_dialogue = llm_dialogues.create(
-            counterparty=str(LLM_CONNECTION_PUBLIC_ID),
-            performative=LlmMessage.Performative.REQUEST,
-            prompt_template=prompt_template,
-            prompt_values=prompt_values,
-        )
-        request_llm_message = cast(LlmMessage, request_llm_message)
-        llm_dialogue = cast(LlmDialogue, llm_dialogue)
-        llm_response_message = yield from self._do_request(
-            request_llm_message, llm_dialogue
-        )
-        self.openai_calls.increase_call_count()
-        vote = llm_response_message.value
-        vote = vote.strip()
-        return vote
-
-    def _do_request(
-        self,
-        llm_message: LlmMessage,
-        llm_dialogue: LlmDialogue,
-        timeout: Optional[float] = None,
-    ) -> Generator[None, None, LlmMessage]:
-        """
-        Do a request and wait the response, asynchronously.
-
-        :param llm_message: The request message
-        :param llm_dialogue: the HTTP dialogue associated to the request
-        :param timeout: seconds to wait for the reply.
-        :yield: LLMMessage object
-        :return: the response message
-        """
-        self.context.outbox.put_message(message=llm_message)
-        request_nonce = self._get_request_nonce_from_dialogue(llm_dialogue)
-        cast(Requests, self.context.requests).request_id_to_callback[
-            request_nonce
-        ] = self.get_callback_request()
-        # notify caller by propagating potential timeout exception.
-        response = yield from self.wait_for_message(timeout=timeout)
-        return response
+        return expiring_proposals, mech_requests
 
     def _get_service_vote_intention(self, token_address) -> Optional[str]:
         """Aggregate all the users' vote intentions to find the service's vote intention"""
@@ -362,7 +327,9 @@ class EstablishVoteBehaviour(ProposalVoterBaseBehaviour):
         # Return the option with most votes
         return sorted_preferences[0][0]
 
-    def _get_expiring_snapshot_proposals(self) -> Generator[None, None, dict]:
+    def _get_expiring_snapshot_proposals(
+        self,
+    ) -> Tuple[dict, list]:
         """Get votable snapshot proposals"""
         target_proposals = self.synchronized_data.target_proposals["snapshot"]
 
@@ -385,43 +352,135 @@ class EstablishVoteBehaviour(ProposalVoterBaseBehaviour):
         }
 
         self.context.logger.info(
-            f"There are {len(expiring_proposals)} finishing snapshot proposals (erc20)"
+            f"There are {len(expiring_proposals)} finishing snapshot proposals (erc20) [Threshold set to {self.params.voting_seconds_threshold} seconds]"
         )
 
-        # LLM calls
+        # Mech call preparation
+        mech_requests = []
         for proposal_id in expiring_proposals:
             proposal = target_proposals[proposal_id]
-            prompt_template = "Here is a voting proposal for a protocol: `{proposal}`. How should I vote on the voting proposal if my intent was to contribute positively to the protocol and the voting options are {voting_options}? Please answer with only the voting option."
-
             prompt_values = {
                 "proposal": proposal["title"] + "\n" + proposal["body"],
                 "voting_options": ", ".join(proposal["choices"]),
+                "voting_intention_snippet": "contribute positively to the protocol",
             }
 
-            self.context.logger.info(
-                f"Sending LLM request: prompt_template={prompt_template}, prompt_values={prompt_values}"
+            # Can't use .format() here because the prompt contains a json object
+            prompt = (
+                vote_evaluation_prompt.replace("{proposal}", prompt_values["proposal"])
+                .replace("{voting_options}", prompt_values["voting_options"])
+                .replace(
+                    "{voting_intention_snippet}",
+                    prompt_values["voting_intention_snippet"],
+                )
             )
 
-            vote = yield from self._get_vote(prompt_template, prompt_values)
-            if vote not in proposal["choices"]:
-                if self.params.default_snapshot_vote_on_error:
-                    self.context.logger.info(
-                        f"Invalid vote: {vote}. Using first vote option as fallback."
+            self.context.logger.info(f"Sending LLM request: {prompt}")
+
+            mech_requests.append(
+                asdict(
+                    MechMetadata(
+                        nonce=proposal_id,
+                        tool="openai-gpt-3.5-turbo",
+                        prompt=prompt,
                     )
-                    vote = proposal["choices"][0]
-                else:
-                    self.context.logger.error(
-                        f"Invalid vote: {vote}. Skipping proposal."
+                )
+            )
+
+        return expiring_proposals, mech_requests
+
+
+class EstablishVoteBehaviour(ProposalVoterBaseBehaviour):
+    """EstablishVoteBehaviour"""
+
+    matching_round: Type[AbstractRound] = EstablishVoteRound
+
+    def async_act(self) -> Generator:
+        """Do the act, supporting asynchronous execution."""
+        with self.context.benchmark_tool.measure(self.behaviour_id).local():
+            mech_responses = self.synchronized_data.mech_responses
+            expiring_proposals = self.synchronized_data.expiring_proposals
+            tally_pending_proposal_ids = list(expiring_proposals["tally"].keys())
+            snapshot_pending_proposal_ids = list(expiring_proposals["snapshot"].keys())
+
+            for response in mech_responses:
+                self.context.logger.info(
+                    f"Processing mech response with nonce {response.nonce}"
+                )
+
+                # The request has not been responded
+                if not response.result:
+                    self.context.logger.info("No result. Skipping...")
+                    continue
+
+                # We cannot find the original proposal
+                platform = None
+                if response.nonce in tally_pending_proposal_ids:
+                    platform = "tally"
+                if response.nonce in snapshot_pending_proposal_ids:
+                    platform = "snapshot"
+
+                if not platform:
+                    self.context.logger.info(
+                        "Nonce not in pending proposals. Skipping..."
                     )
                     continue
 
-            self.context.logger.info(f"Vote: {vote}")
+                vote = parse_mech_response(response.result)
 
-            expiring_proposals[proposal_id]["vote"] = (
-                proposal["choices"].index(vote) + 1
-            )  # choices are 1-based indices
+                # Tally
+                if platform == "tally":
+                    vote = vote.upper()
+                    if vote not in VOTES_TO_CODE:
+                        if self.params.default_tally_vote_on_error:
+                            self.context.logger.info(
+                                f"Invalid vote: {vote}. Using first vote option as fallback."
+                            )
+                            vote = list(VOTES_TO_CODE.keys())[0]
+                        else:
+                            self.context.logger.error(
+                                f"Invalid vote: {vote}. Skipping proposal."
+                            )
+                            continue
 
-        return expiring_proposals
+                    self.context.logger.info(f"Vote: {vote}")
+
+                    expiring_proposals["tally"][response.nonce]["vote"] = vote
+
+                # Snapshot
+                else:
+                    proposal = self.synchronized_data.target_proposals["snapshot"][
+                        response.nonce
+                    ]
+                    if vote not in proposal["choices"]:
+                        if self.params.default_snapshot_vote_on_error:
+                            self.context.logger.info(
+                                f"Invalid vote: {vote}. Using first vote option as fallback."
+                            )
+                            vote = proposal["choices"][0]
+                        else:
+                            self.context.logger.error(
+                                f"Invalid vote: {vote}. Skipping proposal."
+                            )
+                            continue
+
+                    self.context.logger.info(f"Vote: {vote}")
+
+                    expiring_proposals["snapshot"][response.nonce]["vote"] = (
+                        proposal["choices"].index(vote) + 1
+                    )  # choices are 1-based indices
+
+        with self.context.benchmark_tool.measure(self.behaviour_id).consensus():
+            yield from self.send_a2a_transaction(
+                payload=EstablishVotePayload(
+                    sender=self.context.agent_address,
+                    expiring_proposals=json.dumps(
+                        {"expiring_proposals": expiring_proposals}, sort_keys=True
+                    ),
+                )
+            )
+            yield from self.wait_until_round_end()
+        self.set_done()
 
 
 class PrepareVoteTransactionsBehaviour(ProposalVoterBaseBehaviour):
@@ -445,6 +504,7 @@ class PrepareVoteTransactionsBehaviour(ProposalVoterBaseBehaviour):
             contract_callable="get_cast_vote_data",
             proposal_id=int(proposal_id),
             support=vote_code,
+            chain_id="ethereum",
         )
         if (
             contract_api_msg.performative != ContractApiMessage.Performative.STATE
@@ -461,7 +521,7 @@ class PrepareVoteTransactionsBehaviour(ProposalVoterBaseBehaviour):
 
         contract_api_msg = yield from self.get_contract_api_response(
             performative=ContractApiMessage.Performative.GET_STATE,  # type: ignore
-            contract_address=self.synchronized_data.safe_contract_address,
+            contract_address=self.params.voter_safe_address,
             contract_id=str(GnosisSafeContract.contract_id),
             contract_callable="get_raw_safe_transaction_hash",
             to_address=governor_address,
@@ -469,6 +529,7 @@ class PrepareVoteTransactionsBehaviour(ProposalVoterBaseBehaviour):
             data=data,
             safe_tx_gas=safe_tx_gas,
             safe_nonce=safe_nonce,
+            chain_id="ethereum",
         )
         if (
             contract_api_msg.performative != ContractApiMessage.Performative.STATE
@@ -503,7 +564,7 @@ class PrepareVoteTransactionsBehaviour(ProposalVoterBaseBehaviour):
             "reason": "",
             "app": "Governatooorr",
             "metadata": "{}",
-            "from": self.synchronized_data.safe_contract_address,
+            "from": self.params.voter_safe_address,
             "timestamp": int(now_timestamp),
         }
 
@@ -541,7 +602,7 @@ class PrepareVoteTransactionsBehaviour(ProposalVoterBaseBehaviour):
         snapshot_data_for_encoding = fix_data_for_encoding(vote_data)
 
         snapshot_api_data = {
-            "address": self.synchronized_data.safe_contract_address,
+            "address": self.params.voter_safe_address,
             "data": vote_data,
             "sig": "0x",  # Snapshot retrieves the signature for votes performed by a safe
         }
@@ -560,6 +621,7 @@ class PrepareVoteTransactionsBehaviour(ProposalVoterBaseBehaviour):
             contract_id=str(SignMessageLibContract.contract_id),
             contract_callable="sign_message",
             data=safe_message,
+            chain_id="ethereum",
         )
         if (
             contract_api_msg.performative != ContractApiMessage.Performative.STATE
@@ -579,7 +641,7 @@ class PrepareVoteTransactionsBehaviour(ProposalVoterBaseBehaviour):
 
         contract_api_msg = yield from self.get_contract_api_response(
             performative=ContractApiMessage.Performative.GET_STATE,  # type: ignore
-            contract_address=self.synchronized_data.safe_contract_address,
+            contract_address=self.params.voter_safe_address,
             contract_id=str(GnosisSafeContract.contract_id),
             contract_callable="get_raw_safe_transaction_hash",
             to_address=signmessagelib_address,
@@ -588,6 +650,7 @@ class PrepareVoteTransactionsBehaviour(ProposalVoterBaseBehaviour):
             safe_tx_gas=safe_tx_gas,
             operation=SafeOperation.DELEGATE_CALL.value,
             safe_nonce=safe_nonce,
+            chain_id="ethereum",
         )
         if (
             contract_api_msg.performative != ContractApiMessage.Performative.STATE
@@ -620,9 +683,10 @@ class PrepareVoteTransactionsBehaviour(ProposalVoterBaseBehaviour):
 
         contract_api_msg = yield from self.get_contract_api_response(
             performative=ContractApiMessage.Performative.GET_STATE,  # type: ignore
-            contract_address=self.synchronized_data.safe_contract_address,
+            contract_address=self.params.voter_safe_address,
             contract_id=str(GnosisSafeContract.contract_id),
             contract_callable="get_safe_nonce",
+            chain_id="ethereum",
         )
         if (
             contract_api_msg.performative != ContractApiMessage.Performative.STATE
@@ -780,6 +844,27 @@ class DecisionMakingBehaviour(ProposalVoterBaseBehaviour):
             self.set_done()
 
 
+class PostTxDecisionMakingBehaviour(ProposalVoterBaseBehaviour):
+    """PostTxDecisionMakingBehaviour"""
+
+    matching_round: Type[AbstractRound] = PostTxDecisionMakingRound
+
+    def async_act(self) -> Generator:
+        """Do the act, supporting asynchronous execution."""
+
+        with self.context.benchmark_tool.measure(self.behaviour_id).local():
+            payload = PostTxDecisionMakingPayload(
+                sender=self.context.agent_address,
+                event=self.synchronized_data.current_path,
+            )
+
+            with self.context.benchmark_tool.measure(self.behaviour_id).consensus():
+                yield from self.send_a2a_transaction(payload)
+                yield from self.wait_until_round_end()
+
+            self.set_done()
+
+
 class PostVoteDecisionMakingBehaviour(ProposalVoterBaseBehaviour):
     """PostVoteDecisionMakingBehaviour"""
 
@@ -918,10 +1003,12 @@ class ProposalVoterRoundBehaviour(AbstractRoundBehaviour):
     initial_behaviour_cls = EstablishVoteBehaviour
     abci_app_cls = ProposalVoterAbciApp  # type: ignore
     behaviours: Set[Type[BaseBehaviour]] = [
-        OpenAICallCheckBehaviour,
+        MechCallCheckBehaviour,
+        DecisionMakingBehaviour,
+        PrepareMechRequestBehaviour,
         EstablishVoteBehaviour,
         PrepareVoteTransactionsBehaviour,
-        DecisionMakingBehaviour,
+        PostTxDecisionMakingBehaviour,
         PostVoteDecisionMakingBehaviour,
         SnapshotAPISendRandomnessBehaviour,
         SnapshotAPISendSelectKeeperBehaviour,

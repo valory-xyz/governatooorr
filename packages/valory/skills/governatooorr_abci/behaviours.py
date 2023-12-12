@@ -32,6 +32,9 @@ from packages.valory.skills.ceramic_write_abci.behaviours import (
     CeramicWriteRoundBehaviour,
 )
 from packages.valory.skills.governatooorr_abci.composition import GovernatooorrAbciApp
+from packages.valory.skills.mech_interact_abci.behaviours.round_behaviour import (
+    MechInteractRoundBehaviour,
+)
 from packages.valory.skills.proposal_collector_abci.behaviours import (
     ProposalCollectorRoundBehaviour,
 )
@@ -68,5 +71,6 @@ class GovernatooorrConsensusBehaviour(AbstractRoundBehaviour):
         *TerminationAbciBehaviours.behaviours,
         *CeramicReadRoundBehaviour.behaviours,
         *CeramicWriteRoundBehaviour.behaviours,
+        *MechInteractRoundBehaviour.behaviours,
     }
     background_behaviours_cls = {BackgroundBehaviour}

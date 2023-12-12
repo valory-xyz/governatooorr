@@ -31,7 +31,7 @@ protocols:
 skills:
 - valory/abstract_abci:0.1.0:bafybeiflcfufixmsrhobf56bn5745m2iipcfqyulwk2qegtnagb3kvaaxi
 - valory/abstract_round_abci:0.1.0:bafybeiaqcl7h2famylusiffigwem7tevkcsyocdu5xd42jkmgq6kvowzgq
-- valory/governatooorr_solana_abci:0.1.0:bafybeibimrtcvpqooitr4ugzbl2ggcq2zzx2jyhl6cnykrpxoajdz4xyc4
+- valory/governatooorr_solana_abci:0.1.0:bafybeifqbqpkbme22sxkjxiozxpy7wawzn57couppx5cwc5ftse62ql6su
 - valory/proposal_collector_solana_abci:0.1.0:bafybeidnitmp57fbcdhikmsfib6dh4evavsxuvfjqbzpipe3yzfa5l4vgq
 - valory/proposal_voter_solana_abci:0.1.0:bafybeig4gyao6d6s4muqxa3wjijmysuxrkiihbot2adl5hy7v5ncx2waty
 - valory/registration_abci:0.1.0:bafybeic2ynseiak7jpta7jfwuqwyp453b4p7lolr4wihxmpn633uekv5am
@@ -194,5 +194,5 @@ models:
       disable_tally: ${bool:false}
       default_snapshot_vote_on_error: ${bool:false}
       default_tally_vote_on_error: ${bool:false}
-      openai_call_window_size: ${float:3600.0}
-      openai_calls_allowed_in_window: ${int:100}
+      mech_call_window_size: ${float:3600.0}
+      mech_calls_allowed_in_window: ${int:100}

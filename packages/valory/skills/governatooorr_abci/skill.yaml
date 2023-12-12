@@ -7,12 +7,12 @@ license: Apache-2.0
 aea_version: '>=1.0.0, <2.0.0'
 fingerprint:
   __init__.py: bafybeigk2kb335wy5vmgapbrqmfotvwqm4dqsuqr7gt7qic4v4npx2pqxy
-  behaviours.py: bafybeic7hmkd2vz7k7yscjisa2kurg6gjrerlekiz5c7c3gl5y7bilacpa
-  composition.py: bafybeihyoezrdw2ztjrpvnrtdbqvu54hnchnq2w2l5avgduchwypbehg7m
-  dialogues.py: bafybeiayva5koyr6upomicnhbfefypjk2sebogk7ew24wxwwnccuqktcki
-  fsm_specification.yaml: bafybeidj3ng4prrikap2abbwnk7l5olah5pcif7zoxtgdgtd7tzson6vk4
-  handlers.py: bafybeiefhvk666md6clddjpkv6ccnletnxmekptz2p5qjjnubfokwlofia
-  models.py: bafybeigoq2xaulowhod3viikl4rsbdfqvoe2jsgsqpsedqwv4jto2toxuq
+  behaviours.py: bafybeifybqekpk7m6xuzsy2bbgxnjymtfip4artnvcvwdbibdnyi2jblei
+  composition.py: bafybeie2ugjl4me2gne2xvfa5w3j3x27sod7md32lngweajmr5r6oqyfku
+  dialogues.py: bafybeigpwuzku3we7axmxeamg7vn656maww6emuztau5pg3ebsoquyfdqm
+  fsm_specification.yaml: bafybeig5dq2rd3ucakyrvhq4xstxlcdnl2zgkvg365nlykjgptwatptrgq
+  handlers.py: bafybeigpasztma6nn4txojmsvvt3zvbbrad2hptn7emzeeif7cyvddbsca
+  models.py: bafybeiecavpbrie3ev6dhio67oy3kvbajcr3s6jhc5un7womv2icjycmgu
 fingerprint_ignore_patterns: []
 connections: []
 contracts: []
@@ -21,12 +21,13 @@ skills:
 - valory/abstract_round_abci:0.1.0:bafybeiaqcl7h2famylusiffigwem7tevkcsyocdu5xd42jkmgq6kvowzgq
 - valory/ceramic_read_abci:0.1.0:bafybeigqpkvsxfhz5jt3yuipmkl6eyfgqcw36226sgfhdgud7mphsjmopa
 - valory/ceramic_write_abci:0.1.0:bafybeighmakx2u2okkvokdimxyzrnfn5qb2cib3qzvzdh4tnkfr6hkx32a
-- valory/proposal_collector_abci:0.1.0:bafybeig46l6ad3eybd4dg7rdkdtdu3ooaydwger53qxboh2td3lo3u3qhy
-- valory/proposal_voter_abci:0.1.0:bafybeibidllvbmwh35a22hdcceerk7xvkb3xbtvygcl4mqitne2jh4jm6q
+- valory/proposal_collector_abci:0.1.0:bafybeiamvhnzid35g7bo72dajbuiaupahcxd4r7pckosehgl6gwubcgy6m
+- valory/proposal_voter_abci:0.1.0:bafybeibljnxhly4wjrag2zrme54yz5kydfqhsr4yhue7s5obhbkxf6zf4i
 - valory/registration_abci:0.1.0:bafybeic2ynseiak7jpta7jfwuqwyp453b4p7lolr4wihxmpn633uekv5am
 - valory/reset_pause_abci:0.1.0:bafybeidzajbe3erygeh2xbd6lrjv7nsptznjuzrt24ykgvhgotdeyhfnba
 - valory/termination_abci:0.1.0:bafybeie4zvjfxvdu7qrulmur3chpjz3kpj5m4bjsxvpk4gvj5zbyyayfaa
 - valory/transaction_settlement_abci:0.1.0:bafybeiaefgqbs7zsn5xe5kdwrujj7ivygkn3ujpw6crnvi3knvxw75qmja
+- valory/mech_interact_abci:0.1.0:bafybeielb6agwj5jfdv3nqnc7iugb4qz5us223jpr5uwolke4fmzxvmkna
 behaviours:
   main:
     args: {}
@@ -47,9 +48,6 @@ handlers:
   ledger_api:
     args: {}
     class_name: LedgerApiHandler
-  llm:
-    args: {}
-    class_name: LlmHandler
   signing:
     args: {}
     class_name: SigningHandler
@@ -76,9 +74,6 @@ models:
   ledger_api_dialogues:
     args: {}
     class_name: LedgerApiDialogues
-  llm_dialogues:
-    args: {}
-    class_name: LlmDialogues
   params:
     args:
       ceramic_api_base: https://ceramic-valory.hirenodes.io/
@@ -162,8 +157,16 @@ models:
       disable_tally: false
       default_snapshot_vote_on_error: false
       default_tally_vote_on_error: false
-      openai_call_window_size: 3600.0
-      openai_calls_allowed_in_window: 100
+      mech_call_window_size: 3600.0
+      mech_calls_allowed_in_window: 100
+      snapshot_request_step: 50
+      snapshot_proposal_round_limit: 50
+      multisend_batch_size: 50
+      mech_contract_address: '0x77af31de935740567cf4ff1986d04b2c964a786a'
+      ipfs_address: https://gateway.autonolas.tech/ipfs/
+      default_chain_id: ethereum
+      voter_safe_address: '0x0000000000000000000000000000000000000000'
+      safe_contract_address_copy: '0x0000000000000000000000000000000000000000'
     class_name: Params
   randomness_api:
     args:
@@ -176,6 +179,18 @@ models:
       retries: 5
       url: https://drand.cloudflare.com/public/latest
     class_name: RandomnessApi
+  mech_response:
+    args:
+      api_id: mech_response
+      headers:
+        Content-Type: application/json
+      method: GET
+      parameters: {}
+      response_key: result
+      response_type: str
+      retries: 5
+      url: ''
+    class_name: MechResponseSpecs
   requests:
     args: {}
     class_name: Requests

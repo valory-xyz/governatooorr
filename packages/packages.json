@@ -1,22 +1,22 @@
 {
     "dev": {
-        "skill/valory/proposal_collector_abci/0.1.0": "bafybeig46l6ad3eybd4dg7rdkdtdu3ooaydwger53qxboh2td3lo3u3qhy",
+        "skill/valory/proposal_collector_abci/0.1.0": "bafybeiamvhnzid35g7bo72dajbuiaupahcxd4r7pckosehgl6gwubcgy6m",
         "contract/valory/delegate/0.1.0": "bafybeihmc6erwccmyrthyjfbbwbiahhpgf2mu5ui2oxj7zoigqn3ub6mdm",
-        "skill/valory/proposal_voter_abci/0.1.0": "bafybeibidllvbmwh35a22hdcceerk7xvkb3xbtvygcl4mqitne2jh4jm6q",
-        "skill/valory/governatooorr_abci/0.1.0": "bafybeicdnla57kngltblacez47c36cegxejiksne6rdifatt4erjuy6xlq",
-        "agent/valory/governatooorr/0.1.0": "bafybeif64wqfueuxrbezaw6jl6lz45tpk6bgzcgc2bxsrdcfpenf7t6xva",
-        "service/valory/governatooorr/0.1.0": "bafybeiff6o3isswb3g5vanwg2qxr2fupn3ndprf3zya5rwwk7nvdkzetge",
-        "service/valory/governatooorr_local/0.1.0": "bafybeibty2xklypddrooazgbdf4sfxwl2m523x46bd4qyuxuxkw22rua6a",
+        "skill/valory/proposal_voter_abci/0.1.0": "bafybeibljnxhly4wjrag2zrme54yz5kydfqhsr4yhue7s5obhbkxf6zf4i",
+        "skill/valory/governatooorr_abci/0.1.0": "bafybeic7xupcoya4jiujse3zxlmftkkak6opvppwqbswjlfy5qm66p46dy",
+        "agent/valory/governatooorr/0.1.0": "bafybeiamnhhj5yryhbm7j3cke5e2jtskh22tzdgzw43uz7jnbmuw6wdg6y",
+        "service/valory/governatooorr/0.1.0": "bafybeifdca4yld6k4yatevk2na75jm6gqrlvnx3eetfoxqpjkisv5bjexu",
+        "service/valory/governatooorr_local/0.1.0": "bafybeihkeju5bsobd3otumue7zigiw22h6v4ijyfqqqsjl4pmwpm2ibnnm",
         "contract/valory/sign_message_lib/0.1.0": "bafybeibzgzy4bhjevf2smkgxgyowus76xgrrz25az7hrlpmiopdy6hpzbq",
         "contract/valory/solana_governance/0.1.0": "bafybeiai6xmkddnu3dmd4aar2om6bqmta6wesdne7wjcsm7q4qhrfnsdia",
         "contract/valory/squads_multisig/0.1.0": "bafybeihjv5gwbqsnwjkhljtkamdx2olscvunk7j53jicvd2rgymtgzmbvi",
         "skill/valory/proposal_collector_solana_abci/0.1.0": "bafybeidnitmp57fbcdhikmsfib6dh4evavsxuvfjqbzpipe3yzfa5l4vgq",
         "skill/valory/proposal_voter_solana_abci/0.1.0": "bafybeig4gyao6d6s4muqxa3wjijmysuxrkiihbot2adl5hy7v5ncx2waty",
         "skill/valory/solana_transaction_settlement_abci/0.1.0": "bafybeifkc6qwxrtzzazonridghlr7u7gpejjxwimbrgcfdqo2c7rqpmd3a",
-        "skill/valory/governatooorr_solana_abci/0.1.0": "bafybeibimrtcvpqooitr4ugzbl2ggcq2zzx2jyhl6cnykrpxoajdz4xyc4",
-        "agent/valory/governatooorr_solana/0.1.0": "bafybeigv43jtcyg55qbsdijfy3bz4crnsg3ko5ika62zzlkxuw7t5bx6de",
-        "service/valory/governatooorr_solana/0.1.0": "bafybeibtmehcuqqovr4mhectgfvs36iyub7ugcofexe3y45vvqhw4p44fi",
-        "service/valory/governatooorr_solana_local/0.1.0": "bafybeihobecf4uwocinb3gbylgg56yj6ewm6box6q5sfkaer276iyhf23m"
+        "skill/valory/governatooorr_solana_abci/0.1.0": "bafybeifqbqpkbme22sxkjxiozxpy7wawzn57couppx5cwc5ftse62ql6su",
+        "agent/valory/governatooorr_solana/0.1.0": "bafybeiaxotdcjqkrhxgykhujrqygi577dhggmiosdwzbzpaabkidslidpa",
+        "service/valory/governatooorr_solana/0.1.0": "bafybeih456pgn252kdmxsvuqcvk5oazcbfywnk2ioqc6n5c47gaizh25we",
+        "service/valory/governatooorr_solana_local/0.1.0": "bafybeieepgrxu6kmm6agdruksuxcr2nflgb24sd5j36hvlpugpc2sghp3a"
     },
     "third_party": {
         "protocol/open_aea/signing/1.0.0": "bafybeie7xyems76v5b4wc2lmaidcujizpxfzjnnwdeokmhje53g7ym25ii",
@@ -46,6 +46,9 @@
         "skill/valory/ceramic_read_abci/0.1.0": "bafybeigqpkvsxfhz5jt3yuipmkl6eyfgqcw36226sgfhdgud7mphsjmopa",
         "skill/valory/ceramic_write_abci/0.1.0": "bafybeighmakx2u2okkvokdimxyzrnfn5qb2cib3qzvzdh4tnkfr6hkx32a",
         "connection/valory/openai/0.1.0": "bafybeiepsxac7e2tq3mcfkgcx62zt6oiaeic5wwcs4mnv733l762kn62du",
-        "protocol/valory/llm/1.0.0": "bafybeihj2orqapokafg7co3wlogwgf6cckaaj2bz3nuv4rm3opkoyhrlp4"
+        "protocol/valory/llm/1.0.0": "bafybeihj2orqapokafg7co3wlogwgf6cckaaj2bz3nuv4rm3opkoyhrlp4",
+        "skill/valory/mech_interact_abci/0.1.0": "bafybeielb6agwj5jfdv3nqnc7iugb4qz5us223jpr5uwolke4fmzxvmkna",
+        "contract/valory/mech/0.1.0": "bafybeibv6ydk326zkny4pphze64zgzzv2sc5qkt2iyymoi6pt3ci2gtxne",
+        "connection/fetchai/http_server/0.22.0": "bafybeihvscddpxjbtqsetngmxo3kiht2wqhosmwiyuh3f6zjti3x3byu5u"
     }
 }

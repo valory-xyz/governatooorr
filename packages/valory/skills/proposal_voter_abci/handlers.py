@@ -19,15 +19,9 @@
 
 """This module contains the handlers for the skill of ProposalVoterAbciApp."""
 
-from typing import Optional
-
-from aea.configurations.data_types import PublicId
-
-from packages.valory.protocols.llm import LlmMessage
 from packages.valory.skills.abstract_round_abci.handlers import (
     ABCIRoundHandler as BaseABCIRoundHandler,
 )
-from packages.valory.skills.abstract_round_abci.handlers import AbstractResponseHandler
 from packages.valory.skills.abstract_round_abci.handlers import (
     ContractApiHandler as BaseContractApiHandler,
 )
@@ -55,15 +49,3 @@ LedgerApiHandler = BaseLedgerApiHandler
 ContractApiHandler = BaseContractApiHandler
 TendermintHandler = BaseTendermintHandler
 IpfsHandler = BaseIpfsHandler
-
-
-class LlmHandler(AbstractResponseHandler):
-    """A class for handling LLLM messages."""
-
-    SUPPORTED_PROTOCOL: Optional[PublicId] = LlmMessage.protocol_id
-    allowed_response_performatives = frozenset(
-        {
-            LlmMessage.Performative.REQUEST,
-            LlmMessage.Performative.RESPONSE,
-        }
-    )

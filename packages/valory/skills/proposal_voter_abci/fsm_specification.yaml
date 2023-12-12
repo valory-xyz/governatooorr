@@ -1,27 +1,37 @@
 alphabet_in:
 - DONE
+- ESTABLISH_VOTE
+- MECH_REQUEST
 - NO_ALLOWANCE
 - NO_MAJORITY
 - NO_VOTE
+- POST_VOTE
 - ROUND_TIMEOUT
 - SKIP_CALL
 - SNAPSHOT_CALL
 - VOTE
-default_start_state: OpenAICallCheckRound
+default_start_state: MechCallCheckRound
 final_states:
+- FinishedMechRequestPreparationRound
+- FinishedToMechResponseRound
 - FinishedTransactionPreparationNoVoteRound
 - FinishedTransactionPreparationVoteRound
 label: ProposalVoterAbciApp
 start_states:
-- OpenAICallCheckRound
-- PostVoteDecisionMakingRound
+- EstablishVoteRound
+- MechCallCheckRound
+- PostTxDecisionMakingRound
 states:
 - DecisionMakingRound
 - EstablishVoteRound
+- FinishedMechRequestPreparationRound
+- FinishedToMechResponseRound
 - FinishedTransactionPreparationNoVoteRound
 - FinishedTransactionPreparationVoteRound
-- OpenAICallCheckRound
+- MechCallCheckRound
+- PostTxDecisionMakingRound
 - PostVoteDecisionMakingRound
+- PrepareMechRequestRound
 - PrepareVoteTransactionsRound
 - SnapshotAPISendRandomnessRound
 - SnapshotAPISendRound
@@ -34,14 +44,22 @@ transition_func:
     (EstablishVoteRound, DONE): PrepareVoteTransactionsRound
     (EstablishVoteRound, NO_MAJORITY): EstablishVoteRound
     (EstablishVoteRound, ROUND_TIMEOUT): EstablishVoteRound
-    (OpenAICallCheckRound, DONE): EstablishVoteRound
-    (OpenAICallCheckRound, NO_ALLOWANCE): FinishedTransactionPreparationNoVoteRound
-    (OpenAICallCheckRound, NO_MAJORITY): OpenAICallCheckRound
-    (OpenAICallCheckRound, ROUND_TIMEOUT): OpenAICallCheckRound
+    (MechCallCheckRound, DONE): PrepareMechRequestRound
+    (MechCallCheckRound, NO_ALLOWANCE): FinishedTransactionPreparationNoVoteRound
+    (MechCallCheckRound, NO_MAJORITY): MechCallCheckRound
+    (MechCallCheckRound, ROUND_TIMEOUT): MechCallCheckRound
+    (PostTxDecisionMakingRound, ESTABLISH_VOTE): FinishedToMechResponseRound
+    (PostTxDecisionMakingRound, NO_MAJORITY): PostTxDecisionMakingRound
+    (PostTxDecisionMakingRound, POST_VOTE): PostVoteDecisionMakingRound
+    (PostTxDecisionMakingRound, ROUND_TIMEOUT): PostTxDecisionMakingRound
     (PostVoteDecisionMakingRound, NO_MAJORITY): PostVoteDecisionMakingRound
     (PostVoteDecisionMakingRound, ROUND_TIMEOUT): PostVoteDecisionMakingRound
     (PostVoteDecisionMakingRound, SKIP_CALL): DecisionMakingRound
     (PostVoteDecisionMakingRound, SNAPSHOT_CALL): SnapshotAPISendRandomnessRound
+    (PrepareMechRequestRound, DONE): EstablishVoteRound
+    (PrepareMechRequestRound, MECH_REQUEST): FinishedMechRequestPreparationRound
+    (PrepareMechRequestRound, NO_MAJORITY): PrepareMechRequestRound
+    (PrepareMechRequestRound, ROUND_TIMEOUT): PrepareMechRequestRound
     (PrepareVoteTransactionsRound, DONE): DecisionMakingRound
     (PrepareVoteTransactionsRound, NO_MAJORITY): PrepareVoteTransactionsRound
     (PrepareVoteTransactionsRound, ROUND_TIMEOUT): PrepareVoteTransactionsRound

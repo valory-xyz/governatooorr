@@ -620,7 +620,7 @@ class CollectActiveSnapshotProposalsBehaviour(ProposalCollectorBaseBehaviour):
         """Checks whether the safe has voting power on this proposal"""
 
         variables = {
-            "voter": self.synchronized_data.safe_contract_address,
+            "voter": self.params.voter_safe_address,
             "space": proposal["space"]["name"],
             "proposal": proposal["id"],
         }

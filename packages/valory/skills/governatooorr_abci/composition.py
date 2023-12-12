@@ -21,6 +21,10 @@
 
 import packages.valory.skills.ceramic_read_abci.rounds as CeramicReadAbci
 import packages.valory.skills.ceramic_write_abci.rounds as CeramicWriteAbci
+import packages.valory.skills.mech_interact_abci.rounds as MechInteractAbci
+import packages.valory.skills.mech_interact_abci.states.final_states as MechFinalStates
+import packages.valory.skills.mech_interact_abci.states.request as MechRequestStates
+import packages.valory.skills.mech_interact_abci.states.response as MechResponseStates
 import packages.valory.skills.proposal_collector_abci.rounds as ProposalCollectorAbciApp
 import packages.valory.skills.proposal_voter_abci.rounds as ProposalVoterAbciApp
 import packages.valory.skills.registration_abci.rounds as RegistrationAbci
@@ -45,11 +49,17 @@ abci_app_transition_mapping: AbciAppTransitionMapping = {
     CeramicReadAbci.FinishedReadingRound: ProposalCollectorAbciApp.SynchronizeDelegationsRound,
     ProposalCollectorAbciApp.FinishedWriteDelegationsRound: CeramicWriteAbci.RandomnessRound,
     CeramicWriteAbci.FinishedVerificationRound: ProposalCollectorAbciApp.CollectActiveTallyProposalsRound,
-    ProposalCollectorAbciApp.FinishedProposalRound: ProposalVoterAbciApp.OpenAICallCheckRound,
+    CeramicWriteAbci.FinishedMaxRetriesRound: CeramicWriteAbci.RandomnessRound,
+    ProposalCollectorAbciApp.FinishedProposalRound: ProposalVoterAbciApp.MechCallCheckRound,
     ProposalVoterAbciApp.FinishedTransactionPreparationNoVoteRound: ResetAndPauseAbci.ResetAndPauseRound,
     ProposalVoterAbciApp.FinishedTransactionPreparationVoteRound: TransactionSubmissionAbciApp.RandomnessTransactionSubmissionRound,
-    TransactionSubmissionAbciApp.FinishedTransactionSubmissionRound: ProposalVoterAbciApp.PostVoteDecisionMakingRound,
-    TransactionSubmissionAbciApp.FailedRound: ProposalVoterAbciApp.PostVoteDecisionMakingRound,
+    ProposalVoterAbciApp.FinishedMechRequestPreparationRound: MechRequestStates.MechRequestRound,
+    ProposalVoterAbciApp.FinishedToMechResponseRound: MechResponseStates.MechResponseRound,
+    MechFinalStates.FinishedMechRequestRound: TransactionSubmissionAbciApp.RandomnessTransactionSubmissionRound,
+    MechFinalStates.FinishedMechRequestSkipRound: ProposalVoterAbciApp.EstablishVoteRound,
+    MechFinalStates.FinishedMechResponseRound: ProposalVoterAbciApp.EstablishVoteRound,
+    TransactionSubmissionAbciApp.FinishedTransactionSubmissionRound: ProposalVoterAbciApp.PostTxDecisionMakingRound,
+    TransactionSubmissionAbciApp.FailedRound: ProposalVoterAbciApp.PostTxDecisionMakingRound,
     ResetAndPauseAbci.FinishedResetAndPauseRound: ProposalCollectorAbciApp.SynchronizeDelegationsRound,
     ResetAndPauseAbci.FinishedResetAndPauseErrorRound: RegistrationAbci.RegistrationRound,
 }
@@ -69,6 +79,7 @@ GovernatooorrAbciApp = chain(
         TransactionSubmissionAbciApp.TransactionSubmissionAbciApp,
         CeramicReadAbci.CeramicReadAbciApp,
         CeramicWriteAbci.CeramicWriteAbciApp,
+        MechInteractAbci.MechInteractAbciApp,
     ),
     abci_app_transition_mapping,
 ).add_background_app(termination_config)

@@ -8,30 +8,30 @@ license: Apache-2.0
 aea_version: '>=1.0.0, <2.0.0'
 fingerprint:
   __init__.py: bafybeickrxtcqbivmneh54iq7ymaoq6xzwdouvnoon3h234vzp574qouvu
-  behaviours.py: bafybeiaxt6bigocdkvxcarpxmdda662vd2qimgrtbhhvlyhr2hm4fbpsgi
+  behaviours.py: bafybeihytrhiph7wyhxbu3g67dny6zj6yqucdxh42h42wbglrimpp6qw7e
   dialogues.py: bafybeighergy2hupd32ozp2ud5j4jujpccfkzk2l46a33xn7yi2ofk32m4
   fsm_specification.yaml: bafybeiaj6tni7lmwus6jj3aso5ykaqwkfslamxogxkyarwlt7dg643lp2m
-  handlers.py: bafybeiev5yltp3n3uivdxs7futiaw62gvmskwjoxuf4y5nqgillka3aaiq
-  models.py: bafybeih7g2bo2jbeetjszlrklnpsjaa64tv7awl6hm4tdv3my3uujfwuze
+  handlers.py: bafybeifqky5gt3h5qmg5e3qtdrcj6gkhh455rcy45lta46c6qf3nxjqple
+  models.py: bafybeicrgkvwwpr4d5wjzpykriewcgfh2fgp6u3iye4fjayw2izi6cajgi
   payloads.py: bafybeicixvkiet6ko2cvx5rm4ezp7mez5izezaq6ufdcyxto65khly72fq
   rounds.py: bafybeiezg3ip63bmeduzzyxbiu5jslzcv6vhp4c6eeysl2k467wezy4z5q
   snapshot.py: bafybeih2pksy5cthlunmtuuaeepdobh7y3bnp43u7uiptknrjea6fpdvaa
   tally.py: bafybeiajk6r53cikskzpfexrw5iheqlolb724fedrqgwovojhf4fjgpghu
   tests/__init__.py: bafybeicqptpyrejemtnjmtvarhf4sk3roprka5wedztzeehei42rygpfwy
   tests/test_behaviours.py: bafybeih3kbzqauq4qqunfndidqt6uq47aukay3pbmamhwftiqhoiiycsi4
-  tests/test_handlers.py: bafybeiez46ow3yvm4vbgkhf5cpsscdswh46easfs3eo4vqbbalmi3l3mnq
+  tests/test_handlers.py: bafybeicvfpabh7ldleirel3ly6jw7x6qwak5d5qo4wrgc34rmu5xcagg54
   tests/test_models.py: bafybeia4q5ncu6xxie5e2plugclkccrqnuqw3ujlqu3vus54zacvfkwyxi
   tests/test_payloads.py: bafybeifpggwuftdbammofsvoi4dpouscmjw47rozqea2syyaa27fbxvrlu
   tests/test_rounds.py: bafybeigbmcmng34xvwlhnboopyoc4vrhvf2lmvtpokh6qhced7o2slenky
 fingerprint_ignore_patterns: []
 connections:
-- fetchai/http_server:0.22.0:bafybeihvscddpxjbtqsetngmxo3kiht2wqhosmwiyuh3f6zjti3x3byu5u
+- valory/http_server:0.22.0:bafybeiesafy2af2wakqvsal4hz6ldycb73j5w62szhwy25iyhlf2wgyg44
 contracts: []
 protocols:
 - valory/http:1.0.0:bafybeiejoqgv7finfxo3rcvvovrlj5ccrbgxodjq43uo26ylpowsa3llfe
 - valory/ledger_api:1.0.0:bafybeige5agrztgzfevyglf7mb4o7pzfttmq4f6zi765y4g2zvftbyowru
 skills:
-- valory/abstract_round_abci:0.1.0:bafybeigrqhygo2hl2owisj5rqyh3acdvee773ajije64snlzalcgtaac7q
+- valory/abstract_round_abci:0.1.0:bafybeiaqcl7h2famylusiffigwem7tevkcsyocdu5xd42jkmgq6kvowzgq
 behaviours:
   main:
     args: {}
@@ -148,6 +148,7 @@ models:
       disable_tally: false
       snapshot_request_step: 50
       snapshot_proposal_round_limit: 50
+      voter_safe_address: '0x0000000000000000000000000000000000000000'
     class_name: Params
   requests:
     args: {}

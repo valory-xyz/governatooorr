@@ -26,17 +26,24 @@ from packages.valory.skills.abstract_round_abci.base import BaseTxPayload
 
 
 @dataclass(frozen=True)
-class OpenAICallCheckPayload(BaseTxPayload):
-    """Represent a transaction payload for the OpenAICallCheckRound."""
+class MechCallCheckPayload(BaseTxPayload):
+    """Represent a transaction payload for the MechCallCheckRound."""
 
     content: Optional[str]
+
+
+@dataclass(frozen=True)
+class PrepareMechRequestPayload(BaseTxPayload):
+    """Represent a transaction payload for the PrepareMechRequestsRound."""
+
+    content: str
 
 
 @dataclass(frozen=True)
 class EstablishVotePayload(BaseTxPayload):
     """Represent a transaction payload for the EstablishVoteRound."""
 
-    proposals: str
+    expiring_proposals: str
 
 
 @dataclass(frozen=True)
@@ -80,3 +87,10 @@ class SnapshotAPISendPayload(BaseTxPayload):
     """Represent a transaction payload for the SnapshotAPISendRound."""
 
     success: bool
+
+
+@dataclass(frozen=True)
+class PostTxDecisionMakingPayload(BaseTxPayload):
+    """Represent a transaction payload for the PostTxDecisionMakingRound."""
+
+    event: str

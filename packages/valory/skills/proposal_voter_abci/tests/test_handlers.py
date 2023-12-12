@@ -19,12 +19,8 @@
 
 """Test the handlers.py module of the GenericScoring."""
 
-from packages.valory.protocols.llm import LlmMessage
-from packages.valory.skills.abstract_round_abci.test_tools.base import DummyContext
-from packages.valory.skills.proposal_voter_abci.handlers import LlmHandler
+import packages.valory.skills.proposal_voter_abci.handlers  # noqa
 
 
-def test_llm_handler():
-    """test_llm_handler"""
-    handler = LlmHandler(name="", skill_context=DummyContext())
-    assert handler.SUPPORTED_PROTOCOL == LlmMessage.protocol_id
+def test_import() -> None:
+    """Test that the 'handlers.py' of the CeramicWrite can be imported."""

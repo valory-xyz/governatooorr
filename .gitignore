@@ -18,11 +18,12 @@ packages/valory/connections/http_client
 packages/valory/connections/ipfs
 packages/valory/connections/ledger
 packages/valory/connections/p2p_libp2p_client
-packages/fetchai/connections/http_server
+packages/valory/connections/http_server
 packages/valory/contracts/gnosis_safe
 packages/valory/contracts/gnosis_safe_proxy_factory
 packages/valory/contracts/service_registry
 packages/valory/contracts/multisend
+packages/valory/contracts/mech
 packages/valory/protocols/abci
 packages/valory/protocols/acn
 packages/valory/protocols/contract_api
@@ -39,6 +40,7 @@ packages/valory/skills/transaction_settlement_abci
 packages/valory/skills/termination_abci
 packages/valory/skills/ceramic_read_abci
 packages/valory/skills/ceramic_write_abci
+packages/valory/skills/mech_interact_abci
 packages/open_aea
 packages/fetchai
 *.pyc

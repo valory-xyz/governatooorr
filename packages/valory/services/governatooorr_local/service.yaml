@@ -8,7 +8,7 @@ license: Apache-2.0
 fingerprint:
   README.md: bafybeifvddbrix4wlzp5mfaxjg7bargwbcqxjdfvaz5tctxfvzowggkusu
 fingerprint_ignore_patterns: []
-agent: valory/governatooorr:0.1.0:bafybeigickctm3kiyljcnkscutdzqjjxv2bj6vxpzhzebsjcmucbmrsnee
+agent: valory/governatooorr:0.1.0:bafybeiamnhhj5yryhbm7j3cke5e2jtskh22tzdgzw43uz7jnbmuw6wdg6y
 number_of_agents: 1
 deployment:
   agent:
@@ -51,6 +51,7 @@ models:
       keeper_timeout: 30.0
       max_attempts: 10
       max_healthcheck: 120
+      multisend_address: ${MULTISEND_ADDRESS:str:0xA238CBeb142c10Ef7Ad8442C6D1f9E89e07e7761}
       on_chain_service_id: null
       reset_tendermint_after: ${RESET_TENDERMINT_AFTER:int:30}
       retry_attempts: 400
@@ -62,9 +63,8 @@ models:
       service_id: governatooorr
       service_registry_address: null
       setup:
-        all_participants:
-        - '0xBfE475AF374AB552ff22F995b8732DFee25694ea'
-        safe_contract_address: '0x7b2a08Fae878E88efE0aa82599C167E9B0e9BdC4'
+        all_participants: ${ALL_PARTICIPANTS:list:[]}
+        safe_contract_address: ${SAFE_CONTRACT_ADDRESS:str:0x0000000000000000000000000000000000000000}
         consensus_threshold: null
       share_tm_config_on_startup: ${USE_ACN:bool:false}
       sleep_time: 1
@@ -103,10 +103,16 @@ models:
       disable_tally: ${DISABLE_TALLY:bool:false}
       default_snapshot_vote_on_error: ${DEFAULT_SNAPSHOT_VOTE_ON_ERROR:bool:false}
       default_tally_vote_on_error: ${DEFAULT_TALLY_VOTE_ON_ERROR:bool:false}
-      openai_call_window_size: ${OPENAI_CALL_WINDOW_SIZE:float:3600.0}
-      openai_calls_allowed_in_window: ${OPENAI_CALLS_ALLOWED_IN_WINDOW:int:3}
+      mech_call_window_size: ${MECH_CALL_WINDOW_SIZE:float:3600.0}
+      mech_calls_allowed_in_window: ${MECH_CALLS_ALLOWED_IN_WINDOW:int:3}
       snapshot_request_step: ${SNAPSHOT_REQUEST_STEP:int:50}
       snapshot_proposal_round_limit: ${SNAPSHOT_PROPOSAL_ROUND_LIMIT:int:50}
+      multisend_batch_size: ${MULTISEND_BATCH_SIZE:int:50}
+      mech_contract_address: ${MECH_CONTRACT_ADDRESS:str:0x77af31de935740567cf4ff1986d04b2c964a786a}
+      ipfs_address: ${IPFS_ADDRESS:str:https://gateway.autonolas.tech/ipfs/}
+      default_chain_id: ${DEFAULT_CHAIN_ID:str:ethereum}
+      voter_safe_address: ${VOTER_SAFE_ADDRESS:str:0x0000000000000000000000000000000000000000}
+      safe_contract_address_copy: ${SAFE_CONTRACT_ADDRESS_COPY:str:0xdC92eaB505c0F7E34EF2BEacc41C2d410755FeC6}
 ---
 public_id: valory/ledger:0.19.0
 type: connection
@@ -117,14 +123,11 @@ config:
       chain_id: ${ETHEREUM_LEDGER_CHAIN_ID:int:1}
       poa_chain: ${ETHEREUM_LEDGER_IS_POA_CHAIN:bool:false}
       default_gas_price_strategy: ${ETHEREUM_LEDGER_PRICING:str:eip1559}
----
-public_id: valory/openai:0.1.0
-type: connection
-config:
-  engine: ${ENGINE:str:text-davinci-003}
-  max_tokens: ${MAX_TOKENS:int:500}
-  openai_api_key: ${OPENAI_API_KEY:str:null}
-  temperature: ${TEMPERATURE:float:0.7}
+    gnosis:
+      address: ${GNOSIS_LEDGER_RPC:str:http://localhost:8545}
+      chain_id: ${int:100}
+      poa_chain: ${bool:false}
+      default_gas_price_strategy: ${str:eip1559}
 ---
 public_id: valory/p2p_libp2p_client:0.1.0
 type: connection

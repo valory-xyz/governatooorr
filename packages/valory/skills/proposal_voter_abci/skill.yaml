@@ -8,32 +8,31 @@ license: Apache-2.0
 aea_version: '>=1.0.0, <2.0.0'
 fingerprint:
   __init__.py: bafybeifps6e4vfc55iyb5jaab7dxem7y3a2wyflai32pyzf4z75m5ngym4
-  behaviours.py: bafybeigvyijgbm43owzer6d52rnoyyuoi23qgm544oxywdjpe6ngmhphke
-  dialogues.py: bafybeihdakfnmps5o7n5rgepn3fl3lzttqsddhiny7mh7ddwhniutri6bq
-  fsm_specification.yaml: bafybeie35q4fyabi4vqri3orxrvtxzcqwpuj4h4lcvtinz72tv6ba3wk4a
-  handlers.py: bafybeihex227foehp7a7wfc6vh25ahk5g65b5itu325hph2xj33mgp6kue
-  models.py: bafybeifatbwggis32v5zmmbhcobnmkw5jjv2pqaae5tm45goy6w4hp6hmi
-  payloads.py: bafybeialhycxjfh6qzqtihj6vgajbxgfv5lefnydl5fcmnimkdnisbcomi
-  rounds.py: bafybeiazufhyrmmxayifn7qllqpwome2d2gbfr4xogznagvrafct56ci6y
+  behaviours.py: bafybeihtulasyd3d43qc7vt3ypegsw7242ddzygtkhatjpamrpsl46mfq4
+  dialogues.py: bafybeifapweyl7ixvwhj4t7dz4jihhx4rpanhslinyllfhfpcgg2s7ipoa
+  fsm_specification.yaml: bafybeic73suavs4hxttbetuooe7frfgdksrhuqcke5dqaxduwguckzwqte
+  handlers.py: bafybeibyvr2so264jdc7nfzicieegtltl7gq7u5mxjaiodkuvvpux2rj3m
+  models.py: bafybeihr2isftqhzobhckuuotmdhjtulrfe6ovfbtz3hzxkpptkxibqage
+  payloads.py: bafybeiaecea7b3bdicpdvrcq4n2xysvlvs5shs5irpm3p265e4fi7lliiy
+  prompt.py: bafybeiatxjb2fb76733y3y73taxgsgkhipdcvar5irx6rqqjtyjdgjjjve
+  rounds.py: bafybeie4eiyxclgqjrkd5lj7hhlncpwyrbedcdxnllzbaxbqpv2lpvtcy4
   tests/__init__.py: bafybeicnpfbu2732mdlaputxl4izv5yfievyodmjzy5w64r2e5zyqycigu
-  tests/test_behaviours.py: bafybeieba6ee42zky6xmdsef7maojuyzjopbb5lxfmfmh76ydslglb7jbm
-  tests/test_handlers.py: bafybeih47tjdvy6sv52ipxkurjinukqurhs5lwfgyauzpv5skrczwuhmky
+  tests/test_behaviours.py: bafybeihjjazbtg6wg7j4ouptqlmty2ogczsf5r75rksavd62w3ybvalnda
+  tests/test_handlers.py: bafybeieqom5jtu7btbnrlzx7si55njbshvudptznacifr6yzhc6s7a76sy
   tests/test_models.py: bafybeig7lk4aojnesm22dknzz6z5bvxjahzlsrxubncusdbmxtqy6bokhq
   tests/test_payloads.py: bafybeifyheo2u743zogonqa5ofaanyzuazw4yqm2cxkcwwt3n7my7e4jvm
   tests/test_rounds.py: bafybeibcbynhla7vbrkvyc27xipvi42wzk4qu6kszwd25i3srcxmblxdv4
 fingerprint_ignore_patterns: []
-connections:
-- valory/openai:0.1.0:bafybeigiib2l2vji4ehr7jm43bwpzhxe4u2ih4ybwy5zwmkpyjmj3k7u3e
+connections: []
 contracts:
-- valory/delegate:0.1.0:bafybeihh53xxxzwwt2aijrtka5tsktxyfvoskelvsbpz2a5m6hwp2cvcny
-- valory/gnosis_safe:0.1.0:bafybeifmsjpgbifvk7y462rhfczvjvpigkdniavghhg5utza3hbnffioq4
-- valory/sign_message_lib:0.1.0:bafybeibt4ffua46dx6cnlttq5h5swub2f4q4lbq2fhhsbzhnwxzelsyoiy
+- valory/delegate:0.1.0:bafybeihmc6erwccmyrthyjfbbwbiahhpgf2mu5ui2oxj7zoigqn3ub6mdm
+- valory/gnosis_safe:0.1.0:bafybeidll7frtdsq2ckiluazkwk4zpkp7natt4kdejjehwvykqwzyuf6ei
+- valory/sign_message_lib:0.1.0:bafybeibzgzy4bhjevf2smkgxgyowus76xgrrz25az7hrlpmiopdy6hpzbq
 protocols:
 - valory/contract_api:1.0.0:bafybeialhbjvwiwcnqq3ysxcyemobcbie7xza66gaofcvla5njezkvhcka
-- valory/llm:1.0.0:bafybeihj2orqapokafg7co3wlogwgf6cckaaj2bz3nuv4rm3opkoyhrlp4
 skills:
-- valory/abstract_round_abci:0.1.0:bafybeigrqhygo2hl2owisj5rqyh3acdvee773ajije64snlzalcgtaac7q
-- valory/transaction_settlement_abci:0.1.0:bafybeigxkdujugzvve2dszkwr5kgfx4uhz2epofo4lorbcnthmzfjegwzi
+- valory/abstract_round_abci:0.1.0:bafybeiaqcl7h2famylusiffigwem7tevkcsyocdu5xd42jkmgq6kvowzgq
+- valory/transaction_settlement_abci:0.1.0:bafybeiaefgqbs7zsn5xe5kdwrujj7ivygkn3ujpw6crnvi3knvxw75qmja
 behaviours:
   main:
     args: {}
@@ -54,9 +53,6 @@ handlers:
   ledger_api:
     args: {}
     class_name: LedgerApiHandler
-  llm:
-    args: {}
-    class_name: LlmHandler
   signing:
     args: {}
     class_name: SigningHandler
@@ -83,9 +79,6 @@ models:
   ledger_api_dialogues:
     args: {}
     class_name: LedgerApiDialogues
-  llm_dialogues:
-    args: {}
-    class_name: LlmDialogues
   params:
     args:
       cleanup_history_depth: 1
@@ -152,8 +145,10 @@ models:
       default_snapshot_vote_on_error: false
       default_tally_vote_on_error: false
       snapshot_vote_endpoint: ${str:https://seq.snapshot.org/}
-      openai_call_window_size: 3600.0
-      openai_calls_allowed_in_window: 100
+      mech_call_window_size: 3600.0
+      mech_calls_allowed_in_window: 100
+      voter_safe_address: '0x0000000000000000000000000000000000000000'
+      safe_contract_address_copy: '0x0000000000000000000000000000000000000000'
     class_name: Params
   randomness_api:
     args:

@@ -267,7 +267,7 @@ class PrepareMechRequestRound(CollectSameUntilThresholdRound):
                     ): "gnosis",  # we send mech requests to gnosis
                     get_name(
                         SynchronizedData.safe_contract_address
-                    ): self.params.safe_contract_address,  # we send mech requests to gnosis
+                    ): self.context.params.safe_contract_address,  # we send mech requests to gnosis
                 },
             )
 
@@ -379,7 +379,7 @@ class DecisionMakingRound(CollectSameUntilThresholdRound):
                     ): "ethereum",  # we vote on Ethereum
                     get_name(
                         SynchronizedData.safe_contract_address
-                    ): self.params.voter_safe_address,  # we vote on Ethereum
+                    ): self.context.params.voter_safe_address,  # we vote on Ethereum
                 },
             )
             return synchronized_data, Event.VOTE

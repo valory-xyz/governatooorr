@@ -26,7 +26,11 @@ from dataclasses import asdict
 from typing import Generator, Optional, Set, Tuple, Type, cast
 
 from eth_account.messages import _hash_eip191_message, encode_structured_data
+from eth_utils.curried import keccak
 
+from packages.valory.contracts.compatibility_fallback_handler.contract import (
+    CompatibilityFallbackHandlerContract,
+)
 from packages.valory.contracts.delegate.contract import DelegateContract
 from packages.valory.contracts.gnosis_safe.contract import (
     GnosisSafeContract,
@@ -75,6 +79,7 @@ from packages.valory.skills.proposal_voter_abci.rounds import (
     SnapshotAPISendRandomnessRound,
     SnapshotAPISendRound,
     SnapshotAPISendSelectKeeperRound,
+    SnapshotOffchainSignatureRound,
     SynchronizedData,
 )
 from packages.valory.skills.transaction_settlement_abci.payload_tools import (
@@ -132,23 +137,35 @@ class ProposalVoterBaseBehaviour(BaseBehaviour, ABC):
         return self.params.mech_calls
 
     def _request_with_retries(
-        self, endpoint, method, body, headers={}, max_retries=MAX_RETRIES, retry_wait=0
+        self,
+        endpoint,
+        method,
+        body=None,
+        headers=None,
+        max_retries=MAX_RETRIES,
+        retry_wait=0,
     ):
         """Request wrapped around a retry mechanism"""
 
         self.context.logger.info(f"HTTP {method} call: {endpoint}")
+
+        kwargs = dict(
+            method=method,
+            url=endpoint,
+        )
+
+        if headers:
+            kwargs["content"] = json.dumps(body).encode("utf-8")
+
+        if headers:
+            kwargs["headers"] = headers
 
         retries = 0
         response_json = {}
 
         while retries < MAX_RETRIES:
             # Make the request
-            response = yield from self.get_http_response(
-                method=method,
-                url=endpoint,
-                content=json.dumps(body).encode("utf-8"),
-                headers=headers,
-            )
+            response = yield from self.get_http_response(**kwargs)
 
             response_json = response.json()
 
@@ -157,7 +174,7 @@ class ProposalVoterBaseBehaviour(BaseBehaviour, ABC):
                 yield from self.sleep(retry_wait)
                 continue
             else:
-                self.context.logger.info(f"Request succeeded")
+                self.context.logger.info("Request succeeded")
                 return True, response_json
 
         self.context.logger.info(
@@ -737,7 +754,8 @@ class PrepareVoteTransactionsBehaviour(ProposalVoterBaseBehaviour):
 
         return int(safe_nonce)
 
-    def get_struct_message_hash(snapshot_api_data: dict):
+    def get_struct_message_hash(self, snapshot_api_data: dict):
+        """Get the message hash"""
         snapshot_data_for_encoding = fix_data_for_encoding(snapshot_api_data)
         encoded_proposal_data = encode_structured_data(snapshot_data_for_encoding)
 
@@ -751,21 +769,21 @@ class PrepareVoteTransactionsBehaviour(ProposalVoterBaseBehaviour):
         # Call get_message_hash
         contract_api_msg = yield from self.behaviour.get_contract_api_response(
             performative=ContractApiMessage.Performative.GET_STATE,  # type: ignore
-            contract_address=safe_address,
+            contract_address=self.params.voter_safe_address,
             contract_id=str(CompatibilityFallbackHandlerContract.contract_id),
             contract_callable="get_message_hash",
             message=msg_bytes,
         )
         if contract_api_msg.performative != ContractApiMessage.Performative.STATE:
             self.behaviour.context.logger.error(
-                f"Error getting the message hash for safe {safe_address}. Message: {message}"
+                f"Error getting the message hash for safe {self.params.voter_safe_address}. Message: {msg_bytes.hex()}"
             )
             return False
 
         message_hash = contract_api_msg.state.body["message_hash"]
         return message_hash
 
-    def _get_snapshot_offchain_vote(self, proposal) -> Generator[None, None, Dict]:
+    def _get_snapshot_offchain_vote(self, proposal) -> Generator[None, None, dict]:
         """Get the proposal offchain vote data"""
         snapshot_api_data = self._get_snapshot_vote_data(proposal)
 
@@ -1078,7 +1096,7 @@ class SnapshotAPISendBehaviour(ProposalVoterBaseBehaviour):
         endpoint = f"https://safe-transaction-mainnet.safe.global/api/v1/messages/{safe_message_hash}/"
 
         success, response_json = yield from self._request_with_retries(
-            endpoint=self.params.snapshot_vote_endpoint,
+            endpoint=endpoint,
             method="GET",
         )
 
@@ -1105,7 +1123,6 @@ class SnapshotAPISendBehaviour(ProposalVoterBaseBehaviour):
                 "api_data"
             ]
 
-        retries = 0
         headers = {
             "Accept": "application/json",
             "Content-Type": "application/json",
@@ -1120,10 +1137,7 @@ class SnapshotAPISendBehaviour(ProposalVoterBaseBehaviour):
         )
 
         if not success:
-            self.context.logger.error(
-                f"Could not send the vote to Snapshot API [{retries} retries]. "
-                f"Received status code {response.status_code}: {response.json()}."
-            )
+            self.context.logger.error("Could not send the vote to Snapshot API")
         else:
             self.context.logger.info("Succesfully submitted the vote.")
             return True

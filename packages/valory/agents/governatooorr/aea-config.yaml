@@ -38,9 +38,9 @@ protocols:
 skills:
 - valory/abstract_abci:0.1.0:bafybeiflcfufixmsrhobf56bn5745m2iipcfqyulwk2qegtnagb3kvaaxi
 - valory/abstract_round_abci:0.1.0:bafybeiaqcl7h2famylusiffigwem7tevkcsyocdu5xd42jkmgq6kvowzgq
-- valory/governatooorr_abci:0.1.0:bafybeibccsncbonjqziqd2aqtxcu6scmrpk2c2xbg67jdjrq3g2scookwm
+- valory/governatooorr_abci:0.1.0:bafybeifcgzfambkrqtcahg6r7kxxclx6zssq276jjum3s7oz3zi2ktgxem
 - valory/proposal_collector_abci:0.1.0:bafybeiamvhnzid35g7bo72dajbuiaupahcxd4r7pckosehgl6gwubcgy6m
-- valory/proposal_voter_abci:0.1.0:bafybeige7tdiiu7kj74fcei7mkwkui6gv257xfuxn3fwn4lxs44233ae4a
+- valory/proposal_voter_abci:0.1.0:bafybeiezf3sxn365rheg5yi57mtigafgz5cwev3dmdsuiqfrzhzhonog3a
 - valory/registration_abci:0.1.0:bafybeic2ynseiak7jpta7jfwuqwyp453b4p7lolr4wihxmpn633uekv5am
 - valory/reset_pause_abci:0.1.0:bafybeidzajbe3erygeh2xbd6lrjv7nsptznjuzrt24ykgvhgotdeyhfnba
 - valory/termination_abci:0.1.0:bafybeie4zvjfxvdu7qrulmur3chpjz3kpj5m4bjsxvpk4gvj5zbyyayfaa

@@ -29,7 +29,6 @@ from packages.valory.skills.abstract_round_abci.base import (
     AbciAppTransitionFunction,
     AppState,
     BaseSynchronizedData,
-    CollectDifferentUntilAllRound,
     CollectSameUntilThresholdRound,
     DegenerateRound,
     EventToTimeout,
@@ -595,6 +594,8 @@ class PostTxDecisionMakingRound(CollectSameUntilThresholdRound):
 
 
 class SnapshotOffchainSignatureRound(CollectSameUntilThresholdRound):
+    """SnapshotOffchainSignatureRound"""
+
     payload_class = SnapshotOffchainSignaturePayload
     synchronized_data_class = SynchronizedData
 

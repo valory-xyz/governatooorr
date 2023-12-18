@@ -24,6 +24,7 @@ from abc import ABC
 from copy import deepcopy
 from dataclasses import asdict
 from typing import Generator, Optional, Set, Tuple, Type, cast
+
 from eth_account.messages import _hash_eip191_message, encode_structured_data
 
 from packages.valory.contracts.delegate.contract import DelegateContract
@@ -58,7 +59,7 @@ from packages.valory.skills.proposal_voter_abci.payloads import (
     SnapshotAPISendPayload,
     SnapshotAPISendRandomnessPayload,
     SnapshotAPISendSelectKeeperPayload,
-    SnapshotOffchainSignaturePayload
+    SnapshotOffchainSignaturePayload,
 )
 from packages.valory.skills.proposal_voter_abci.prompt import vote_evaluation_prompt
 from packages.valory.skills.proposal_voter_abci.rounds import (
@@ -130,7 +131,9 @@ class ProposalVoterBaseBehaviour(BaseBehaviour, ABC):
         """Return the params."""
         return self.params.mech_calls
 
-    def _request_with_retries(self, endpoint, method, body, headers = {}, max_retries = MAX_RETRIES, retry_wait = 0):
+    def _request_with_retries(
+        self, endpoint, method, body, headers={}, max_retries=MAX_RETRIES, retry_wait=0
+    ):
         """Request wrapped around a retry mechanism"""
 
         self.context.logger.info(f"HTTP {method} call: {endpoint}")
@@ -139,7 +142,6 @@ class ProposalVoterBaseBehaviour(BaseBehaviour, ABC):
         response_json = {}
 
         while retries < MAX_RETRIES:
-
             # Make the request
             response = yield from self.get_http_response(
                 method=method,
@@ -158,7 +160,9 @@ class ProposalVoterBaseBehaviour(BaseBehaviour, ABC):
                 self.context.logger.info(f"Request succeeded")
                 return True, response_json
 
-        self.context.logger.info(f"Request failed after {MAX_RETRIES} retries: {response_json}")
+        self.context.logger.info(
+            f"Request failed after {MAX_RETRIES} retries: {response_json}"
+        )
         return False, response_json
 
 
@@ -733,7 +737,6 @@ class PrepareVoteTransactionsBehaviour(ProposalVoterBaseBehaviour):
 
         return int(safe_nonce)
 
-
     def get_struct_message_hash(snapshot_api_data: dict):
         snapshot_data_for_encoding = fix_data_for_encoding(snapshot_api_data)
         encoded_proposal_data = encode_structured_data(snapshot_data_for_encoding)
@@ -762,7 +765,6 @@ class PrepareVoteTransactionsBehaviour(ProposalVoterBaseBehaviour):
         message_hash = contract_api_msg.state.body["message_hash"]
         return message_hash
 
-
     def _get_snapshot_offchain_vote(self, proposal) -> Generator[None, None, Dict]:
         """Get the proposal offchain vote data"""
         snapshot_api_data = self._get_snapshot_vote_data(proposal)
@@ -770,16 +772,15 @@ class PrepareVoteTransactionsBehaviour(ProposalVoterBaseBehaviour):
         envelope = {
             "address": self.params.voter_safe_address,
             "data": snapshot_api_data,
-            "sig": None
+            "sig": None,
         }
 
         safe_message_hash = yield from self.get_struct_message_hash(snapshot_api_data)
         return {
             "api_data": envelope,
             "safe_message_hash": safe_message_hash,
-            "retries": 0
+            "retries": 0,
         }
-
 
     def async_act(self) -> Generator:
         """Do the act, supporting asynchronous execution."""
@@ -837,7 +838,9 @@ class PrepareVoteTransactionsBehaviour(ProposalVoterBaseBehaviour):
                     self.context.logger.info(
                         f"Preparing offchain vote for Snapshot proposal {proposal_id}: {expiring_proposal}"
                     )
-                    pending_offchain_votes[proposal_id] = yield from self._get_snapshot_offchain_vote(expiring_proposal)
+                    pending_offchain_votes[
+                        proposal_id
+                    ] = yield from self._get_snapshot_offchain_vote(expiring_proposal)
 
                 # Onchain
                 else:
@@ -861,7 +864,11 @@ class PrepareVoteTransactionsBehaviour(ProposalVoterBaseBehaviour):
             payload = PrepareVoteTransactionsPayload(
                 sender=self.context.agent_address,
                 content=json.dumps(
-                    {"pending_transactions": pending_transactions, "pending_offchain_votes": pending_offchain_votes}, sort_keys=True
+                    {
+                        "pending_transactions": pending_transactions,
+                        "pending_offchain_votes": pending_offchain_votes,
+                    },
+                    sort_keys=True,
                 ),
             )
 
@@ -902,8 +909,8 @@ class DecisionMakingBehaviour(ProposalVoterBaseBehaviour):
             }
 
             payload_data = {
-                "pending_transactions": pending_transactions
-                "pending_offchain_votes": pending_offchain_votes
+                "pending_transactions": pending_transactions,
+                "pending_offchain_votes": pending_offchain_votes,
             }
 
             # Snapshot offchain proposals
@@ -912,7 +919,7 @@ class DecisionMakingBehaviour(ProposalVoterBaseBehaviour):
                     payload_data["selected_proposal"] = {
                         "proposal_id": proposal_id,
                         "platform": "snapshot",
-                        "mode": "offchain"
+                        "mode": "offchain",
                     }
                     self.context.logger.info(
                         f"Selected Snapshot proposal: {proposal_id} [offchain]"
@@ -926,7 +933,7 @@ class DecisionMakingBehaviour(ProposalVoterBaseBehaviour):
                         payload_data["selected_proposal"] = {
                             "proposal_id": proposal_id,
                             "platform": "snapshot",
-                            "mode": "onchain"
+                            "mode": "onchain",
                         }
                         self.context.logger.info(
                             f"Selected Snapshot proposal: {proposal_id} [onchain]"
@@ -940,7 +947,7 @@ class DecisionMakingBehaviour(ProposalVoterBaseBehaviour):
                         payload_data["selected_proposal"] = {
                             "proposal_id": proposal_id,
                             "platform": "tally",
-                            "mode": "onchain"
+                            "mode": "onchain",
                         }
                         self.context.logger.info(
                             f"Selected Tally proposal {proposal_id}"
@@ -1067,9 +1074,7 @@ class SnapshotAPISendBehaviour(ProposalVoterBaseBehaviour):
 
         self.set_done()
 
-
     def _get_prepared_signature(self, safe_message_hash) -> Generator:
-
         endpoint = f"https://safe-transaction-mainnet.safe.global/api/v1/messages/{safe_message_hash}/"
 
         success, response_json = yield from self._request_with_retries(
@@ -1083,7 +1088,6 @@ class SnapshotAPISendBehaviour(ProposalVoterBaseBehaviour):
         prepared_signature = response_json["preparedSignature"]
         return prepared_signature
 
-
     def _call_snapshot_api(self):
         """Send the vote to Snapshot's API"""
         proposal_id = self.synchronized_data.selected_proposal["proposal_id"]
@@ -1091,7 +1095,9 @@ class SnapshotAPISendBehaviour(ProposalVoterBaseBehaviour):
 
         if self.params.snapshot_vote_offchain:
             # Get the prepared_signature
-            prepared_signature = yield from self._get_prepared_signature(proposal_data["safe_message_hash"])
+            prepared_signature = yield from self._get_prepared_signature(
+                proposal_data["safe_message_hash"]
+            )
             body = proposal_data["api_data"]
             body["sig"] = prepared_signature
         else:
@@ -1110,7 +1116,7 @@ class SnapshotAPISendBehaviour(ProposalVoterBaseBehaviour):
             method="POST",
             body=body,
             headers=headers,
-            retry_wait=self.params.tally_api_call_sleep_seconds
+            retry_wait=self.params.tally_api_call_sleep_seconds,
         )
 
         if not success:
@@ -1134,7 +1140,6 @@ class SnapshotOffchainSignatureBehaviour(ProposalVoterBaseBehaviour):
         """Do the act, supporting asynchronous execution."""
 
         with self.context.benchmark_tool.measure(self.behaviour_id).local():
-
             success = yield from self._call_transaction_service()
             sender = self.context.agent_address
             payload = SnapshotOffchainSignaturePayload(
@@ -1147,7 +1152,6 @@ class SnapshotOffchainSignatureBehaviour(ProposalVoterBaseBehaviour):
             yield from self.wait_until_round_end()
 
         self.set_done()
-
 
     def _call_transaction_service(self):
         """Send the signature to Safe's API"""
@@ -1167,21 +1171,16 @@ class SnapshotOffchainSignatureBehaviour(ProposalVoterBaseBehaviour):
         signer_endpoint = f"https://safe-transaction-mainnet.safe.global/api/v1/messages/{safe_message_hash}/signatures/"
 
         # Sign the message
-        self.context.logger.info(
-            f"Signing message: {safe_message_hash}"
-        )
-        signature = yield from self.get_signature(
-            bytes.fromhex(safe_message_hash)
-        )
+        self.context.logger.info(f"Signing message: {safe_message_hash}")
+        signature = yield from self.get_signature(bytes.fromhex(safe_message_hash))
 
         # Make the call. The creator needs to be the first.
         endpoint = creator_endpoint if i_am_creator else signer_endpoint
-        body = {
-            "message": message,
-            "signature": signature
-        } if i_am_creator else {
-            "signature": signature
-        }
+        body = (
+            {"message": message, "signature": signature}
+            if i_am_creator
+            else {"signature": signature}
+        )
 
         # Signers wait for 3 seconds
         if not i_am_creator:
@@ -1190,9 +1189,7 @@ class SnapshotOffchainSignatureBehaviour(ProposalVoterBaseBehaviour):
         retries = 0
 
         while retries < MAX_RETRIES:
-            self.context.logger.info(
-                f"Calling the transaction service [{endpoint}]"
-            )
+            self.context.logger.info(f"Calling the transaction service [{endpoint}]")
 
             # Make the request
             response = yield from self.get_http_response(

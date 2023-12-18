@@ -29,8 +29,8 @@ from packages.valory.skills.abstract_round_abci.base import (
     AbciAppTransitionFunction,
     AppState,
     BaseSynchronizedData,
-    CollectSameUntilThresholdRound,
     CollectDifferentUntilAllRound,
+    CollectSameUntilThresholdRound,
     DegenerateRound,
     EventToTimeout,
     OnlyKeeperSendsRound,
@@ -47,7 +47,7 @@ from packages.valory.skills.proposal_voter_abci.payloads import (
     SnapshotAPISendPayload,
     SnapshotAPISendRandomnessPayload,
     SnapshotAPISendSelectKeeperPayload,
-    SnapshotOffchainSignaturePayload
+    SnapshotOffchainSignaturePayload,
 )
 from packages.valory.skills.transaction_settlement_abci.payload_tools import (
     VerificationStatus,
@@ -215,9 +215,8 @@ class SynchronizedData(BaseSynchronizedData):
     @property
     def pending_offchain_votes(self) -> dict:
         """Get the pending_offchain_votes."""
-        return cast(
-            dict, self.db.get("pending_offchain_votes", {})
-        )
+        return cast(dict, self.db.get("pending_offchain_votes", {}))
+
 
 class MechCallCheckRound(CollectSameUntilThresholdRound):
     """OpenAICallCheckRound"""
@@ -565,7 +564,9 @@ class SnapshotAPISendRound(OnlyKeeperSendsRound):
             synchronized_data_class=SynchronizedData,
             **{
                 get_name(SynchronizedData.pending_transactions): pending_transactions,
-                get_name(SynchronizedData.pending_offchain_votes): pending_offchain_votes,
+                get_name(
+                    SynchronizedData.pending_offchain_votes
+                ): pending_offchain_votes,
                 get_name(SynchronizedData.ceramic_db): ceramic_db,
                 get_name(SynchronizedData.pending_write): pending_write,
             },
@@ -594,16 +595,16 @@ class PostTxDecisionMakingRound(CollectSameUntilThresholdRound):
 
 
 class SnapshotOffchainSignatureRound(CollectSameUntilThresholdRound):
-
     payload_class = SnapshotOffchainSignaturePayload
     synchronized_data_class = SynchronizedData
 
     def end_block(self) -> Optional[Tuple[BaseSynchronizedData, Event]]:
         """Process the end of the block."""
         if self.threshold_reached:
-
-            success = cast(SnapshotOffchainSignaturePayload, self.most_voted_payload).success
-            return self.synchronized_data, Event.DONE is success else Event.VOTE_FAILED
+            success = cast(
+                SnapshotOffchainSignaturePayload, self.most_voted_payload
+            ).success
+            return self.synchronized_data, Event.DONE if success else Event.VOTE_FAILED
 
         if not self.is_majority_possible(
             self.collection, self.synchronized_data.nb_participants
@@ -695,7 +696,7 @@ class ProposalVoterAbciApp(AbciApp[Event]):
         },
         SnapshotOffchainSignatureRound: {
             Event.DONE: SnapshotAPISendRandomnessRound,
-            Event.VOTE_FAILED: SnapshotOffchainSignatureRound
+            Event.VOTE_FAILED: SnapshotOffchainSignatureRound,
             Event.NO_MAJORITY: SnapshotOffchainSignatureRound,
             Event.ROUND_TIMEOUT: SnapshotOffchainSignatureRound,
         },

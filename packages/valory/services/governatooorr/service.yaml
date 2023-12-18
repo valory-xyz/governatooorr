@@ -121,6 +121,7 @@ type: skill
         default_chain_id: ${DEFAULT_CHAIN_ID:str:ethereum}
         voter_safe_address: ${VOTER_SAFE_ADDRESS:str:0xc48b5D61fF082b49d19CAefd770D3C65028775b6}
         safe_contract_address_copy: ${SAFE_CONTRACT_ADDRESS_COPY:str:0xdC92eaB505c0F7E34EF2BEacc41C2d410755FeC6}
+        snapshot_vote_offchain: ${SNAPSHOT_VOTE_OFFCHAIN:bool:true}
 1:
   models:
     benchmark_tool: *id001
@@ -197,6 +198,7 @@ type: skill
         default_chain_id: ${DEFAULT_CHAIN_ID:str:ethereum}
         voter_safe_address: ${VOTER_SAFE_ADDRESS:str:0xc48b5D61fF082b49d19CAefd770D3C65028775b6}
         safe_contract_address_copy: ${SAFE_CONTRACT_ADDRESS_COPY:str:0xdC92eaB505c0F7E34EF2BEacc41C2d410755FeC6}
+        snapshot_vote_offchain: ${SNAPSHOT_VOTE_OFFCHAIN:bool:true}
 2:
   models:
     benchmark_tool: *id001
@@ -273,6 +275,7 @@ type: skill
         default_chain_id: ${DEFAULT_CHAIN_ID:str:ethereum}
         voter_safe_address: ${VOTER_SAFE_ADDRESS:str:0xc48b5D61fF082b49d19CAefd770D3C65028775b6}
         safe_contract_address_copy: ${SAFE_CONTRACT_ADDRESS_COPY:str:0xdC92eaB505c0F7E34EF2BEacc41C2d410755FeC6}
+        snapshot_vote_offchain: ${SNAPSHOT_VOTE_OFFCHAIN:bool:true}
 3:
   models:
     benchmark_tool: *id001
@@ -349,6 +352,7 @@ type: skill
         default_chain_id: ${DEFAULT_CHAIN_ID:str:ethereum}
         voter_safe_address: ${VOTER_SAFE_ADDRESS:str:0xc48b5D61fF082b49d19CAefd770D3C65028775b6}
         safe_contract_address_copy: ${SAFE_CONTRACT_ADDRESS_COPY:str:0xdC92eaB505c0F7E34EF2BEacc41C2d410755FeC6}
+        snapshot_vote_offchain: ${SNAPSHOT_VOTE_OFFCHAIN:bool:true}
 ---
 public_id: valory/ledger:0.19.0
 type: connection

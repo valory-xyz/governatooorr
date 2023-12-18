@@ -30,6 +30,7 @@ from packages.valory.skills.abstract_round_abci.base import (
     AppState,
     BaseSynchronizedData,
     CollectSameUntilThresholdRound,
+    CollectDifferentUntilAllRound,
     DegenerateRound,
     EventToTimeout,
     OnlyKeeperSendsRound,
@@ -46,6 +47,7 @@ from packages.valory.skills.proposal_voter_abci.payloads import (
     SnapshotAPISendPayload,
     SnapshotAPISendRandomnessPayload,
     SnapshotAPISendSelectKeeperPayload,
+    SnapshotOffchainSignaturePayload
 )
 from packages.valory.skills.transaction_settlement_abci.payload_tools import (
     VerificationStatus,
@@ -105,7 +107,8 @@ class Event(Enum):
     NO_MAJORITY = "no_majority"
     ROUND_TIMEOUT = "round_timeout"
     DONE = "done"
-    VOTE = "vote"
+    VOTE_ONCHAIN = "vote_onchain"
+    VOTE_OFFCHAIN = "vote_offchain"
     NO_VOTE = "no_vote"
     SKIP_CALL = "skip_call"
     SNAPSHOT_CALL = "snapshot_call"
@@ -114,6 +117,7 @@ class Event(Enum):
     MECH_REQUEST = "mech_request"
     POST_VOTE = "post_vote"
     ESTABLISH_VOTE = "establish_vote"
+    VOTE_FAILED = "vote_failed"
 
 
 class SynchronizedData(BaseSynchronizedData):
@@ -208,6 +212,12 @@ class SynchronizedData(BaseSynchronizedData):
         """Get the chain_id."""
         return cast(str, self.db.get_strict("chain_id"))
 
+    @property
+    def pending_offchain_votes(self) -> dict:
+        """Get the pending_offchain_votes."""
+        return cast(
+            dict, self.db.get("pending_offchain_votes", {})
+        )
 
 class MechCallCheckRound(CollectSameUntilThresholdRound):
     """OpenAICallCheckRound"""
@@ -324,6 +334,9 @@ class PrepareVoteTransactionsRound(CollectSameUntilThresholdRound):
                     get_name(SynchronizedData.pending_transactions): payload[
                         "pending_transactions"
                     ],
+                    get_name(SynchronizedData.pending_offchain_votes): payload[
+                        "pending_offchain_votes"
+                    ],
                 },
             )
             return synchronized_data, Event.DONE
@@ -345,6 +358,7 @@ class DecisionMakingRound(CollectSameUntilThresholdRound):
         if self.threshold_reached:
             payload = json.loads(self.most_voted_payload)
 
+            # No votes
             if "selected_proposal" not in payload:
                 synchronized_data = self.synchronized_data.update(
                     synchronized_data_class=SynchronizedData,
@@ -352,11 +366,34 @@ class DecisionMakingRound(CollectSameUntilThresholdRound):
                         get_name(SynchronizedData.pending_transactions): payload[
                             "pending_transactions"
                         ],
+                        get_name(SynchronizedData.pending_offchain_votes): payload[
+                            "pending_offchain_votes"
+                        ],
                     },
                 )
                 return synchronized_data, Event.NO_VOTE
 
             selected_proposal = payload["selected_proposal"]
+
+            # Offchain vote
+            if selected_proposal["mode"] == "offchain":
+                synchronized_data = self.synchronized_data.update(
+                    synchronized_data_class=SynchronizedData,
+                    **{
+                        get_name(SynchronizedData.selected_proposal): payload[
+                            "selected_proposal"
+                        ],
+                        get_name(SynchronizedData.pending_transactions): payload[
+                            "pending_transactions"
+                        ],
+                        get_name(SynchronizedData.pending_offchain_votes): payload[
+                            "pending_offchain_votes"
+                        ],
+                    },
+                )
+                return synchronized_data, Event.VOTE_OFFCHAIN
+
+            # Onchain vote
             tx_hash = cast(
                 SynchronizedData, self.synchronized_data
             ).pending_transactions[selected_proposal["platform"]][
@@ -375,6 +412,9 @@ class DecisionMakingRound(CollectSameUntilThresholdRound):
                     get_name(SynchronizedData.pending_transactions): payload[
                         "pending_transactions"
                     ],
+                    get_name(SynchronizedData.pending_offchain_votes): payload[
+                        "pending_offchain_votes"
+                    ],
                     get_name(SynchronizedData.current_path): "post_vote",
                     get_name(
                         SynchronizedData.chain_id
@@ -384,7 +424,8 @@ class DecisionMakingRound(CollectSameUntilThresholdRound):
                     ): self.context.params.voter_safe_address,  # we vote on Ethereum
                 },
             )
-            return synchronized_data, Event.VOTE
+
+            return synchronized_data, Event.VOTE_ONCHAIN
 
         if not self.is_majority_possible(
             self.collection, self.synchronized_data.nb_participants
@@ -501,6 +542,7 @@ class SnapshotAPISendRound(OnlyKeeperSendsRound):
         synchronized_data = cast(SynchronizedData, self.synchronized_data)
         selected_proposal = synchronized_data.selected_proposal
         pending_transactions = synchronized_data.pending_transactions
+        pending_offchain_votes = synchronized_data.pending_offchain_votes
         ceramic_db = synchronized_data.ceramic_db
         pending_write = synchronized_data.pending_write
 
@@ -512,14 +554,18 @@ class SnapshotAPISendRound(OnlyKeeperSendsRound):
             pending_write = True
 
         # We remove the vote from pending in any case. If the call has failed, we will retry in the future.
-        del pending_transactions[selected_proposal["platform"]][
-            selected_proposal["proposal_id"]
-        ]
+        if selected_proposal["mode"] == "offchain":
+            del pending_offchain_votes[selected_proposal["proposal_id"]]
+        else:
+            del pending_transactions[selected_proposal["platform"]][
+                selected_proposal["proposal_id"]
+            ]
 
         synchronized_data = self.synchronized_data.update(
             synchronized_data_class=SynchronizedData,
             **{
                 get_name(SynchronizedData.pending_transactions): pending_transactions,
+                get_name(SynchronizedData.pending_offchain_votes): pending_offchain_votes,
                 get_name(SynchronizedData.ceramic_db): ceramic_db,
                 get_name(SynchronizedData.pending_write): pending_write,
             },
@@ -539,6 +585,25 @@ class PostTxDecisionMakingRound(CollectSameUntilThresholdRound):
             # Event.ESTABLISH_VOTE, Event.POST_VOTE
             event = Event(self.most_voted_payload)
             return self.synchronized_data, event
+
+        if not self.is_majority_possible(
+            self.collection, self.synchronized_data.nb_participants
+        ):
+            return self.synchronized_data, Event.NO_MAJORITY
+        return None
+
+
+class SnapshotOffchainSignatureRound(CollectSameUntilThresholdRound):
+
+    payload_class = SnapshotOffchainSignaturePayload
+    synchronized_data_class = SynchronizedData
+
+    def end_block(self) -> Optional[Tuple[BaseSynchronizedData, Event]]:
+        """Process the end of the block."""
+        if self.threshold_reached:
+
+            success = cast(SnapshotOffchainSignaturePayload, self.most_voted_payload).success
+            return self.synchronized_data, Event.DONE is success else Event.VOTE_FAILED
 
         if not self.is_majority_possible(
             self.collection, self.synchronized_data.nb_participants
@@ -598,7 +663,8 @@ class ProposalVoterAbciApp(AbciApp[Event]):
         },
         DecisionMakingRound: {
             Event.NO_VOTE: FinishedTransactionPreparationNoVoteRound,
-            Event.VOTE: FinishedTransactionPreparationVoteRound,
+            Event.VOTE_ONCHAIN: FinishedTransactionPreparationVoteRound,
+            Event.VOTE_OFFCHAIN: SnapshotOffchainSignatureRound,
             Event.NO_MAJORITY: DecisionMakingRound,
             Event.ROUND_TIMEOUT: DecisionMakingRound,
         },
@@ -626,6 +692,12 @@ class ProposalVoterAbciApp(AbciApp[Event]):
         SnapshotAPISendRound: {
             Event.DONE: DecisionMakingRound,
             Event.ROUND_TIMEOUT: SnapshotAPISendRandomnessRound,
+        },
+        SnapshotOffchainSignatureRound: {
+            Event.DONE: SnapshotAPISendRandomnessRound,
+            Event.VOTE_FAILED: SnapshotOffchainSignatureRound
+            Event.NO_MAJORITY: SnapshotOffchainSignatureRound,
+            Event.ROUND_TIMEOUT: SnapshotOffchainSignatureRound,
         },
         FinishedTransactionPreparationNoVoteRound: {},
         FinishedTransactionPreparationVoteRound: {},

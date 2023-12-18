@@ -72,3 +72,5 @@ ethereum_private_key.txt
 packages/valory/connections/openai/
 
 packages/valory/protocols/llm/
+
+packages/valory/contracts/compatibility_fallback_handler/

@@ -122,6 +122,9 @@ class Params(BaseParams):
         self.safe_contract_address_copy = kwargs.get(
             "safe_contract_address_copy", "0x0000000000000000000000000000000000000000"
         )
+        self.snapshot_vote_offchain = self._ensure(
+            "snapshot_vote_offchain", kwargs, bool
+        )
         super().__init__(*args, **kwargs)
 
 

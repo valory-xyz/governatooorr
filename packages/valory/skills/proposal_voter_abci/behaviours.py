@@ -24,7 +24,6 @@ from abc import ABC
 from copy import deepcopy
 from dataclasses import asdict
 from typing import Generator, Optional, Set, Tuple, Type, cast
-
 from eth_account.messages import _hash_eip191_message, encode_structured_data
 
 from packages.valory.contracts.delegate.contract import DelegateContract
@@ -59,6 +58,7 @@ from packages.valory.skills.proposal_voter_abci.payloads import (
     SnapshotAPISendPayload,
     SnapshotAPISendRandomnessPayload,
     SnapshotAPISendSelectKeeperPayload,
+    SnapshotOffchainSignaturePayload
 )
 from packages.valory.skills.proposal_voter_abci.prompt import vote_evaluation_prompt
 from packages.valory.skills.proposal_voter_abci.rounds import (
@@ -90,6 +90,7 @@ VOTES_TO_CODE = {"FOR": 0, "AGAINST": 1, "ABSTAIN": 2}
 HTTP_OK = 200
 MAX_RETRIES = 3
 MAX_VOTE_RETRIES = 3
+SNAPSHOT_SIGNER_WAIT_SECONDS = 3
 
 
 def fix_data_for_encoding(data):
@@ -128,6 +129,37 @@ class ProposalVoterBaseBehaviour(BaseBehaviour, ABC):
     def mech_calls(self) -> MechCalls:
         """Return the params."""
         return self.params.mech_calls
+
+    def _request_with_retries(self, endpoint, method, body, headers = {}, max_retries = MAX_RETRIES, retry_wait = 0):
+        """Request wrapped around a retry mechanism"""
+
+        self.context.logger.info(f"HTTP {method} call: {endpoint}")
+
+        retries = 0
+        response_json = {}
+
+        while retries < MAX_RETRIES:
+
+            # Make the request
+            response = yield from self.get_http_response(
+                method=method,
+                url=endpoint,
+                content=json.dumps(body).encode("utf-8"),
+                headers=headers,
+            )
+
+            response_json = response.json()
+
+            if response.status_code != HTTP_OK:
+                retries += 1
+                yield from self.sleep(retry_wait)
+                continue
+            else:
+                self.context.logger.info(f"Request succeeded")
+                return True, response_json
+
+        self.context.logger.info(f"Request failed after {MAX_RETRIES} retries: {response_json}")
+        return False, response_json
 
 
 class MechCallCheckBehaviour(ProposalVoterBaseBehaviour):
@@ -701,12 +733,61 @@ class PrepareVoteTransactionsBehaviour(ProposalVoterBaseBehaviour):
 
         return int(safe_nonce)
 
+
+    def get_struct_message_hash(snapshot_api_data: dict):
+        snapshot_data_for_encoding = fix_data_for_encoding(snapshot_api_data)
+        encoded_proposal_data = encode_structured_data(snapshot_data_for_encoding)
+
+        msg_bytes = keccak(
+            b"\x19"
+            + encoded_proposal_data.version
+            + encoded_proposal_data.header
+            + encoded_proposal_data.body
+        )
+
+        # Call get_message_hash
+        contract_api_msg = yield from self.behaviour.get_contract_api_response(
+            performative=ContractApiMessage.Performative.GET_STATE,  # type: ignore
+            contract_address=safe_address,
+            contract_id=str(CompatibilityFallbackHandlerContract.contract_id),
+            contract_callable="get_message_hash",
+            message=msg_bytes,
+        )
+        if contract_api_msg.performative != ContractApiMessage.Performative.STATE:
+            self.behaviour.context.logger.error(
+                f"Error getting the message hash for safe {safe_address}. Message: {message}"
+            )
+            return False
+
+        message_hash = contract_api_msg.state.body["message_hash"]
+        return message_hash
+
+
+    def _get_snapshot_offchain_vote(self, proposal) -> Generator[None, None, Dict]:
+        """Get the proposal offchain vote data"""
+        snapshot_api_data = self._get_snapshot_vote_data(proposal)
+
+        envelope = {
+            "address": self.params.voter_safe_address,
+            "data": snapshot_api_data,
+            "sig": None
+        }
+
+        safe_message_hash = yield from self.get_struct_message_hash(snapshot_api_data)
+        return {
+            "api_data": envelope,
+            "safe_message_hash": safe_message_hash,
+            "retries": 0
+        }
+
+
     def async_act(self) -> Generator:
         """Do the act, supporting asynchronous execution."""
 
         with self.context.benchmark_tool.measure(self.behaviour_id).local():
             expiring_proposals = self.synchronized_data.expiring_proposals
             pending_transactions = self.synchronized_data.pending_transactions
+            pending_offchain_votes = self.synchronized_data.pending_offchain_votes
 
             safe_nonce = None
             if expiring_proposals["tally"] or expiring_proposals["snapshot"]:
@@ -751,27 +832,36 @@ class PrepareVoteTransactionsBehaviour(ProposalVoterBaseBehaviour):
                 if expiring_proposal["vote"] is None:
                     continue
 
-                self.context.logger.info(
-                    f"Preparing transaction for Snapshot proposal {proposal_id}: {expiring_proposal}"
-                )
+                # Offchain
+                if self.params.snapshot_vote_offchain:
+                    self.context.logger.info(
+                        f"Preparing offchain vote for Snapshot proposal {proposal_id}: {expiring_proposal}"
+                    )
+                    pending_offchain_votes[proposal_id] = yield from self._get_snapshot_offchain_vote(expiring_proposal)
 
-                tx_hash, api_data = yield from self._get_snapshot_tx_hash(
-                    expiring_proposal, safe_nonce
-                )
+                # Onchain
+                else:
+                    self.context.logger.info(
+                        f"Preparing transaction for Snapshot proposal {proposal_id}: {expiring_proposal}"
+                    )
 
-                if safe_nonce:
-                    safe_nonce += 1
+                    tx_hash, api_data = yield from self._get_snapshot_tx_hash(
+                        expiring_proposal, safe_nonce
+                    )
 
-                pending_transactions["snapshot"][proposal_id] = {
-                    "tx_hash": tx_hash,
-                    "api_data": api_data,
-                    "retries": 0,
-                }
+                    if safe_nonce:
+                        safe_nonce += 1
+
+                    pending_transactions["snapshot"][proposal_id] = {
+                        "tx_hash": tx_hash,
+                        "api_data": api_data,
+                        "retries": 0,
+                    }
 
             payload = PrepareVoteTransactionsPayload(
                 sender=self.context.agent_address,
                 content=json.dumps(
-                    {"pending_transactions": pending_transactions}, sort_keys=True
+                    {"pending_transactions": pending_transactions, "pending_offchain_votes": pending_offchain_votes}, sort_keys=True
                 ),
             )
 
@@ -792,6 +882,7 @@ class DecisionMakingBehaviour(ProposalVoterBaseBehaviour):
 
         with self.context.benchmark_tool.measure(self.behaviour_id).local():
             pending_transactions = self.synchronized_data.pending_transactions
+            pending_offchain_votes = self.synchronized_data.pending_offchain_votes
 
             # Remove proposals with too many retries
             pending_transactions["snapshot"] = {
@@ -804,28 +895,52 @@ class DecisionMakingBehaviour(ProposalVoterBaseBehaviour):
                 for k, v in pending_transactions["tally"].items()
                 if v["retries"] < MAX_VOTE_RETRIES
             }
+            pending_offchain_votes = {
+                k: v
+                for k, v in pending_offchain_votes.items()
+                if v["retries"] < MAX_VOTE_RETRIES
+            }
 
-            payload_data = {"pending_transactions": pending_transactions}
+            payload_data = {
+                "pending_transactions": pending_transactions
+                "pending_offchain_votes": pending_offchain_votes
+            }
 
-            # Snapshot proposals
-            for proposal_id, vote_data in pending_transactions["snapshot"].items():
+            # Snapshot offchain proposals
+            for proposal_id, vote_data in pending_offchain_votes.items():
                 if vote_data["retries"] < MAX_VOTE_RETRIES:
                     payload_data["selected_proposal"] = {
                         "proposal_id": proposal_id,
                         "platform": "snapshot",
+                        "mode": "offchain"
                     }
                     self.context.logger.info(
-                        f"Selected Snapshot proposal {proposal_id}"
+                        f"Selected Snapshot proposal: {proposal_id} [offchain]"
                     )
                     break
 
+            # Snapshot onchain proposals: processed only after Snapshot offchain votes
+            if not pending_offchain_votes:
+                for proposal_id, vote_data in pending_transactions["snapshot"].items():
+                    if vote_data["retries"] < MAX_VOTE_RETRIES:
+                        payload_data["selected_proposal"] = {
+                            "proposal_id": proposal_id,
+                            "platform": "snapshot",
+                            "mode": "onchain"
+                        }
+                        self.context.logger.info(
+                            f"Selected Snapshot proposal: {proposal_id} [onchain]"
+                        )
+                        break
+
             # Tally proposals: processed only after Snapshot transactions
-            if not pending_transactions["snapshot"]:
+            if not pending_offchain_votes and not pending_transactions["snapshot"]:
                 for proposal_id, vote_data in pending_transactions["tally"].items():
                     if vote_data["retries"] < MAX_VOTE_RETRIES:
                         payload_data["selected_proposal"] = {
                             "proposal_id": proposal_id,
                             "platform": "tally",
+                            "mode": "onchain"
                         }
                         self.context.logger.info(
                             f"Selected Tally proposal {proposal_id}"
@@ -952,13 +1067,37 @@ class SnapshotAPISendBehaviour(ProposalVoterBaseBehaviour):
 
         self.set_done()
 
+
+    def _get_prepared_signature(self, safe_message_hash) -> Generator:
+
+        endpoint = f"https://safe-transaction-mainnet.safe.global/api/v1/messages/{safe_message_hash}/"
+
+        success, response_json = yield from self._request_with_retries(
+            endpoint=self.params.snapshot_vote_endpoint,
+            method="GET",
+        )
+
+        if not success:
+            return None
+
+        prepared_signature = response_json["preparedSignature"]
+        return prepared_signature
+
+
     def _call_snapshot_api(self):
         """Send the vote to Snapshot's API"""
-
         proposal_id = self.synchronized_data.selected_proposal["proposal_id"]
-        api_data = self.synchronized_data.pending_transactions["snapshot"][proposal_id][
-            "api_data"
-        ]
+        proposal_data = self.synchronized_data.pending_offchain_votes[proposal_id]
+
+        if self.params.snapshot_vote_offchain:
+            # Get the prepared_signature
+            prepared_signature = yield from self._get_prepared_signature(proposal_data["safe_message_hash"])
+            body = proposal_data["api_data"]
+            body["sig"] = prepared_signature
+        else:
+            body = self.synchronized_data.pending_transactions["snapshot"][proposal_id][
+                "api_data"
+            ]
 
         retries = 0
         headers = {
@@ -966,32 +1105,112 @@ class SnapshotAPISendBehaviour(ProposalVoterBaseBehaviour):
             "Content-Type": "application/json",
         }
 
-        while retries < MAX_RETRIES:
-            self.context.logger.info(
-                f"Sending vote data to Snapshot API [{self.params.snapshot_vote_endpoint}]: {api_data}"
+        success, response_json = yield from self._request_with_retries(
+            endpoint=self.params.snapshot_vote_endpoint,
+            method="POST",
+            body=body,
+            headers=headers,
+            retry_wait=self.params.tally_api_call_sleep_seconds
+        )
+
+        if not success:
+            self.context.logger.error(
+                f"Could not send the vote to Snapshot API [{retries} retries]. "
+                f"Received status code {response.status_code}: {response.json()}."
+            )
+        else:
+            self.context.logger.info("Succesfully submitted the vote.")
+            return True
+
+        return success
+
+
+class SnapshotOffchainSignatureBehaviour(ProposalVoterBaseBehaviour):
+    """PostVoteDecisionMakingBehaviour"""
+
+    matching_round: Type[AbstractRound] = SnapshotOffchainSignatureRound
+
+    def async_act(self) -> Generator:
+        """Do the act, supporting asynchronous execution."""
+
+        with self.context.benchmark_tool.measure(self.behaviour_id).local():
+
+            success = yield from self._call_transaction_service()
+            sender = self.context.agent_address
+            payload = SnapshotOffchainSignaturePayload(
+                sender=sender,
+                success=success,
             )
 
-            # Avoid calling too quicly
-            yield from self.sleep(self.params.tally_api_call_sleep_seconds)
+        with self.context.benchmark_tool.measure(self.behaviour_id).consensus():
+            yield from self.send_a2a_transaction(payload)
+            yield from self.wait_until_round_end()
+
+        self.set_done()
+
+
+    def _call_transaction_service(self):
+        """Send the signature to Safe's API"""
+
+        proposal_id = self.synchronized_data.selected_proposal["proposal_id"]
+        vote_data = self.synchronized_data.pending_offchain_votes[proposal_id]
+        message = vote_data["snapshot_api_data"]
+        safe_message_hash = vote_data["safe_message_hash"]
+
+        # All agents need to make an API call.
+        # The vote creator calls to one endpoint, the other signers call to another
+        # We do not care who the creator is, so no need to randomly select
+        vote_creator = sorted(self.synchronized_data.participants)[0]
+        i_am_creator = self.context.agent_address == vote_creator
+
+        creator_endpoint = f"https://safe-transaction-mainnet.safe.global/api/v1/safes/{self.params.voter_safe_address}/messages/"
+        signer_endpoint = f"https://safe-transaction-mainnet.safe.global/api/v1/messages/{safe_message_hash}/signatures/"
+
+        # Sign the message
+        self.context.logger.info(
+            f"Signing message: {safe_message_hash}"
+        )
+        signature = yield from self.get_signature(
+            bytes.fromhex(safe_message_hash)
+        )
+
+        # Make the call. The creator needs to be the first.
+        endpoint = creator_endpoint if i_am_creator else signer_endpoint
+        body = {
+            "message": message,
+            "signature": signature
+        } if i_am_creator else {
+            "signature": signature
+        }
+
+        # Signers wait for 3 seconds
+        if not i_am_creator:
+            yield from self.sleep(SNAPSHOT_SIGNER_WAIT_SECONDS)
+
+        retries = 0
+
+        while retries < MAX_RETRIES:
+            self.context.logger.info(
+                f"Calling the transaction service [{endpoint}]"
+            )
 
             # Make the request
             response = yield from self.get_http_response(
                 method="POST",
-                url=self.params.snapshot_vote_endpoint,
-                content=json.dumps(api_data).encode("utf-8"),
-                headers=headers,
+                url=endpoint,
+                content=json.dumps(body).encode("utf-8"),
             )
 
             if response.status_code != HTTP_OK:
                 retries += 1
                 self.context.logger.error(
-                    f"Could not send the vote to Snapshot API [{retries} retries]. "
+                    f"Could not send the signature to Safe transaction service [{retries} retries]. "
                     f"Received status code {response.status_code}: {response.json()}."
                 )
                 continue
 
             else:
-                self.context.logger.info("Succesfully submitted the vote.")
+                self.context.logger.info("Succesfully submitted the signature.")
                 return True
 
         return False
@@ -1013,4 +1232,5 @@ class ProposalVoterRoundBehaviour(AbstractRoundBehaviour):
         SnapshotAPISendRandomnessBehaviour,
         SnapshotAPISendSelectKeeperBehaviour,
         SnapshotAPISendBehaviour,
+        SnapshotOffchainSignatureBehaviour,
     ]

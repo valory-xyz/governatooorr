@@ -1136,7 +1136,7 @@ class SnapshotAPISendBehaviour(ProposalVoterBaseBehaviour):
         self.context.logger.info(f"I am the keeper. Calling Snapshot API\nbody: {body}")
 
         success, response_json = yield from self._request_with_retries(
-            endpoint=self.params.snapshot_vote_endpoint,
+            endpoint=self.params.snapshot_sequencer_endpoint,
             method="POST",
             body=body,
             headers=headers,

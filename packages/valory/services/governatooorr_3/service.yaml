@@ -87,7 +87,8 @@ type: skill
         tally_api_key: ${TALLY_API_KEY_0:str:<tally_api_key>}
         tally_api_call_sleep_seconds: ${TALLY_API_CALL_SLEEP_SECONDS:int:2}
         snapshot_graphql_endpoint: ${SNAPSHOT_GRAPHQL_ENDPOINT:str:https://hub.snapshot.org/graphql}
-        snapshot_vote_endpoint: ${SNAPSHOT_VOTE_ENDPOINT:str:https://seq.snapshot.org}
+        snapshot_sequencer_endpoint: ${SNAPSHOT_SEQUENCER_ENDPOINT:str:https://seq.snapshot.org/}
+        snapshot_relayer_endpoint: ${SNAPSHOT_RELAYER_ENDPOINT:str:https://relayer.snapshot.org/}
         service_endpoint_base: ${SERVICE_ENDPOINT_BASE:str:https://dummy_service.autonolas.tech/}
         validate_timeout: 1205
         voting_block_threshold: ${VOTING_BLOCK_THRESHOLD:int:300}
@@ -164,7 +165,8 @@ type: skill
         tally_api_key: ${TALLY_API_KEY_1:str:<tally_api_key>}
         tally_api_call_sleep_seconds: ${TALLY_API_CALL_SLEEP_SECONDS:int:2}
         snapshot_graphql_endpoint: ${SNAPSHOT_GRAPHQL_ENDPOINT:str:https://hub.snapshot.org/graphql}
-        snapshot_vote_endpoint: ${SNAPSHOT_VOTE_ENDPOINT:str:https://seq.snapshot.org}
+        snapshot_sequencer_endpoint: ${SNAPSHOT_SEQUENCER_ENDPOINT:str:https://seq.snapshot.org/}
+        snapshot_relayer_endpoint: ${SNAPSHOT_RELAYER_ENDPOINT:str:https://relayer.snapshot.org/}
         service_endpoint_base: ${SERVICE_ENDPOINT_BASE:str:https://dummy_service.autonolas.tech/}
         validate_timeout: 1205
         voting_block_threshold: ${VOTING_BLOCK_THRESHOLD:int:300}
@@ -241,7 +243,8 @@ type: skill
         tally_api_key: ${TALLY_API_KEY_2:str:<tally_api_key>}
         tally_api_call_sleep_seconds: ${TALLY_API_CALL_SLEEP_SECONDS:int:2}
         snapshot_graphql_endpoint: ${SNAPSHOT_GRAPHQL_ENDPOINT:str:https://hub.snapshot.org/graphql}
-        snapshot_vote_endpoint: ${SNAPSHOT_VOTE_ENDPOINT:str:https://seq.snapshot.org}
+        snapshot_sequencer_endpoint: ${SNAPSHOT_SEQUENCER_ENDPOINT:str:https://seq.snapshot.org/}
+        snapshot_relayer_endpoint: ${SNAPSHOT_RELAYER_ENDPOINT:str:https://relayer.snapshot.org/}
         service_endpoint_base: ${SERVICE_ENDPOINT_BASE:str:https://dummy_service.autonolas.tech/}
         validate_timeout: 1205
         voting_block_threshold: ${VOTING_BLOCK_THRESHOLD:int:300}

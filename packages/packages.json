@@ -16,7 +16,8 @@
         "skill/valory/governatooorr_solana_abci/0.1.0": "bafybeifqbqpkbme22sxkjxiozxpy7wawzn57couppx5cwc5ftse62ql6su",
         "agent/valory/governatooorr_solana/0.1.0": "bafybeiaxotdcjqkrhxgykhujrqygi577dhggmiosdwzbzpaabkidslidpa",
         "service/valory/governatooorr_solana/0.1.0": "bafybeih456pgn252kdmxsvuqcvk5oazcbfywnk2ioqc6n5c47gaizh25we",
-        "service/valory/governatooorr_solana_local/0.1.0": "bafybeieepgrxu6kmm6agdruksuxcr2nflgb24sd5j36hvlpugpc2sghp3a"
+        "service/valory/governatooorr_solana_local/0.1.0": "bafybeieepgrxu6kmm6agdruksuxcr2nflgb24sd5j36hvlpugpc2sghp3a",
+        "service/valory/governatooorr_3/0.1.0": "bafybeigdghtmuelaiwgah2xe46xhdk2wnr2imnvff6xqukwwiraen33gey"
     },
     "third_party": {
         "protocol/open_aea/signing/1.0.0": "bafybeie7xyems76v5b4wc2lmaidcujizpxfzjnnwdeokmhje53g7ym25ii",

@@ -1,0 +1,336 @@
+name: governatooorr_3
+author: valory
+version: 0.1.0
+description: The Governatooorr is a service that autonomously votes on on-chain governance
+  proposals. It takes into account user preferences and uses LLMs to evaluate proposals.
+aea_version: '>=1.0.0, <2.0.0'
+license: Apache-2.0
+fingerprint:
+  README.md: bafybeid6vqhnovhpsrjwws2wcb67i7fwr4dq54rpowqgrf3njt2anp5nc4
+fingerprint_ignore_patterns: []
+agent: valory/governatooorr:0.1.0:bafybeifas6pibt2iebme3dnykbuuf23e6ckr64tfpqwv4yrn3bjfcdkqnq
+number_of_agents: 3
+deployment:
+  agent:
+    ports:
+      0:
+        8000: 8000
+      1:
+        8001: 8000
+      2:
+        8002: 8000
+      3:
+        8003: 8000
+---
+public_id: valory/governatooorr_abci:0.1.0
+type: skill
+0:
+  models:
+    benchmark_tool: &id001
+      args:
+        log_dir: /logs
+    params:
+      args:
+        cleanup_history_depth: 1
+        cleanup_history_depth_current: null
+        drand_public_key: 868f005eb8e6e4ca0a47c8a77ceaa5309a47978a7c71bc5cce96366b5d7a569937c529eeda66c7293784a9402801af31
+        finalize_timeout: 60.0
+        genesis_config: &id002
+          genesis_time: '2022-09-26T00:00:00.000000000Z'
+          chain_id: chain-c4daS1
+          consensus_params:
+            block:
+              max_bytes: '22020096'
+              max_gas: '-1'
+              time_iota_ms: '1000'
+            evidence:
+              max_age_num_blocks: '100000'
+              max_age_duration: '172800000000000'
+              max_bytes: '1048576'
+            validator:
+              pub_key_types:
+              - ed25519
+            version: {}
+          voting_power: '10'
+        history_check_timeout: 1205
+        init_fallback_gas: 0
+        keeper_allowed_retries: 3
+        keeper_timeout: 30.0
+        max_attempts: 10
+        max_healthcheck: 120
+        multisend_address: ${MULTISEND_ADDRESS:str:0xA238CBeb142c10Ef7Ad8442C6D1f9E89e07e7761}
+        on_chain_service_id: ${ON_CHAIN_SERVICE_ID:int:5}
+        reset_tendermint_after: ${RESET_TENDERMINT_AFTER:int:30}
+        retry_attempts: 400
+        retry_timeout: 3
+        reset_pause_duration: ${RESET_PAUSE_DURATION:int:300}
+        request_retry_delay: 1.0
+        request_timeout: 10.0
+        round_timeout_seconds: 30.0
+        service_id: governatooorr
+        service_registry_address: ${SERVICE_REGISTRY_ADDRESS:str:0x48b6af7B12C71f09e2fC8aF4855De4Ff54e775cA}
+        setup: &id003
+          all_participants: ${ALL_PARTICIPANTS:list:["0x36144FFCAC35B3Cf5e0267f8D2e0A1D847198d8b","0xcbfD036240e7ADDB5BF6e662a9F74cda2ffb0072","0x122D4a6847229852256EF737Ff1D346cAae55b93","0xa1756Ce869c7918BFD4bCF4fEfA4dEabb2D02DD6"]}
+          safe_contract_address: ${SAFE_CONTRACT_ADDRESS:str:0xdC92eaB505c0F7E34EF2BEacc41C2d410755FeC6}
+          consensus_threshold: null
+        share_tm_config_on_startup: ${USE_ACN:bool:true}
+        sleep_time: 1
+        tendermint_check_sleep_delay: 3
+        tendermint_com_url: ${TENDERMINT_COM_URL:str:http://localhost:8080}
+        tendermint_max_retries: 5
+        tendermint_url: ${TENDERMINT_URL:str:http://localhost:26657}
+        tendermint_p2p_url: ${TM_P2P_ENDPOINT_NODE_0:str:node0:26656}
+        termination_sleep: ${TERMINATION_SLEEP:int:900}
+        tx_timeout: 10.0
+        use_termination: ${USE_TERMINATION:bool:true}
+        tally_api_endpoint: ${TALLY_API_ENDPOINT:str:https://api.tally.xyz/query}
+        tally_api_key: ${TALLY_API_KEY_0:str:<tally_api_key>}
+        tally_api_call_sleep_seconds: ${TALLY_API_CALL_SLEEP_SECONDS:int:2}
+        snapshot_graphql_endpoint: ${SNAPSHOT_GRAPHQL_ENDPOINT:str:https://hub.snapshot.org/graphql}
+        snapshot_vote_endpoint: ${SNAPSHOT_VOTE_ENDPOINT:str:https://seq.snapshot.org}
+        service_endpoint_base: ${SERVICE_ENDPOINT_BASE:str:https://dummy_service.autonolas.tech/}
+        validate_timeout: 1205
+        voting_block_threshold: ${VOTING_BLOCK_THRESHOLD:int:300}
+        voting_seconds_threshold: ${VOTING_SECONDS_THRESHOLD:int:25000}
+        ceramic_api_base: ${CERAMIC_API_BASE:str:https://ceramic-valory.hirenodes.io/}
+        ceramic_api_create_endpoint: ${CERAMIC_API_CREATE_ENDPOINT:str:api/v0/streams}
+        ceramic_api_commit_endpoint: ${CERAMIC_API_COMMIT_ENDPOINT:str:api/v0/commits}
+        ceramic_api_read_endpoint: ${CERAMIC_API_READ_ENDPOINT:str:api/v0/commits/{stream_id}}
+        ceramic_did_seed: ${CERAMIC_DID_SEED:str:dummy_did_seed}
+        ceramic_did_str: ${CERAMIC_DID_STR:str:dummy_did_str}
+        default_read_stream_id: ${DEFAULT_READ_STREAM_ID:str:kjzl6cwe1jw148lbekp2ds4pumr91d1vbj1nw5hihl5ld3ar4rzkd037346za1l}
+        ceramic_stream_id: ${CERAMIC_STREAM_ID:str:kjzl6cwe1jw148lbekp2ds4pumr91d1vbj1nw5hihl5ld3ar4rzkd037346za1l}
+        signmessagelib_address: ${SIGNMESSAGELIB_ADDRESS:str:0xA65387F16B013cf2Af4605Ad8aA5ec25a2cbA3a2}
+        use_slashing: ${USE_SLASHING:bool:false}
+        slash_cooldown_hours: ${SLASH_COOLDOWN_HOURS:int:3}
+        slash_threshold_amount: ${SLASH_THRESHOLD_AMOUNT:int:10000000000000000}
+        light_slash_unit_amount: ${LIGHT_SLASH_UNIT_AMOUNT:int:5000000000000000}
+        serious_slash_unit_amount: ${SERIOUS_SLASH_UNIT_AMOUNT:int:8000000000000000}
+        snapshot_space_whitelist: ${SNAPSHOT_SPACE_WHITELIST:list:["snaptester.eth","balancer.eth","safe.eth","gnosis.eth","lido-snapshot.eth","cow.eth","uniswap","autonolas.eth"]}
+        disable_snapshot: ${DISABLE_SNAPSHOT:bool:false}
+        disable_tally: ${DISABLE_TALLY:bool:false}
+        default_snapshot_vote_on_error: ${DEFAULT_SNAPSHOT_VOTE_ON_ERROR:bool:false}
+        default_tally_vote_on_error: ${DEFAULT_TALLY_VOTE_ON_ERROR:bool:false}
+        mech_call_window_size: ${MECH_CALL_WINDOW_SIZE:float:3600.0}
+        mech_calls_allowed_in_window: ${MECH_CALLS_ALLOWED_IN_WINDOW:int:3}
+        snapshot_request_step: ${SNAPSHOT_REQUEST_STEP:int:50}
+        snapshot_proposal_round_limit: ${SNAPSHOT_PROPOSAL_ROUND_LIMIT:int:50}
+        multisend_batch_size: ${MULTISEND_BATCH_SIZE:int:50}
+        mech_contract_address: ${MECH_CONTRACT_ADDRESS:str:0x77af31de935740567cf4ff1986d04b2c964a786a}
+        ipfs_address: ${IPFS_ADDRESS:str:https://gateway.autonolas.tech/ipfs/}
+        default_chain_id: ${DEFAULT_CHAIN_ID:str:ethereum}
+        voter_safe_address: ${VOTER_SAFE_ADDRESS:str:0xc48b5D61fF082b49d19CAefd770D3C65028775b6}
+        safe_contract_address_copy: ${SAFE_CONTRACT_ADDRESS_COPY:str:0xdC92eaB505c0F7E34EF2BEacc41C2d410755FeC6}
+        snapshot_vote_offchain: ${SNAPSHOT_VOTE_OFFCHAIN:bool:true}
+1:
+  models:
+    benchmark_tool: *id001
+    params:
+      args:
+        cleanup_history_depth: 1
+        cleanup_history_depth_current: null
+        drand_public_key: 868f005eb8e6e4ca0a47c8a77ceaa5309a47978a7c71bc5cce96366b5d7a569937c529eeda66c7293784a9402801af31
+        finalize_timeout: 60.0
+        genesis_config: *id002
+        history_check_timeout: 1205
+        init_fallback_gas: 0
+        keeper_allowed_retries: 3
+        keeper_timeout: 30.0
+        max_attempts: 10
+        max_healthcheck: 120
+        multisend_address: ${MULTISEND_ADDRESS:str:0xA238CBeb142c10Ef7Ad8442C6D1f9E89e07e7761}
+        on_chain_service_id: ${ON_CHAIN_SERVICE_ID:int:5}
+        reset_tendermint_after: ${RESET_TENDERMINT_AFTER:int:30}
+        retry_attempts: 400
+        retry_timeout: 3
+        reset_pause_duration: ${RESET_PAUSE_DURATION:int:300}
+        request_retry_delay: 1.0
+        request_timeout: 10.0
+        round_timeout_seconds: 30.0
+        service_id: governatooorr
+        service_registry_address: ${SERVICE_REGISTRY_ADDRESS:str:0x48b6af7B12C71f09e2fC8aF4855De4Ff54e775cA}
+        setup: *id003
+        share_tm_config_on_startup: ${USE_ACN:bool:true}
+        sleep_time: 1
+        tendermint_check_sleep_delay: 3
+        tendermint_com_url: ${TENDERMINT_COM_URL:str:http://localhost:8080}
+        tendermint_max_retries: 5
+        tendermint_url: ${TENDERMINT_URL:str:http://localhost:26657}
+        tendermint_p2p_url: ${TM_P2P_ENDPOINT_NODE_1:str:node1:26656}
+        termination_sleep: ${TERMINATION_SLEEP:int:900}
+        tx_timeout: 10.0
+        use_termination: ${USE_TERMINATION:bool:true}
+        tally_api_endpoint: ${TALLY_API_ENDPOINT:str:https://api.tally.xyz/query}
+        tally_api_key: ${TALLY_API_KEY_1:str:<tally_api_key>}
+        tally_api_call_sleep_seconds: ${TALLY_API_CALL_SLEEP_SECONDS:int:2}
+        snapshot_graphql_endpoint: ${SNAPSHOT_GRAPHQL_ENDPOINT:str:https://hub.snapshot.org/graphql}
+        snapshot_vote_endpoint: ${SNAPSHOT_VOTE_ENDPOINT:str:https://seq.snapshot.org}
+        service_endpoint_base: ${SERVICE_ENDPOINT_BASE:str:https://dummy_service.autonolas.tech/}
+        validate_timeout: 1205
+        voting_block_threshold: ${VOTING_BLOCK_THRESHOLD:int:300}
+        voting_seconds_threshold: ${VOTING_SECONDS_THRESHOLD:int:10000}
+        ceramic_api_base: ${CERAMIC_API_BASE:str:https://ceramic-valory.hirenodes.io/}
+        ceramic_api_create_endpoint: ${CERAMIC_API_CREATE_ENDPOINT:str:api/v0/streams}
+        ceramic_api_commit_endpoint: ${CERAMIC_API_COMMIT_ENDPOINT:str:api/v0/commits}
+        ceramic_api_read_endpoint: ${CERAMIC_API_READ_ENDPOINT:str:api/v0/commits/{stream_id}}
+        ceramic_did_seed: ${CERAMIC_DID_SEED:str:dummy_did_seed}
+        ceramic_did_str: ${CERAMIC_DID_STR:str:dummy_did_str}
+        default_read_stream_id: ${DEFAULT_READ_STREAM_ID:str:kjzl6cwe1jw148lbekp2ds4pumr91d1vbj1nw5hihl5ld3ar4rzkd037346za1l}
+        ceramic_stream_id: ${CERAMIC_STREAM_ID:str:kjzl6cwe1jw148lbekp2ds4pumr91d1vbj1nw5hihl5ld3ar4rzkd037346za1l}
+        signmessagelib_address: ${SIGNMESSAGELIB_ADDRESS:str:0xA65387F16B013cf2Af4605Ad8aA5ec25a2cbA3a2}
+        use_slashing: ${USE_SLASHING:bool:false}
+        slash_cooldown_hours: ${SLASH_COOLDOWN_HOURS:int:3}
+        slash_threshold_amount: ${SLASH_THRESHOLD_AMOUNT:int:10000000000000000}
+        light_slash_unit_amount: ${LIGHT_SLASH_UNIT_AMOUNT:int:5000000000000000}
+        serious_slash_unit_amount: ${SERIOUS_SLASH_UNIT_AMOUNT:int:8000000000000000}
+        snapshot_space_whitelist: ${SNAPSHOT_SPACE_WHITELIST:list:["snaptester.eth","balancer.eth","safe.eth","gnosis.eth","lido-snapshot.eth","cow.eth","uniswap","autonolas.eth"]}
+        disable_snapshot: ${DISABLE_SNAPSHOT:bool:false}
+        disable_tally: ${DISABLE_TALLY:bool:false}
+        default_snapshot_vote_on_error: ${DEFAULT_SNAPSHOT_VOTE_ON_ERROR:bool:false}
+        default_tally_vote_on_error: ${DEFAULT_TALLY_VOTE_ON_ERROR:bool:false}
+        mech_call_window_size: ${MECH_CALL_WINDOW_SIZE:float:3600.0}
+        mech_calls_allowed_in_window: ${MECH_CALLS_ALLOWED_IN_WINDOW:int:3}
+        snapshot_request_step: ${SNAPSHOT_REQUEST_STEP:int:50}
+        snapshot_proposal_round_limit: ${SNAPSHOT_PROPOSAL_ROUND_LIMIT:int:50}
+        multisend_batch_size: ${MULTISEND_BATCH_SIZE:int:50}
+        mech_contract_address: ${MECH_CONTRACT_ADDRESS:str:0x77af31de935740567cf4ff1986d04b2c964a786a}
+        ipfs_address: ${IPFS_ADDRESS:str:https://gateway.autonolas.tech/ipfs/}
+        default_chain_id: ${DEFAULT_CHAIN_ID:str:ethereum}
+        voter_safe_address: ${VOTER_SAFE_ADDRESS:str:0xc48b5D61fF082b49d19CAefd770D3C65028775b6}
+        safe_contract_address_copy: ${SAFE_CONTRACT_ADDRESS_COPY:str:0xdC92eaB505c0F7E34EF2BEacc41C2d410755FeC6}
+        snapshot_vote_offchain: ${SNAPSHOT_VOTE_OFFCHAIN:bool:true}
+2:
+  models:
+    benchmark_tool: *id001
+    params:
+      args:
+        cleanup_history_depth: 1
+        cleanup_history_depth_current: null
+        drand_public_key: 868f005eb8e6e4ca0a47c8a77ceaa5309a47978a7c71bc5cce96366b5d7a569937c529eeda66c7293784a9402801af31
+        finalize_timeout: 60.0
+        genesis_config: *id002
+        history_check_timeout: 1205
+        init_fallback_gas: 0
+        keeper_allowed_retries: 3
+        keeper_timeout: 30.0
+        max_attempts: 10
+        max_healthcheck: 120
+        multisend_address: ${MULTISEND_ADDRESS:str:0xA238CBeb142c10Ef7Ad8442C6D1f9E89e07e7761}
+        on_chain_service_id: ${ON_CHAIN_SERVICE_ID:int:5}
+        reset_tendermint_after: ${RESET_TENDERMINT_AFTER:int:30}
+        retry_attempts: 400
+        retry_timeout: 3
+        reset_pause_duration: ${RESET_PAUSE_DURATION:int:300}
+        request_retry_delay: 1.0
+        request_timeout: 10.0
+        round_timeout_seconds: 30.0
+        service_id: governatooorr
+        service_registry_address: ${SERVICE_REGISTRY_ADDRESS:str:0x48b6af7B12C71f09e2fC8aF4855De4Ff54e775cA}
+        setup: *id003
+        share_tm_config_on_startup: ${USE_ACN:bool:true}
+        sleep_time: 1
+        tendermint_check_sleep_delay: 3
+        tendermint_com_url: ${TENDERMINT_COM_URL:str:http://localhost:8080}
+        tendermint_max_retries: 5
+        tendermint_url: ${TENDERMINT_URL:str:http://localhost:26657}
+        tendermint_p2p_url: ${TM_P2P_ENDPOINT_NODE_2:str:node2:26656}
+        termination_sleep: ${TERMINATION_SLEEP:int:900}
+        tx_timeout: 10.0
+        use_termination: ${USE_TERMINATION:bool:true}
+        tally_api_endpoint: ${TALLY_API_ENDPOINT:str:https://api.tally.xyz/query}
+        tally_api_key: ${TALLY_API_KEY_2:str:<tally_api_key>}
+        tally_api_call_sleep_seconds: ${TALLY_API_CALL_SLEEP_SECONDS:int:2}
+        snapshot_graphql_endpoint: ${SNAPSHOT_GRAPHQL_ENDPOINT:str:https://hub.snapshot.org/graphql}
+        snapshot_vote_endpoint: ${SNAPSHOT_VOTE_ENDPOINT:str:https://seq.snapshot.org}
+        service_endpoint_base: ${SERVICE_ENDPOINT_BASE:str:https://dummy_service.autonolas.tech/}
+        validate_timeout: 1205
+        voting_block_threshold: ${VOTING_BLOCK_THRESHOLD:int:300}
+        voting_seconds_threshold: ${VOTING_SECONDS_THRESHOLD:int:10000}
+        ceramic_api_base: ${CERAMIC_API_BASE:str:https://ceramic-valory.hirenodes.io/}
+        ceramic_api_create_endpoint: ${CERAMIC_API_CREATE_ENDPOINT:str:api/v0/streams}
+        ceramic_api_commit_endpoint: ${CERAMIC_API_COMMIT_ENDPOINT:str:api/v0/commits}
+        ceramic_api_read_endpoint: ${CERAMIC_API_READ_ENDPOINT:str:api/v0/commits/{stream_id}}
+        ceramic_did_seed: ${CERAMIC_DID_SEED:str:dummy_did_seed}
+        ceramic_did_str: ${CERAMIC_DID_STR:str:dummy_did_str}
+        default_read_stream_id: ${DEFAULT_READ_STREAM_ID:str:kjzl6cwe1jw148lbekp2ds4pumr91d1vbj1nw5hihl5ld3ar4rzkd037346za1l}
+        ceramic_stream_id: ${CERAMIC_STREAM_ID:str:kjzl6cwe1jw148lbekp2ds4pumr91d1vbj1nw5hihl5ld3ar4rzkd037346za1l}
+        signmessagelib_address: ${SIGNMESSAGELIB_ADDRESS:str:0xA65387F16B013cf2Af4605Ad8aA5ec25a2cbA3a2}
+        use_slashing: ${USE_SLASHING:bool:false}
+        slash_cooldown_hours: ${SLASH_COOLDOWN_HOURS:int:3}
+        slash_threshold_amount: ${SLASH_THRESHOLD_AMOUNT:int:10000000000000000}
+        light_slash_unit_amount: ${LIGHT_SLASH_UNIT_AMOUNT:int:5000000000000000}
+        serious_slash_unit_amount: ${SERIOUS_SLASH_UNIT_AMOUNT:int:8000000000000000}
+        snapshot_space_whitelist: ${SNAPSHOT_SPACE_WHITELIST:list:["snaptester.eth","balancer.eth","safe.eth","gnosis.eth","lido-snapshot.eth","cow.eth","uniswap","autonolas.eth"]}
+        disable_snapshot: ${DISABLE_SNAPSHOT:bool:false}
+        disable_tally: ${DISABLE_TALLY:bool:false}
+        default_snapshot_vote_on_error: ${DEFAULT_SNAPSHOT_VOTE_ON_ERROR:bool:false}
+        default_tally_vote_on_error: ${DEFAULT_TALLY_VOTE_ON_ERROR:bool:false}
+        mech_call_window_size: ${MECH_CALL_WINDOW_SIZE:float:3600.0}
+        mech_calls_allowed_in_window: ${MECH_CALLS_ALLOWED_IN_WINDOW:int:3}
+        snapshot_request_step: ${SNAPSHOT_REQUEST_STEP:int:50}
+        snapshot_proposal_round_limit: ${SNAPSHOT_PROPOSAL_ROUND_LIMIT:int:50}
+        multisend_batch_size: ${MULTISEND_BATCH_SIZE:int:50}
+        mech_contract_address: ${MECH_CONTRACT_ADDRESS:str:0x77af31de935740567cf4ff1986d04b2c964a786a}
+        ipfs_address: ${IPFS_ADDRESS:str:https://gateway.autonolas.tech/ipfs/}
+        default_chain_id: ${DEFAULT_CHAIN_ID:str:ethereum}
+        voter_safe_address: ${VOTER_SAFE_ADDRESS:str:0xc48b5D61fF082b49d19CAefd770D3C65028775b6}
+        safe_contract_address_copy: ${SAFE_CONTRACT_ADDRESS_COPY:str:0xdC92eaB505c0F7E34EF2BEacc41C2d410755FeC6}
+        snapshot_vote_offchain: ${SNAPSHOT_VOTE_OFFCHAIN:bool:true}
+---
+public_id: valory/ledger:0.19.0
+type: connection
+0:
+  config:
+    ledger_apis:
+      ethereum:
+        address: ${ETHEREUM_LEDGER_RPC:str:http://host.docker.internal:8545}
+        chain_id: ${ETHEREUM_LEDGER_CHAIN_ID:int:1}
+        poa_chain: ${ETHEREUM_LEDGER_IS_POA_CHAIN:bool:false}
+        default_gas_price_strategy: ${ETHEREUM_LEDGER_PRICING:str:eip1559}
+      gnosis:
+        address: ${GNOSIS_LEDGER_RPC:str:http://localhost:8545}
+        chain_id: ${int:100}
+        poa_chain: ${bool:false}
+        default_gas_price_strategy: ${str:eip1559}
+1:
+  config:
+    ledger_apis:
+      ethereum:
+        address: ${ETHEREUM_LEDGER_RPC:str:http://host.docker.internal:8545}
+        chain_id: ${ETHEREUM_LEDGER_CHAIN_ID:int:1}
+        poa_chain: ${ETHEREUM_LEDGER_IS_POA_CHAIN:bool:false}
+        default_gas_price_strategy: ${ETHEREUM_LEDGER_PRICING:str:eip1559}
+      gnosis:
+        address: ${GNOSIS_LEDGER_RPC:str:http://localhost:8545}
+        chain_id: ${int:100}
+        poa_chain: ${bool:false}
+        default_gas_price_strategy: ${str:eip1559}
+2:
+  config:
+    ledger_apis:
+      ethereum:
+        address: ${ETHEREUM_LEDGER_RPC:str:http://host.docker.internal:8545}
+        chain_id: ${ETHEREUM_LEDGER_CHAIN_ID:int:1}
+        poa_chain: ${ETHEREUM_LEDGER_IS_POA_CHAIN:bool:false}
+        default_gas_price_strategy: ${ETHEREUM_LEDGER_PRICING:str:eip1559}
+      gnosis:
+        address: ${GNOSIS_LEDGER_RPC:str:http://localhost:8545}
+        chain_id: ${int:100}
+        poa_chain: ${bool:false}
+        default_gas_price_strategy: ${str:eip1559}
+---
+public_id: valory/p2p_libp2p_client:0.1.0
+type: connection
+config:
+  nodes:
+  - uri: ${ACN_URI:str:acn.staging.autonolas.tech:9005}
+    public_key: ${ACN_NODE_PUBLIC_KEY:str:02d3a830c9d6ea1ae91936951430dee11f4662f33118b02190693be835359a9d77}
+cert_requests:
+- identifier: acn
+  ledger_id: ethereum
+  message_format: '{public_key}'
+  not_after: '2023-01-01'
+  not_before: '2022-01-01'
+  public_key: ${ACN_NODE_PUBLIC_KEY:str:02d3a830c9d6ea1ae91936951430dee11f4662f33118b02190693be835359a9d77}
+  save_path: .certs/acn_cosmos_11000.txt
+is_abstract: false

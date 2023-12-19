@@ -1172,7 +1172,7 @@ class SnapshotOffchainSignatureBehaviour(ProposalVoterBaseBehaviour):
 
         proposal_id = self.synchronized_data.selected_proposal["proposal_id"]
         vote_data = self.synchronized_data.pending_offchain_votes[proposal_id]
-        message = vote_data["snapshot_api_data"]
+        message = vote_data["api_data"]["data"]
         safe_message_hash = vote_data["safe_message_hash"]
 
         # All agents need to make an API call.

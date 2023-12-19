@@ -154,7 +154,7 @@ class ProposalVoterBaseBehaviour(BaseBehaviour, ABC):
             url=endpoint,
         )
 
-        if headers:
+        if body:
             kwargs["content"] = json.dumps(body).encode("utf-8")
 
         if headers:
@@ -1174,7 +1174,7 @@ class SnapshotOffchainSignatureBehaviour(ProposalVoterBaseBehaviour):
         proposal_id = self.synchronized_data.selected_proposal["proposal_id"]
         vote_data = self.synchronized_data.pending_offchain_votes[proposal_id]
         message = vote_data["api_data"]["data"]
-        safe_message_hash = vote_data["safe_message_hash"]
+        safe_message_hash = vote_data["safe_message_hash"][2:]
 
         # All agents need to make an API call.
         # The vote creator calls to one endpoint, the other signers call to another
@@ -1183,11 +1183,11 @@ class SnapshotOffchainSignatureBehaviour(ProposalVoterBaseBehaviour):
         i_am_creator = self.context.agent_address == vote_creator
 
         creator_endpoint = f"https://safe-transaction-mainnet.safe.global/api/v1/safes/{self.params.voter_safe_address}/messages/"
-        signer_endpoint = f"https://safe-transaction-mainnet.safe.global/api/v1/messages/{safe_message_hash[2:]}/signatures/"
+        signer_endpoint = f"https://safe-transaction-mainnet.safe.global/api/v1/messages/{safe_message_hash}/signatures/"
 
         # Sign the message
         self.context.logger.info(f"Signing message: {safe_message_hash}")
-        signature = yield from self.get_signature(bytes.fromhex(safe_message_hash[2:]))
+        signature = yield from self.get_signature(bytes.fromhex(safe_message_hash))
         self.context.logger.info(f"Signature: {signature}")
 
         # Make the call. The creator needs to be the first.
@@ -1207,7 +1207,7 @@ class SnapshotOffchainSignatureBehaviour(ProposalVoterBaseBehaviour):
         )
 
         success, response_json = yield from self._request_with_retries(
-            endpoint=endpoint, method="POST", body=json.dumps(body).encode("utf-8")
+            endpoint=endpoint, method="POST", body=body
         )
 
         if not success:

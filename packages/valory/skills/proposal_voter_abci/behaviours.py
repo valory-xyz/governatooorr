@@ -767,7 +767,7 @@ class PrepareVoteTransactionsBehaviour(ProposalVoterBaseBehaviour):
         )
 
         # Call get_message_hash
-        contract_api_msg = yield from self.behaviour.get_contract_api_response(
+        contract_api_msg = yield from self.get_contract_api_response(
             performative=ContractApiMessage.Performative.GET_STATE,  # type: ignore
             contract_address=self.params.voter_safe_address,
             contract_id=str(CompatibilityFallbackHandlerContract.contract_id),
@@ -775,7 +775,7 @@ class PrepareVoteTransactionsBehaviour(ProposalVoterBaseBehaviour):
             message=msg_bytes,
         )
         if contract_api_msg.performative != ContractApiMessage.Performative.STATE:
-            self.behaviour.context.logger.error(
+            self.context.logger.error(
                 f"Error getting the message hash for safe {self.params.voter_safe_address}. Message: {msg_bytes.hex()}"
             )
             return False

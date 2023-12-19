@@ -74,3 +74,9 @@ packages/valory/connections/openai/
 packages/valory/protocols/llm/
 
 packages/valory/contracts/compatibility_fallback_handler/
+
+.3env
+
+run_service_3.sh
+
+governatooorr_3/

@@ -93,7 +93,7 @@ ETHER_VALUE = 0
 VOTING_OPTIONS = "For, Against, and Abstain"
 VOTES_TO_CODE = {"FOR": 0, "AGAINST": 1, "ABSTAIN": 2}
 
-HTTP_OK = 200
+HTTP_OK = [200, 201]
 MAX_RETRIES = 3
 MAX_VOTE_RETRIES = 3
 SNAPSHOT_SIGNER_WAIT_SECONDS = 3
@@ -154,7 +154,7 @@ class ProposalVoterBaseBehaviour(BaseBehaviour, ABC):
             url=endpoint,
         )
 
-        if headers:
+        if body:
             kwargs["content"] = json.dumps(body).encode("utf-8")
 
         if headers:
@@ -163,13 +163,19 @@ class ProposalVoterBaseBehaviour(BaseBehaviour, ABC):
         retries = 0
         response_json = {}
 
-        while retries < MAX_RETRIES:
+        while retries < max_retries:
             # Make the request
             response = yield from self.get_http_response(**kwargs)
 
-            response_json = response.json()
+            try:
+                response_json = json.loads(response.body)
+            except json.decoder.JSONDecodeError as exc:
+                response_json = {"exception": str(exc)}
 
-            if response.status_code != HTTP_OK:
+            if response.status_code not in HTTP_OK:
+                self.context.logger.error(
+                    f"Request failed [{response.status_code}]: {response_json}"
+                )
                 retries += 1
                 yield from self.sleep(retry_wait)
                 continue
@@ -177,9 +183,7 @@ class ProposalVoterBaseBehaviour(BaseBehaviour, ABC):
                 self.context.logger.info("Request succeeded")
                 return True, response_json
 
-        self.context.logger.info(
-            f"Request failed after {MAX_RETRIES} retries: {response_json}"
-        )
+        self.context.logger.error(f"Request failed after {max_retries} retries")
         return False, response_json
 
 
@@ -767,7 +771,7 @@ class PrepareVoteTransactionsBehaviour(ProposalVoterBaseBehaviour):
         )
 
         # Call get_message_hash
-        contract_api_msg = yield from self.behaviour.get_contract_api_response(
+        contract_api_msg = yield from self.get_contract_api_response(
             performative=ContractApiMessage.Performative.GET_STATE,  # type: ignore
             contract_address=self.params.voter_safe_address,
             contract_id=str(CompatibilityFallbackHandlerContract.contract_id),
@@ -775,7 +779,7 @@ class PrepareVoteTransactionsBehaviour(ProposalVoterBaseBehaviour):
             message=msg_bytes,
         )
         if contract_api_msg.performative != ContractApiMessage.Performative.STATE:
-            self.behaviour.context.logger.error(
+            self.context.logger.error(
                 f"Error getting the message hash for safe {self.params.voter_safe_address}. Message: {msg_bytes.hex()}"
             )
             return False
@@ -792,8 +796,9 @@ class PrepareVoteTransactionsBehaviour(ProposalVoterBaseBehaviour):
             "data": snapshot_api_data,
             "sig": None,
         }
-
+        self.context.logger.info(f"Getting safe message hash for: {snapshot_api_data}")
         safe_message_hash = yield from self.get_struct_message_hash(snapshot_api_data)
+        self.context.logger.info(f"Safe message hash is {safe_message_hash}")
         return {
             "api_data": envelope,
             "safe_message_hash": safe_message_hash,
@@ -1128,8 +1133,13 @@ class SnapshotAPISendBehaviour(ProposalVoterBaseBehaviour):
             "Content-Type": "application/json",
         }
 
+        self.context.logger.info(f"I am the keeper. Calling Snapshot API\nbody: {body}")
+
+        # Complete payloads are sent to the sequencer
+        # If we need to send signatures one by one, then we should use the relayer,
+        # which will wait for all signatures and then will send to the sequencer
         success, response_json = yield from self._request_with_retries(
-            endpoint=self.params.snapshot_vote_endpoint,
+            endpoint=self.params.snapshot_sequencer_endpoint,
             method="POST",
             body=body,
             headers=headers,
@@ -1137,7 +1147,9 @@ class SnapshotAPISendBehaviour(ProposalVoterBaseBehaviour):
         )
 
         if not success:
-            self.context.logger.error("Could not send the vote to Snapshot API")
+            self.context.logger.error(
+                f"Could not send the vote to Snapshot API: {response_json}"
+            )
         else:
             self.context.logger.info("Succesfully submitted the vote.")
             return True
@@ -1172,8 +1184,8 @@ class SnapshotOffchainSignatureBehaviour(ProposalVoterBaseBehaviour):
 
         proposal_id = self.synchronized_data.selected_proposal["proposal_id"]
         vote_data = self.synchronized_data.pending_offchain_votes[proposal_id]
-        message = vote_data["snapshot_api_data"]
-        safe_message_hash = vote_data["safe_message_hash"]
+        message = vote_data["api_data"]["data"]
+        safe_message_hash = vote_data["safe_message_hash"][2:]
 
         # All agents need to make an API call.
         # The vote creator calls to one endpoint, the other signers call to another
@@ -1186,7 +1198,10 @@ class SnapshotOffchainSignatureBehaviour(ProposalVoterBaseBehaviour):
 
         # Sign the message
         self.context.logger.info(f"Signing message: {safe_message_hash}")
-        signature = yield from self.get_signature(bytes.fromhex(safe_message_hash))
+        signature = yield from self.get_signature(
+            message=bytes.fromhex(safe_message_hash), is_deprecated_mode=True
+        )
+        self.context.logger.info(f"Signature: {signature}")
 
         # Make the call. The creator needs to be the first.
         endpoint = creator_endpoint if i_am_creator else signer_endpoint
@@ -1195,36 +1210,28 @@ class SnapshotOffchainSignatureBehaviour(ProposalVoterBaseBehaviour):
             if i_am_creator
             else {"signature": signature}
         )
+        headers = {"Content-Type": "application/json", "Accept": "application/json"}
 
         # Signers wait for 3 seconds
         if not i_am_creator:
             yield from self.sleep(SNAPSHOT_SIGNER_WAIT_SECONDS)
 
-        retries = 0
+        self.context.logger.info(
+            f"[Message creator? {i_am_creator}] Calling the transaction service [{endpoint}]\n body: {body}"
+        )
 
-        while retries < MAX_RETRIES:
-            self.context.logger.info(f"Calling the transaction service [{endpoint}]")
+        success, response_json = yield from self._request_with_retries(
+            endpoint=endpoint, method="POST", body=body, headers=headers
+        )
 
-            # Make the request
-            response = yield from self.get_http_response(
-                method="POST",
-                url=endpoint,
-                content=json.dumps(body).encode("utf-8"),
+        if not success:
+            self.context.logger.error(
+                "Could not send the signature to Safe transaction service."
             )
+        else:
+            self.context.logger.info("Succesfully submitted the signature.")
 
-            if response.status_code != HTTP_OK:
-                retries += 1
-                self.context.logger.error(
-                    f"Could not send the signature to Safe transaction service [{retries} retries]. "
-                    f"Received status code {response.status_code}: {response.json()}."
-                )
-                continue
-
-            else:
-                self.context.logger.info("Succesfully submitted the signature.")
-                return True
-
-        return False
+        return success
 
 
 class ProposalVoterRoundBehaviour(AbstractRoundBehaviour):

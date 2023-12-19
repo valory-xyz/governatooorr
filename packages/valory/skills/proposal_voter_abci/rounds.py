@@ -602,9 +602,7 @@ class SnapshotOffchainSignatureRound(CollectSameUntilThresholdRound):
     def end_block(self) -> Optional[Tuple[BaseSynchronizedData, Event]]:
         """Process the end of the block."""
         if self.threshold_reached:
-            success = cast(
-                SnapshotOffchainSignaturePayload, self.most_voted_payload
-            ).success
+            success = cast(SnapshotOffchainSignaturePayload, self.most_voted_payload)
             return self.synchronized_data, Event.DONE if success else Event.VOTE_FAILED
 
         if not self.is_majority_possible(

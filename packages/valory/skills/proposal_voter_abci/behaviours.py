@@ -1186,7 +1186,7 @@ class SnapshotOffchainSignatureBehaviour(ProposalVoterBaseBehaviour):
 
         # Sign the message
         self.context.logger.info(f"Signing message: {safe_message_hash}")
-        signature = yield from self.get_signature(bytes.fromhex(safe_message_hash))
+        signature = yield from self.get_signature(bytes.fromhex(safe_message_hash[2:]))
 
         # Make the call. The creator needs to be the first.
         endpoint = creator_endpoint if i_am_creator else signer_endpoint

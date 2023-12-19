@@ -167,7 +167,10 @@ class ProposalVoterBaseBehaviour(BaseBehaviour, ABC):
             # Make the request
             response = yield from self.get_http_response(**kwargs)
 
-            response_json = json.loads(response.body)
+            try:
+                response_json = json.loads(response.body)
+            except json.decoder.JSONDecodeError as exc:
+                response_json = {"exception": str(exc)}
 
             if response.status_code != HTTP_OK:
                 retries += 1
@@ -1187,7 +1190,9 @@ class SnapshotOffchainSignatureBehaviour(ProposalVoterBaseBehaviour):
 
         # Sign the message
         self.context.logger.info(f"Signing message: {safe_message_hash}")
-        signature = yield from self.get_signature(bytes.fromhex(safe_message_hash))
+        signature = yield from self.get_signature(
+            message=bytes.fromhex(safe_message_hash), is_deprecated_mode=True
+        )
         self.context.logger.info(f"Signature: {signature}")
 
         # Make the call. The creator needs to be the first.
@@ -1197,6 +1202,7 @@ class SnapshotOffchainSignatureBehaviour(ProposalVoterBaseBehaviour):
             if i_am_creator
             else {"signature": signature}
         )
+        headers = {"Content-Type": "application/json", "Accept": "application/json"}
 
         # Signers wait for 3 seconds
         if not i_am_creator:
@@ -1207,7 +1213,7 @@ class SnapshotOffchainSignatureBehaviour(ProposalVoterBaseBehaviour):
         )
 
         success, response_json = yield from self._request_with_retries(
-            endpoint=endpoint, method="POST", body=body
+            endpoint=endpoint, method="POST", body=body, headers=headers
         )
 
         if not success:

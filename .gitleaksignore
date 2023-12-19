@@ -35,3 +35,6 @@ ffc6405d7a9588d3ebf4bc0e216bf2be877cc557:packages/valory/skills/solana_transacti
 7d688f9f69e0334bea039abfd44895a36ec64882:packages/valory/skills/proposal_voter_abci/custom_eth_account/account.py:generic-api-key:643
 7d688f9f69e0334bea039abfd44895a36ec64882:packages/valory/skills/proposal_voter_abci/custom_eth_account/account.py:generic-api-key:666
 7d688f9f69e0334bea039abfd44895a36ec64882:packages/valory/skills/proposal_voter_abci/custom_eth_account/account.py:generic-api-key:695
+f46c06b5961bacacd7557751b0cbd44a339aff93:packages/valory/services/governatooorr_3/service.yaml:generic-api-key:36
+f46c06b5961bacacd7557751b0cbd44a339aff93:packages/valory/services/governatooorr_3/service.yaml:generic-api-key:132
+f46c06b5961bacacd7557751b0cbd44a339aff93:packages/valory/services/governatooorr_3/service.yaml:generic-api-key:209

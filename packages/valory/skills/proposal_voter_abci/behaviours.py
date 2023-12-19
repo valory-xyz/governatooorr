@@ -1183,11 +1183,12 @@ class SnapshotOffchainSignatureBehaviour(ProposalVoterBaseBehaviour):
         i_am_creator = self.context.agent_address == vote_creator
 
         creator_endpoint = f"https://safe-transaction-mainnet.safe.global/api/v1/safes/{self.params.voter_safe_address}/messages/"
-        signer_endpoint = f"https://safe-transaction-mainnet.safe.global/api/v1/messages/{safe_message_hash}/signatures/"
+        signer_endpoint = f"https://safe-transaction-mainnet.safe.global/api/v1/messages/{safe_message_hash[2:]}/signatures/"
 
         # Sign the message
         self.context.logger.info(f"Signing message: {safe_message_hash}")
         signature = yield from self.get_signature(bytes.fromhex(safe_message_hash[2:]))
+        self.context.logger.info(f"Signature: {signature}")
 
         # Make the call. The creator needs to be the first.
         endpoint = creator_endpoint if i_am_creator else signer_endpoint

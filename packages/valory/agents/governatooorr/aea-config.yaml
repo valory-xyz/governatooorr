@@ -39,9 +39,9 @@ protocols:
 skills:
 - valory/abstract_abci:0.1.0:bafybeiflcfufixmsrhobf56bn5745m2iipcfqyulwk2qegtnagb3kvaaxi
 - valory/abstract_round_abci:0.1.0:bafybeiaqcl7h2famylusiffigwem7tevkcsyocdu5xd42jkmgq6kvowzgq
-- valory/governatooorr_abci:0.1.0:bafybeiddiicz23mczfjiatrbvwboaueuh7737bphx4dffnth2jekljuteu
+- valory/governatooorr_abci:0.1.0:bafybeihjwngibpcedlb6dp54cjjtb7yo5x66xeh75yj2zp6dpna4e37ggy
 - valory/proposal_collector_abci:0.1.0:bafybeiamvhnzid35g7bo72dajbuiaupahcxd4r7pckosehgl6gwubcgy6m
-- valory/proposal_voter_abci:0.1.0:bafybeif7wyc2ejc67t3atx4efudwmmckh52zxz7wm3m7kh2bwi2dmc2tje
+- valory/proposal_voter_abci:0.1.0:bafybeihtu3o4c2hge3g3gobcuppx5mllmde566ergtvf6q5rg3bqehdy7e
 - valory/registration_abci:0.1.0:bafybeic2ynseiak7jpta7jfwuqwyp453b4p7lolr4wihxmpn633uekv5am
 - valory/reset_pause_abci:0.1.0:bafybeidzajbe3erygeh2xbd6lrjv7nsptznjuzrt24ykgvhgotdeyhfnba
 - valory/termination_abci:0.1.0:bafybeie4zvjfxvdu7qrulmur3chpjz3kpj5m4bjsxvpk4gvj5zbyyayfaa

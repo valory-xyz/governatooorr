@@ -2,11 +2,11 @@
     "dev": {
         "skill/valory/proposal_collector_abci/0.1.0": "bafybeiamvhnzid35g7bo72dajbuiaupahcxd4r7pckosehgl6gwubcgy6m",
         "contract/valory/delegate/0.1.0": "bafybeihmc6erwccmyrthyjfbbwbiahhpgf2mu5ui2oxj7zoigqn3ub6mdm",
-        "skill/valory/proposal_voter_abci/0.1.0": "bafybeig4cv3ulm35lwrp6hzsblu6njuxwwrdnsruysww2gt4fs3gjlvcpu",
-        "skill/valory/governatooorr_abci/0.1.0": "bafybeifxruexlv4ybflkbdtvwqq3pniqt3cvu7pqxce2hkpuqukhise5xm",
-        "agent/valory/governatooorr/0.1.0": "bafybeifas6pibt2iebme3dnykbuuf23e6ckr64tfpqwv4yrn3bjfcdkqnq",
-        "service/valory/governatooorr/0.1.0": "bafybeic7pj632a6uaolul63xkv7g23ei2dqmrwbf4k6lu6ndp7tkbfkiri",
-        "service/valory/governatooorr_local/0.1.0": "bafybeib5u7o3ymf7zwdehat5th3bmtqgogxjguz77lmnjpfg37pp5xrgpe",
+        "skill/valory/proposal_voter_abci/0.1.0": "bafybeid2qtytgitetcdu5xiwqeckk2dcjqydd37hvx6yb5zpo4e7r3nwje",
+        "skill/valory/governatooorr_abci/0.1.0": "bafybeibc3633lpu55eyci3uld367wd7lkqzeq4sle4yp3ucy7aoxs4clt4",
+        "agent/valory/governatooorr/0.1.0": "bafybeihyv72xwfmkylo3zwkduedj7n6hofa6opdf5xynks5pyks4hbfxwu",
+        "service/valory/governatooorr/0.1.0": "bafybeia4f4j5oqisje6ths3m6gxk7kbave5bpcp3qqrmv45lov7pxzlobu",
+        "service/valory/governatooorr_local/0.1.0": "bafybeiac6keo3m3m3wf3vufjw2moclgzupnwjcerecr67xlbeye5uda4v4",
         "contract/valory/sign_message_lib/0.1.0": "bafybeibzgzy4bhjevf2smkgxgyowus76xgrrz25az7hrlpmiopdy6hpzbq",
         "contract/valory/solana_governance/0.1.0": "bafybeiai6xmkddnu3dmd4aar2om6bqmta6wesdne7wjcsm7q4qhrfnsdia",
         "contract/valory/squads_multisig/0.1.0": "bafybeihjv5gwbqsnwjkhljtkamdx2olscvunk7j53jicvd2rgymtgzmbvi",
@@ -17,7 +17,7 @@
         "agent/valory/governatooorr_solana/0.1.0": "bafybeiaxotdcjqkrhxgykhujrqygi577dhggmiosdwzbzpaabkidslidpa",
         "service/valory/governatooorr_solana/0.1.0": "bafybeih456pgn252kdmxsvuqcvk5oazcbfywnk2ioqc6n5c47gaizh25we",
         "service/valory/governatooorr_solana_local/0.1.0": "bafybeieepgrxu6kmm6agdruksuxcr2nflgb24sd5j36hvlpugpc2sghp3a",
-        "service/valory/governatooorr_3/0.1.0": "bafybeigdghtmuelaiwgah2xe46xhdk2wnr2imnvff6xqukwwiraen33gey"
+        "service/valory/governatooorr_3/0.1.0": "bafybeihjvfq6o56xmadfb67obu627afyc27wpgliyryi5c27zfo3ypwdlu"
     },
     "third_party": {
         "protocol/open_aea/signing/1.0.0": "bafybeie7xyems76v5b4wc2lmaidcujizpxfzjnnwdeokmhje53g7ym25ii",

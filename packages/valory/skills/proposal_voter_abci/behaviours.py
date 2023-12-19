@@ -93,7 +93,7 @@ ETHER_VALUE = 0
 VOTING_OPTIONS = "For, Against, and Abstain"
 VOTES_TO_CODE = {"FOR": 0, "AGAINST": 1, "ABSTAIN": 2}
 
-HTTP_OK = 200
+HTTP_OK = [200, 201]
 MAX_RETRIES = 3
 MAX_VOTE_RETRIES = 3
 SNAPSHOT_SIGNER_WAIT_SECONDS = 3
@@ -172,7 +172,10 @@ class ProposalVoterBaseBehaviour(BaseBehaviour, ABC):
             except json.decoder.JSONDecodeError as exc:
                 response_json = {"exception": str(exc)}
 
-            if response.status_code != HTTP_OK:
+            if response.status_code not in HTTP_OK:
+                self.context.logger.error(
+                    f"Request failed [{response.status_code}]: {response_json}"
+                )
                 retries += 1
                 yield from self.sleep(retry_wait)
                 continue
@@ -180,9 +183,7 @@ class ProposalVoterBaseBehaviour(BaseBehaviour, ABC):
                 self.context.logger.info("Request succeeded")
                 return True, response_json
 
-        self.context.logger.info(
-            f"Request failed after {max_retries} retries: {response_json}"
-        )
+        self.context.logger.error(f"Request failed after {max_retries} retries")
         return False, response_json
 
 

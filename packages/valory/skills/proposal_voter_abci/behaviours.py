@@ -1135,6 +1135,9 @@ class SnapshotAPISendBehaviour(ProposalVoterBaseBehaviour):
 
         self.context.logger.info(f"I am the keeper. Calling Snapshot API\nbody: {body}")
 
+        # Complete payloads are sent to the sequencer
+        # If we need to send signatures one by one, then we should use the relayer,
+        # which will wait for all signatures and then will send to the sequencer
         success, response_json = yield from self._request_with_retries(
             endpoint=self.params.snapshot_sequencer_endpoint,
             method="POST",

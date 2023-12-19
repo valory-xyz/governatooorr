@@ -163,11 +163,11 @@ class ProposalVoterBaseBehaviour(BaseBehaviour, ABC):
         retries = 0
         response_json = {}
 
-        while retries < MAX_RETRIES:
+        while retries < max_retries:
             # Make the request
             response = yield from self.get_http_response(**kwargs)
 
-            response_json = response.json()
+            response_json = json.loads(response.body)
 
             if response.status_code != HTTP_OK:
                 retries += 1
@@ -178,7 +178,7 @@ class ProposalVoterBaseBehaviour(BaseBehaviour, ABC):
                 return True, response_json
 
         self.context.logger.info(
-            f"Request failed after {MAX_RETRIES} retries: {response_json}"
+            f"Request failed after {max_retries} retries: {response_json}"
         )
         return False, response_json
 
@@ -1202,33 +1202,22 @@ class SnapshotOffchainSignatureBehaviour(ProposalVoterBaseBehaviour):
         if not i_am_creator:
             yield from self.sleep(SNAPSHOT_SIGNER_WAIT_SECONDS)
 
-        retries = 0
-
         self.context.logger.info(
-            f"Calling the transaction service [{endpoint}]\n body: {body}"
+            f"[Message creator? {i_am_creator}] Calling the transaction service [{endpoint}]\n body: {body}"
         )
 
-        while retries < MAX_RETRIES:
-            # Make the request
-            response = yield from self.get_http_response(
-                method="POST",
-                url=endpoint,
-                content=json.dumps(body).encode("utf-8"),
+        success, response_json = yield from self._request_with_retries(
+            endpoint=endpoint, method="POST", body=json.dumps(body).encode("utf-8")
+        )
+
+        if not success:
+            self.context.logger.error(
+                "Could not send the signature to Safe transaction service."
             )
+        else:
+            self.context.logger.info("Succesfully submitted the signature.")
 
-            if response.status_code != HTTP_OK:
-                retries += 1
-                self.context.logger.error(
-                    f"Could not send the signature to Safe transaction service [{retries} retries]. "
-                    f"Received status code {response.status_code}: {response.json()}."
-                )
-                continue
-
-            else:
-                self.context.logger.info("Succesfully submitted the signature.")
-                return True
-
-        return False
+        return success
 
 
 class ProposalVoterRoundBehaviour(AbstractRoundBehaviour):

@@ -792,8 +792,9 @@ class PrepareVoteTransactionsBehaviour(ProposalVoterBaseBehaviour):
             "data": snapshot_api_data,
             "sig": None,
         }
-
+        self.context.logger.info(f"Getting safe message hash for: {snapshot_api_data}")
         safe_message_hash = yield from self.get_struct_message_hash(snapshot_api_data)
+        self.context.logger.info(f"Safe message hash is {safe_message_hash}")
         return {
             "api_data": envelope,
             "safe_message_hash": safe_message_hash,
@@ -1202,9 +1203,11 @@ class SnapshotOffchainSignatureBehaviour(ProposalVoterBaseBehaviour):
 
         retries = 0
 
-        while retries < MAX_RETRIES:
-            self.context.logger.info(f"Calling the transaction service [{endpoint}]")
+        self.context.logger.info(
+            f"Calling the transaction service [{endpoint}]\n body: {body}"
+        )
 
+        while retries < MAX_RETRIES:
             # Make the request
             response = yield from self.get_http_response(
                 method="POST",

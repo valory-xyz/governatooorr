@@ -1133,6 +1133,8 @@ class SnapshotAPISendBehaviour(ProposalVoterBaseBehaviour):
             "Content-Type": "application/json",
         }
 
+        self.context.logger.info(f"I am the keeper. Calling Snapshot API\nbody: {body}")
+
         success, response_json = yield from self._request_with_retries(
             endpoint=self.params.snapshot_vote_endpoint,
             method="POST",
@@ -1142,7 +1144,9 @@ class SnapshotAPISendBehaviour(ProposalVoterBaseBehaviour):
         )
 
         if not success:
-            self.context.logger.error("Could not send the vote to Snapshot API")
+            self.context.logger.error(
+                f"Could not send the vote to Snapshot API: {response_json}"
+            )
         else:
             self.context.logger.info("Succesfully submitted the vote.")
             return True

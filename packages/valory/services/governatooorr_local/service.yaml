@@ -8,7 +8,7 @@ license: Apache-2.0
 fingerprint:
   README.md: bafybeifvddbrix4wlzp5mfaxjg7bargwbcqxjdfvaz5tctxfvzowggkusu
 fingerprint_ignore_patterns: []
-agent: valory/governatooorr:0.1.0:bafybeiamnhhj5yryhbm7j3cke5e2jtskh22tzdgzw43uz7jnbmuw6wdg6y
+agent: valory/governatooorr:0.1.0:bafybeidepom72suaui2rx5n26rbcdcfwgms5giugyvtkq6jdaf76hs7cga
 number_of_agents: 1
 deployment:
   agent:
@@ -79,7 +79,8 @@ models:
       tally_api_key: ${TALLY_API_KEY:str:<tally_api_key>}
       tally_api_call_sleep_seconds: ${TALLY_API_CALL_SLEEP_SECONDS:int:2}
       snapshot_graphql_endpoint: ${SNAPSHOT_GRAPHQL_ENDPOINT:str:https://hub.snapshot.org/graphql}
-      snapshot_vote_endpoint: ${SNAPSHOT_VOTE_ENDPOINT:str:https://seq.snapshot.org}
+      snapshot_sequencer_endpoint: ${SNAPSHOT_SEQUENCER_ENDPOINT:str:https://seq.snapshot.org/}
+      snapshot_relayer_endpoint: ${SNAPSHOT_RELAYER_ENDPOINT:str:https://relayer.snapshot.org/}
       service_endpoint_base: ${SERVICE_ENDPOINT_BASE:str:https://dummy_service.autonolas.tech/}
       validate_timeout: 1205
       voting_block_threshold: ${VOTING_BLOCK_THRESHOLD:int:300}
@@ -113,6 +114,7 @@ models:
       default_chain_id: ${DEFAULT_CHAIN_ID:str:ethereum}
       voter_safe_address: ${VOTER_SAFE_ADDRESS:str:0x0000000000000000000000000000000000000000}
       safe_contract_address_copy: ${SAFE_CONTRACT_ADDRESS_COPY:str:0xdC92eaB505c0F7E34EF2BEacc41C2d410755FeC6}
+      snapshot_vote_offchain: ${SNAPSHOT_VOTE_OFFCHAIN:bool:true}
 ---
 public_id: valory/ledger:0.19.0
 type: connection

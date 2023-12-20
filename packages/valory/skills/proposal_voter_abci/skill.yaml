@@ -8,14 +8,14 @@ license: Apache-2.0
 aea_version: '>=1.0.0, <2.0.0'
 fingerprint:
   __init__.py: bafybeifps6e4vfc55iyb5jaab7dxem7y3a2wyflai32pyzf4z75m5ngym4
-  behaviours.py: bafybeihtulasyd3d43qc7vt3ypegsw7242ddzygtkhatjpamrpsl46mfq4
+  behaviours.py: bafybeibuw6ugjvjjbab5c3cxyjtwx3kavj6o2q4st4y2jp3rsaw2oqygpi
   dialogues.py: bafybeifapweyl7ixvwhj4t7dz4jihhx4rpanhslinyllfhfpcgg2s7ipoa
-  fsm_specification.yaml: bafybeic73suavs4hxttbetuooe7frfgdksrhuqcke5dqaxduwguckzwqte
+  fsm_specification.yaml: bafybeigpwjrs3mu3d3gkbxli7anppc4v22ympsiornrutetjyxd74so7le
   handlers.py: bafybeibyvr2so264jdc7nfzicieegtltl7gq7u5mxjaiodkuvvpux2rj3m
-  models.py: bafybeihr2isftqhzobhckuuotmdhjtulrfe6ovfbtz3hzxkpptkxibqage
-  payloads.py: bafybeiaecea7b3bdicpdvrcq4n2xysvlvs5shs5irpm3p265e4fi7lliiy
+  models.py: bafybeibdezto6vli6r4mjs6mswoyfnumczqzwkez6ujjousltb6wj72jmy
+  payloads.py: bafybeihb2coc2qhunibb62nheom3bedlrfsyqgmiqhtjicx4odjphmbtka
   prompt.py: bafybeiatxjb2fb76733y3y73taxgsgkhipdcvar5irx6rqqjtyjdgjjjve
-  rounds.py: bafybeie4eiyxclgqjrkd5lj7hhlncpwyrbedcdxnllzbaxbqpv2lpvtcy4
+  rounds.py: bafybeibbel7xvgxj3iefgb6bkgu4gg4lsli4yqwzwrnjz7lijy4agysnie
   tests/__init__.py: bafybeicnpfbu2732mdlaputxl4izv5yfievyodmjzy5w64r2e5zyqycigu
   tests/test_behaviours.py: bafybeihjjazbtg6wg7j4ouptqlmty2ogczsf5r75rksavd62w3ybvalnda
   tests/test_handlers.py: bafybeieqom5jtu7btbnrlzx7si55njbshvudptznacifr6yzhc6s7a76sy
@@ -28,6 +28,7 @@ contracts:
 - valory/delegate:0.1.0:bafybeihmc6erwccmyrthyjfbbwbiahhpgf2mu5ui2oxj7zoigqn3ub6mdm
 - valory/gnosis_safe:0.1.0:bafybeidll7frtdsq2ckiluazkwk4zpkp7natt4kdejjehwvykqwzyuf6ei
 - valory/sign_message_lib:0.1.0:bafybeibzgzy4bhjevf2smkgxgyowus76xgrrz25az7hrlpmiopdy6hpzbq
+- valory/compatibility_fallback_handler:0.1.0:bafybeifyan3wzhsvafwwkyq7tptojvkm3mzjtzgjqewvdbpkuia7r2dfnq
 protocols:
 - valory/contract_api:1.0.0:bafybeialhbjvwiwcnqq3ysxcyemobcbie7xza66gaofcvla5njezkvhcka
 skills:
@@ -144,11 +145,13 @@ models:
       serious_slash_unit_amount: 8000000000000000
       default_snapshot_vote_on_error: false
       default_tally_vote_on_error: false
-      snapshot_vote_endpoint: ${str:https://seq.snapshot.org/}
+      snapshot_sequencer_endpoint: https://seq.snapshot.org/
+      snapshot_relayer_endpoint: https://relayer.snapshot.org/
       mech_call_window_size: 3600.0
       mech_calls_allowed_in_window: 100
       voter_safe_address: '0x0000000000000000000000000000000000000000'
       safe_contract_address_copy: '0x0000000000000000000000000000000000000000'
+      snapshot_vote_offchain: true
     class_name: Params
   randomness_api:
     args:
@@ -176,4 +179,6 @@ models:
 dependencies:
   eth_account:
     version: '>=0.8.0,<0.9.0'
+  eth_utils:
+    version: ==2.2.0
 is_abstract: true

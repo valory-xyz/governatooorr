@@ -94,3 +94,10 @@ class PostTxDecisionMakingPayload(BaseTxPayload):
     """Represent a transaction payload for the PostTxDecisionMakingRound."""
 
     event: str
+
+
+@dataclass(frozen=True)
+class SnapshotOffchainSignaturePayload(BaseTxPayload):
+    """Represent a transaction payload for the SnapshotOffchainSignatureRound."""
+
+    success: bool

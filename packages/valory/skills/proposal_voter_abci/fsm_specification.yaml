@@ -9,7 +9,9 @@ alphabet_in:
 - ROUND_TIMEOUT
 - SKIP_CALL
 - SNAPSHOT_CALL
-- VOTE
+- VOTE_FAILED
+- VOTE_OFFCHAIN
+- VOTE_ONCHAIN
 default_start_state: MechCallCheckRound
 final_states:
 - FinishedMechRequestPreparationRound
@@ -36,11 +38,13 @@ states:
 - SnapshotAPISendRandomnessRound
 - SnapshotAPISendRound
 - SnapshotAPISendSelectKeeperRound
+- SnapshotOffchainSignatureRound
 transition_func:
     (DecisionMakingRound, NO_MAJORITY): DecisionMakingRound
     (DecisionMakingRound, NO_VOTE): FinishedTransactionPreparationNoVoteRound
     (DecisionMakingRound, ROUND_TIMEOUT): DecisionMakingRound
-    (DecisionMakingRound, VOTE): FinishedTransactionPreparationVoteRound
+    (DecisionMakingRound, VOTE_OFFCHAIN): SnapshotOffchainSignatureRound
+    (DecisionMakingRound, VOTE_ONCHAIN): FinishedTransactionPreparationVoteRound
     (EstablishVoteRound, DONE): PrepareVoteTransactionsRound
     (EstablishVoteRound, NO_MAJORITY): EstablishVoteRound
     (EstablishVoteRound, ROUND_TIMEOUT): EstablishVoteRound
@@ -71,3 +75,7 @@ transition_func:
     (SnapshotAPISendSelectKeeperRound, DONE): SnapshotAPISendRound
     (SnapshotAPISendSelectKeeperRound, NO_MAJORITY): SnapshotAPISendRandomnessRound
     (SnapshotAPISendSelectKeeperRound, ROUND_TIMEOUT): SnapshotAPISendRandomnessRound
+    (SnapshotOffchainSignatureRound, DONE): SnapshotAPISendRandomnessRound
+    (SnapshotOffchainSignatureRound, NO_MAJORITY): SnapshotOffchainSignatureRound
+    (SnapshotOffchainSignatureRound, ROUND_TIMEOUT): SnapshotOffchainSignatureRound
+    (SnapshotOffchainSignatureRound, VOTE_FAILED): SnapshotOffchainSignatureRound

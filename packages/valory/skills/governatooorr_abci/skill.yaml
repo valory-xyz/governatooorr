@@ -10,7 +10,7 @@ fingerprint:
   behaviours.py: bafybeifybqekpk7m6xuzsy2bbgxnjymtfip4artnvcvwdbibdnyi2jblei
   composition.py: bafybeie2ugjl4me2gne2xvfa5w3j3x27sod7md32lngweajmr5r6oqyfku
   dialogues.py: bafybeigpwuzku3we7axmxeamg7vn656maww6emuztau5pg3ebsoquyfdqm
-  fsm_specification.yaml: bafybeig5dq2rd3ucakyrvhq4xstxlcdnl2zgkvg365nlykjgptwatptrgq
+  fsm_specification.yaml: bafybeie6qzug667vjl3n47i364xbp3l274jdn3ypcz22bd4sdshzy6ekpy
   handlers.py: bafybeigpasztma6nn4txojmsvvt3zvbbrad2hptn7emzeeif7cyvddbsca
   models.py: bafybeiecavpbrie3ev6dhio67oy3kvbajcr3s6jhc5un7womv2icjycmgu
 fingerprint_ignore_patterns: []
@@ -22,7 +22,7 @@ skills:
 - valory/ceramic_read_abci:0.1.0:bafybeigqpkvsxfhz5jt3yuipmkl6eyfgqcw36226sgfhdgud7mphsjmopa
 - valory/ceramic_write_abci:0.1.0:bafybeighmakx2u2okkvokdimxyzrnfn5qb2cib3qzvzdh4tnkfr6hkx32a
 - valory/proposal_collector_abci:0.1.0:bafybeiamvhnzid35g7bo72dajbuiaupahcxd4r7pckosehgl6gwubcgy6m
-- valory/proposal_voter_abci:0.1.0:bafybeibljnxhly4wjrag2zrme54yz5kydfqhsr4yhue7s5obhbkxf6zf4i
+- valory/proposal_voter_abci:0.1.0:bafybeieuthbtmqjcyyeswu2ssfrqi6afuakr7bop5el7bahxkwbhhhw4yq
 - valory/registration_abci:0.1.0:bafybeic2ynseiak7jpta7jfwuqwyp453b4p7lolr4wihxmpn633uekv5am
 - valory/reset_pause_abci:0.1.0:bafybeidzajbe3erygeh2xbd6lrjv7nsptznjuzrt24ykgvhgotdeyhfnba
 - valory/termination_abci:0.1.0:bafybeie4zvjfxvdu7qrulmur3chpjz3kpj5m4bjsxvpk4gvj5zbyyayfaa
@@ -132,7 +132,8 @@ models:
       signmessagelib_address: '0xA65387F16B013cf2Af4605Ad8aA5ec25a2cbA3a2'
       sleep_time: 1
       snapshot_graphql_endpoint: https://hub.snapshot.org/graphql
-      snapshot_vote_endpoint: https://seq.snapshot.org/
+      snapshot_sequencer_endpoint: https://seq.snapshot.org/
+      snapshot_relayer_endpoint: https://relayer.snapshot.org/
       tally_api_endpoint: https://api.tally.xyz/query
       tally_api_key: <tally_api_key>
       tally_api_call_sleep_seconds: 2
@@ -167,6 +168,7 @@ models:
       default_chain_id: ethereum
       voter_safe_address: '0x0000000000000000000000000000000000000000'
       safe_contract_address_copy: '0x0000000000000000000000000000000000000000'
+      snapshot_vote_offchain: true
     class_name: Params
   randomness_api:
     args:

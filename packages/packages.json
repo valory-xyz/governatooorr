@@ -2,11 +2,11 @@
     "dev": {
         "skill/valory/proposal_collector_abci/0.1.0": "bafybeiamvhnzid35g7bo72dajbuiaupahcxd4r7pckosehgl6gwubcgy6m",
         "contract/valory/delegate/0.1.0": "bafybeihmc6erwccmyrthyjfbbwbiahhpgf2mu5ui2oxj7zoigqn3ub6mdm",
-        "skill/valory/proposal_voter_abci/0.1.0": "bafybeibljnxhly4wjrag2zrme54yz5kydfqhsr4yhue7s5obhbkxf6zf4i",
-        "skill/valory/governatooorr_abci/0.1.0": "bafybeic7xupcoya4jiujse3zxlmftkkak6opvppwqbswjlfy5qm66p46dy",
-        "agent/valory/governatooorr/0.1.0": "bafybeiamnhhj5yryhbm7j3cke5e2jtskh22tzdgzw43uz7jnbmuw6wdg6y",
-        "service/valory/governatooorr/0.1.0": "bafybeifdca4yld6k4yatevk2na75jm6gqrlvnx3eetfoxqpjkisv5bjexu",
-        "service/valory/governatooorr_local/0.1.0": "bafybeihkeju5bsobd3otumue7zigiw22h6v4ijyfqqqsjl4pmwpm2ibnnm",
+        "skill/valory/proposal_voter_abci/0.1.0": "bafybeieuthbtmqjcyyeswu2ssfrqi6afuakr7bop5el7bahxkwbhhhw4yq",
+        "skill/valory/governatooorr_abci/0.1.0": "bafybeihhubvdj6zgqokyuj5fvo5nf2ramahjkwexmn6g7vbd575agd37gq",
+        "agent/valory/governatooorr/0.1.0": "bafybeidepom72suaui2rx5n26rbcdcfwgms5giugyvtkq6jdaf76hs7cga",
+        "service/valory/governatooorr/0.1.0": "bafybeifut2et5tsvwkgizuigbuojxkoyyb3tx7hpi275skcskh37rysfh4",
+        "service/valory/governatooorr_local/0.1.0": "bafybeiged7w3qaug3idg4igfni77ulsn47eiqzk6haadvjljtbzl5gonqy",
         "contract/valory/sign_message_lib/0.1.0": "bafybeibzgzy4bhjevf2smkgxgyowus76xgrrz25az7hrlpmiopdy6hpzbq",
         "contract/valory/solana_governance/0.1.0": "bafybeiai6xmkddnu3dmd4aar2om6bqmta6wesdne7wjcsm7q4qhrfnsdia",
         "contract/valory/squads_multisig/0.1.0": "bafybeihjv5gwbqsnwjkhljtkamdx2olscvunk7j53jicvd2rgymtgzmbvi",
@@ -16,7 +16,8 @@
         "skill/valory/governatooorr_solana_abci/0.1.0": "bafybeifqbqpkbme22sxkjxiozxpy7wawzn57couppx5cwc5ftse62ql6su",
         "agent/valory/governatooorr_solana/0.1.0": "bafybeiaxotdcjqkrhxgykhujrqygi577dhggmiosdwzbzpaabkidslidpa",
         "service/valory/governatooorr_solana/0.1.0": "bafybeih456pgn252kdmxsvuqcvk5oazcbfywnk2ioqc6n5c47gaizh25we",
-        "service/valory/governatooorr_solana_local/0.1.0": "bafybeieepgrxu6kmm6agdruksuxcr2nflgb24sd5j36hvlpugpc2sghp3a"
+        "service/valory/governatooorr_solana_local/0.1.0": "bafybeieepgrxu6kmm6agdruksuxcr2nflgb24sd5j36hvlpugpc2sghp3a",
+        "service/valory/governatooorr_3/0.1.0": "bafybeigctqbccfppbnf54fnmjbnlwzn57spistzdg2e3uee75uyjdt656i"
     },
     "third_party": {
         "protocol/open_aea/signing/1.0.0": "bafybeie7xyems76v5b4wc2lmaidcujizpxfzjnnwdeokmhje53g7ym25ii",
@@ -49,6 +50,7 @@
         "protocol/valory/llm/1.0.0": "bafybeihj2orqapokafg7co3wlogwgf6cckaaj2bz3nuv4rm3opkoyhrlp4",
         "skill/valory/mech_interact_abci/0.1.0": "bafybeielb6agwj5jfdv3nqnc7iugb4qz5us223jpr5uwolke4fmzxvmkna",
         "contract/valory/mech/0.1.0": "bafybeibv6ydk326zkny4pphze64zgzzv2sc5qkt2iyymoi6pt3ci2gtxne",
-        "connection/fetchai/http_server/0.22.0": "bafybeihvscddpxjbtqsetngmxo3kiht2wqhosmwiyuh3f6zjti3x3byu5u"
+        "connection/fetchai/http_server/0.22.0": "bafybeihvscddpxjbtqsetngmxo3kiht2wqhosmwiyuh3f6zjti3x3byu5u",
+        "contract/valory/compatibility_fallback_handler/0.1.0": "bafybeifyan3wzhsvafwwkyq7tptojvkm3mzjtzgjqewvdbpkuia7r2dfnq"
     }
 }

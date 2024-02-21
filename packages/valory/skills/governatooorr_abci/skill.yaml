@@ -19,15 +19,15 @@ contracts: []
 protocols: []
 skills:
 - valory/abstract_round_abci:0.1.0:bafybeib3te5ami7gi7vh6v2rvq7mjmatyqdzqwkqpn7qh6mzfmpc4ikq4q
-- valory/ceramic_read_abci:0.1.0:bafybeiefdxjl5r5y3nweq7m44uxjne5br3x7jdq45e7bqmwqigxod3n4pm
-- valory/ceramic_write_abci:0.1.0:bafybeidjrjd6kx4ravfm7jfwiplcledzdtzfa65apmpqsfadqf4hqe6rfy
+- valory/ceramic_read_abci:0.1.0:bafybeigs24uorwfsbogo3kwbezcjkumjgvbbizdsg5ichmoborufwlzgee
+- valory/ceramic_write_abci:0.1.0:bafybeifljfccvlwy3widq3guxxaodebum2dv7arkjbtyfu6qypsfrvoa4y
 - valory/proposal_collector_abci:0.1.0:bafybeif75py4wbmdzvdy7rcf2jdxp2vehjihwovi7dfftfkifvehxlthuq
-- valory/proposal_voter_abci:0.1.0:bafybeiazau5kjfkunf5qvtmj6zbgot2zalgjr7pnl33ixndmdeahor2p3i
+- valory/proposal_voter_abci:0.1.0:bafybeif2b4igpbm4mjhn5pjs2m7vljzr2cyi35geqnuyohs3tp7diclf7y
 - valory/registration_abci:0.1.0:bafybeigeferybxvqw4fl2cu2mcmfhfpxdruw3jtsswlmvhag3pav47ia5e
 - valory/reset_pause_abci:0.1.0:bafybeig2fb6i66uq5g3kzcd32rmv4z4xqjsslteqpz44adwxjd6op54uxq
 - valory/termination_abci:0.1.0:bafybeihn5gc2uf7gnnjwwpgbgvbcivhac7hgzq54zlr4mj3vmsblhl2fna
 - valory/transaction_settlement_abci:0.1.0:bafybeib4qqbpcdbfba23jm4c3ki7imo4wn5wtsja3tqrsrdlulh3lnixby
-- valory/mech_interact_abci:0.1.0:bafybeifff6axyuv3qb3ot7bmkzolkunqetqikqchrjccngdbmdi6opexwy
+- valory/mech_interact_abci:0.1.0:bafybeigedkfnyxwsdky7qly72svbi6ergekzpufeojnc5ggddciswadave
 behaviours:
   main:
     args: {}

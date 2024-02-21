@@ -24,6 +24,7 @@ alphabet_in:
 - REPEAT
 - RESET_AND_PAUSE_TIMEOUT
 - RESET_TIMEOUT
+- RETRY
 - ROUND_TIMEOUT
 - SKIP_CALL
 - SKIP_REQUEST
@@ -191,6 +192,7 @@ transition_func:
     (StreamReadRound, API_ERROR): StreamReadRound
     (StreamReadRound, DONE): SynchronizeDelegationsRound
     (StreamReadRound, NO_MAJORITY): StreamReadRound
+    (StreamReadRound, RETRY): StreamReadRound
     (StreamReadRound, ROUND_TIMEOUT): StreamReadRound
     (StreamWriteRound, API_ERROR): RandomnessRound
     (StreamWriteRound, DID_NOT_SEND): RandomnessRound

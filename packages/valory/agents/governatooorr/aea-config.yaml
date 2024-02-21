@@ -24,9 +24,9 @@ contracts:
 - valory/gnosis_safe:0.1.0:bafybeia2m32xfpsddrww7j3unkhcijuitlixffg66igrdyt6kgh5jvvwum
 - valory/gnosis_safe_proxy_factory:0.1.0:bafybeien67v6nu5btupwmekr7feyggu6u3nqo5unzsg25xlias6pmgz7ee
 - valory/sign_message_lib:0.1.0:bafybeie2rz2jpxvayzu3cc5i3el6omwqpr6m3zyreh4y4gxzwu23gfv2ai
-- valory/mech:0.1.0:bafybeibv6ydk326zkny4pphze64zgzzv2sc5qkt2iyymoi6pt3ci2gtxne
+- valory/mech:0.1.0:bafybeibcfe2utllc2dakdvdsxawoypodwmilstnjord6rvshunl3hiywuq
 - valory/multisend:0.1.0:bafybeig5byt5urg2d2bsecufxe5ql7f4mezg3mekfleeh32nmuusx66p4y
-- valory/compatibility_fallback_handler:0.1.0:bafybeifyan3wzhsvafwwkyq7tptojvkm3mzjtzgjqewvdbpkuia7r2dfnq
+- valory/compatibility_fallback_handler:0.1.0:bafybeiaiosad7j5ygj3yjb4s66kmscmwqb5n37ashdsls5xllmeyivevhi
 protocols:
 - open_aea/signing:1.0.0:bafybeihv62fim3wl2bayavfcg3u5e5cxu3b7brtu4cn5xoxd6lqwachasi
 - valory/abci:0.1.0:bafybeiaqmp7kocbfdboksayeqhkbrynvlfzsx4uy4x6nohywnmaig4an7u
@@ -39,16 +39,16 @@ protocols:
 skills:
 - valory/abstract_abci:0.1.0:bafybeidbrzxykkdplynsh2z6iskqq26le2t4yvog4expn5v6g2iyyd7clq
 - valory/abstract_round_abci:0.1.0:bafybeib3te5ami7gi7vh6v2rvq7mjmatyqdzqwkqpn7qh6mzfmpc4ikq4q
-- valory/governatooorr_abci:0.1.0:bafybeiep2mmn732f3l5qe2fpbkzpxzlmgtkkrrmgb2soa6is76v6wssajq
+- valory/governatooorr_abci:0.1.0:bafybeiee2lgnsrthvni4edccn72rhoyoptfevlge57mfvicdvfuxcysjba
 - valory/proposal_collector_abci:0.1.0:bafybeif75py4wbmdzvdy7rcf2jdxp2vehjihwovi7dfftfkifvehxlthuq
-- valory/proposal_voter_abci:0.1.0:bafybeiazau5kjfkunf5qvtmj6zbgot2zalgjr7pnl33ixndmdeahor2p3i
+- valory/proposal_voter_abci:0.1.0:bafybeif2b4igpbm4mjhn5pjs2m7vljzr2cyi35geqnuyohs3tp7diclf7y
 - valory/registration_abci:0.1.0:bafybeigeferybxvqw4fl2cu2mcmfhfpxdruw3jtsswlmvhag3pav47ia5e
 - valory/reset_pause_abci:0.1.0:bafybeig2fb6i66uq5g3kzcd32rmv4z4xqjsslteqpz44adwxjd6op54uxq
 - valory/termination_abci:0.1.0:bafybeihn5gc2uf7gnnjwwpgbgvbcivhac7hgzq54zlr4mj3vmsblhl2fna
 - valory/transaction_settlement_abci:0.1.0:bafybeib4qqbpcdbfba23jm4c3ki7imo4wn5wtsja3tqrsrdlulh3lnixby
-- valory/ceramic_read_abci:0.1.0:bafybeiefdxjl5r5y3nweq7m44uxjne5br3x7jdq45e7bqmwqigxod3n4pm
-- valory/ceramic_write_abci:0.1.0:bafybeidjrjd6kx4ravfm7jfwiplcledzdtzfa65apmpqsfadqf4hqe6rfy
-- valory/mech_interact_abci:0.1.0:bafybeifff6axyuv3qb3ot7bmkzolkunqetqikqchrjccngdbmdi6opexwy
+- valory/ceramic_read_abci:0.1.0:bafybeigs24uorwfsbogo3kwbezcjkumjgvbbizdsg5ichmoborufwlzgee
+- valory/ceramic_write_abci:0.1.0:bafybeifljfccvlwy3widq3guxxaodebum2dv7arkjbtyfu6qypsfrvoa4y
+- valory/mech_interact_abci:0.1.0:bafybeigedkfnyxwsdky7qly72svbi6ergekzpufeojnc5ggddciswadave
 default_ledger: ethereum
 required_ledgers:
 - ethereum

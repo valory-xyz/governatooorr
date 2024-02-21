@@ -18,16 +18,16 @@ connections: []
 contracts: []
 protocols: []
 skills:
-- valory/abstract_round_abci:0.1.0:bafybeiaqcl7h2famylusiffigwem7tevkcsyocdu5xd42jkmgq6kvowzgq
-- valory/ceramic_read_abci:0.1.0:bafybeigqpkvsxfhz5jt3yuipmkl6eyfgqcw36226sgfhdgud7mphsjmopa
-- valory/ceramic_write_abci:0.1.0:bafybeighmakx2u2okkvokdimxyzrnfn5qb2cib3qzvzdh4tnkfr6hkx32a
-- valory/proposal_collector_abci:0.1.0:bafybeiamvhnzid35g7bo72dajbuiaupahcxd4r7pckosehgl6gwubcgy6m
-- valory/proposal_voter_abci:0.1.0:bafybeieuthbtmqjcyyeswu2ssfrqi6afuakr7bop5el7bahxkwbhhhw4yq
-- valory/registration_abci:0.1.0:bafybeic2ynseiak7jpta7jfwuqwyp453b4p7lolr4wihxmpn633uekv5am
-- valory/reset_pause_abci:0.1.0:bafybeidzajbe3erygeh2xbd6lrjv7nsptznjuzrt24ykgvhgotdeyhfnba
-- valory/termination_abci:0.1.0:bafybeie4zvjfxvdu7qrulmur3chpjz3kpj5m4bjsxvpk4gvj5zbyyayfaa
-- valory/transaction_settlement_abci:0.1.0:bafybeiaefgqbs7zsn5xe5kdwrujj7ivygkn3ujpw6crnvi3knvxw75qmja
-- valory/mech_interact_abci:0.1.0:bafybeielb6agwj5jfdv3nqnc7iugb4qz5us223jpr5uwolke4fmzxvmkna
+- valory/abstract_round_abci:0.1.0:bafybeib3te5ami7gi7vh6v2rvq7mjmatyqdzqwkqpn7qh6mzfmpc4ikq4q
+- valory/ceramic_read_abci:0.1.0:bafybeiefdxjl5r5y3nweq7m44uxjne5br3x7jdq45e7bqmwqigxod3n4pm
+- valory/ceramic_write_abci:0.1.0:bafybeidjrjd6kx4ravfm7jfwiplcledzdtzfa65apmpqsfadqf4hqe6rfy
+- valory/proposal_collector_abci:0.1.0:bafybeif75py4wbmdzvdy7rcf2jdxp2vehjihwovi7dfftfkifvehxlthuq
+- valory/proposal_voter_abci:0.1.0:bafybeiazau5kjfkunf5qvtmj6zbgot2zalgjr7pnl33ixndmdeahor2p3i
+- valory/registration_abci:0.1.0:bafybeigeferybxvqw4fl2cu2mcmfhfpxdruw3jtsswlmvhag3pav47ia5e
+- valory/reset_pause_abci:0.1.0:bafybeig2fb6i66uq5g3kzcd32rmv4z4xqjsslteqpz44adwxjd6op54uxq
+- valory/termination_abci:0.1.0:bafybeihn5gc2uf7gnnjwwpgbgvbcivhac7hgzq54zlr4mj3vmsblhl2fna
+- valory/transaction_settlement_abci:0.1.0:bafybeib4qqbpcdbfba23jm4c3ki7imo4wn5wtsja3tqrsrdlulh3lnixby
+- valory/mech_interact_abci:0.1.0:bafybeifff6axyuv3qb3ot7bmkzolkunqetqikqchrjccngdbmdi6opexwy
 behaviours:
   main:
     args: {}
@@ -207,5 +207,5 @@ models:
     class_name: TendermintDialogues
 dependencies:
   open-aea-cli-ipfs:
-    version: ==1.42.0
+    version: ==1.47.0
 is_abstract: false

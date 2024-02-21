@@ -20,10 +20,10 @@ connections:
 contracts:
 - valory/solana_governance:0.1.0:bafybeiai6xmkddnu3dmd4aar2om6bqmta6wesdne7wjcsm7q4qhrfnsdia
 protocols:
-- valory/contract_api:1.0.0:bafybeialhbjvwiwcnqq3ysxcyemobcbie7xza66gaofcvla5njezkvhcka
+- valory/contract_api:1.0.0:bafybeidgu7o5llh26xp3u3ebq3yluull5lupiyeu6iooi2xyymdrgnzq5i
 - valory/llm:1.0.0:bafybeihj2orqapokafg7co3wlogwgf6cckaaj2bz3nuv4rm3opkoyhrlp4
 skills:
-- valory/abstract_round_abci:0.1.0:bafybeiaqcl7h2famylusiffigwem7tevkcsyocdu5xd42jkmgq6kvowzgq
+- valory/abstract_round_abci:0.1.0:bafybeib3te5ami7gi7vh6v2rvq7mjmatyqdzqwkqpn7qh6mzfmpc4ikq4q
 behaviours:
   main:
     args: {}

@@ -28,7 +28,7 @@ contracts:
 - valory/delegate:0.1.0:bafybeielfbtl5olzzvftvfkcqmgg572cs2nww6p42qj5yw6634mufrjxcq
 - valory/gnosis_safe:0.1.0:bafybeictjc7saviboxbsdcey3trvokrgo7uoh76mcrxecxhlvcrp47aqg4
 - valory/sign_message_lib:0.1.0:bafybeid2pla7ttn4ofcyegnew56yvhejssva3xq63vj5m6uo7yi7labz4y
-- valory/compatibility_fallback_handler:0.1.0:bafybeiaiosad7j5ygj3yjb4s66kmscmwqb5n37ashdsls5xllmeyivevhi
+- valory/compatibility_fallback_handler:0.1.0:bafybeidb2qaogynf7xop3kmpknubxxpl3omwhaljm7l6vmnx4qaonxp7ae
 protocols:
 - valory/contract_api:1.0.0:bafybeidgu7o5llh26xp3u3ebq3yluull5lupiyeu6iooi2xyymdrgnzq5i
 skills:

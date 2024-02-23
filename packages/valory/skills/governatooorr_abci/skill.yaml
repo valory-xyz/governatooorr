@@ -10,7 +10,7 @@ fingerprint:
   behaviours.py: bafybeifybqekpk7m6xuzsy2bbgxnjymtfip4artnvcvwdbibdnyi2jblei
   composition.py: bafybeie2ugjl4me2gne2xvfa5w3j3x27sod7md32lngweajmr5r6oqyfku
   dialogues.py: bafybeigpwuzku3we7axmxeamg7vn656maww6emuztau5pg3ebsoquyfdqm
-  fsm_specification.yaml: bafybeie6qzug667vjl3n47i364xbp3l274jdn3ypcz22bd4sdshzy6ekpy
+  fsm_specification.yaml: bafybeiesc7aegkdwycvb4kfrv5x5unqnvu66unrdl54hn3amrb4zodl2fy
   handlers.py: bafybeigpasztma6nn4txojmsvvt3zvbbrad2hptn7emzeeif7cyvddbsca
   models.py: bafybeiecavpbrie3ev6dhio67oy3kvbajcr3s6jhc5un7womv2icjycmgu
 fingerprint_ignore_patterns: []
@@ -18,16 +18,16 @@ connections: []
 contracts: []
 protocols: []
 skills:
-- valory/abstract_round_abci:0.1.0:bafybeiaqcl7h2famylusiffigwem7tevkcsyocdu5xd42jkmgq6kvowzgq
-- valory/ceramic_read_abci:0.1.0:bafybeigqpkvsxfhz5jt3yuipmkl6eyfgqcw36226sgfhdgud7mphsjmopa
-- valory/ceramic_write_abci:0.1.0:bafybeighmakx2u2okkvokdimxyzrnfn5qb2cib3qzvzdh4tnkfr6hkx32a
-- valory/proposal_collector_abci:0.1.0:bafybeiamvhnzid35g7bo72dajbuiaupahcxd4r7pckosehgl6gwubcgy6m
-- valory/proposal_voter_abci:0.1.0:bafybeieuthbtmqjcyyeswu2ssfrqi6afuakr7bop5el7bahxkwbhhhw4yq
-- valory/registration_abci:0.1.0:bafybeic2ynseiak7jpta7jfwuqwyp453b4p7lolr4wihxmpn633uekv5am
-- valory/reset_pause_abci:0.1.0:bafybeidzajbe3erygeh2xbd6lrjv7nsptznjuzrt24ykgvhgotdeyhfnba
-- valory/termination_abci:0.1.0:bafybeie4zvjfxvdu7qrulmur3chpjz3kpj5m4bjsxvpk4gvj5zbyyayfaa
-- valory/transaction_settlement_abci:0.1.0:bafybeiaefgqbs7zsn5xe5kdwrujj7ivygkn3ujpw6crnvi3knvxw75qmja
-- valory/mech_interact_abci:0.1.0:bafybeielb6agwj5jfdv3nqnc7iugb4qz5us223jpr5uwolke4fmzxvmkna
+- valory/abstract_round_abci:0.1.0:bafybeigjrepaqpb3m7zunmt4hryos4vto4yyj3u6iyofdb2fotwho3bqvm
+- valory/ceramic_read_abci:0.1.0:bafybeiaexxgdzmfcbymwiz525gpnpv2oaiowmbdwwtwvzksgou75u3snx4
+- valory/ceramic_write_abci:0.1.0:bafybeig7sh3hujmvdompgzjbsxs3vnsnh2l4un3gfhv3p4pb44z4ok7lda
+- valory/proposal_collector_abci:0.1.0:bafybeifl6rlaltfucibcifhunw3k4igjcd2qkixescqyqxam6q333fwrdm
+- valory/proposal_voter_abci:0.1.0:bafybeieqmhpnc5pvv46b5w7vzdqf46gjanqimdqrz5aho25szpshuflo5m
+- valory/registration_abci:0.1.0:bafybeif3ln6eg53ebrfe6uicjew4uqp2ynyrcxkw5wi4jm3ixqv3ykte4a
+- valory/reset_pause_abci:0.1.0:bafybeicm7onl72rfnn33pbvzwjpkl5gafeieyobfcnyresxz7kunjwmqea
+- valory/termination_abci:0.1.0:bafybeie6h7j4hyhgj2wte64n3xyudxq4pgqcqjmslxi5tff4mb6vce2tay
+- valory/transaction_settlement_abci:0.1.0:bafybeid57tozt5f3kgzmu22nbr3c3oy4p7bi2bu66rqsgnlylq6xgh2ixe
+- valory/mech_interact_abci:0.1.0:bafybeicjunamybs27vwz2jz5hdrtkrtr2xwy2a5dyhbqksjrgh266qpnha
 behaviours:
   main:
     args: {}
@@ -207,5 +207,5 @@ models:
     class_name: TendermintDialogues
 dependencies:
   open-aea-cli-ipfs:
-    version: ==1.42.0
+    version: ==1.48.0
 is_abstract: false

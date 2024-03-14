@@ -53,6 +53,7 @@ query Proposals(
     strategies {
       name
     }
+    flagged
   }
 }
 """

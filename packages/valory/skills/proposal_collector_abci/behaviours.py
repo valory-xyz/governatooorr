@@ -556,13 +556,19 @@ class CollectActiveSnapshotProposalsBehaviour(ProposalCollectorBaseBehaviour):
             target_proposals,
         )
 
+        # Filter out proposals that have been flagged as spam
+        target_proposals = filter(
+            lambda tp: not tp["flagged"],
+            target_proposals,
+        )
+
         # Only allow proposals from the space whitelist if there is one
         if self.params.snapshot_space_whitelist:
             self.context.logger.info(
                 f"Using snapshot space whitelist: {self.params.snapshot_space_whitelist}"
             )
             target_proposals = filter(
-                lambda ap: ap["space"]["id"] in self.params.snapshot_space_whitelist,
+                lambda tp: tp["space"]["id"] in self.params.snapshot_space_whitelist,
                 target_proposals,
             )
 

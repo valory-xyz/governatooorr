@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # ------------------------------------------------------------------------------
 #
-#   Copyright 2023 Valory AG
+#   Copyright 2023-2024 Valory AG
 #
 #   Licensed under the Apache License, Version 2.0 (the "License");
 #   you may not use this file except in compliance with the License.
@@ -556,13 +556,19 @@ class CollectActiveSnapshotProposalsBehaviour(ProposalCollectorBaseBehaviour):
             target_proposals,
         )
 
+        # Filter out proposals that have been flagged as spam
+        target_proposals = filter(
+            lambda tp: not tp["flagged"],
+            target_proposals,
+        )
+
         # Only allow proposals from the space whitelist if there is one
         if self.params.snapshot_space_whitelist:
             self.context.logger.info(
                 f"Using snapshot space whitelist: {self.params.snapshot_space_whitelist}"
             )
             target_proposals = filter(
-                lambda ap: ap["space"]["id"] in self.params.snapshot_space_whitelist,
+                lambda tp: tp["space"]["id"] in self.params.snapshot_space_whitelist,
                 target_proposals,
             )
 

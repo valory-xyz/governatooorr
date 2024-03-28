@@ -1,0 +1,2 @@
+contract/valory/squads_multisig/0.1.0
+service/valory/governatooorr_local/0.1.0
